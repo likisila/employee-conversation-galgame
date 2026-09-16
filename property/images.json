@@ -28,6 +28,23 @@
     "ending-trust": "rooftop", "ending-clear": "open-office", "ending-fragile": "meeting-room",
     "direct": "meeting-room", "listen": "quiet-room", "ending-good": "rooftop", "ending-neutral": "open-office"
   },
+  "scenePresentation": {
+    "intro": { "background": "meeting-room", "character": "employee", "expression": "uneasy", "transition": "fade" },
+    "explore": { "background": "meeting-room", "character": "employee", "expression": "uneasy", "transition": "soft" },
+    "feedback": { "background": "meeting-room", "character": "manager", "expression": "reflective", "transition": "soft" },
+    "support": { "background": "quiet-room", "character": "employee", "expression": "relieved", "transition": "wipe" },
+    "action-plan": { "background": "open-office", "character": "employee", "expression": "confident", "transition": "fade" },
+    "pressure": { "background": "meeting-room", "character": "employee", "expression": "uneasy", "transition": "wipe" },
+    "repair": { "background": "quiet-room", "character": "manager", "expression": "empathetic", "transition": "soft" },
+    "check-understanding": { "background": "quiet-room", "character": "employee", "expression": "relieved", "transition": "soft" },
+    "ending-trust": { "background": "rooftop", "character": "employee", "expression": "confident", "transition": "fade" },
+    "ending-clear": { "background": "open-office", "character": "manager", "expression": "resolved", "transition": "fade" },
+    "ending-fragile": { "background": "meeting-room", "character": "employee", "expression": "neutral", "transition": "fade" },
+    "direct": { "background": "meeting-room", "character": "manager", "expression": "neutral", "transition": "soft" },
+    "listen": { "background": "quiet-room", "character": "employee", "expression": "relieved", "transition": "soft" },
+    "ending-good": { "background": "rooftop", "character": "employee", "expression": "confident", "transition": "fade" },
+    "ending-neutral": { "background": "open-office", "character": "employee", "expression": "neutral", "transition": "fade" }
+  },
   "screens": {
     "title": { "src": "/assets/screens/title-key-art.webp", "alt": "半掩的會議室門、桌邊的兩張椅子與晨光", "focalPoint": "62% 50%" },
     "loading": { "src": "/assets/screens/loading-water.webp", "alt": "會議桌上的兩杯水與柔和晨光", "focalPoint": "50% 50%" }
@@ -36,5 +53,11 @@
     "dialoguePanel": "/assets/ui/dialogue-panel.svg",
     "choiceFrame": "/assets/ui/choice-frame.svg",
     "sceneWipe": "/assets/ui/scene-wipe.svg"
+  },
+  "transitions": {
+    "none": { "durationMs": 0 },
+    "soft": { "durationMs": 260 },
+    "fade": { "durationMs": 420 },
+    "wipe": { "durationMs": 520, "asset": "sceneWipe" }
   }
 }
