@@ -1,34 +1,12 @@
 ---
-name: "主管"
+name: "周予安"
 role: protagonist
-status: alive
-aliases: []
-relationships:
-  - character: employee
-    type: manages
-locations: [meeting-room, open-office, quiet-room]
-tags: [manager, player-character]
-arc: from-solution-first-to-curious-coaching
+status: deprecated-alias
+canonical-file: zhou-yuan.md
 ---
 
-## Appearance
+# 角色檔已移轉
 
-成年女性主管，肩長直黑髮，一側勾耳，穿灰藍色西裝外套、米白上衣、炭灰西裝褲與黑色低跟鞋。視覺設定固定，不從性格推論額外身分背景。
+`manager` 是早期原型使用的暫時 ID。正式故事的玩家角色為周予安，請改以 [zhou-yuan.md](zhou-yuan.md) 為準。
 
-## Personality & Traits
-
-玩家透過選項決定她是先傾聽、直接給回饋，或以壓力回應。角色視覺需能支援中性、同理、反思與堅定四種狀態。
-
-## Motivations & Goals
-
-協助加入團隊三個月的小林釐清工作期待、阻礙與下一步，同時建立可持續的一對一溝通方式。
-
-## Voice & Speech Patterns
-
-台灣職場常用語，清楚、具體，不使用高高在上的訓誡語氣（除非玩家選擇失敗路線）。
-
-## Character Arc
-
-- **Starting state:** 準備進行第一次正式一對一。
-- **Key turning points:** 是否先理解情境；能否給具體回饋；是否共同定義下一步。
-- **Ending state:** 依信任、清晰度、心理安全感與 ownership 形成不同結局。
+程式端在完成新劇情接入前可以暫時保留 `manager` ID，但顯示名稱、人物動機與台詞不得再引用舊版「新進同仁一對一」設定。
