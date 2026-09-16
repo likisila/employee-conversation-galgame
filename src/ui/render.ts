@@ -65,11 +65,19 @@ export function renderLoading(app: HTMLElement, content: LoadedContent): void {
   `;
 }
 
+let keyHandler: ((event: KeyboardEvent) => void) | undefined;
+/** 上一次 render 的場景；同場景內逐句前進時不重播轉場與立繪淡入。 */
+let lastSceneId: string | undefined;
+
 export function render(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks = {}): void {
   const scene = engine.currentScene;
   const visibleLines = engine.visibleLines;
+  const lineIndex = engine.currentLineIndex;
+  const line = engine.currentLine;
+  const atLast = engine.atLastLine;
   const presentation = content.images.scenePresentation[scene.id];
-  const activeLine = [...visibleLines].reverse().find((line) => line.speaker && content.characters.has(line.speaker));
+  // 立繪 fallback：目前這一句（含）之前最後一位有立繪的說話者，讓立繪跟著對話走。
+  const activeLine = visibleLines.slice(0, lineIndex + 1).reverse().find((item) => item.speaker && content.characters.has(item.speaker));
   const fallbackCharacterId = activeLine?.speaker ?? undefined;
   const characterId = presentation?.hideCharacter ? undefined : presentation?.character ?? fallbackCharacterId;
   const activeCharacter = characterId ? content.characters.get(characterId) : undefined;
@@ -80,36 +88,62 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
 
   const backgroundId = presentation?.background ?? content.images.sceneBackgrounds[scene.id];
   const background = backgroundId ? content.images.backgrounds[backgroundId] : undefined;
-  const transitionId = presentation?.transition ?? 'none';
+  const sameScene = lastSceneId === scene.id;
+  lastSceneId = scene.id;
+  const transitionId = sameScene ? 'none' : presentation?.transition ?? 'none';
   const transition = content.images.transitions[transitionId];
   const transitionAsset = transition?.asset ? content.images.ui[transition.asset] : undefined;
   const dialoguePanel = content.images.ui.dialoguePanel;
   const choiceFrame = content.images.ui.choiceFrame;
 
-  const lines = visibleLines.map((line) => {
-    const speaker = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : content.ui.narratorName;
-    return `<article class="line"><strong>${escapeHtml(speaker)}</strong><p>${escapeHtml(line.text)}</p></article>`;
-  }).join('');
-  const choices = engine.availableChoices.map((choice, index) =>
-    `<button class="choice" data-choice="${escapeHtml(choice.id)}" style="--choice-frame:${cssUrl(choiceFrame)}"><span>${String(index + 1).padStart(2, '0')}</span>${escapeHtml(choice.text)}</button>`,
-  ).join('');
-  const action = scene.ending
+  // 一次只顯示一句；點畫面（或 Enter／空白鍵）才到下一句。
+  const canAdvance = !atLast || (scene.next !== undefined && !scene.ending);
+  const speaker = line ? (line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : content.ui.narratorName) : '';
+  const dialogue = line
+    ? `<article class="line" data-line="${lineIndex + 1}/${visibleLines.length}"><strong>${escapeHtml(speaker)}</strong><p>${escapeHtml(line.text)}</p></article>`
+    : '';
+  const hint = canAdvance ? `<span class="advance-hint" aria-hidden="true">▼</span>` : '';
+
+  const choices = atLast
+    ? engine.availableChoices.map((choice, index) =>
+        `<button class="choice" data-choice="${escapeHtml(choice.id)}" style="--choice-frame:${cssUrl(choiceFrame)}"><span>${String(index + 1).padStart(2, '0')}</span>${escapeHtml(choice.text)}</button>`,
+      ).join('')
+    : '';
+  const action = atLast && scene.ending
     ? `<button class="primary-action full" id="restart">${escapeHtml(content.ui.restartLabel)}</button>`
     : choices
       ? `<section class="choices"><h2>${escapeHtml(content.ui.choicePrompt)}</h2>${choices}</section>`
-      : scene.next
-        ? `<button class="primary-action full" id="continue">${escapeHtml(content.ui.continueLabel)}</button>`
-        : '';
+      : '';
 
   app.innerHTML = `
-    <section class="game-screen" data-transition="${escapeHtml(transitionId)}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}">
+    <section class="game-screen" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-settled="${sameScene}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}">
       <div class="scene-transition" aria-hidden="true" style="--transition-art:${cssUrl(transitionAsset)}"></div>
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
       ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
-      <div class="story-panel"><section class="dialogue" aria-live="polite">${lines}</section><footer>${action}</footer></div>
+      <div class="story-panel"><section class="dialogue" aria-live="polite">${dialogue}${hint}</section><footer>${action}</footer></div>
     </section>
   `;
+
+  const advance = (): void => {
+    if (!engine.advance()) return;
+    render(app, engine, content, hooks);
+    hooks.onAdvance?.();
+  };
+
+  app.querySelector<HTMLElement>('.game-screen')?.addEventListener('click', (event) => {
+    // 按鈕（選項、重來）各自處理；其他地方點一下就是「下一句」。
+    if ((event.target as HTMLElement).closest('button')) return;
+    advance();
+  });
+  if (keyHandler) document.removeEventListener('keydown', keyHandler);
+  keyHandler = (event: KeyboardEvent): void => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    if ((event.target as HTMLElement | null)?.closest('button')) return;
+    event.preventDefault();
+    advance();
+  };
+  document.addEventListener('keydown', keyHandler);
 
   app.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((button) => {
     button.addEventListener('click', () => {
@@ -118,13 +152,9 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       hooks.onAdvance?.();
     });
   });
-  app.querySelector<HTMLButtonElement>('#continue')?.addEventListener('click', () => {
-    engine.continue();
-    render(app, engine, content, hooks);
-    hooks.onAdvance?.();
-  });
   app.querySelector<HTMLButtonElement>('#restart')?.addEventListener('click', () => {
     engine.restart();
+    lastSceneId = undefined;
     render(app, engine, content, hooks);
     hooks.onRestart?.();
   });

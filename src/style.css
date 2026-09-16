@@ -8,3 +8,14 @@
 @media(max-width:700px){.title-shade{background:linear-gradient(0deg,rgba(6,18,28,.94),rgba(6,18,28,.45) 68%,transparent)}.title-copy{width:100%;justify-content:flex-end;padding:2rem 1.25rem 5rem}.title-copy h1{font-size:clamp(2.8rem,14vw,4.5rem)}.character-stage{inset:4dvh 0 0;padding:0 5vw}.character-sprite{height:min(92dvh,calc(90vw / var(--frame-aspect,0.375)))}.story-panel{width:calc(100vw - 1rem);min-height:32dvh;max-height:52dvh;grid-template-columns:1fr;gap:.75rem;padding:1rem;bottom:max(.5rem,env(safe-area-inset-bottom));overflow-y:auto;background:#0b1c27;backdrop-filter:none}.dialogue{overflow:visible}}
 @media(orientation:landscape) and (max-height:520px){.character-stage{inset:3rem 0 9rem}.character-sprite{height:min(70vh,calc(44vw / var(--frame-aspect,0.375)))}.story-panel{max-height:48vh;padding:.8rem}.line{padding:.2rem 0 .4rem}.line p{margin-top:.2rem;line-height:1.5}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+/* 一句一句：單句對話、點畫面前進的提示 */
+.game-screen[data-advance="true"]{cursor:pointer}
+.game-screen[data-advance="true"] .story-panel{cursor:pointer}
+.dialogue{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:7.5rem;overflow:visible;padding-right:2rem}
+.line{padding:.2rem 0 .4rem}.line+.line{border-top:0}
+.line p{font-size:1.12rem;line-height:1.8}
+.advance-hint{position:absolute;right:.25rem;bottom:.1rem;color:var(--teal);font-size:.85rem;animation:advance-bob 1.1s ease-in-out infinite}
+@keyframes advance-bob{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(.25rem);opacity:1}}
+@media(max-width:700px){.dialogue{min-height:6rem}.line p{font-size:1.02rem}}
+/* 同場景內逐句前進：不重播立繪淡入 */
+.game-screen[data-settled="true"] .character-sprite{animation:none}

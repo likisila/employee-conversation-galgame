@@ -93,3 +93,19 @@ describe('SaveStore', () => {
     expect(store.save(snapshot)).toBe(false);
   });
 });
+
+describe('SaveStore lineIndex', () => {
+  it('round-trips lineIndex and drops an invalid one instead of rejecting the save', () => {
+    const memory = new Map<string, string>();
+    const storage: StorageLike = {
+      getItem: (key) => memory.get(key) ?? null,
+      setItem: (key, value) => { memory.set(key, value); },
+      removeItem: (key) => { memory.delete(key); },
+    };
+    const store = new SaveStore('game-a', storage);
+    store.save({ sceneId: 's3-meeting', state: { trust: 1 }, lineIndex: 7 });
+    expect(store.load()).toEqual({ sceneId: 's3-meeting', state: { trust: 1 }, lineIndex: 7 });
+    memory.set('ecg:save:game-a', JSON.stringify({ version: SAVE_FORMAT_VERSION, gameId: 'game-a', updatedAt: 'x', snapshot: { sceneId: 's1', state: {}, lineIndex: -3 } }));
+    expect(store.load()).toEqual({ sceneId: 's1', state: {} });
+  });
+});
