@@ -139,6 +139,8 @@ export interface UiCopy {
   newGameLabel: string;
   /** 內心話的標籤文字。 */
   thoughtLabel: string;
+  /** 名牌上標示「這是玩家自己」的小字。 */
+  playerLabel: string;
   /** 讀取／轉場畫面等待點擊時的提示。 */
   tapToContinueLabel: string;
 }
@@ -286,6 +288,7 @@ export function parseUi(raw: unknown): UiCopy {
     resumeLabel: typeof value.resumeLabel === 'string' ? value.resumeLabel : '繼續上次',
     newGameLabel: typeof value.newGameLabel === 'string' ? value.newGameLabel : '重新開始',
     thoughtLabel: typeof value.thoughtLabel === 'string' ? value.thoughtLabel : '內心',
+    playerLabel: typeof value.playerLabel === 'string' ? value.playerLabel : '你',
     tapToContinueLabel: typeof value.tapToContinueLabel === 'string' ? value.tapToContinueLabel : '點擊畫面繼續',
   };
 }

@@ -28,8 +28,8 @@
 
 | kind | 呈現 | 寫法 |
 |---|---|---|
-| `dialogue` | 名字＋台詞 | `{ "speaker": "lin-yucheng", "text": "我把檔案存好了。" }` |
-| `thought` | 來源端泡泡（頭像在左）、虛線框、「內心」標籤、淡色字 | `{ "speaker": "zhou-yuan", "text": "（內心）……" }` |
+| `dialogue` | 名牌（對話框上緣）＋台詞 | `{ "speaker": "lin-yucheng", "text": "我把檔案存好了。" }` |
+| `thought` | 名牌加「內心」標籤；本體是來源端泡泡（頭像在左）、虛線框、淡色字 | `{ "speaker": "zhou-yuan", "text": "（內心）……" }` |
 | `narration` | 無名字、置中 | `{ "speaker": null, "text": "雨澄準時進來。" }` |
 | `message` | Teams 風格訊息卡（頻道標籤、頭像、泡泡） | `{ "speaker": null, "text": "【私訊·林雨澄】……" }` |
 
@@ -39,7 +39,7 @@
 { "speaker": null, "kind": "message", "channel": "Teams", "from": "林雨澄", "text": "收到。" }
 ```
 
-`game.json` 的 `player` 指定玩家角色；發送者對得到該角色時（「予安」會對到「周予安」），訊息靠右顯示。
+`game.json` 的 `player` 指定玩家角色。玩家自己的對話與內心：名牌改青色並加「你」標記，對話框頂線同色；其他角色的名牌是琥珀色。訊息卡的發送者對得到該角色時（「予安」會對到「周予安」），訊息靠右顯示。`ui.json` 可用 `playerLabel` 改「你」的文字。
 
 ## 條件台詞（依先前選擇分歧）
 `lines[]` 的每一句都可以帶 `conditions`；全部成立才顯示，沒有 `conditions` 則永遠顯示。
