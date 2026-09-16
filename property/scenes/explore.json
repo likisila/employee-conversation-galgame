@@ -22,6 +22,15 @@
       "effects": [
         { "variable": "clarity", "operation": "add", "value": 1 }
       ]
+    },
+    {
+      "id": "co-define-rule",
+      "text": "一起定標準：『那我們現在就一起訂一個判斷原則，讓你不用每次都用猜的。』",
+      "next": "listen",
+      "effects": [
+        { "variable": "trust", "operation": "add", "value": 1 },
+        { "variable": "psychologicalSafety", "operation": "add", "value": 1 }
+      ]
     }
   ]
 }

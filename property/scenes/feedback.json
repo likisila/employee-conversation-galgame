@@ -22,6 +22,14 @@
       "effects": [
         { "variable": "clarity", "operation": "add", "value": -1 }
       ]
+    },
+    {
+      "id": "state-bottom-line",
+      "text": "給明確底線：『我直接說重點——品質沒問題，但遇到阻塞要更早讓我知道。』",
+      "next": "direct",
+      "effects": [
+        { "variable": "clarity", "operation": "add", "value": 1 }
+      ]
     }
   ]
 }
