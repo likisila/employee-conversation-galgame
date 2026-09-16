@@ -6,7 +6,9 @@
   "scenes": [
     "scenes/intro.json",
     "scenes/explore.json",
+    "scenes/listen.json",
     "scenes/feedback.json",
+    "scenes/direct.json",
     "scenes/support.json",
     "scenes/action-plan.json",
     "scenes/pressure.json",
@@ -14,6 +16,8 @@
     "scenes/check-understanding.json",
     "scenes/ending-trust.json",
     "scenes/ending-clear.json",
+    "scenes/ending-good.json",
+    "scenes/ending-neutral.json",
     "scenes/ending-fragile.json"
   ],
   "cutscenes": "cutscenes.json",
