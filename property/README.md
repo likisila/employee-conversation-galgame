@@ -52,8 +52,21 @@
 
 支援的 operator：`eq`、`neq`、`gt`、`gte`、`lt`、`lte`。
 
+## 場景中途換景（時間與地點跳躍）
+同一個場景裡若有時間或地點跳躍（例如結局的「三週後」），在跳躍的那一句寫 `background`／`character`，效力延續到同場景下一句指定為止：
+
+```json
+{ "speaker": null, "kind": "narration", "text": "黑畫面。三週後。夜晚，予安住處，手機亮起。", "background": "apartment-phone-night", "character": null }
+```
+
+- `background`：`images.json` 的 `backgrounds` ID。換景時會自動補一次該場景的轉場，不會硬切。
+- `character`：角色 ID 代表固定顯示那個人；`null` 代表已離場，之後誰說話都不顯示立繪。沒有寫過任何 `character` 的場景才適用「立繪跟著說話者走」。
+- 兩者都會在載入時檢查；指向不存在的背景或沒有立繪的角色會直接報錯，不會變成黑畫面。
+
 ## 路由場景（有優先序的自動跳轉）
 場景可以帶 `route`，引擎會**由上到下**取第一個條件全部成立的項目自動前往，玩家不會停在路由場景上。最後一項不寫 `conditions` 即為預設路徑。
+
+同一項裡的多個 `conditions` 是「而且」；要表達「或」就寫成多項指向同一個場景（例如「私下補錢」**或**「權力關係仍在時告白」都直接鎖 END 04，不受後續界線加分抵銷）。
 
 ```json
 {
@@ -61,6 +74,7 @@
   "lines": [],
   "choices": [],
   "route": [
+    { "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }], "next": "ending-over-line" },
     { "conditions": [{ "variable": "boundary", "operator": "lte", "value": -2 }], "next": "ending-over-line" },
     { "next": "ending-soft-knife" }
   ]
@@ -71,7 +85,7 @@
 1. 新增 `scenes/your-scene.json`。
 2. 把檔名加入 `manifest.json` 的 `scenes`。
 3. 讓某個選項的 `next`、場景的 `next` 或 `route` 指向新場景的 `id`。
-4. 如需視覺設定，在 `images.json` 的 `sceneBackgrounds` / `scenePresentation` 加上同名項目。立繪跟著說話者走：顯示目前這句（含）之前最後一位有立繪的說話者（對話與內心都算）；場景開頭還沒有人說話時（旁白、訊息）才用 `scenePresentation.character`。`expression` 只套在 `character` 指定的那位身上，換成別人時用該角色的 `defaultExpression`。若背景本身是描繪角色的 CG、不希望再疊立繪，寫 `"character": null`。
+4. 如需視覺設定，在 `images.json` 的 `sceneBackgrounds` / `scenePresentation` 加上同名項目。立繪跟著說話者走：顯示目前這句（含）之前最後一位有立繪的說話者（對話與內心都算）；場景開頭還沒有人說話時（旁白、訊息）才用 `scenePresentation.character`。`expression` 只套在 `character` 指定的那位身上，換成別人時用該角色的 `defaultExpression`。若整場背景都是描繪角色的 CG、不希望再疊立繪，在 `scenePresentation` 寫 `"character": null`；只有中途某一段要換景或送角色離場，改用台詞層級的 `background`／`character`（見上節）。
 
 ## 分支變數
 `game.json` 的 `initialState` 可新增任意字串、數值或布林值。選項透過 `effects` 修改狀態（`add` 僅限數值、`set` 可為任何型別），透過 `conditions` 決定是否顯示。

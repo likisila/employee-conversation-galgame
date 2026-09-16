@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadContent } from '../src/data/contentLoader';
+import { parseImages } from '../src/domain/schema';
 import { StoryEngine } from '../src/engine/StoryEngine';
 
 // 這個測試實際載入 property/ 內容，等同遊戲啟動時 loadContent() 的行為。
@@ -147,10 +148,20 @@ describe('image assets referenced by property/images.json exist on disk', () => 
   });
 
   it('"character": null in scenePresentation parses as hideCharacter (CG scenes show no sprite)', () => {
-    const content = loadContent();
-    const cgScenes = Object.entries(content.images.scenePresentation).filter(([, p]) => p.hideCharacter);
-    expect(cgScenes.map(([id]) => id).sort()).toEqual(['ending-over-line', 'ending-true']);
-    for (const [, p] of cgScenes) expect(p.character).toBeUndefined();
+    const images = parseImages({
+      characters: {},
+      backgrounds: {},
+      sceneBackgrounds: {},
+      screens: {},
+      ui: {},
+      transitions: {},
+      scenePresentation: {
+        'cg-scene': { background: 'cg', character: null },
+        'normal-scene': { background: 'room', character: 'lin-yucheng' },
+      },
+    });
+    expect(images.scenePresentation['cg-scene']).toMatchObject({ hideCharacter: true, character: undefined });
+    expect(images.scenePresentation['normal-scene']).toMatchObject({ hideCharacter: undefined, character: 'lin-yucheng' });
   });
 
   it('every sprite sheet declares frameAspectRatio so the renderer never distorts it', () => {
