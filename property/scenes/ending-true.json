@@ -33,7 +33,8 @@
     { "speaker": "zhou-yuan", "text": "那今天算什麼？" },
     { "speaker": null, "kind": "narration", "text": "她把一杯咖啡推到我面前。" },
     { "speaker": "lin-yucheng", "text": "算第一次見面。" },
-    { "speaker": null, "kind": "narration", "text": "TRUE END：真正的告別　　只有真正結束一段不平等的關係，才可能開始另一段關係。" }
+    { "speaker": null, "kind": "narration", "text": "TRUE END：真正的告別" },
+    { "speaker": null, "kind": "narration", "text": "只有真正結束一段不平等的關係，才可能開始另一段關係。" }
   ],
   "choices": [],
   "ending": true
