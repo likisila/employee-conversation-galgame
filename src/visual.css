@@ -18,11 +18,13 @@
 /* ───── 台詞類型：對話／內心／旁白／訊息 ───── */
 /* 對話：琥珀色名字＋正常字色（沿用 .line 樣式） */
 .line--dialogue p{color:var(--paper)}
-/* 內心：名字旁加「內心」標籤、左側虛線、字色偏冷偏淡，讀起來是「沒說出口的話」 */
-.line--thought{padding-left:.9rem;border-left:2px dashed rgba(120,174,183,.65)}
-.line--thought strong{display:inline-flex;align-items:center;gap:.5rem;color:var(--teal);font-size:.92rem}
-.line--thought p{color:#b8cbd1;font-family:'Noto Serif TC',serif;letter-spacing:.02em}
-.line-tag{padding:.05rem .45rem;border:1px solid rgba(120,174,183,.55);border-radius:999px;color:var(--teal);font-family:'Noto Sans TC',system-ui,sans-serif;font-size:.7rem;font-weight:500;letter-spacing:.1em}
+/* 內心：與訊息卡同一套頭像＋泡泡版面（見下方 .message-*），固定在來源端：頭像在左、
+   泡泡尾（小圓角）朝向想的人。邊框虛線、底色近透明、字色偏冷偏淡，讀起來是「沒說出口的話」。 */
+.line-tag{display:inline-block;padding:.1rem .55rem;border:1px dashed rgba(120,174,183,.7);border-radius:999px;color:var(--teal);font-family:'Noto Sans TC',system-ui,sans-serif;font-size:.7rem;font-weight:500;letter-spacing:.1em}
+.line--thought .message-avatar{background:transparent;border:1.5px dashed rgba(120,174,183,.75);color:var(--teal)}
+.line--thought .message-bubble{background:rgba(120,174,183,.08);border:1.5px dashed rgba(120,174,183,.65)}
+.line--thought .message-bubble strong{color:var(--teal)}
+.line--thought .message-bubble p{color:#b8cbd1;font-family:'Noto Serif TC',serif;letter-spacing:.02em}
 /* 旁白：沒有名字、置中、較小字與字距，像舞台指示 */
 .line--narration{text-align:center}
 .line--narration p{margin:0 auto;max-width:34em;color:#d3dde2;font-family:'Noto Serif TC',serif;font-size:1rem;letter-spacing:.06em}
@@ -63,7 +65,6 @@
 /* 手機：出現選項時對話框可再高一點，減少框內捲動 */
 @media(max-width:700px){
   .game-screen[data-has-choices="true"] .story-panel{max-height:68dvh}
-  .line--thought{padding-left:.7rem}
   .message-avatar{width:2rem;height:2rem;font-size:.66rem}
   .scene-intro .tap-hint{margin-top:2rem}
 }

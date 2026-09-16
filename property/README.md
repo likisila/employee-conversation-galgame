@@ -29,7 +29,7 @@
 | kind | 呈現 | 寫法 |
 |---|---|---|
 | `dialogue` | 名字＋台詞 | `{ "speaker": "lin-yucheng", "text": "我把檔案存好了。" }` |
-| `thought` | 「內心」標籤、左側虛線、淡色字 | `{ "speaker": "zhou-yuan", "text": "（內心）……" }` |
+| `thought` | 來源端泡泡（頭像在左）、虛線框、「內心」標籤、淡色字 | `{ "speaker": "zhou-yuan", "text": "（內心）……" }` |
 | `narration` | 無名字、置中 | `{ "speaker": null, "text": "雨澄準時進來。" }` |
 | `message` | Teams 風格訊息卡（頻道標籤、頭像、泡泡） | `{ "speaker": null, "text": "【私訊·林雨澄】……" }` |
 

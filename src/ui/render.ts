@@ -165,6 +165,12 @@ function findCharacterByName(content: LoadedContent, name: string | undefined): 
   return undefined;
 }
 
+/** 訊息／內心泡泡的頭像：對得到角色時用名字後兩字（雨澄、予安），否則用第一個字（執行長 → 執）。 */
+function avatarText(content: LoadedContent, senderId: string | undefined, fallbackName: string): string {
+  const chars = Array.from((senderId ? content.characters.get(senderId)?.displayName : undefined) ?? fallbackName);
+  return senderId ? chars.slice(-2).join('') : chars.slice(0, 1).join('');
+}
+
 function renderLine(line: Line, content: LoadedContent, progress: string): string {
   const kind = line.kind ?? (line.speaker ? 'dialogue' : 'narration');
   const speakerName = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : '';
@@ -172,8 +178,17 @@ function renderLine(line: Line, content: LoadedContent, progress: string): strin
 
   switch (kind) {
     case 'thought': {
-      const label = speakerName ? `${escapeHtml(speakerName)}<span class="line-tag">${escapeHtml(content.ui.thoughtLabel)}</span>` : `<span class="line-tag">${escapeHtml(content.ui.thoughtLabel)}</span>`;
-      return `<article class="line line--thought" data-kind="thought" data-line="${progress}"><strong>${label}</strong>${text}</article>`;
+      // 內心：與訊息卡同一套頭像＋泡泡版面，但固定在來源端（頭像在左、泡泡尾朝向想的人），
+      // 邊框虛線、底色透明，讀起來是「沒說出口的話」。
+      const thinker = speakerName || content.ui.narratorName;
+      const avatar = avatarText(content, line.speaker ?? undefined, thinker);
+      return `<article class="line line--thought" data-kind="thought" data-line="${progress}">
+        <div class="message-meta"><span class="line-tag">${escapeHtml(content.ui.thoughtLabel)}</span></div>
+        <div class="message-row">
+          <span class="message-avatar" aria-hidden="true">${escapeHtml(avatar)}</span>
+          <div class="message-bubble"><strong>${escapeHtml(thinker)}</strong>${text}</div>
+        </div>
+      </article>`;
     }
     case 'narration':
       return `<article class="line line--narration" data-kind="narration" data-line="${progress}" aria-label="${escapeHtml(content.ui.narratorName)}">${text}</article>`;
@@ -181,9 +196,7 @@ function renderLine(line: Line, content: LoadedContent, progress: string): strin
       const senderId = line.speaker ?? findCharacterByName(content, line.from);
       const sender = line.from ?? speakerName;
       const self = senderId !== undefined && senderId === content.game.player;
-      // 頭像：對得到角色時用名字後兩字（雨澄、予安），否則用第一個字（執行長 → 執）。
-      const avatarChars = Array.from((senderId ? content.characters.get(senderId)?.displayName : undefined) ?? sender);
-      const avatar = senderId ? avatarChars.slice(-2).join('') : avatarChars.slice(0, 1).join('');
+      const avatar = avatarText(content, senderId, sender);
       return `<article class="line line--message${self ? ' is-self' : ''}" data-kind="message" data-line="${progress}">
         <div class="message-meta">${line.channel ? `<span class="message-channel">${escapeHtml(line.channel)}</span>` : ''}</div>
         <div class="message-row">
