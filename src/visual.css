@@ -18,11 +18,11 @@
 /* ───── 台詞類型：對話／內心／旁白／訊息 ───── */
 /* 對話：琥珀色名字＋正常字色（沿用 .line 樣式） */
 .line--dialogue p{color:var(--paper)}
-/* 內心：名字旁加「內心」標籤、左側虛線、字色偏冷偏淡，讀起來是「沒說出口的話」 */
-.line--thought{padding-left:.9rem;border-left:2px dashed rgba(120,174,183,.65)}
-.line--thought strong{display:inline-flex;align-items:center;gap:.5rem;color:var(--teal);font-size:.92rem}
-.line--thought p{color:#b8cbd1;font-family:'Noto Serif TC',serif;letter-spacing:.02em}
-.line-tag{padding:.05rem .45rem;border:1px solid rgba(120,174,183,.55);border-radius:999px;color:var(--teal);font-family:'Noto Sans TC',system-ui,sans-serif;font-size:.7rem;font-weight:500;letter-spacing:.1em}
+/* 內心：名字在名牌上（見下方 .name-plate），本體與訊息卡共用頭像＋泡泡版面（.message-*），
+   固定在來源端：頭像在左、泡泡尾（小圓角）朝向想的人。邊框虛線、底色近透明、字色偏冷偏淡。 */
+.line--thought .message-avatar{background:transparent;border:1.5px dashed rgba(120,174,183,.75);color:var(--teal)}
+.line--thought .message-bubble{background:rgba(120,174,183,.08);border:1.5px dashed rgba(120,174,183,.65)}
+.line--thought .message-bubble p{margin-top:0;color:#b8cbd1;font-family:'Noto Serif TC',serif;letter-spacing:.02em}
 /* 旁白：沒有名字、置中、較小字與字距，像舞台指示 */
 .line--narration{text-align:center}
 .line--narration p{margin:0 auto;max-width:34em;color:#d3dde2;font-family:'Noto Serif TC',serif;font-size:1rem;letter-spacing:.06em}
@@ -40,6 +40,24 @@
 .line--message.is-self .message-row{flex-direction:row-reverse}
 .line--message.is-self .message-bubble{border-radius:12px 4px 12px 12px;background:#3d3f7a}
 .line--message.is-self .message-avatar{background:#8b5cf6}
+
+/* ───── 名牌：說話者名字放在對話框上緣，不混在台詞裡 ─────
+   仿一般文字冒險的名牌：貼著面板頂線的小標籤，右側斜切。其他角色琥珀色、玩家自己青色並加「你」，
+   面板頂線跟著名牌換色，讓「現在是誰在說」一眼可辨。 */
+.story-panel{--panel-pad:1.4rem;padding:var(--panel-pad);border-top-color:var(--amber)}
+.story-panel[data-self="true"]{border-top-color:var(--teal);background:rgba(8,28,36,.96)}
+.story-panel[data-kind="narration"],.story-panel[data-kind="message"]{border-top-color:rgba(255,255,255,.35)}
+.name-plate{grid-column:1/-1;justify-self:start;display:inline-flex;align-items:center;gap:.55rem;max-width:100%;margin:calc(var(--panel-pad) * -1) 0 .15rem calc(var(--panel-pad) * -1 + .9rem);padding:.4rem 1.35rem .36rem .95rem;color:var(--ink);background:var(--amber);font-family:'Noto Serif TC',serif;font-size:1.08rem;font-weight:600;letter-spacing:.16em;clip-path:polygon(0 0,100% 0,calc(100% - .85rem) 100%,0 100%)}
+.name-plate[data-self="true"]{background:var(--teal)}
+.plate-mark{flex:none;width:.5rem;height:.5rem;background:var(--ink);opacity:.7;transform:rotate(45deg)}
+.plate-name{white-space:nowrap}
+.plate-tag{display:inline-block;padding:.06rem .5rem;border-radius:999px;font-family:'Noto Sans TC',system-ui,sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.12em;vertical-align:middle}
+.plate-tag--self{background:var(--ink);color:var(--teal)}
+.name-plate[data-self="true"] .plate-tag--self{color:var(--amber)}
+.plate-tag--thought{border:1px dashed currentColor;opacity:.85}
+.message-bubble strong .plate-tag--self{margin-left:.4rem;background:rgba(8,24,34,.7);color:#c5c9ff}
+/* 玩家自己的對話：台詞前加一小段青色，與名牌呼應 */
+.line--dialogue.is-self p{padding-left:.75rem;border-left:2px solid rgba(120,174,183,.7)}
 
 /* ───── 讀取畫面：預載完成後等玩家點擊 ───── */
 .tap-hint{margin:1.5rem 0 0;color:var(--amber);font-size:.85rem;letter-spacing:.14em;animation:tap-pulse 1.6s ease-in-out infinite}
@@ -63,7 +81,9 @@
 /* 手機：出現選項時對話框可再高一點，減少框內捲動 */
 @media(max-width:700px){
   .game-screen[data-has-choices="true"] .story-panel{max-height:68dvh}
-  .line--thought{padding-left:.7rem}
+  .story-panel{--panel-pad:1rem}
+  .name-plate{font-size:1rem;padding:.32rem 1.1rem .3rem .8rem}
   .message-avatar{width:2rem;height:2rem;font-size:.66rem}
   .scene-intro .tap-hint{margin-top:2rem}
 }
+@media(orientation:landscape) and (max-height:520px){.story-panel{--panel-pad:.8rem}.name-plate{font-size:.95rem;padding:.25rem 1rem .22rem .7rem}}

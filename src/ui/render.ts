@@ -165,35 +165,62 @@ function findCharacterByName(content: LoadedContent, name: string | undefined): 
   return undefined;
 }
 
+/** 訊息／內心泡泡的頭像：對得到角色時用名字後兩字（雨澄、予安），否則用第一個字（執行長 → 執）。 */
+function avatarText(content: LoadedContent, senderId: string | undefined, fallbackName: string): string {
+  const chars = Array.from((senderId ? content.characters.get(senderId)?.displayName : undefined) ?? fallbackName);
+  return senderId ? chars.slice(-2).join('') : chars.slice(0, 1).join('');
+}
+
+/** 對話框上緣的名牌：對話與內心顯示說話者；玩家自己的台詞另加「你」標記與不同配色。 */
+function renderNamePlate(line: Line, content: LoadedContent): string {
+  const kind = line.kind ?? (line.speaker ? 'dialogue' : 'narration');
+  if (kind !== 'dialogue' && kind !== 'thought') return '';
+  const name = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : content.ui.narratorName;
+  const self = line.speaker !== null && line.speaker === content.game.player;
+  const tags = [
+    self ? `<span class="plate-tag plate-tag--self">${escapeHtml(content.ui.playerLabel)}</span>` : '',
+    kind === 'thought' ? `<span class="plate-tag plate-tag--thought">${escapeHtml(content.ui.thoughtLabel)}</span>` : '',
+  ].join('');
+  return `<div class="name-plate" data-self="${self}" data-kind="${kind}"><span class="plate-mark" aria-hidden="true"></span><span class="plate-name">${escapeHtml(name)}</span>${tags}</div>`;
+}
+
 function renderLine(line: Line, content: LoadedContent, progress: string): string {
   const kind = line.kind ?? (line.speaker ? 'dialogue' : 'narration');
   const speakerName = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : '';
+  const self = line.speaker !== null && line.speaker === content.game.player;
   const text = `<p>${escapeHtml(line.text)}</p>`;
 
   switch (kind) {
     case 'thought': {
-      const label = speakerName ? `${escapeHtml(speakerName)}<span class="line-tag">${escapeHtml(content.ui.thoughtLabel)}</span>` : `<span class="line-tag">${escapeHtml(content.ui.thoughtLabel)}</span>`;
-      return `<article class="line line--thought" data-kind="thought" data-line="${progress}"><strong>${label}</strong>${text}</article>`;
+      // 內心：名字放在對話框名牌上；本體是來源端泡泡（頭像在左、泡泡尾朝向想的人），
+      // 邊框虛線、底色透明，讀起來是「沒說出口的話」。
+      const thinker = speakerName || content.ui.narratorName;
+      const avatar = avatarText(content, line.speaker ?? undefined, thinker);
+      return `<article class="line line--thought${self ? ' is-self' : ''}" data-kind="thought" data-line="${progress}">
+        <div class="message-row">
+          <span class="message-avatar" aria-hidden="true">${escapeHtml(avatar)}</span>
+          <div class="message-bubble">${text}</div>
+        </div>
+      </article>`;
     }
     case 'narration':
       return `<article class="line line--narration" data-kind="narration" data-line="${progress}" aria-label="${escapeHtml(content.ui.narratorName)}">${text}</article>`;
     case 'message': {
       const senderId = line.speaker ?? findCharacterByName(content, line.from);
       const sender = line.from ?? speakerName;
-      const self = senderId !== undefined && senderId === content.game.player;
-      // 頭像：對得到角色時用名字後兩字（雨澄、予安），否則用第一個字（執行長 → 執）。
-      const avatarChars = Array.from((senderId ? content.characters.get(senderId)?.displayName : undefined) ?? sender);
-      const avatar = senderId ? avatarChars.slice(-2).join('') : avatarChars.slice(0, 1).join('');
-      return `<article class="line line--message${self ? ' is-self' : ''}" data-kind="message" data-line="${progress}">
+      const selfMessage = senderId !== undefined && senderId === content.game.player;
+      const avatar = avatarText(content, senderId, sender);
+      return `<article class="line line--message${selfMessage ? ' is-self' : ''}" data-kind="message" data-line="${progress}">
         <div class="message-meta">${line.channel ? `<span class="message-channel">${escapeHtml(line.channel)}</span>` : ''}</div>
         <div class="message-row">
           <span class="message-avatar" aria-hidden="true">${escapeHtml(avatar)}</span>
-          <div class="message-bubble"><strong>${escapeHtml(sender)}</strong>${text}</div>
+          <div class="message-bubble"><strong>${escapeHtml(sender)}${selfMessage ? `<span class="plate-tag plate-tag--self">${escapeHtml(content.ui.playerLabel)}</span>` : ''}</strong>${text}</div>
         </div>
       </article>`;
     }
     default:
-      return `<article class="line line--dialogue" data-kind="dialogue" data-line="${progress}"><strong>${escapeHtml(speakerName || content.ui.narratorName)}</strong>${text}</article>`;
+      // 對話：名字在名牌上，這裡只放台詞。
+      return `<article class="line line--dialogue${self ? ' is-self' : ''}" data-kind="dialogue" data-line="${progress}">${text}</article>`;
   }
 }
 
@@ -236,6 +263,8 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   // 一次只顯示一句；點畫面（或 Enter／空白鍵）才到下一句。
   const canAdvance = phase === 'intro' || !atLast || (scene.next !== undefined && !scene.ending);
   const dialogue = line ? renderLine(line, content, `${lineIndex + 1}/${visibleLines.length}`) : '';
+  const namePlate = line ? renderNamePlate(line, content) : '';
+  const speakingSelf = line !== undefined && line.speaker !== null && line.speaker === content.game.player;
   const hint = canAdvance ? `<span class="advance-hint" aria-hidden="true">▼</span>` : '';
 
   const choices = atLast
@@ -256,7 +285,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
       ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
-      <div class="story-panel"><section class="dialogue" aria-live="polite">${dialogue}${hint}</section><footer>${action}</footer></div>
+      <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue" aria-live="polite">${dialogue}${hint}</section><footer>${action}</footer></div>
     </section>
   `;
 
