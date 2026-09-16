@@ -5,32 +5,32 @@
     { "speaker": "zeng-yalin", "text": "這一處只確認你收到文件，不等於接受所有內容，也不等於放棄提問。你可以先不簽，帶回電子副本與紙本。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
     { "speaker": "lin-yucheng", "text": "如果我之後有問題？", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
     { "speaker": "zeng-yalin", "text": "直接找我。你也可以帶你信任的人一起確認。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
-    { "speaker": "zhou-yuan", "text": "（內心）她把資料夾往自己方向移近兩公分。那是她第一次主動碰它。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
+    { "speaker": null, "kind": "narration", "text": "她把資料夾往自己方向移近兩公分。那是她第一次主動碰它。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
 
     { "speaker": "zeng-yalin", "text": "我要修正。即使只是收訖，也不必在此刻完成。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": "zhou-yuan", "text": "（內心）雨澄把筆扣上。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": null, "kind": "narration", "text": "雨澄把筆扣上。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
     { "speaker": "lin-yucheng", "text": "原來我的第一個離職任務，是幫公司降低漏件率。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
     { "speaker": "zhou-yuan", "text": "我不是那個意思。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
     { "speaker": "lin-yucheng", "text": "但那是你剛才要求我做的事。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": "zhou-yuan", "text": "（內心）她把資料夾推回桌子中央。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": null, "kind": "narration", "text": "她把資料夾推回桌子中央。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
 
     { "speaker": "zeng-yalin", "text": "停止。不要提出文件外的金錢承諾。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-    { "speaker": "zhou-yuan", "text": "（內心）雨澄的手離開資料夾，像桌面忽然變燙。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
+    { "speaker": null, "kind": "narration", "text": "雨澄的手離開資料夾，像桌面忽然變燙。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
     { "speaker": "lin-yucheng", "text": "私下？", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
     { "speaker": "zhou-yuan", "text": "我只是想——", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
     { "speaker": "lin-yucheng", "text": "不要把規則變成我們兩個的秘密。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
     { "speaker": "zeng-yalin", "text": "這一段我會如實記錄。後續由我補充正式資訊。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
 
-    { "speaker": null, "text": "17:18。很淡的鋼琴單音進入，間隔很長。" },
+    { "speaker": null, "kind": "narration", "text": "17:18。很淡的鋼琴單音進入，間隔很長。" },
     { "speaker": "lin-yucheng", "text": "作品集呢？我做的流程圖、測試摘要，哪些可以用？" },
     { "speaker": "zeng-yalin", "text": "文件有申請方式。涉及客戶資料的部分要移除；可公開範圍會由專人書面回覆。" },
     { "speaker": "lin-yucheng", "text": "推薦信？" },
     { "speaker": "zhou-yuan", "text": "我可以針對我親自看過的工作寫，內容不需要你今天決定。" },
-    { "speaker": "zhou-yuan", "text": "（內心）她低頭，把電子錶按亮，又按暗。" },
+    { "speaker": null, "kind": "narration", "text": "她低頭，把電子錶按亮，又按暗。" },
     { "speaker": "lin-yucheng", "text": "還有一件事。" },
-    { "speaker": "zhou-yuan", "text": "（內心）雅琳沒有打字。" },
+    { "speaker": null, "kind": "narration", "text": "雅琳沒有打字。" },
     { "speaker": "lin-yucheng", "text": "你有沒有哪一刻，是真的想把我留下來？" },
-    { "speaker": "zhou-yuan", "text": "（內心）冷氣在這時停了。整間會議室忽然安靜得像有人把背景音軌抽走。" }
+    { "speaker": null, "kind": "narration", "text": "冷氣在這時停了。整間會議室忽然安靜得像有人把背景音軌抽走。" }
   ],
   "choices": [
     {

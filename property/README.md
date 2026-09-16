@@ -39,6 +39,8 @@
 { "speaker": null, "kind": "message", "channel": "Teams", "from": "林雨澄", "text": "收到。" }
 ```
 
+正式劇本請優先明確填寫 `kind`。動作、時間、鏡頭與場景描述使用 `speaker: null` 搭配 `kind: "narration"`；內心話才使用角色 `speaker` 搭配 `kind: "thought"`。同一筆不可混合兩種類型，避免遊戲把敘事誤顯示成角色台詞。
+
 `game.json` 的 `player` 指定玩家角色。玩家自己的對話與內心：名牌改青色並加「你」標記，對話框頂線同色；其他角色的名牌是琥珀色。訊息卡的發送者對得到該角色時（「予安」會對到「周予安」），訊息靠右顯示。`ui.json` 可用 `playerLabel` 改「你」的文字。
 
 ## 條件台詞（依先前選擇分歧）
