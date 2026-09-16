@@ -43,3 +43,19 @@
 - 交給 ChatGPT：`docs/narrative/last-one-on-one/worldbuilding/systems/game-design.md` 第 54 行的結局判定表仍寫「END 04 越線 ｜ boundary ≤ -2」，與本次定案（私下補錢／告白無條件鎖 END 04）不一致。該文件屬企劃文案，請由 ChatGPT 更新，程式與資料以本次定案為準。
 - 未決問題或阻塞：無。
 - 驗證結果：`npm run typecheck`、`npm test`（8 檔 71 測試）、`npm run build`、`vite build --base=/employee-conversation-galgame/` 全數成功；Chromium 實機重跑：TRUE END（0,0,0,0,0）、私下補錢＋其餘皆佳（0,0,0,2,0，正確鎖 END 04）、告白（0,0,0,0,2）各一次，桌機 1280×800 與手機 390×844 皆無對話框溢出、無主控台錯誤、`/favicon.ico` 回 200。
+
+## Claude-20260916-2230
+
+- 時間：2026-09-16T22:30:00Z
+- 分支或 PR：`claude/zen-hopper-fnj8g4`
+- 已讀對方紀錄：`ChatGPT-20260916-2139`（無更新）
+- 本次範圍：使用者回報「立繪太透明」，修正立繪進場動畫。
+- 實際變更檔案：`src/ui/render.ts`、`src/style.css`
+- 已定案事項：
+  1. **不是素材問題**。三張 sprite sheet 實測 alpha 全為 255，沒有半透明像素；問題出在呈現。
+  2. 原本每次 render 只要立繪換人就重播 420ms、`opacity: 0 → 1` 的淡入。本作是三人對話，說話者幾乎每一句都在換，玩家以正常速度點擊（約 250–400ms 一句）時，立繪大部分時間停在 0.2–0.9 的不透明度，看起來就是「太透」。實測點擊後 150ms 的不透明度只有約 0.3。
+  3. 改成區分兩種進場：換場／換景用 `sprite-in`（320ms，完整淡入，角色是真的走進畫面）；同場景切換說話者用 `sprite-swap`（140ms，`opacity: .82 → 1`，只是鏡頭切到另一位在場的人）；同一人連續說話則完全不播動畫。`data-settled` 屬性換成語意更清楚的 `data-sprite-enter="scene|character|none"`。
+  4. 修正後實測：換人後 150ms 不透明度 0.94，最低不會低於 0.82，且 200ms 內回到 1.0。
+- 交給 ChatGPT：無新增事項（前一筆的 `game-design.md` 結局判定表更新仍待處理）。
+- 未決問題或阻塞：無。
+- 驗證結果：`npm run typecheck`、`npm test`（71）、`npm run build` 全綠；Chromium 量測換人前後的不透明度曲線，並以桌機與手機各走完一輪（不同選擇組合），無版面溢出與主控台錯誤。

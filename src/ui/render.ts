@@ -286,12 +286,16 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   }
   const phase: 'intro' | 'reveal' | 'play' = pendingIntroSceneId === scene.id ? 'intro' : revealSceneId === scene.id ? 'reveal' : 'play';
   if (phase === 'reveal') revealSceneId = undefined;
-  // settled＝不重播立繪淡入：只有剛進場（無轉場卡）、剛點掉轉場卡，或立繪換人時才播放。
+  // 立繪進場動畫分兩種：
+  // `scene`＝換場或剛點掉轉場卡，角色是真的「走進畫面」，可以完整淡入；
+  // `character`＝同場景內鏡頭切到另一位說話者，兩個人本來就都在房間裡，只做很短的交接，
+  //   否則三人對話幾乎每一句都在重播淡入，玩家看到的幾乎都是半透明的立繪。
   const characterChanged = lastCharacterId !== characterId;
   lastCharacterId = characterId;
   const backgroundChanged = !enteringScene && lastBackgroundId !== backgroundId;
   lastBackgroundId = backgroundId;
-  const sameScene = !enteringScene && phase === 'play' && !characterChanged;
+  const spriteEnter: 'scene' | 'character' | 'none' =
+    enteringScene || phase !== 'play' || backgroundChanged ? 'scene' : characterChanged ? 'character' : 'none';
   // 同場景內換景（結局的時間跳躍）不該是硬切，補一次場景自己的轉場。
   const transitionId = phase === 'play' && !enteringScene ? (backgroundChanged ? sceneTransition : 'none') : sceneTransition;
   const transition = content.images.transitions[transitionId];
@@ -317,7 +321,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       : '';
 
   app.innerHTML = `
-    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-settled="${sameScene}" data-has-choices="${atLast && choices !== ''}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}">
+    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-sprite-enter="${spriteEnter}" data-has-choices="${atLast && choices !== ''}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}">
       <div class="scene-transition" aria-hidden="true" style="--transition-art:${cssUrl(transitionAsset)}"></div>
       ${phase === 'intro' ? `<div class="scene-intro" role="status"><p class="eyebrow">${escapeHtml(content.game.title)}</p>${scene.title ? `<h2>${escapeHtml(scene.title)}</h2>` : ''}<p class="tap-hint">${escapeHtml(content.ui.tapToContinueLabel)}</p></div>` : ''}
       <div class="scene-scrim" aria-hidden="true"></div>
