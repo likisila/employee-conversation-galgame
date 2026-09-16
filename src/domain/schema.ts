@@ -8,6 +8,28 @@ export interface Character {
   avatar?: string;
 }
 
+export interface SpriteSheet {
+  src: string;
+  alt: string;
+  columns: number;
+  defaultExpression: string;
+  expressions: Record<string, number>;
+}
+
+export interface BackgroundImage {
+  src: string;
+  alt: string;
+  focalPoint?: string;
+}
+
+export interface ImageCatalog {
+  characters: Record<string, SpriteSheet>;
+  backgrounds: Record<string, BackgroundImage>;
+  sceneBackgrounds: Record<string, string>;
+  screens: Record<string, BackgroundImage>;
+  ui: Record<string, string>;
+}
+
 export interface Condition {
   variable: string;
   operator: 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte';
@@ -54,6 +76,7 @@ export interface Manifest {
   characters: string;
   scenes: string[];
   ui?: string;
+  images?: string;
 }
 
 export interface UiCopy {
@@ -61,6 +84,9 @@ export interface UiCopy {
   continueLabel: string;
   restartLabel: string;
   narratorName: string;
+  startLabel: string;
+  loadingLabel: string;
+  subtitle: string;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -87,6 +113,7 @@ export function parseManifest(raw: unknown): Manifest {
     characters: stringField(raw, 'characters'),
     scenes: raw.scenes,
     ui: typeof raw.ui === 'string' ? raw.ui : undefined,
+    images: typeof raw.images === 'string' ? raw.images : undefined,
   };
 }
 
@@ -117,11 +144,7 @@ function parseChoice(raw: unknown): Choice {
         if (!isRecord(condition)) throw new Error('condition 格式錯誤');
         const operator = stringField(condition, 'operator');
         if (!['eq', 'neq', 'gt', 'gte', 'lt', 'lte'].includes(operator)) throw new Error(`未知 operator: ${operator}`);
-        return {
-          variable: stringField(condition, 'variable'),
-          operator: operator as Condition['operator'],
-          value: asGameValue(condition.value, 'condition.value'),
-        };
+        return { variable: stringField(condition, 'variable'), operator: operator as Condition['operator'], value: asGameValue(condition.value, 'condition.value') };
       })
     : undefined;
   const effects: Effect[] | undefined = Array.isArray(raw.effects)
@@ -129,20 +152,10 @@ function parseChoice(raw: unknown): Choice {
         if (!isRecord(effect)) throw new Error('effect 格式錯誤');
         const operation = stringField(effect, 'operation');
         if (operation !== 'set' && operation !== 'add') throw new Error(`未知 operation: ${operation}`);
-        return {
-          variable: stringField(effect, 'variable'),
-          operation,
-          value: asGameValue(effect.value, 'effect.value'),
-        };
+        return { variable: stringField(effect, 'variable'), operation, value: asGameValue(effect.value, 'effect.value') };
       })
     : undefined;
-  return {
-    id: stringField(raw, 'id'),
-    text: stringField(raw, 'text'),
-    next: stringField(raw, 'next'),
-    conditions,
-    effects,
-  };
+  return { id: stringField(raw, 'id'), text: stringField(raw, 'text'), next: stringField(raw, 'next'), conditions, effects };
 }
 
 export function parseScene(raw: unknown): Scene {
@@ -169,5 +182,52 @@ export function parseUi(raw: unknown): UiCopy {
     continueLabel: typeof value.continueLabel === 'string' ? value.continueLabel : '繼續',
     restartLabel: typeof value.restartLabel === 'string' ? value.restartLabel : '重新開始',
     narratorName: typeof value.narratorName === 'string' ? value.narratorName : '旁白',
+    startLabel: typeof value.startLabel === 'string' ? value.startLabel : '開始對話',
+    loadingLabel: typeof value.loadingLabel === 'string' ? value.loadingLabel : '整理思緒中',
+    subtitle: typeof value.subtitle === 'string' ? value.subtitle : '一場需要好好聽完的對話',
   };
+}
+
+function parseBackground(raw: unknown, label: string): BackgroundImage {
+  if (!isRecord(raw)) throw new Error(`${label} 格式錯誤`);
+  return { src: stringField(raw, 'src'), alt: stringField(raw, 'alt'), focalPoint: typeof raw.focalPoint === 'string' ? raw.focalPoint : undefined };
+}
+
+export function parseImages(raw: unknown): ImageCatalog {
+  if (!isRecord(raw)) throw new Error('images 必須是物件');
+  const characterSource = isRecord(raw.characters) ? raw.characters : {};
+  const backgroundSource = isRecord(raw.backgrounds) ? raw.backgrounds : {};
+  const screenSource = isRecord(raw.screens) ? raw.screens : {};
+  const sceneSource = isRecord(raw.sceneBackgrounds) ? raw.sceneBackgrounds : {};
+  const uiSource = isRecord(raw.ui) ? raw.ui : {};
+  const characters: Record<string, SpriteSheet> = {};
+
+  for (const [id, value] of Object.entries(characterSource)) {
+    if (!isRecord(value) || !isRecord(value.expressions)) throw new Error(`images.characters.${id} 格式錯誤`);
+    const expressions: Record<string, number> = {};
+    for (const [name, frame] of Object.entries(value.expressions)) {
+      if (typeof frame !== 'number' || frame < 0) throw new Error(`images.characters.${id}.expressions.${name} 必須是非負數`);
+      expressions[name] = frame;
+    }
+    if (typeof value.columns !== 'number' || value.columns < 1) throw new Error(`images.characters.${id}.columns 格式錯誤`);
+    characters[id] = {
+      src: stringField(value, 'src'),
+      alt: stringField(value, 'alt'),
+      columns: value.columns,
+      defaultExpression: stringField(value, 'defaultExpression'),
+      expressions,
+    };
+  }
+
+  const backgrounds = Object.fromEntries(Object.entries(backgroundSource).map(([id, value]) => [id, parseBackground(value, `images.backgrounds.${id}`)]));
+  const screens = Object.fromEntries(Object.entries(screenSource).map(([id, value]) => [id, parseBackground(value, `images.screens.${id}`)]));
+  const sceneBackgrounds = Object.fromEntries(Object.entries(sceneSource).map(([id, value]) => {
+    if (typeof value !== 'string') throw new Error(`images.sceneBackgrounds.${id} 必須是字串`);
+    return [id, value];
+  }));
+  const ui = Object.fromEntries(Object.entries(uiSource).map(([id, value]) => {
+    if (typeof value !== 'string') throw new Error(`images.ui.${id} 必須是字串`);
+    return [id, value];
+  }));
+  return { characters, backgrounds, sceneBackgrounds, screens, ui };
 }

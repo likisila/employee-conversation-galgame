@@ -1,0 +1,40 @@
+{
+  "characters": {
+    "manager": {
+      "src": "/assets/characters/manager.png",
+      "alt": "穿灰藍色西裝外套的團隊主管",
+      "columns": 4,
+      "defaultExpression": "empathetic",
+      "expressions": { "neutral": 0, "empathetic": 1, "reflective": 2, "resolved": 3 }
+    },
+    "employee": {
+      "src": "/assets/characters/employee.png",
+      "alt": "穿芥黃色針織外套、剛加入團隊三個月的小林",
+      "columns": 4,
+      "defaultExpression": "uneasy",
+      "expressions": { "neutral": 0, "uneasy": 1, "relieved": 2, "confident": 3 }
+    }
+  },
+  "backgrounds": {
+    "meeting-room": { "src": "/assets/backgrounds/meeting-room-morning.webp", "alt": "晨光中的玻璃會議室，桌上放著兩杯水", "focalPoint": "50% 48%" },
+    "open-office": { "src": "/assets/backgrounds/open-office-evening.webp", "alt": "入夜後安靜的台北開放式辦公室", "focalPoint": "50% 50%" },
+    "quiet-room": { "src": "/assets/backgrounds/quiet-room-rain.webp", "alt": "雨天裡安靜且私密的談話空間", "focalPoint": "50% 46%" },
+    "rooftop": { "src": "/assets/backgrounds/rooftop-dusk.webp", "alt": "雨後黃昏的台北辦公大樓屋頂花園", "focalPoint": "50% 44%" }
+  },
+  "sceneBackgrounds": {
+    "intro": "meeting-room", "explore": "meeting-room", "feedback": "meeting-room",
+    "support": "quiet-room", "action-plan": "open-office", "pressure": "meeting-room",
+    "repair": "quiet-room", "check-understanding": "quiet-room",
+    "ending-trust": "rooftop", "ending-clear": "open-office", "ending-fragile": "meeting-room",
+    "direct": "meeting-room", "listen": "quiet-room", "ending-good": "rooftop", "ending-neutral": "open-office"
+  },
+  "screens": {
+    "title": { "src": "/assets/screens/title-key-art.webp", "alt": "半掩的會議室門、桌邊的兩張椅子與晨光", "focalPoint": "62% 50%" },
+    "loading": { "src": "/assets/screens/loading-water.webp", "alt": "會議桌上的兩杯水與柔和晨光", "focalPoint": "50% 50%" }
+  },
+  "ui": {
+    "dialoguePanel": "/assets/ui/dialogue-panel.svg",
+    "choiceFrame": "/assets/ui/choice-frame.svg",
+    "sceneWipe": "/assets/ui/scene-wipe.svg"
+  }
+}

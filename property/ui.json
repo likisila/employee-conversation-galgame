@@ -2,5 +2,8 @@
   "choicePrompt": "你想怎麼回應？",
   "continueLabel": "繼續",
   "restartLabel": "重新開始",
-  "narratorName": "旁白"
+  "narratorName": "旁白",
+  "startLabel": "開始對話",
+  "loadingLabel": "整理思緒中",
+  "subtitle": "第一次一對一，不只是把話說完"
 }

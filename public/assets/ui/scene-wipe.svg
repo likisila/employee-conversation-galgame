@@ -1,0 +1,6 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="wipe" x1="0" y1="0" x2="1600" y2="900"><stop stop-color="#071017"/><stop offset=".5" stop-color="#163441"/><stop offset="1" stop-color="#071017"/></linearGradient><pattern id="grain" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#fff" fill-opacity=".035"/></pattern></defs>
+  <rect width="1600" height="900" fill="url(#wipe)"/>
+  <rect width="1600" height="900" fill="url(#grain)"/>
+  <path d="M160 450h1280" stroke="#E8B75F" stroke-opacity=".18"/>
+</svg>
