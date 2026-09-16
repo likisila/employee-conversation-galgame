@@ -29,7 +29,7 @@
 | kind | 呈現 | 寫法 |
 |---|---|---|
 | `dialogue` | 名牌（對話框上緣）＋台詞 | `{ "speaker": "lin-yucheng", "text": "我把檔案存好了。" }` |
-| `thought` | 名牌加「內心」標籤；本體是來源端泡泡（頭像在左）、虛線框、淡色字 | `{ "speaker": "zhou-yuan", "text": "（內心）……" }` |
+| `thought` | 名牌同對話；本體是來源端泡泡（頭像在左）、虛線框、淡色字 | `{ "speaker": "zhou-yuan", "text": "（內心）……" }` |
 | `narration` | 無名字、置中 | `{ "speaker": null, "text": "雨澄準時進來。" }` |
 | `message` | Teams 風格訊息卡（頻道標籤、頭像、泡泡） | `{ "speaker": null, "text": "【私訊·林雨澄】……" }` |
 
@@ -69,7 +69,7 @@
 1. 新增 `scenes/your-scene.json`。
 2. 把檔名加入 `manifest.json` 的 `scenes`。
 3. 讓某個選項的 `next`、場景的 `next` 或 `route` 指向新場景的 `id`。
-4. 如需視覺設定，在 `images.json` 的 `sceneBackgrounds` / `scenePresentation` 加上同名項目。`scenePresentation` 未指定 `character` 時會以該場最後一位有立繪的說話者為準；若背景本身是描繪角色的 CG、不希望再疊立繪，寫 `"character": null`。
+4. 如需視覺設定，在 `images.json` 的 `sceneBackgrounds` / `scenePresentation` 加上同名項目。立繪跟著說話者走：顯示目前這句（含）之前最後一位有立繪的說話者（對話與內心都算）；場景開頭還沒有人說話時（旁白、訊息）才用 `scenePresentation.character`。`expression` 只套在 `character` 指定的那位身上，換成別人時用該角色的 `defaultExpression`。若背景本身是描繪角色的 CG、不希望再疊立繪，寫 `"character": null`。
 
 ## 分支變數
 `game.json` 的 `initialState` 可新增任意字串、數值或布林值。選項透過 `effects` 修改狀態（`add` 僅限數值、`set` 可為任何型別），透過 `conditions` 決定是否顯示。

@@ -22,10 +22,11 @@ function currentSceneImages(): Array<string | undefined> {
   const scene = engine.currentScene;
   const presentation = content.images.scenePresentation[scene.id];
   const backgroundId = presentation?.background ?? content.images.sceneBackgrounds[scene.id];
-  const spriteId = presentation?.character;
+  // 立繪跟著說話者走，所以這一場會出現的每位說話者立繪都先載。
+  const spriteIds = new Set<string>([...(presentation?.character ? [presentation.character] : []), ...scene.lines.flatMap((line) => (line.speaker ? [line.speaker] : []))]);
   return [
     backgroundId ? content.images.backgrounds[backgroundId]?.src : undefined,
-    spriteId ? content.images.characters[spriteId]?.src : undefined,
+    ...[...spriteIds].map((id) => content.images.characters[id]?.src),
   ];
 }
 

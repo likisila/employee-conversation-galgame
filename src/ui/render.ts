@@ -126,6 +126,8 @@ let pendingIntroSceneId: string | undefined;
 let revealSceneId: string | undefined;
 /** 上一次 render 的場景；同場景內逐句前進時不重播轉場與立繪淡入。 */
 let lastSceneId: string | undefined;
+/** 上一次 render 顯示的立繪角色；換人時重播立繪淡入。 */
+let lastCharacterId: string | undefined;
 /** 量測對話框高度、把立繪底線寫成 CSS 變數；換場景時先解除上一次的觀察。 */
 let panelObserver: ResizeObserver | undefined;
 let resizeHandler: (() => void) | undefined;
@@ -171,16 +173,14 @@ function avatarText(content: LoadedContent, senderId: string | undefined, fallba
   return senderId ? chars.slice(-2).join('') : chars.slice(0, 1).join('');
 }
 
-/** 對話框上緣的名牌：對話與內心顯示說話者；玩家自己的台詞另加「你」標記與不同配色。 */
+/** 對話框上緣的名牌：對話與內心顯示說話者；玩家自己的台詞另加「你」標記與不同配色。內心不加標籤。 */
 function renderNamePlate(line: Line, content: LoadedContent): string {
   const kind = line.kind ?? (line.speaker ? 'dialogue' : 'narration');
   if (kind !== 'dialogue' && kind !== 'thought') return '';
   const name = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : content.ui.narratorName;
   const self = line.speaker !== null && line.speaker === content.game.player;
-  const tags = [
-    self ? `<span class="plate-tag plate-tag--self">${escapeHtml(content.ui.playerLabel)}</span>` : '',
-    kind === 'thought' ? `<span class="plate-tag plate-tag--thought">${escapeHtml(content.ui.thoughtLabel)}</span>` : '',
-  ].join('');
+  // 內心不另外加標籤：靠虛線泡泡本身區分。
+  const tags = self ? `<span class="plate-tag plate-tag--self">${escapeHtml(content.ui.playerLabel)}</span>` : '';
   return `<div class="name-plate" data-self="${self}" data-kind="${kind}"><span class="plate-mark" aria-hidden="true"></span><span class="plate-name">${escapeHtml(name)}</span>${tags}</div>`;
 }
 
@@ -231,13 +231,15 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const line = engine.currentLine;
   const atLast = engine.atLastLine;
   const presentation = content.images.scenePresentation[scene.id];
-  // 立繪 fallback：目前這一句（含）之前最後一位有立繪的說話者，讓立繪跟著對話走。
-  const activeLine = visibleLines.slice(0, lineIndex + 1).reverse().find((item) => item.speaker && content.characters.has(item.speaker));
-  const fallbackCharacterId = activeLine?.speaker ?? undefined;
-  const characterId = presentation?.hideCharacter ? undefined : presentation?.character ?? fallbackCharacterId;
+  // 立繪跟著說話者走：目前這一句（含）之前最後一位有立繪的說話者（對話或內心都算）。
+  // 沒有這樣的人（例如開場旁白、訊息）才退回場景指定的角色；`character: null` 則一律不顯示。
+  const activeLine = visibleLines.slice(0, lineIndex + 1).reverse().find((item) => item.speaker && content.images.characters[item.speaker]);
+  const speakerCharacterId = activeLine?.speaker ?? undefined;
+  const characterId = presentation?.hideCharacter ? undefined : speakerCharacterId ?? presentation?.character;
   const activeCharacter = characterId ? content.characters.get(characterId) : undefined;
   const sprite = activeCharacter ? content.images.characters[activeCharacter.id] : undefined;
-  const expression = presentation?.expression ?? sprite?.defaultExpression;
+  // 場景指定的表情只套在場景指定的那位角色上；換成別人時用該角色的預設表情。
+  const expression = (characterId === presentation?.character ? presentation?.expression : undefined) ?? sprite?.defaultExpression;
   const frame = sprite && expression ? sprite.expressions[expression] ?? sprite.expressions[sprite.defaultExpression] ?? 0 : 0;
   const position = sprite && sprite.columns > 1 ? (frame / (sprite.columns - 1)) * 100 : 0;
 
@@ -253,8 +255,10 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   }
   const phase: 'intro' | 'reveal' | 'play' = pendingIntroSceneId === scene.id ? 'intro' : revealSceneId === scene.id ? 'reveal' : 'play';
   if (phase === 'reveal') revealSceneId = undefined;
-  // settled＝不重播立繪淡入：只有剛進場（無轉場卡）或剛點掉轉場卡時才播放。
-  const sameScene = !enteringScene && phase === 'play';
+  // settled＝不重播立繪淡入：只有剛進場（無轉場卡）、剛點掉轉場卡，或立繪換人時才播放。
+  const characterChanged = lastCharacterId !== characterId;
+  lastCharacterId = characterId;
+  const sameScene = !enteringScene && phase === 'play' && !characterChanged;
   const transitionId = phase === 'play' && !enteringScene ? 'none' : sceneTransition;
   const transition = content.images.transitions[transitionId];
   const transitionAsset = transition?.asset ? content.images.ui[transition.asset] : undefined;
@@ -330,6 +334,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   app.querySelector<HTMLButtonElement>('#restart')?.addEventListener('click', () => {
     engine.restart();
     lastSceneId = undefined;
+    lastCharacterId = undefined;
     pendingIntroSceneId = undefined;
     revealSceneId = undefined;
     render(app, engine, content, hooks);
