@@ -51,7 +51,7 @@
 1. 新增 `scenes/your-scene.json`。
 2. 把檔名加入 `manifest.json` 的 `scenes`。
 3. 讓某個選項的 `next`、場景的 `next` 或 `route` 指向新場景的 `id`。
-4. 如需視覺設定，在 `images.json` 的 `sceneBackgrounds` / `scenePresentation` 加上同名項目。
+4. 如需視覺設定，在 `images.json` 的 `sceneBackgrounds` / `scenePresentation` 加上同名項目。`scenePresentation` 未指定 `character` 時會以該場最後一位有立繪的說話者為準；若背景本身是描繪角色的 CG、不希望再疊立繪，寫 `"character": null`。
 
 ## 分支變數
 `game.json` 的 `initialState` 可新增任意字串、數值或布林值。選項透過 `effects` 修改狀態（`add` 僅限數值、`set` 可為任何型別），透過 `conditions` 決定是否顯示。

@@ -33,6 +33,8 @@ export interface TransitionSpec {
 export interface ScenePresentation {
   background?: string;
   character?: string;
+  /** `character: null`：這一場不顯示任何立繪（例如背景已是描繪該角色的 CG），也不做說話者 fallback。 */
+  hideCharacter?: boolean;
   expression?: string;
   transition?: string;
 }
@@ -289,6 +291,7 @@ export function parseImages(raw: unknown): ImageCatalog {
     scenePresentation[id] = {
       background: typeof value.background === 'string' ? value.background : undefined,
       character: typeof value.character === 'string' ? value.character : undefined,
+      hideCharacter: value.character === null ? true : undefined,
       expression: typeof value.expression === 'string' ? value.expression : undefined,
       transition: typeof value.transition === 'string' ? value.transition : undefined,
     };

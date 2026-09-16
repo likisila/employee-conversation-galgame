@@ -15,6 +15,7 @@ completed: 2026-09-16
 - 五次選擇各以 `set` 記錄 `choice1`…`choice5`，供後續條件台詞與越線變體使用。
 - 素材：合併 `main` 的 `c19e705` 後改用正式立繪（雨澄 6 表情、雅琳 3 表情）、5 張背景、3 張 CG 與新標題／載入畫面；予安為第一人稱不做立繪。引擎新增 `frameAspectRatio` 支援，避免不同尺寸的 sprite sheet 被 CSS 拉伸。
 - 與 `main` 上平行整合（`c19e705`，28 個節錄場景 + `ending-router` 的 `routes` 欄位）的合併決策：該版在引擎無路由支援下會停在無按鈕的死路且台詞大量節錄，故場景與引擎採本 handoff 版本；保留其素材、`content-warning` 開場、UI 文案、`cutscenes.json` 缺檔策略與 GPT 維護的 `sora-cutscenes.json`。
+- 立繪素材修正：`c19e705` 提供的 `lin-yucheng.png` / `zeng-yalin.png` 為半身像，但被放在約 80% 全透明的畫布頂端（雅琳內容止於 y=209/1024、雨澄止於 y=222/887），在高度驅動、靠底對齊的版面中整個被推出視窗外。已**無損裁掉全透明列**（雅琳 1536×1024→1536×214、雨澄 1774×887→1774×227；驗證被裁區域 alpha 全為 0），並更新 `frameAspectRatio`。CSS 對寬幅畫格加上寬度上限（`44vw / frameAspectRatio`），避免半身像撐破版面。若日後重新產生全身立繪，只需替換 PNG 並更新 `columns` / `frameAspectRatio`。
 - 尚未實作：`scenePresentation.actors[]` 多立繪同框（目前每場景一位主要角色）；cutscene 接線見 `HANDOFF-20260916-cutscene-integration.md`。
 - 測試：四個結局各一條可達路徑、越線優先於 TRUE END、條件台詞、路由循環保護、active `property/` 無舊設定殘留。
 

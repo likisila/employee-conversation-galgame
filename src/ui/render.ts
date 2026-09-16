@@ -71,7 +71,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const presentation = content.images.scenePresentation[scene.id];
   const activeLine = [...visibleLines].reverse().find((line) => line.speaker && content.characters.has(line.speaker));
   const fallbackCharacterId = activeLine?.speaker ?? undefined;
-  const characterId = presentation?.character ?? fallbackCharacterId;
+  const characterId = presentation?.hideCharacter ? undefined : presentation?.character ?? fallbackCharacterId;
   const activeCharacter = characterId ? content.characters.get(characterId) : undefined;
   const sprite = activeCharacter ? content.images.characters[activeCharacter.id] : undefined;
   const expression = presentation?.expression ?? sprite?.defaultExpression;

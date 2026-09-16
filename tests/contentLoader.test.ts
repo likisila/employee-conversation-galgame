@@ -146,6 +146,13 @@ describe('image assets referenced by property/images.json exist on disk', () => 
     }
   });
 
+  it('"character": null in scenePresentation parses as hideCharacter (CG scenes show no sprite)', () => {
+    const content = loadContent();
+    const cgScenes = Object.entries(content.images.scenePresentation).filter(([, p]) => p.hideCharacter);
+    expect(cgScenes.map(([id]) => id).sort()).toEqual(['ending-over-line', 'ending-true']);
+    for (const [, p] of cgScenes) expect(p.character).toBeUndefined();
+  });
+
   it('every sprite sheet declares frameAspectRatio so the renderer never distorts it', () => {
     const content = loadContent();
     for (const [id, sheet] of Object.entries(content.images.characters)) {
