@@ -1,7 +1,7 @@
 {
   "characters": {
     "lin-yucheng": {
-      "src": "/assets/characters/lin-yucheng.png",
+      "src": "/assets/characters/lin-yucheng-bust-v2.png",
       "alt": "林雨澄，灰藍髮尾、MAKE IT OBVIOUS T 恤與舊電子錶",
       "columns": 6,
       "frameAspectRatio": 1.299559,
@@ -17,7 +17,7 @@
       "align": "left"
     },
     "zeng-yalin": {
-      "src": "/assets/characters/zeng-yalin.png",
+      "src": "/assets/characters/zeng-yalin-bust-v2.png",
       "alt": "曾雅琳，深色西裝外套、球鞋與手持平板的 HR Business Partner",
       "columns": 3,
       "frameAspectRatio": 2.392523,
