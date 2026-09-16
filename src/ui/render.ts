@@ -1,6 +1,19 @@
 import type { LoadedContent } from '../data/contentLoader';
 import type { StoryEngine } from '../engine/StoryEngine';
 
+/** 標題畫面的行為掛勾。有存檔時提供 onResume，讓玩家選擇繼續。 */
+export interface TitleHooks {
+  onStart: () => void;
+  onResume?: () => void;
+  canResume?: boolean;
+}
+
+/** 遊戲畫面的行為掛勾，讓外層在玩家動作後執行副作用（例如自動存檔）。 */
+export interface RenderHooks {
+  onAdvance?: () => void;
+  onRestart?: () => void;
+}
+
 function escapeHtml(value: string): string {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
 }
@@ -13,8 +26,14 @@ function cssUrl(src?: string): string {
   return src ? `url('${escapeHtml(src)}')` : 'none';
 }
 
-export function renderTitle(app: HTMLElement, content: LoadedContent, onStart: () => void): void {
+export function renderTitle(app: HTMLElement, content: LoadedContent, hooks: TitleHooks): void {
   const title = content.images.screens.title;
+  const canResume = hooks.canResume === true && typeof hooks.onResume === 'function';
+  const startLabel = canResume ? content.ui.newGameLabel : content.ui.startLabel;
+  const actions = canResume
+    ? `<button class="primary-action" id="resume">${escapeHtml(content.ui.resumeLabel)}</button>
+       <button class="secondary-action" id="start">${escapeHtml(startLabel)}</button>`
+    : `<button class="primary-action" id="start">${escapeHtml(startLabel)}</button>`;
   app.innerHTML = `
     <section class="title-screen" style="${imageStyle(title?.src, title?.focalPoint)}">
       <div class="title-shade" aria-hidden="true"></div>
@@ -22,11 +41,14 @@ export function renderTitle(app: HTMLElement, content: LoadedContent, onStart: (
         <p class="eyebrow">A WORKPLACE CONVERSATION</p>
         <h1>${escapeHtml(content.game.title)}</h1>
         <p class="subtitle">${escapeHtml(content.ui.subtitle)}</p>
-        <button class="primary-action" id="start">${escapeHtml(content.ui.startLabel)}</button>
+        <div class="title-actions">${actions}</div>
       </div>
     </section>
   `;
-  app.querySelector<HTMLButtonElement>('#start')?.addEventListener('click', onStart);
+  app.querySelector<HTMLButtonElement>('#start')?.addEventListener('click', hooks.onStart);
+  if (canResume) {
+    app.querySelector<HTMLButtonElement>('#resume')?.addEventListener('click', hooks.onResume!);
+  }
 }
 
 export function renderLoading(app: HTMLElement, content: LoadedContent): void {
@@ -43,7 +65,7 @@ export function renderLoading(app: HTMLElement, content: LoadedContent): void {
   `;
 }
 
-export function render(app: HTMLElement, engine: StoryEngine, content: LoadedContent): void {
+export function render(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks = {}): void {
   const scene = engine.currentScene;
   const presentation = content.images.scenePresentation[scene.id];
   const activeLine = [...scene.lines].reverse().find((line) => line.speaker && content.characters.has(line.speaker));
@@ -91,15 +113,18 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   app.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((button) => {
     button.addEventListener('click', () => {
       engine.choose(button.dataset.choice!);
-      render(app, engine, content);
+      render(app, engine, content, hooks);
+      hooks.onAdvance?.();
     });
   });
   app.querySelector<HTMLButtonElement>('#continue')?.addEventListener('click', () => {
     engine.continue();
-    render(app, engine, content);
+    render(app, engine, content, hooks);
+    hooks.onAdvance?.();
   });
   app.querySelector<HTMLButtonElement>('#restart')?.addEventListener('click', () => {
     engine.restart();
-    render(app, engine, content);
+    render(app, engine, content, hooks);
+    hooks.onRestart?.();
   });
 }

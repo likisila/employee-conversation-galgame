@@ -101,6 +101,8 @@ export interface UiCopy {
   startLabel: string;
   loadingLabel: string;
   subtitle: string;
+  resumeLabel: string;
+  newGameLabel: string;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -199,6 +201,8 @@ export function parseUi(raw: unknown): UiCopy {
     startLabel: typeof value.startLabel === 'string' ? value.startLabel : '開始對話',
     loadingLabel: typeof value.loadingLabel === 'string' ? value.loadingLabel : '整理思緒中',
     subtitle: typeof value.subtitle === 'string' ? value.subtitle : '一場需要好好聽完的對話',
+    resumeLabel: typeof value.resumeLabel === 'string' ? value.resumeLabel : '繼續上次',
+    newGameLabel: typeof value.newGameLabel === 'string' ? value.newGameLabel : '重新開始',
   };
 }
 

@@ -12,6 +12,7 @@ import {
   type Scene,
   type UiCopy,
 } from '../domain/schema';
+import { resolveCatalogAssets } from './assetPath';
 
 const modules = import.meta.glob('../../property/**/*.json', { eager: true, import: 'default' }) as Record<string, unknown>;
 
@@ -42,9 +43,11 @@ export function loadContent(): LoadedContent {
   const charactersArray = parseCharacters(requireFile(manifest.characters));
   const scenesArray = manifest.scenes.map((path) => parseScene(requireFile(path)));
   const ui = manifest.ui ? parseUi(requireFile(manifest.ui)) : parseUi({});
-  const images = manifest.images
+  const rawImages = manifest.images
     ? parseImages(requireFile(manifest.images))
     : parseImages({ characters: {}, backgrounds: {}, sceneBackgrounds: {}, screens: {}, ui: {}, transitions: {}, scenePresentation: {} });
+  // 依部署 base 解析素材路徑，讓遊戲能部署在子路徑（如 GitHub Pages）。
+  const images = resolveCatalogAssets(rawImages);
 
   const characters = new Map(charactersArray.map((item) => [item.id, item]));
   const scenes = new Map(scenesArray.map((item) => [item.id, item]));
