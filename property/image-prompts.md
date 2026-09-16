@@ -14,28 +14,28 @@
 ## Character: 林雨澄
 
 - **Use case:** style-transfer
-- **Asset:** 6-column bust sprite sheet，生成時使用純綠背景，後製為真正透明 PNG。
+- **Asset:** 6-column bust sprite sheet；每格 512×512、人物可見高度約 460 px、底部對齊、水平置中，生成時使用純綠背景，後製為真正透明 PNG。
 - **Subject:** 26 歲台灣女性；下巴長度深色短髮，髮尾淡灰藍；深灰 T 恤、黑色識別證掛繩、舊電子錶。
 - **Frames:** neutral、alert、blank、suppressed-anger、wry、relaxed。
-- **Keep:** 六格身分、服裝、比例與光線一致；畫格順序固定。
+- **Keep:** 六格身分、服裝、比例與光線一致；畫格順序固定；不同表情不可左右跳位。
 - **Avoid:** 幼態、過度哭泣、背景、地板、標籤、框線、額外人物。
 
 ## Character: 曾雅琳
 
 - **Use case:** style-transfer
-- **Asset:** 3-column bust sprite sheet，生成時使用純綠背景，後製為真正透明 PNG。
+- **Asset:** 3-column bust sprite sheet；每格 512×512、人物可見高度約 460 px、底部對齊、水平置中，生成時使用純綠背景，後製為真正透明 PNG。
 - **Subject:** 34 歲台灣女性 HR Business Partner；肩長深髮、深色合身西裝外套、灰色上衣、低調耳環。
 - **Frames:** neutral、stop（抬掌制止）、dry（面無表情的乾式幽默）。
-- **Keep:** 三格身分、服裝、比例與光線一致；畫格順序固定。
+- **Keep:** 三格身分、服裝、比例與光線一致；畫格順序固定；不同表情不可左右跳位。
 - **Avoid:** 反派化、過度性感化、背景、標籤、框線、額外人物。
 
 ## Character: 周予安
 
 - **Use case:** style-transfer
-- **Asset:** single bust sprite，生成時使用純綠背景，後製為真正透明 PNG。
+- **Asset:** single bust sprite；單格 512×512、人物可見高度約 460 px、底部對齊、水平置中，生成時使用純綠背景，後製為真正透明 PNG。
 - **Subject:** 31 歲台灣成人；中性性別表現、略偏男性輪廓；短深棕髮、炭灰西裝外套、藍灰開領襯衫，可露出文件夾一角。
 - **Expression:** neutral；克制、疲憊但不冷酷。
-- **Keep:** 角色位於寬畫布右側，保留左側空間；符合玩家角色定位。
+- **Keep:** 身分、服裝、比例與光線符合玩家角色定位。
 - **Avoid:** 黑色或棋盤格假透明背景、英雄化、過度年輕、額外人物。
 
 ## Backgrounds
@@ -63,3 +63,8 @@
 
 對話框、選項框與場景 wipe 使用確定性的 SVG／CSS，不交給 ImageGen。色彩與間距遵循
 `design-system/before-we-talk/MASTER.md`。
+
+### Favicon
+
+- **Asset:** `public/assets/ui/favicon-source.png`（512×512 來源圖）與 `public/favicon.ico`（瀏覽器用多尺寸圖示）。
+- **Prompt:** 明亮簡潔的現代編輯插畫；畫面中央只有一個藍色權益文件夾，資料夾上有一滴暖琥珀色的雨滴形反光；淡天藍背景、輪廓清楚、色彩極少、16×16 仍可辨識；不含人物、手、文字、數字、標誌、浮水印或邊框。

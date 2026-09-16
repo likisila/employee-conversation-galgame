@@ -1,6 +1,6 @@
 {
   "id": "s8-reaction",
-  "title": "沒有寫在文件裡",
+  "title": "答案的重量",
   "lines": [
     { "speaker": null, "kind": "narration", "text": "雨澄沒有立刻回答。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
     { "speaker": "zhou-yuan", "text": "我願意提供推薦，也願意把我能確認的作品內容寫清楚。要不要再聯絡、用什麼方式聯絡，由你決定。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
