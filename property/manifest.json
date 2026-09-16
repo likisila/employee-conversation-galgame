@@ -4,6 +4,7 @@
   "ui": "ui.json",
   "images": "images.json",
   "scenes": [
+    "scenes/content-warning.json",
     "scenes/s1-final-cut.json",
     "scenes/s2-invite.json",
     "scenes/s3-meeting.json",

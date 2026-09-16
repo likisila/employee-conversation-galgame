@@ -81,11 +81,11 @@ npm run build
 - AI 產生 scene draft，但仍存回同一套 schema。
 ## Sora 劇情過場
 
-`property/sora-cutscenes.json` 定義八段 8 秒、720p 的 Sora 過場，輸出會直接取代 `public/assets/cutscenes/` 內同名的本機 fallback MP4。完整一輪預估費用上限為 USD 6.40。
+`property/sora-cutscenes.json` 定義 8 秒、720p 的真人寫實微電影過場，涵蓋共通主線與互斥結局。所有鏡頭以正式資遣劇本為準；鏡頭數、單價與完整生成上限以 manifest 及 dry-run 輸出為準。
 
-> 注意：目前 `public/assets/cutscenes/` 內的 MP4 仍是舊原型的算圖，尚未依《最後一次一對一》重新產生。過場不由遊戲 runtime 載入，缺片不影響遊玩。
+`property/cutscenes.json` 只保存影片格式、來源與缺檔策略；實際 Sora 提示、觸發點、正式場景對應、角色連戲、道具狀態與生成後檢查表位於 `property/sora-cutscenes.json`。影片尚未生成或缺檔時，遊戲應略過影片並直接進入對應的正式場景，不使用舊版替代影片。
 
-先檢查提示，不產生費用：
+先驗證 manifest 並檢查最終提示，不產生費用：
 
 ```bash
 npm run videos:sora -- --dry-run
@@ -94,13 +94,17 @@ npm run videos:sora -- --dry-run
 本機生成：
 
 ```bash
-OPENAI_API_KEY="..." SORA_MAX_COST_USD=5.60 npm run videos:sora
+OPENAI_API_KEY="..." npm run videos:sora
 ```
 
 也可只生成指定鏡頭：
 
 ```bash
-OPENAI_API_KEY="..." npm run videos:sora -- --ids=final-cut,ending-true
+OPENAI_API_KEY="..." npm run videos:sora -- --ids=layoff-notification,ending-true
 ```
 
 請勿把 API key 寫入檔案或提交版本控制。若要由 GitHub 生成，將 key 存為 repository secret `OPENAI_API_KEY`，再手動執行 **Generate Sora cutscenes** workflow；成功後 workflow 會提交 MP4 與生成報告。
+
+每次生成後必須依 manifest 的 `postGenerationReview` 驗證：不得出現 GAL GAME 對話框或 HUD、三位演員與服裝必須連戲、Day 1 的會議室鏡頭必須有 HR 曾雅琳，且僅 TRUE END 可在三週後由林雨澄主動開啟私人會面。
+
+舊版 `render_cutscenes.py`、自動合成立繪／對話卡的 workflow 與其輸出影片已移除，避免後續素材更新重新產生錯誤的 GAL GAME 式 Cutscene。

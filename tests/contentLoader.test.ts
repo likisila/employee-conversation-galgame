@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadContent } from '../src/data/contentLoader';
@@ -117,11 +117,40 @@ describe('《最後一次一對一》ending reachability', () => {
 
   it('conditional lines follow the invitation actually sent', () => {
     const engine = new StoryEngine(loadContent());
-    engine.continue();
+    while (engine.availableChoices.length === 0) engine.continue();
     engine.choose('invite-goodnews');
     const texts = engine.visibleLines.map((line) => line.text);
     expect(texts.some((text) => text.includes('好消息？'))).toBe(true);
     expect(texts.some((text) => text.includes('我把檔案存好了'))).toBe(false);
+  });
+});
+
+// 素材路徑只在 runtime 才會 404，測試在這裡先擋：images.json 引用的每個檔案都必須存在於 public/。
+describe('image assets referenced by property/images.json exist on disk', () => {
+  it('every sprite, background, screen and ui src resolves to a file under public/', () => {
+    const raw = JSON.parse(readFileSync(join(__dirname, '..', 'property', 'images.json'), 'utf8')) as {
+      characters: Record<string, { src: string }>;
+      backgrounds: Record<string, { src: string }>;
+      screens: Record<string, { src: string }>;
+      ui: Record<string, string>;
+    };
+    const srcs = [
+      ...Object.values(raw.characters).map((entry) => entry.src),
+      ...Object.values(raw.backgrounds).map((entry) => entry.src),
+      ...Object.values(raw.screens).map((entry) => entry.src),
+      ...Object.values(raw.ui),
+    ];
+    expect(srcs.length).toBeGreaterThan(0);
+    for (const src of srcs) {
+      expect(existsSync(join(__dirname, '..', 'public', src)), `${src} 不存在`).toBe(true);
+    }
+  });
+
+  it('every sprite sheet declares frameAspectRatio so the renderer never distorts it', () => {
+    const content = loadContent();
+    for (const [id, sheet] of Object.entries(content.images.characters)) {
+      expect(sheet.frameAspectRatio, `${id} 缺 frameAspectRatio`).toBeGreaterThan(0);
+    }
   });
 });
 

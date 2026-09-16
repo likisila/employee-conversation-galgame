@@ -1,7 +1,7 @@
 {
   "id": "last-one-on-one",
   "title": "最後一次一對一",
-  "startScene": "s1-final-cut",
+  "startScene": "content-warning",
   "initialState": {
     "trust": 0,
     "procedure": 0,

@@ -19,6 +19,7 @@ const selectedIds = typeof args.get('ids') === 'string'
   : null;
 
 const manifest = JSON.parse(await readFile(MANIFEST_PATH, 'utf8'));
+validateManifest(manifest);
 const items = manifest.items.filter((item) => !selectedIds || selectedIds.has(item.id));
 if (!items.length) throw new Error('No cutscenes selected. Check --ids against property/sora-cutscenes.json.');
 
@@ -28,10 +29,48 @@ if (!Number.isFinite(maxCost) || estimatedCost - maxCost > 1e-9) {
   throw new Error(`Estimated cost $${estimatedCost.toFixed(2)} exceeds SORA_MAX_COST_USD=$${maxCost.toFixed(2)}.`);
 }
 
+function validateManifest(value) {
+  if (!value.storyId) throw new Error('Sora manifest storyId is required.');
+  if (!Array.isArray(value.items) || !value.items.length) throw new Error('Sora manifest requires at least one item.');
+
+  const ids = new Set();
+  const files = new Set();
+  for (const item of value.items) {
+    if (!item.id || ids.has(item.id)) throw new Error(`Duplicate or missing cutscene id: ${item.id ?? '<missing>'}.`);
+    if (!item.file || files.has(item.file)) throw new Error(`Duplicate or missing cutscene file: ${item.file ?? '<missing>'}.`);
+    if (item.kind !== 'transition' || item.owner !== 'GPT' || !['READY', 'LOCKED'].includes(item.status)) {
+      throw new Error(`[${item.id}] asset contract requires kind=transition, owner=GPT and status READY or LOCKED.`);
+    }
+    if (!Array.isArray(item.canonicalScenes) || !item.canonicalScenes.length) {
+      throw new Error(`[${item.id}] canonicalScenes is required.`);
+    }
+    if (!Array.isArray(item.participants) || !item.participants.length) {
+      throw new Error(`[${item.id}] participants is required.`);
+    }
+    for (const participant of item.participants) {
+      if (!value.characterBible[participant]) throw new Error(`[${item.id}] unknown participant: ${participant}.`);
+    }
+    for (const prop of item.props ?? []) {
+      if (!value.propBible[prop]) throw new Error(`[${item.id}] unknown continuity prop: ${prop}.`);
+    }
+    const narrativeText = `${item.requiredContinuity ?? ''} ${item.prompt ?? ''}`.toLowerCase();
+    for (const legacyTerm of value.legacyBannedTerms ?? []) {
+      if (narrativeText.includes(legacyTerm.toLowerCase())) {
+        throw new Error(`[${item.id}] contains banned legacy concept: ${legacyTerm}.`);
+      }
+    }
+    ids.add(item.id);
+    files.add(item.file);
+  }
+
+}
+
 const fullPrompt = (item) => [
   manifest.styleBible,
-  manifest.characterBible.manager,
-  manifest.characterBible.employee,
+  manifest.continuityBible,
+  ...item.participants.map((participant) => manifest.characterBible[participant]),
+  ...(item.props ?? []).map((prop) => manifest.propBible[prop]),
+  `Required story continuity: ${item.requiredContinuity}`,
   item.prompt,
 ].join(' ');
 

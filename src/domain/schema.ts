@@ -12,6 +12,8 @@ export interface SpriteSheet {
   src: string;
   alt: string;
   columns: number;
+  /** 單格寬／高。有值時 renderer 依此設定立繪框比例，避免不同尺寸的 sprite sheet 被拉伸。 */
+  frameAspectRatio?: number;
   defaultExpression: string;
   expressions: Record<string, number>;
   align?: 'left' | 'right' | 'center';
@@ -252,10 +254,14 @@ export function parseImages(raw: unknown): ImageCatalog {
     }
     if (typeof value.columns !== 'number' || value.columns < 1) throw new Error(`images.characters.${id}.columns 格式錯誤`);
     const align = value.align === 'left' || value.align === 'right' || value.align === 'center' ? value.align : undefined;
+    if (value.frameAspectRatio !== undefined && (typeof value.frameAspectRatio !== 'number' || value.frameAspectRatio <= 0)) {
+      throw new Error(`images.characters.${id}.frameAspectRatio 必須是正數`);
+    }
     characters[id] = {
       src: stringField(value, 'src'),
       alt: stringField(value, 'alt'),
       columns: value.columns,
+      frameAspectRatio: typeof value.frameAspectRatio === 'number' ? value.frameAspectRatio : undefined,
       defaultExpression: stringField(value, 'defaultExpression'),
       expressions,
       align,

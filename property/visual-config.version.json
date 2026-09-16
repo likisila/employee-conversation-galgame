@@ -1,4 +1,4 @@
 {
-  "schemaVersion": 1,
-  "note": "Visual presentation is configured from property/images.json; renderer should not special-case scene IDs."
+  "schemaVersion": 2,
+  "note": "Visual presentation is configured from property/images.json; the renderer must not special-case scene IDs. Sprite sheets declare columns and frameAspectRatio so frames are never distorted. scenePresentation currently renders one primary actor per scene (character/expression); multi-actor rendering (actors[]) is a follow-up."
 }

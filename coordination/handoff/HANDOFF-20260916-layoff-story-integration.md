@@ -13,8 +13,9 @@ completed: 2026-09-16
   - `lines[].conditions`：依狀態顯示分歧台詞，承載劇本中所有「若先前選 X」的段落，不需拆分場景。
   - `scene.route`：由上到下取第一個命中者自動跳轉，承載結局優先序；`s9-doorway` 為純路由節點。
 - 五次選擇各以 `set` 記錄 `choice1`…`choice5`，供後續條件台詞與越線變體使用。
-- 素材 fallback：雨澄暫用 `employee.png`、雅琳暫用 `manager.png`、予安不做立繪；月球會議室→`meeting-room`、零號月台咖啡→`rooftop`、雨夜→`quiet-room`。
-- cutscene 對應已更新至新場景，但 MP4 尚未重新算圖（runtime 不載入，不影響遊玩）。
+- 素材：合併 `main` 的 `c19e705` 後改用正式立繪（雨澄 6 表情、雅琳 3 表情）、5 張背景、3 張 CG 與新標題／載入畫面；予安為第一人稱不做立繪。引擎新增 `frameAspectRatio` 支援，避免不同尺寸的 sprite sheet 被 CSS 拉伸。
+- 與 `main` 上平行整合（`c19e705`，28 個節錄場景 + `ending-router` 的 `routes` 欄位）的合併決策：該版在引擎無路由支援下會停在無按鈕的死路且台詞大量節錄，故場景與引擎採本 handoff 版本；保留其素材、`content-warning` 開場、UI 文案、`cutscenes.json` 缺檔策略與 GPT 維護的 `sora-cutscenes.json`。
+- 尚未實作：`scenePresentation.actors[]` 多立繪同框（目前每場景一位主要角色）；cutscene 接線見 `HANDOFF-20260916-cutscene-integration.md`。
 - 測試：四個結局各一條可達路徑、越線優先於 TRUE END、條件台詞、路由循環保護、active `property/` 無舊設定殘留。
 
 ## Goal

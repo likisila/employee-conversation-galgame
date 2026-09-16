@@ -106,7 +106,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       <div class="scene-transition" aria-hidden="true" style="--transition-art:${cssUrl(transitionAsset)}"></div>
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
-      ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%"></div></div>` : ''}
+      ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
       <div class="story-panel"><section class="dialogue" aria-live="polite">${lines}</section><footer>${action}</footer></div>
     </section>
   `;

@@ -1,92 +1,115 @@
 {
-  "_fallbackNote": "本故事尚未有專屬素材：雨澄暫用 employee.png、雅琳暫用 manager.png；予安為第一人稱視角不做立繪。月球會議室以 meeting-room 代替、零號月台咖啡以 rooftop 代替、雨夜以 quiet-room 代替。",
   "characters": {
     "lin-yucheng": {
-      "src": "/assets/characters/employee.png",
-      "alt": "林雨澄，產品設計師，短髮末端染成淡灰藍色（暫用素材）",
-      "columns": 4,
-      "defaultExpression": "alert",
+      "src": "/assets/characters/lin-yucheng.png",
+      "alt": "林雨澄，灰藍髮尾、MAKE IT OBVIOUS T 恤與舊電子錶",
+      "columns": 6,
+      "frameAspectRatio": 0.333333,
+      "defaultExpression": "neutral",
       "expressions": {
         "neutral": 0,
         "alert": 1,
-        "wry": 2,
-        "relaxed": 3
+        "blank": 2,
+        "suppressed-anger": 3,
+        "wry": 4,
+        "relaxed": 5
       },
       "align": "left"
     },
     "zeng-yalin": {
-      "src": "/assets/characters/manager.png",
-      "alt": "曾雅琳，HR Business Partner，深色西裝外套（暫用素材）",
-      "columns": 4,
+      "src": "/assets/characters/zeng-yalin.png",
+      "alt": "曾雅琳，深色西裝外套、球鞋與手持平板的 HR Business Partner",
+      "columns": 3,
+      "frameAspectRatio": 0.5,
       "defaultExpression": "neutral",
       "expressions": {
         "neutral": 0,
         "stop": 1,
-        "tired-humor": 2,
-        "witness": 3
+        "dry": 2
       },
       "align": "right"
     }
   },
   "backgrounds": {
-    "meeting-room": {
-      "src": "/assets/backgrounds/meeting-room-morning.webp",
-      "alt": "玻璃牆會議室，桌上放著三杯水與一只藍色資料夾",
-      "focalPoint": "50% 48%"
-    },
-    "open-office": {
-      "src": "/assets/backgrounds/open-office-evening.webp",
-      "alt": "傍晚的台北開放式辦公室，螢幕反著冷藍色的光",
-      "focalPoint": "50% 50%"
-    },
-    "quiet-room": {
-      "src": "/assets/backgrounds/quiet-room-rain.webp",
-      "alt": "雨夜裡安靜下來的辦公空間",
+    "weiguang-office-rain-dusk": {
+      "src": "/assets/backgrounds/weiguang-office-rain-dusk.webp",
+      "alt": "傍晚四點四十分的台北新創辦公室，窗外下雨，螢幕與玻璃泛著冷藍色",
       "focalPoint": "50% 46%"
     },
-    "rooftop": {
-      "src": "/assets/backgrounds/rooftop-dusk.webp",
-      "alt": "雨後的暖色光線，城市噪音仍在遠處",
-      "focalPoint": "50% 44%"
+    "moon-meeting-room-rain": {
+      "src": "/assets/backgrounds/moon-meeting-room-rain.webp",
+      "alt": "玻璃牆貼著卡通太空人的月球會議室，圓桌上有三杯水與藍色資料夾",
+      "focalPoint": "50% 48%"
+    },
+    "rainy-arcade-night": {
+      "src": "/assets/backgrounds/rainy-arcade-night.webp",
+      "alt": "台北雨夜騎樓，霓虹倒映在積水裡，適合作為離席後的結局轉場",
+      "focalPoint": "50% 50%"
+    },
+    "apartment-phone-night": {
+      "src": "/assets/backgrounds/apartment-phone-night.webp",
+      "alt": "夜晚住處的桌面與亮起的手機，窗外是安靜的台北城市燈光",
+      "focalPoint": "62% 52%"
+    },
+    "platform-zero-cafe": {
+      "src": "/assets/backgrounds/platform-zero-cafe.webp",
+      "alt": "捷運出口旁的零號月台咖啡，暖橘燈光映在夜間玻璃上",
+      "focalPoint": "50% 48%"
+    },
+    "cg-rights-packet": {
+      "src": "/assets/cg/cg-rights-packet.webp",
+      "alt": "藍色權益資料夾位於桌面中央，三個人的手都沒有碰它",
+      "focalPoint": "50% 52%"
+    },
+    "cg-badge-flip": {
+      "src": "/assets/cg/cg-badge-flip.webp",
+      "alt": "林雨澄在會議室門口把公司識別證翻到背面",
+      "focalPoint": "58% 48%"
+    },
+    "cg-true-reflection": {
+      "src": "/assets/cg/cg-true-reflection.webp",
+      "alt": "咖啡店玻璃映出兩名沒有佩戴公司識別證的成年人",
+      "focalPoint": "50% 50%"
     }
   },
   "sceneBackgrounds": {
-    "s1-final-cut": "open-office",
-    "s2-invite": "open-office",
-    "s3-meeting": "meeting-room",
-    "s4-notice": "meeting-room",
-    "s5-when-did-you-know": "meeting-room",
-    "s6-receipt": "meeting-room",
-    "s7-not-in-file": "meeting-room",
-    "s8-reaction": "meeting-room",
-    "ending-over-line": "meeting-room",
-    "ending-true": "rooftop",
-    "ending-decent": "open-office",
-    "ending-soft-knife": "quiet-room"
+    "s1-final-cut": "weiguang-office-rain-dusk",
+    "s2-invite": "weiguang-office-rain-dusk",
+    "s3-meeting": "moon-meeting-room-rain",
+    "s4-notice": "cg-rights-packet",
+    "s5-when-did-you-know": "moon-meeting-room-rain",
+    "s6-receipt": "cg-rights-packet",
+    "s7-not-in-file": "moon-meeting-room-rain",
+    "s8-reaction": "moon-meeting-room-rain",
+    "ending-over-line": "cg-badge-flip",
+    "ending-true": "cg-true-reflection",
+    "ending-decent": "rainy-arcade-night",
+    "ending-soft-knife": "weiguang-office-rain-dusk"
   },
   "scenePresentation": {
-    "s1-final-cut": { "background": "open-office", "character": "zeng-yalin", "expression": "neutral", "transition": "fade" },
-    "s2-invite": { "background": "open-office", "transition": "soft" },
-    "s3-meeting": { "background": "meeting-room", "character": "lin-yucheng", "expression": "alert", "transition": "wipe" },
-    "s4-notice": { "background": "meeting-room", "character": "lin-yucheng", "expression": "alert", "transition": "soft" },
-    "s5-when-did-you-know": { "background": "meeting-room", "character": "lin-yucheng", "expression": "neutral", "transition": "soft" },
-    "s6-receipt": { "background": "meeting-room", "character": "zeng-yalin", "expression": "witness", "transition": "soft" },
-    "s7-not-in-file": { "background": "meeting-room", "character": "lin-yucheng", "expression": "neutral", "transition": "soft" },
-    "s8-reaction": { "background": "meeting-room", "character": "lin-yucheng", "expression": "alert", "transition": "soft" },
-    "ending-over-line": { "background": "meeting-room", "character": "lin-yucheng", "expression": "neutral", "transition": "fade" },
-    "ending-true": { "background": "rooftop", "character": "lin-yucheng", "expression": "relaxed", "transition": "fade" },
-    "ending-decent": { "background": "open-office", "character": "lin-yucheng", "expression": "wry", "transition": "fade" },
-    "ending-soft-knife": { "background": "quiet-room", "character": "zeng-yalin", "expression": "tired-humor", "transition": "fade" }
+    "content-warning": { "transition": "fade" },
+    "s1-final-cut": { "background": "weiguang-office-rain-dusk", "character": "zeng-yalin", "expression": "neutral", "transition": "fade" },
+    "s2-invite": { "background": "weiguang-office-rain-dusk", "transition": "soft" },
+    "s3-meeting": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "alert", "transition": "wipe" },
+    "s4-notice": { "background": "cg-rights-packet", "character": "lin-yucheng", "expression": "alert", "transition": "fade" },
+    "s5-when-did-you-know": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "suppressed-anger", "transition": "soft" },
+    "s6-receipt": { "background": "cg-rights-packet", "character": "zeng-yalin", "expression": "neutral", "transition": "soft" },
+    "s7-not-in-file": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "suppressed-anger", "transition": "soft" },
+    "s8-reaction": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "alert", "transition": "soft" },
+    "ending-over-line": { "background": "cg-badge-flip", "character": "lin-yucheng", "expression": "blank", "transition": "fade" },
+    "ending-true": { "background": "cg-true-reflection", "character": "lin-yucheng", "expression": "relaxed", "transition": "fade" },
+    "ending-decent": { "background": "rainy-arcade-night", "character": "lin-yucheng", "expression": "neutral", "transition": "fade" },
+    "ending-soft-knife": { "background": "weiguang-office-rain-dusk", "character": "zeng-yalin", "expression": "dry", "transition": "fade" }
   },
   "screens": {
     "title": {
-      "src": "/assets/screens/title-key-art.webp",
-      "alt": "半掩的會議室門與桌邊的椅子",
-      "focalPoint": "62% 50%"
+      "src": "/assets/screens/title-last-one-on-one.webp",
+      "alt": "雨夜會議室半掩的門、桌面中央的藍色資料夾與三杯水",
+      "focalPoint": "66% 50%"
     },
     "loading": {
-      "src": "/assets/screens/loading-water.webp",
-      "alt": "會議桌上的水杯",
+      "src": "/assets/screens/loading-rain-cursor.webp",
+      "alt": "雨水沿玻璃落下，像刪除線切過遠方城市燈光",
       "focalPoint": "50% 50%"
     }
   },

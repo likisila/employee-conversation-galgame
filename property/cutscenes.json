@@ -1,67 +1,16 @@
 {
   "version": 2,
-  "_note": "對應已改為《最後一次一對一》場景；現有 mp4 仍是舊原型算圖，須重新執行 scripts/render_cutscenes.py 才會更新。runtime 不載入此檔，缺片時遊戲照常進行。",
-  "format": { "width": 1280, "height": 720, "fps": 24, "codec": "H.264", "audio": false },
-  "items": [
-    {
-      "id": "final-cut", "scene": "s1-final-cut", "file": "00_intro_first_one_on_one.mp4", "trigger": "before-scene", "durationMs": 8000,
-      "background": "open-office", "mood": "cold", "camera": "push",
-      "actors": [
-        { "character": "zeng-yalin", "expression": "neutral", "x": 360, "height": 590, "opacity": 0.96 },
-        { "character": "lin-yucheng", "expression": "neutral", "x": 910, "height": 610 }
-      ],
-      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 9 } ]
-    },
-    {
-      "id": "not-a-discussion", "scene": "s4-notice", "file": "02_pressure_closure.mp4", "trigger": "on-enter", "durationMs": 7000,
-      "background": "meeting-room", "mood": "cold", "camera": "pull",
-      "actors": [
-        { "character": "zeng-yalin", "expression": "witness", "x": 335, "height": 600, "opacity": 0.92 },
-        { "character": "lin-yucheng", "expression": "alert", "x": 920, "height": 545 }
-      ],
-      "cards": [ { "lineIndex": 12, "showSceneTitle": true }, { "lineIndex": 16 } ]
-    },
-    {
-      "id": "receipt-not-consent", "scene": "s6-receipt", "file": "01_safe_questioning.mp4", "trigger": "on-enter", "durationMs": 8000,
-      "background": "meeting-room", "camera": "push",
-      "actors": [
-        { "character": "zeng-yalin", "expression": "witness", "x": 410, "height": 585 },
-        { "character": "lin-yucheng", "expression": "alert", "x": 840, "height": 600 }
-      ],
-      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 13 } ]
-    },
-    {
-      "id": "not-in-file", "scene": "s7-not-in-file", "file": "03_action_plan.mp4", "trigger": "on-enter", "durationMs": 8000,
-      "background": "meeting-room", "mood": "cold", "camera": "push",
-      "actors": [ { "character": "lin-yucheng", "expression": "neutral", "x": 760, "height": 620 } ],
-      "cards": [ { "lineIndex": 16, "showSceneTitle": true }, { "lineIndex": 24 } ]
-    },
-    {
-      "id": "ending-true", "scene": "ending-true", "file": "04_ending_trust.mp4", "trigger": "on-enter", "durationMs": 9000,
-      "background": "rooftop", "mood": "warm", "camera": "push",
-      "actors": [ { "character": "lin-yucheng", "expression": "relaxed", "x": 760, "height": 620 } ],
-      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 32, "endingCard": true } ]
-    },
-    {
-      "id": "ending-decent", "scene": "ending-decent", "file": "05_ending_clear.mp4", "trigger": "on-enter", "durationMs": 8000,
-      "background": "open-office", "camera": "push",
-      "actors": [ { "character": "lin-yucheng", "expression": "wry", "x": 835, "height": 590 } ],
-      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 9, "endingCard": true } ]
-    },
-    {
-      "id": "ending-soft-knife", "scene": "ending-soft-knife", "file": "06_ending_fragile.mp4", "trigger": "on-enter", "durationMs": 8000,
-      "background": "quiet-room", "mood": "cold", "camera": "pull",
-      "actors": [ { "character": "zeng-yalin", "expression": "tired-humor", "x": 890, "height": 555 } ],
-      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 14, "endingCard": true } ]
-    },
-    {
-      "id": "ending-over-line", "scene": "ending-over-line", "file": "07_ending_over_line.mp4", "trigger": "on-enter", "durationMs": 8000,
-      "background": "meeting-room", "mood": "cold", "camera": "pull",
-      "actors": [
-        { "character": "zeng-yalin", "expression": "stop", "x": 335, "height": 600, "opacity": 0.92 },
-        { "character": "lin-yucheng", "expression": "neutral", "x": 920, "height": 545 }
-      ],
-      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 9, "endingCard": true } ]
-    }
-  ]
+  "storyId": "last-one-on-one",
+  "presentation": "live-action-micro-film",
+  "format": {
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "codec": "H.264",
+    "audio": "diegetic-only",
+    "overlay": false
+  },
+  "source": "sora-cutscenes.json",
+  "missingAssetBehavior": "skip-video-and-enter-canonical-scene"
 }
+

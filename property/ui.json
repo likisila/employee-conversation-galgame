@@ -1,11 +1,11 @@
 {
-  "choicePrompt": "你會怎麼說？",
+  "choicePrompt": "你要怎麼說？",
   "continueLabel": "繼續",
   "restartLabel": "回到標題",
   "narratorName": "旁白",
-  "startLabel": "開始",
-  "loadingLabel": "整理思緒中",
-  "subtitle": "二十分鐘，說完一件沒有說法能變好的事",
+  "startLabel": "開始最後一次一對一",
+  "loadingLabel": "距離五點，還有二十分鐘",
+  "subtitle": "有些話沒有正確說法，只有你是否願意承擔",
   "resumeLabel": "繼續上次",
   "newGameLabel": "重新開始"
 }

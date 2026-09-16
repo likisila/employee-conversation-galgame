@@ -6,15 +6,15 @@
 - `game.json`：遊戲標題、起始場景與初始變數。
 - `characters.json`：角色 ID、顯示名稱、職稱等。
 - `ui.json`：按鈕與 UI 文案。
-- `images.json`：立繪、背景、轉場與每個場景的視覺設定。
+- `images.json`：立繪、背景、轉場與每個場景的視覺設定。sprite sheet 需宣告 `columns` 與 `frameAspectRatio`（單格寬／高），renderer 依此決定立繪框比例。
 - `scenes/*.json`：對話、選項、條件、效果與跳轉。
-- `cutscenes.json` / `sora-cutscenes.json`：過場影片的算圖／生成設定；runtime 不載入，僅供 `scripts/` 使用。
+- `sora-cutscenes.json`：真人微電影過場的 Sora 提示、鏡頭與連戲規則（由 GPT 維護）；`cutscenes.json` 只保存影片格式與缺檔策略。兩者目前皆不由 runtime 載入，接線見 `coordination/handoff/HANDOFF-20260916-cutscene-integration.md`。
 
 ## 目前作品：《最後一次一對一》
 
 - 狀態變數：`trust`（坦誠）、`procedure`（程序）、`boundary`（界線）、`avoidance`（逃避）。四者預設隱藏，不以好感度呈現。
 - 每個主要選擇會額外 `set` 一個 `choice1`…`choice5` 字串，供後續場景的條件台詞使用。
-- 場景流程：`s1-final-cut → s2-invite → s3-meeting → s4-notice → s5-when-did-you-know → s6-receipt → s7-not-in-file → s8-reaction → s9-doorway →（四個結局之一）`。
+- 場景流程：`content-warning → s1-final-cut → s2-invite → s3-meeting → s4-notice → s5-when-did-you-know → s6-receipt → s7-not-in-file → s8-reaction → s9-doorway →（四個結局之一）`。
 - `s9-doorway` 是純路由節點，依序判定：**越線**（`boundary <= -2`）→ **TRUE END**（`trust >= 6`、`procedure >= 4`、`boundary >= 2`、`avoidance <= 1`）→ **體面的句點**（`procedure >= 4`、`trust >= 2`、`boundary >= 0`）→ **柔軟的刀**（其餘）。
 
 ## 修改角色名字
