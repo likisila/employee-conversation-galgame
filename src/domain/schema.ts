@@ -22,12 +22,26 @@ export interface BackgroundImage {
   focalPoint?: string;
 }
 
+export interface TransitionSpec {
+  durationMs: number;
+  asset?: string;
+}
+
+export interface ScenePresentation {
+  background?: string;
+  character?: string;
+  expression?: string;
+  transition?: string;
+}
+
 export interface ImageCatalog {
   characters: Record<string, SpriteSheet>;
   backgrounds: Record<string, BackgroundImage>;
   sceneBackgrounds: Record<string, string>;
   screens: Record<string, BackgroundImage>;
   ui: Record<string, string>;
+  transitions: Record<string, TransitionSpec>;
+  scenePresentation: Record<string, ScenePresentation>;
 }
 
 export interface Condition {
@@ -200,6 +214,8 @@ export function parseImages(raw: unknown): ImageCatalog {
   const screenSource = isRecord(raw.screens) ? raw.screens : {};
   const sceneSource = isRecord(raw.sceneBackgrounds) ? raw.sceneBackgrounds : {};
   const uiSource = isRecord(raw.ui) ? raw.ui : {};
+  const transitionSource = isRecord(raw.transitions) ? raw.transitions : {};
+  const presentationSource = isRecord(raw.scenePresentation) ? raw.scenePresentation : {};
   const characters: Record<string, SpriteSheet> = {};
 
   for (const [id, value] of Object.entries(characterSource)) {
@@ -229,5 +245,20 @@ export function parseImages(raw: unknown): ImageCatalog {
     if (typeof value !== 'string') throw new Error(`images.ui.${id} 必須是字串`);
     return [id, value];
   }));
-  return { characters, backgrounds, sceneBackgrounds, screens, ui };
+  const transitions: Record<string, TransitionSpec> = {};
+  for (const [id, value] of Object.entries(transitionSource)) {
+    if (!isRecord(value) || typeof value.durationMs !== 'number' || value.durationMs < 0) throw new Error(`images.transitions.${id} 格式錯誤`);
+    transitions[id] = { durationMs: value.durationMs, asset: typeof value.asset === 'string' ? value.asset : undefined };
+  }
+  const scenePresentation: Record<string, ScenePresentation> = {};
+  for (const [id, value] of Object.entries(presentationSource)) {
+    if (!isRecord(value)) throw new Error(`images.scenePresentation.${id} 格式錯誤`);
+    scenePresentation[id] = {
+      background: typeof value.background === 'string' ? value.background : undefined,
+      character: typeof value.character === 'string' ? value.character : undefined,
+      expression: typeof value.expression === 'string' ? value.expression : undefined,
+      transition: typeof value.transition === 'string' ? value.transition : undefined,
+    };
+  }
+  return { characters, backgrounds, sceneBackgrounds, screens, ui, transitions, scenePresentation };
 }
