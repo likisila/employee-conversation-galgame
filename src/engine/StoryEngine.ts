@@ -5,11 +5,14 @@ import { applyChoiceEffects, isChoiceAvailable, isLineVisible, resolveRoute } fr
 export interface StorySnapshot {
   sceneId: string;
   state: GameState;
+  /** 目前場景已讀到第幾句（0 起算）。舊存檔沒有此欄位時視為 0。 */
+  lineIndex?: number;
 }
 
 export class StoryEngine {
   private sceneId: string;
   private state: GameState;
+  private lineIndex = 0;
 
   constructor(private readonly content: LoadedContent) {
     this.sceneId = content.game.startScene;
@@ -32,8 +35,39 @@ export class StoryEngine {
     return this.currentScene.lines.filter((line) => isLineVisible(line, this.state));
   }
 
+  /** 目前停在場景的第幾句（0 起算）。 */
+  get currentLineIndex(): number {
+    return this.lineIndex;
+  }
+
+  /** 目前應顯示的那一句；場景沒有台詞時為 undefined。 */
+  get currentLine(): Line | undefined {
+    return this.visibleLines[this.lineIndex];
+  }
+
+  /** 這一場的台詞是否已全部讀完（沒有台詞的場景視為已讀完）。 */
+  get atLastLine(): boolean {
+    return this.lineIndex >= this.visibleLines.length - 1;
+  }
+
   get availableChoices(): Choice[] {
     return this.currentScene.choices.filter((choice) => isChoiceAvailable(choice, this.state));
+  }
+
+  /**
+   * 玩家點一下畫面：還有下一句就前進一句；台詞讀完且場景有 `next` 就進下一場。
+   * 停在選項或結局時不動作並回傳 false，由畫面顯示選項／重來按鈕。
+   */
+  advance(): boolean {
+    if (!this.atLastLine) {
+      this.lineIndex += 1;
+      return true;
+    }
+    if (this.currentScene.next) {
+      this.continue();
+      return true;
+    }
+    return false;
   }
 
   choose(choiceId: string): void {
@@ -51,17 +85,18 @@ export class StoryEngine {
   restart(): void {
     this.sceneId = this.content.game.startScene;
     this.state = { ...this.content.game.initialState };
+    this.lineIndex = 0;
     this.settle();
   }
 
   /** 目前進度的可序列化快照，用於存檔。 */
   get snapshot(): StorySnapshot {
-    return { sceneId: this.sceneId, state: { ...this.state } };
+    return { sceneId: this.sceneId, state: { ...this.state }, lineIndex: this.lineIndex };
   }
 
   /**
    * 從快照還原進度。若場景不存在（例如內容已改版），拋出錯誤，
-   * 由呼叫端決定是否丟棄過期存檔。
+   * 由呼叫端決定是否丟棄過期存檔。lineIndex 超出範圍時夾到合法區間。
    */
   restore(snapshot: StorySnapshot): void {
     if (!this.content.scenes.has(snapshot.sceneId)) {
@@ -69,12 +104,16 @@ export class StoryEngine {
     }
     this.sceneId = snapshot.sceneId;
     this.state = { ...snapshot.state };
+    this.lineIndex = 0;
     this.settle();
+    const max = Math.max(0, this.visibleLines.length - 1);
+    this.lineIndex = Math.min(Math.max(0, Math.floor(snapshot.lineIndex ?? 0)), max);
   }
 
   private goTo(sceneId: string): void {
     if (!this.content.scenes.has(sceneId)) throw new Error(`下一個場景不存在：${sceneId}`);
     this.sceneId = sceneId;
+    this.lineIndex = 0;
     this.settle();
   }
 

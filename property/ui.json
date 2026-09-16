@@ -1,7 +1,7 @@
 {
   "choicePrompt": "你要怎麼說？",
   "continueLabel": "繼續",
-  "restartLabel": "回到標題",
+  "restartLabel": "重新開始",
   "narratorName": "旁白",
   "startLabel": "開始最後一次一對一",
   "loadingLabel": "距離五點，還有二十分鐘",

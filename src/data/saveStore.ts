@@ -51,7 +51,10 @@ function parseEnvelope(raw: unknown, gameId: string): StorySnapshot | null {
   if (typeof raw.snapshot.sceneId !== 'string') return null;
   const state = parseGameState(raw.snapshot.state);
   if (!state) return null;
-  return { sceneId: raw.snapshot.sceneId, state };
+  // lineIndex 為選填（版本 1 早期存檔沒有）；非法值直接忽略而不是整份丟棄。
+  const rawIndex = raw.snapshot.lineIndex;
+  const lineIndex = typeof rawIndex === 'number' && Number.isInteger(rawIndex) && rawIndex >= 0 ? rawIndex : undefined;
+  return lineIndex === undefined ? { sceneId: raw.snapshot.sceneId, state } : { sceneId: raw.snapshot.sceneId, state, lineIndex };
 }
 
 /** 解析瀏覽器 localStorage；在無法存取（SSR、隱私模式）時回傳 null。 */

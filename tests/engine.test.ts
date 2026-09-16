@@ -63,7 +63,7 @@ describe('StoryEngine snapshot/restore', () => {
     const engine = new StoryEngine(makeContent());
     const target = { sceneId: 'feedback', state: { trust: 4, clarity: 1 } };
     engine.restore(target);
-    expect(engine.snapshot).toEqual(target);
+    expect(engine.snapshot).toEqual({ ...target, lineIndex: 0 });
   });
 });
 
@@ -128,5 +128,70 @@ describe('StoryEngine conditional lines and routing', () => {
     ]);
     base.game = { ...base.game, startScene: 'x' };
     expect(() => new StoryEngine(base)).toThrow(/循環/);
+  });
+});
+
+describe('StoryEngine line-by-line advancement', () => {
+  function linedContent(): LoadedContent {
+    const base = makeContent();
+    base.scenes = new Map<string, Scene>([
+      ['talk', scene('talk', {
+        lines: [
+          { speaker: null, text: 'one' },
+          { speaker: null, text: 'hidden', conditions: [{ variable: 'flag', operator: 'eq', value: true }] },
+          { speaker: null, text: 'two' },
+          { speaker: null, text: 'three' },
+        ],
+        choices: [{ id: 'go', text: 'go', next: 'after' }],
+      })],
+      ['after', scene('after', { lines: [{ speaker: null, text: 'a' }, { speaker: null, text: 'b' }], next: 'end' })],
+      ['end', scene('end', { lines: [{ speaker: null, text: 'fin' }], ending: true })],
+    ]);
+    base.game = { ...base.game, startScene: 'talk', initialState: {} };
+    return base;
+  }
+
+  it('starts on the first visible line and advances one visible line per call', () => {
+    const engine = new StoryEngine(linedContent());
+    expect(engine.currentLine?.text).toBe('one');
+    expect(engine.atLastLine).toBe(false);
+    expect(engine.advance()).toBe(true);
+    expect(engine.currentLine?.text).toBe('two'); // 條件未成立的 hidden 被跳過
+    engine.advance();
+    expect(engine.currentLine?.text).toBe('three');
+    expect(engine.atLastLine).toBe(true);
+  });
+
+  it('stops at the last line when the scene waits on a choice; choosing resets to line 0 of the next scene', () => {
+    const engine = new StoryEngine(linedContent());
+    engine.advance(); engine.advance();
+    expect(engine.advance()).toBe(false);
+    expect(engine.currentScene.id).toBe('talk');
+    engine.choose('go');
+    expect(engine.currentScene.id).toBe('after');
+    expect(engine.currentLineIndex).toBe(0);
+  });
+
+  it('advancing past the last line of a scene with next moves to the next scene; endings stop', () => {
+    const engine = new StoryEngine(linedContent());
+    engine.choose('go');
+    expect(engine.advance()).toBe(true); // a -> b
+    expect(engine.advance()).toBe(true); // b -> next scene
+    expect(engine.currentScene.id).toBe('end');
+    expect(engine.currentLine?.text).toBe('fin');
+    expect(engine.advance()).toBe(false);
+  });
+
+  it('snapshot carries lineIndex and restore clamps it into range', () => {
+    const engine = new StoryEngine(linedContent());
+    engine.advance();
+    expect(engine.snapshot.lineIndex).toBe(1);
+    const fresh = new StoryEngine(linedContent());
+    fresh.restore({ sceneId: 'talk', state: {}, lineIndex: 1 });
+    expect(fresh.currentLine?.text).toBe('two');
+    fresh.restore({ sceneId: 'talk', state: {}, lineIndex: 99 });
+    expect(fresh.currentLine?.text).toBe('three');
+    fresh.restore({ sceneId: 'talk', state: {} }); // 舊存檔沒有 lineIndex
+    expect(fresh.currentLineIndex).toBe(0);
   });
 });
