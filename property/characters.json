@@ -1,4 +1,5 @@
 [
-  { "id": "manager", "displayName": "主管", "role": "玩家角色" },
-  { "id": "employee", "displayName": "小林", "role": "加入團隊三個月的資淺同仁" }
+  { "id": "zhou-yuan", "displayName": "周予安", "role": "玩家角色／產品設計部主管" },
+  { "id": "lin-yucheng", "displayName": "林雨澄", "role": "產品設計師／職位遭裁撤的員工" },
+  { "id": "zeng-yalin", "displayName": "曾雅琳", "role": "HR Business Partner／程序見證人" }
 ]

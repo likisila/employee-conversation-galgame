@@ -1,0 +1,12 @@
+{
+  "id": "ending-true-message",
+  "title": "TRUE END：三週後",
+  "lines": [
+    { "speaker": "lin-yucheng", "text": "推薦信收到，作品範圍也確認完了。設備昨天歸還。所有事情都結束了，對吧？" },
+    { "speaker": "zhou-yuan", "text": "對。公司這邊沒有待辦了。" },
+    { "speaker": "lin-yucheng", "text": "那現在你不是我主管，我也不是你部屬。星期六有空嗎？" },
+    { "speaker": "lin-yucheng", "text": "這次不做離職訪談，也不談推薦信。我有幾句話，想在我們都可以隨時離開的地方說。" }
+  ],
+  "choices": [],
+  "next": "ending-true"
+}

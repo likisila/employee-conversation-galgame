@@ -1,0 +1,11 @@
+{
+  "id": "invite-clear",
+  "title": "邀請：先說明性質",
+  "lines": [
+    { "speaker": "lin-yucheng", "text": "收到。需要帶電腦嗎？" },
+    { "speaker": "zhou-yuan", "text": "不用。先把手邊檔案存好就可以。你的系統權限不會在談話中突然關閉。" },
+    { "speaker": "lin-yucheng", "text": "好。五點見。" }
+  ],
+  "choices": [],
+  "next": "disclosure"
+}

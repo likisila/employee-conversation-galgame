@@ -1,0 +1,11 @@
+{
+  "id": "boundary-confession",
+  "title": "在權力結束以前告白",
+  "lines": [
+    { "speaker": "lin-yucheng", "text": "不。你不能在我還要從你手上拿推薦、作品核准和離職文件的時候，把這句話交給我處理。" },
+    { "speaker": "zeng-yalin", "text": "談話到這裡。後續由我單獨聯絡。" },
+    { "speaker": null, "text": "我張口，雅琳搖了一次頭。那是今天最清楚的一個指令。" }
+  ],
+  "choices": [],
+  "next": "ending-router"
+}

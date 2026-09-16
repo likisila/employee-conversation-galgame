@@ -1,0 +1,11 @@
+{
+  "id": "document-private-money",
+  "title": "把規則變成秘密",
+  "lines": [
+    { "speaker": "zeng-yalin", "text": "停止。不要提出文件外的金錢承諾。" },
+    { "speaker": "lin-yucheng", "text": "不要把規則變成我們兩個的秘密。" },
+    { "speaker": "zeng-yalin", "text": "這一段我會如實記錄。後續由我補充正式資訊。" }
+  ],
+  "choices": [],
+  "next": "private-question"
+}

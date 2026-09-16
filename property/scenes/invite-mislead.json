@@ -1,0 +1,13 @@
+{
+  "id": "invite-mislead",
+  "title": "邀請：好消息",
+  "lines": [
+    { "speaker": "lin-yucheng", "text": "這麼正式？" },
+    { "speaker": null, "text": "她回了一張戴墨鏡的慶祝鸚鵡貼圖。" },
+    { "speaker": "zeng-yalin", "text": "刪得掉嗎？" },
+    { "speaker": "zhou-yuan", "text": "已經送出了。" },
+    { "speaker": "zeng-yalin", "text": "我問的是那句話在你腦中能不能刪掉。" }
+  ],
+  "choices": [],
+  "next": "disclosure"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "content-warning",
+  "title": "內容提醒",
+  "lines": [
+    { "speaker": null, "text": "本作包含非自願離職、經濟焦慮與職場權力不對等。" },
+    { "speaker": null, "text": "所有公司、人物與程序均為虛構，內容不構成法律或人資建議。" }
+  ],
+  "choices": [],
+  "next": "final-version"
+}

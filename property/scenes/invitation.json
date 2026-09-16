@@ -1,0 +1,36 @@
+{
+  "id": "invitation",
+  "title": "Scene 2：邀請",
+  "lines": [
+    { "speaker": null, "text": "16:43。雨澄的私訊視窗打開，游標在空白輸入框裡閃動。" },
+    { "speaker": "zhou-yuan", "text": "每一種緩衝，看起來都像替我自己鋪的軟墊。" }
+  ],
+  "choices": [
+    {
+      "id": "invite-clear",
+      "text": "「五點想和你談組織與職務調整，雅琳也會在場。」",
+      "next": "invite-clear",
+      "effects": [
+        { "variable": "trust", "operation": "add", "value": 1 },
+        { "variable": "procedure", "operation": "add", "value": 1 }
+      ]
+    },
+    {
+      "id": "invite-vague",
+      "text": "「五點方便聊一下嗎？月球會議室。」",
+      "next": "invite-vague",
+      "effects": [
+        { "variable": "avoidance", "operation": "add", "value": 1 }
+      ]
+    },
+    {
+      "id": "invite-mislead",
+      "text": "「有個好消息想和你同步，五點月球見。」",
+      "next": "invite-mislead",
+      "effects": [
+        { "variable": "trust", "operation": "add", "value": -1 },
+        { "variable": "avoidance", "operation": "add", "value": 2 }
+      ]
+    }
+  ]
+}

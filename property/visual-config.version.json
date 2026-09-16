@@ -1,4 +1,4 @@
 {
-  "schemaVersion": 1,
-  "note": "Visual presentation is configured from property/images.json; renderer should not special-case scene IDs."
+  "schemaVersion": 2,
+  "note": "Visual presentation is configured from property/images.json. Each scene may show zero, one, or two data-driven actors; the renderer must not special-case scene IDs."
 }

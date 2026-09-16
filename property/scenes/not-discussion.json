@@ -1,0 +1,37 @@
+{
+  "id": "not-discussion",
+  "title": "Scene 4：不是討論",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "失去主要客戶後，公司取消了你目前負責的產品線，也決定不把這個職位轉到其他團隊。" },
+    { "speaker": "lin-yucheng", "text": "所以你們不是來問我的。這不是討論，只是通知？" }
+  ],
+  "choices": [
+    {
+      "id": "decision-honest",
+      "text": "「對，決定已經完成。我很抱歉你到現在才知道。」",
+      "next": "decision-honest",
+      "effects": [
+        { "variable": "trust", "operation": "add", "value": 2 },
+        { "variable": "boundary", "operation": "add", "value": 1 }
+      ]
+    },
+    {
+      "id": "decision-self-focus",
+      "text": "「大家都很不容易，我也不希望事情變成這樣。」",
+      "next": "decision-self-focus",
+      "effects": [
+        { "variable": "avoidance", "operation": "add", "value": 1 }
+      ]
+    },
+    {
+      "id": "decision-false-hope",
+      "text": "「如果今天配合完成流程，我也許還能替你爭取轉圜。」",
+      "next": "decision-false-hope",
+      "effects": [
+        { "variable": "trust", "operation": "add", "value": -1 },
+        { "variable": "procedure", "operation": "add", "value": -1 },
+        { "variable": "avoidance", "operation": "add", "value": 1 }
+      ]
+    }
+  ]
+}

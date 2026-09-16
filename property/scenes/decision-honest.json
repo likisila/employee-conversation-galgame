@@ -1,0 +1,11 @@
+{
+  "id": "decision-honest",
+  "title": "承認決定已定",
+  "lines": [
+    { "speaker": "lin-yucheng", "text": "好。至少這句有主詞，也沒有叫我一起承擔決策。" },
+    { "speaker": "lin-yucheng", "text": "你什麼時候知道的？" },
+    { "speaker": "zhou-yuan", "text": "兩週前知道公司在評估。今天下午拿到最終名單。我把希望說得像資訊，這是我的錯。" }
+  ],
+  "choices": [],
+  "next": "documents"
+}

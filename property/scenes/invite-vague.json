@@ -1,0 +1,12 @@
+{
+  "id": "invite-vague",
+  "title": "邀請：只說聊一下",
+  "lines": [
+    { "speaker": "lin-yucheng", "text": "如果是圓角問題，現在就能吵。" },
+    { "speaker": "zhou-yuan", "text": "雅琳也會在。" },
+    { "speaker": "lin-yucheng", "text": "喔。那應該不是圓角。" },
+    { "speaker": "zhou-yuan", "text": "我沒有說謊。我只是把真相裁成她看不出形狀的尺寸。" }
+  ],
+  "choices": [],
+  "next": "disclosure"
+}

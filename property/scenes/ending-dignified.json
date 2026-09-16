@@ -1,0 +1,12 @@
+{
+  "id": "ending-dignified",
+  "title": "END 02：體面的句點",
+  "lines": [
+    { "speaker": "lin-yucheng", "text": "我知道接下來找誰，也知道今天不用替任何人做決定。謝謝你把程序說完。不是謝謝這個決定。" },
+    { "speaker": "zhou-yuan", "text": "我明白。" },
+    { "speaker": null, "text": "一週後，我照實寫完她要求的推薦，沒有在最後加上私人訊息。收件匣沒有新的回覆。" },
+    { "speaker": null, "text": "有些好結局不是得到誰，而是沒有再多拿走一樣東西。" }
+  ],
+  "choices": [],
+  "ending": true
+}
