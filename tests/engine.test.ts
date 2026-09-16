@@ -22,7 +22,7 @@ function makeContent(): LoadedContent {
     scenes,
     ui: {
       choicePrompt: '', continueLabel: '', restartLabel: '', narratorName: '',
-      startLabel: '', loadingLabel: '', subtitle: '', resumeLabel: '', newGameLabel: '', thoughtLabel: '', playerLabel: '', tapToContinueLabel: '',
+      startLabel: '', loadingLabel: '', subtitle: '', resumeLabel: '', newGameLabel: '', playerLabel: '', tapToContinueLabel: '',
     },
     images: { characters: {}, backgrounds: {}, sceneBackgrounds: {}, screens: {}, ui: {}, transitions: {}, scenePresentation: {} },
   };

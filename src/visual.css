@@ -54,7 +54,6 @@
 .plate-tag{display:inline-block;padding:.06rem .5rem;border-radius:999px;font-family:'Noto Sans TC',system-ui,sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.12em;vertical-align:middle}
 .plate-tag--self{background:var(--ink);color:var(--teal)}
 .name-plate[data-self="true"] .plate-tag--self{color:var(--amber)}
-.plate-tag--thought{border:1px dashed currentColor;opacity:.85}
 .message-bubble strong .plate-tag--self{margin-left:.4rem;background:rgba(8,24,34,.7);color:#c5c9ff}
 /* 玩家自己的對話：台詞前加一小段青色，與名牌呼應 */
 .line--dialogue.is-self p{padding-left:.75rem;border-left:2px solid rgba(120,174,183,.7)}
