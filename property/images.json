@@ -2,9 +2,9 @@
   "characters": {
     "lin-yucheng": {
       "src": "/assets/characters/lin-yucheng-bust-v2.png",
-      "alt": "林雨澄，灰藍髮尾、MAKE IT OBVIOUS T 恤與舊電子錶",
+      "alt": "林雨澄，灰藍髮尾、深灰 T 恤與舊電子錶",
       "columns": 6,
-      "frameAspectRatio": 1.299559,
+      "frameAspectRatio": 0.498851,
       "defaultExpression": "neutral",
       "expressions": {
         "neutral": 0,
@@ -18,9 +18,9 @@
     },
     "zeng-yalin": {
       "src": "/assets/characters/zeng-yalin-bust-v2.png",
-      "alt": "曾雅琳，深色西裝外套、球鞋與手持平板的 HR Business Partner",
+      "alt": "曾雅琳，肩長深髮、深色西裝外套與灰色上衣的 HR Business Partner",
       "columns": 3,
-      "frameAspectRatio": 2.392523,
+      "frameAspectRatio": 1,
       "defaultExpression": "neutral",
       "expressions": {
         "neutral": 0,
@@ -33,7 +33,7 @@
       "src": "/assets/characters/zhou-yuan-bust-v1.png",
       "alt": "周予安，深灰西裝與藍灰襯衫、手持文件夾的產品設計部主管",
       "columns": 1,
-      "frameAspectRatio": 2.392435,
+      "frameAspectRatio": 2.389642,
       "defaultExpression": "neutral",
       "expressions": {
         "neutral": 0
