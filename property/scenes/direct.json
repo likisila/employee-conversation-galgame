@@ -1,0 +1,21 @@
+{
+  "id": "direct",
+  "title": "先給明確回饋",
+  "lines": [
+    { "speaker": "manager", "text": "目前你的交付品質符合預期，但我希望你遇到阻塞時能更早讓我知道。" },
+    { "speaker": "employee", "text": "好，我懂期待了。不過我還是不太確定什麼算是需要回報的阻塞。" }
+  ],
+  "choices": [
+    {
+      "id": "clarify-rule",
+      "text": "補上具體例子與求助原則",
+      "next": "ending-good",
+      "effects": [{ "variable": "trust", "operation": "add", "value": 1 }]
+    },
+    {
+      "id": "wrap-up",
+      "text": "請他之後有問題再提出",
+      "next": "ending-neutral"
+    }
+  ]
+}

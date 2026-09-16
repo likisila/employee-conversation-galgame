@@ -1,0 +1,9 @@
+{
+  "id": "junior-one-on-one",
+  "title": "一對一對話練習",
+  "startScene": "intro",
+  "initialState": {
+    "trust": 0,
+    "clarity": 0
+  }
+}

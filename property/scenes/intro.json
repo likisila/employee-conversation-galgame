@@ -1,0 +1,22 @@
+{
+  "id": "intro",
+  "title": "第一次一對一",
+  "lines": [
+    { "speaker": null, "text": "你和一位剛加入團隊不久的同仁進行一對一談話。" },
+    { "speaker": "employee", "text": "我最近有點不知道自己的工作到底做得好不好，也不太敢一直問。" }
+  ],
+  "choices": [
+    {
+      "id": "ask-more",
+      "text": "先了解：你最不確定的是哪一部分？",
+      "next": "listen",
+      "effects": [{ "variable": "trust", "operation": "add", "value": 1 }]
+    },
+    {
+      "id": "give-answer",
+      "text": "直接說明：我先告訴你目前的表現和期待。",
+      "next": "direct",
+      "effects": [{ "variable": "clarity", "operation": "add", "value": 1 }]
+    }
+  ]
+}

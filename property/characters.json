@@ -1,0 +1,4 @@
+[
+  { "id": "manager", "displayName": "主管", "role": "玩家角色" },
+  { "id": "employee", "displayName": "小林", "role": "資淺同仁" }
+]

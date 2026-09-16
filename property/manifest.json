@@ -1,0 +1,12 @@
+{
+  "game": "game.json",
+  "characters": "characters.json",
+  "ui": "ui.json",
+  "scenes": [
+    "scenes/intro.json",
+    "scenes/listen.json",
+    "scenes/direct.json",
+    "scenes/ending-good.json",
+    "scenes/ending-neutral.json"
+  ]
+}
