@@ -2,6 +2,7 @@
   "id": "last-one-on-one",
   "title": "最後一次一對一",
   "startScene": "content-warning",
+  "player": "zhou-yuan",
   "initialState": {
     "trust": 0,
     "procedure": 0,

@@ -1,7 +1,12 @@
 /* dialogue-panel.svg 內含固定位置的裝飾橫線（頂部 teal、底部 amber）。以 100% 100%
    拉伸到動態高度的對話框後，這些線會落到文字上形成遮擋，因此改用 style.css 的
    CSS 面板樣式（邊框 + teal 頂線 + 實色背景），不再套用該 SVG 當背景。 */
-.choice{background-image:var(--choice-frame);background-size:100% 100%;background-repeat:no-repeat}
+/* 選項框：原本把 choice-frame.svg 以 100% 100% 當背景，但 SVG 預設等比縮放置中，
+   在變高的按鈕裡縮成中間一條「框中框」（手機上兩行文字時特別明顯）。改用純 CSS 繪製。 */
+.choice{position:relative;align-items:flex-start;border-left:3px solid var(--amber);background:rgba(8,24,34,.92);line-height:1.6}
+.choice>span:first-child{flex:none;padding-top:.3rem}
+.choice .choice-text{flex:1;min-width:0;color:var(--paper);font-size:1rem;font-variant-numeric:normal}
+.choice:hover{border-left-color:var(--amber)}
 .scene-transition{position:absolute;z-index:20;inset:0;pointer-events:none;background-image:var(--transition-art);background-size:cover;background-position:center;opacity:0}
 .game-screen[data-transition="fade"] .scene-transition{background:#08151d;animation:scene-fade var(--transition-duration) ease-out both}
 .game-screen[data-transition="soft"] .scene-transition{background:rgba(8,21,29,.7);animation:scene-fade var(--transition-duration) ease-out both}
@@ -9,3 +14,56 @@
 @keyframes scene-fade{from{opacity:1}to{opacity:0}}
 @keyframes scene-wipe{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(18%)}}
 @media(prefers-reduced-motion:reduce){.scene-transition{display:none}}
+
+/* ───── 台詞類型：對話／內心／旁白／訊息 ───── */
+/* 對話：琥珀色名字＋正常字色（沿用 .line 樣式） */
+.line--dialogue p{color:var(--paper)}
+/* 內心：名字旁加「內心」標籤、左側虛線、字色偏冷偏淡，讀起來是「沒說出口的話」 */
+.line--thought{padding-left:.9rem;border-left:2px dashed rgba(120,174,183,.65)}
+.line--thought strong{display:inline-flex;align-items:center;gap:.5rem;color:var(--teal);font-size:.92rem}
+.line--thought p{color:#b8cbd1;font-family:'Noto Serif TC',serif;letter-spacing:.02em}
+.line-tag{padding:.05rem .45rem;border:1px solid rgba(120,174,183,.55);border-radius:999px;color:var(--teal);font-family:'Noto Sans TC',system-ui,sans-serif;font-size:.7rem;font-weight:500;letter-spacing:.1em}
+/* 旁白：沒有名字、置中、較小字與字距，像舞台指示 */
+.line--narration{text-align:center}
+.line--narration p{margin:0 auto;max-width:34em;color:#d3dde2;font-family:'Noto Serif TC',serif;font-size:1rem;letter-spacing:.06em}
+.line--narration::before{content:'';display:block;width:2.5rem;height:1px;margin:0 auto .55rem;background:rgba(232,183,95,.6)}
+/* 訊息：Teams 風格卡片（紫色系、頭像、泡泡），自己送出的靠右 */
+.line--message{--msg:#7b83eb}
+.message-meta{margin-bottom:.4rem}
+.message-channel{display:inline-block;padding:.1rem .55rem;border-radius:4px;background:rgba(123,131,235,.2);color:#c5c9ff;font-size:.72rem;font-weight:600;letter-spacing:.08em}
+.message-row{display:flex;align-items:flex-start;gap:.65rem}
+.message-avatar{flex:none;display:grid;place-items:center;width:2.25rem;height:2.25rem;border-radius:50%;background:#5b5fc7;color:#fff;font-size:.72rem;font-weight:700;letter-spacing:0}
+.message-bubble{min-width:0;max-width:100%;padding:.55rem .85rem .65rem;border-radius:4px 12px 12px 12px;background:#292b45;border:1px solid rgba(123,131,235,.35)}
+.message-bubble strong{display:block;color:#c5c9ff;font-family:'Noto Sans TC',system-ui,sans-serif;font-size:.8rem;font-weight:600}
+.message-bubble p{margin-top:.2rem;font-size:1rem;line-height:1.65}
+.line--message.is-self .message-meta{text-align:right}
+.line--message.is-self .message-row{flex-direction:row-reverse}
+.line--message.is-self .message-bubble{border-radius:12px 4px 12px 12px;background:#3d3f7a}
+.line--message.is-self .message-avatar{background:#8b5cf6}
+
+/* ───── 讀取畫面：預載完成後等玩家點擊 ───── */
+.tap-hint{margin:1.5rem 0 0;color:var(--amber);font-size:.85rem;letter-spacing:.14em;animation:tap-pulse 1.6s ease-in-out infinite}
+@keyframes tap-pulse{0%,100%{opacity:.45}50%{opacity:1}}
+.loading-screen .loading-hint{visibility:hidden;color:var(--amber)}
+.loading-screen[data-ready="true"]{cursor:pointer}
+.loading-screen[data-ready="true"] .loading-hint{visibility:visible}
+.loading-screen[data-ready="true"] .loading-bar{visibility:hidden}
+
+/* ───── 轉場卡：進新場景先停在這，點擊才淡出顯示對話 ───── */
+.scene-intro{position:absolute;z-index:21;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;animation:intro-in var(--transition-duration,420ms) ease-out both}
+.scene-intro h2{margin:.6rem 0 0;font-family:'Noto Serif TC',serif;font-size:clamp(2rem,6vw,3.2rem);font-weight:600;letter-spacing:.12em}
+.scene-intro .tap-hint{margin-top:2.5rem}
+@keyframes intro-in{from{opacity:0;transform:translateY(.5rem)}to{opacity:1;transform:none}}
+.game-screen[data-phase="intro"]{cursor:pointer}
+.game-screen[data-phase="intro"] .scene-transition{opacity:1;animation:none;background-color:#08151d}
+.game-screen[data-phase="intro"][data-transition="soft"] .scene-transition{background-color:rgba(8,21,29,.82)}
+.game-screen[data-phase="intro"] .story-panel,.game-screen[data-phase="intro"] .character-stage,.game-screen[data-phase="intro"] .game-header{visibility:hidden}
+@media(prefers-reduced-motion:reduce){.game-screen[data-phase="intro"] .scene-transition{display:block}}
+
+/* 手機：出現選項時對話框可再高一點，減少框內捲動 */
+@media(max-width:700px){
+  .game-screen[data-has-choices="true"] .story-panel{max-height:68dvh}
+  .line--thought{padding-left:.7rem}
+  .message-avatar{width:2rem;height:2rem;font-size:.66rem}
+  .scene-intro .tap-hint{margin-top:2rem}
+}

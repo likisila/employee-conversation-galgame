@@ -3,7 +3,7 @@ import './visual.css';
 import { loadContent } from './data/contentLoader';
 import { SaveStore } from './data/saveStore';
 import { StoryEngine, type StorySnapshot } from './engine/StoryEngine';
-import { render, renderLoading, renderTitle, type RenderHooks } from './ui/render';
+import { preloadImages, render, renderLoading, renderTitle, type RenderHooks } from './ui/render';
 
 const app = document.querySelector<HTMLElement>('#app');
 if (!app) throw new Error('#app not found');
@@ -17,9 +17,21 @@ const hooks: RenderHooks = {
   onRestart: () => saveStore.clear(),
 };
 
+/** 目前場景要用到的圖（背景、立繪），在讀取畫面預載，進場時不會閃白。 */
+function currentSceneImages(): Array<string | undefined> {
+  const scene = engine.currentScene;
+  const presentation = content.images.scenePresentation[scene.id];
+  const backgroundId = presentation?.background ?? content.images.sceneBackgrounds[scene.id];
+  const spriteId = presentation?.character;
+  return [
+    backgroundId ? content.images.backgrounds[backgroundId]?.src : undefined,
+    spriteId ? content.images.characters[spriteId]?.src : undefined,
+  ];
+}
+
 function enterGame(): void {
-  renderLoading(app!, content);
-  window.setTimeout(() => render(app!, engine, content, hooks), 700);
+  // 讀取完成後停在讀取畫面，等玩家點擊才進入。
+  renderLoading(app!, content, preloadImages(currentSceneImages()), () => render(app!, engine, content, hooks));
 }
 
 function startNewGame(): void {
