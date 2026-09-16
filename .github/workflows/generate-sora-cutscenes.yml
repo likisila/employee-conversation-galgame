@@ -15,10 +15,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Generate seven Sora cutscenes
+      - name: Generate story-accurate Sora cutscenes
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          SORA_MAX_COST_USD: "5.60"
         run: node scripts/generate_sora_cutscenes.mjs
       - name: Commit generated MP4 files
         run: |
