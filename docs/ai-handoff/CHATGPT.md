@@ -1,6 +1,6 @@
 # ChatGPT 交接紀錄
 
-本檔由 ChatGPT（包含 Codex）專用，採最新紀錄在最上方。Claude 必須讀取，但不得修改。
+本檔由 ChatGPT（包含 Codex）專用，採最新紀錄在最下方。Claude 必須讀取，但不得修改。
 
 ## ChatGPT-20260916-1445
 
