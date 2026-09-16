@@ -2,8 +2,20 @@
 
 owner: Claude
 requested_by: USER
-status: TODO
+status: DONE
 priority: HIGH
+completed: 2026-09-16
+
+## Outcome
+
+- 舊「資淺同仁」原型場景已自 `property/scenes/` 移除；`property/` 全面改為《最後一次一對一》。
+- 最小 schema 擴充兩項（引擎架構不變）：
+  - `lines[].conditions`：依狀態顯示分歧台詞，承載劇本中所有「若先前選 X」的段落，不需拆分場景。
+  - `scene.route`：由上到下取第一個命中者自動跳轉，承載結局優先序；`s9-doorway` 為純路由節點。
+- 五次選擇各以 `set` 記錄 `choice1`…`choice5`，供後續條件台詞與越線變體使用。
+- 素材 fallback：雨澄暫用 `employee.png`、雅琳暫用 `manager.png`、予安不做立繪；月球會議室→`meeting-room`、零號月台咖啡→`rooftop`、雨夜→`quiet-room`。
+- cutscene 對應已更新至新場景，但 MP4 尚未重新算圖（runtime 不載入，不影響遊玩）。
+- 測試：四個結局各一條可達路徑、越線優先於 TRUE END、條件台詞、路由循環保護、active `property/` 無舊設定殘留。
 
 ## Goal
 

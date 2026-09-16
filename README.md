@@ -1,8 +1,8 @@
 # Employee Conversation Gal Game
 
-一個以 **TypeScript + Vite** 實作的資料驅動對話 / Gal Game 引擎，適合拿來做主管與員工的一對一對話訓練。
+一個以 **TypeScript + Vite** 實作的資料驅動視覺小說引擎。目前載入的作品是《最後一次一對一》：部門主管周予安必須在下班前通知設計師林雨澄，她的職位已被裁撤。玩家的選擇不決定她是否「原諒」你，而是決定她能否帶著尊嚴離開。劇本與設定見 `story.md` 與 `docs/narrative/last-one-on-one/`。
 
-核心原則：**內容放 `property/`，引擎放 `src/`。角色名稱、對話、選項與分支都不 hard-code。**
+核心原則：**內容放 `property/`，引擎放 `src/`。角色名稱、對話、選項、分支與結局判定都不 hard-code。**
 
 ## 快速開始
 
@@ -39,9 +39,11 @@ npm run dev
 ```json
 {
   "conditions": [{ "variable": "trust", "operator": "gte", "value": 2 }],
-  "effects": [{ "variable": "clarity", "operation": "add", "value": 1 }]
+  "effects": [{ "variable": "procedure", "operation": "add", "value": 1 }]
 }
 ```
+
+除了選項，`lines[]` 也可以帶 `conditions`，用來呈現「依先前選擇」才出現的台詞；場景可以帶 `route`（依序判定、取第一個命中者自動跳轉），用來實作有優先序的結局判定。細節見 `property/README.md`。
 
 ## 驗證
 
@@ -79,7 +81,9 @@ npm run build
 - AI 產生 scene draft，但仍存回同一套 schema。
 ## Sora 劇情過場
 
-`property/sora-cutscenes.json` 定義七段 8 秒、720p 的 Sora 過場，輸出會直接取代 `public/assets/cutscenes/` 內同名的本機 fallback MP4。完整一輪預估費用上限為 USD 5.60。
+`property/sora-cutscenes.json` 定義八段 8 秒、720p 的 Sora 過場，輸出會直接取代 `public/assets/cutscenes/` 內同名的本機 fallback MP4。完整一輪預估費用上限為 USD 6.40。
+
+> 注意：目前 `public/assets/cutscenes/` 內的 MP4 仍是舊原型的算圖，尚未依《最後一次一對一》重新產生。過場不由遊戲 runtime 載入，缺片不影響遊玩。
 
 先檢查提示，不產生費用：
 
@@ -96,7 +100,7 @@ OPENAI_API_KEY="..." SORA_MAX_COST_USD=5.60 npm run videos:sora
 也可只生成指定鏡頭：
 
 ```bash
-OPENAI_API_KEY="..." npm run videos:sora -- --ids=intro,ending-trust
+OPENAI_API_KEY="..." npm run videos:sora -- --ids=final-cut,ending-true
 ```
 
 請勿把 API key 寫入檔案或提交版本控制。若要由 GitHub 生成，將 key 存為 repository secret `OPENAI_API_KEY`，再手動執行 **Generate Sora cutscenes** workflow；成功後 workflow 會提交 MP4 與生成報告。

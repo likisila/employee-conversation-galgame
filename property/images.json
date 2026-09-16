@@ -1,172 +1,92 @@
 {
+  "_fallbackNote": "本故事尚未有專屬素材：雨澄暫用 employee.png、雅琳暫用 manager.png；予安為第一人稱視角不做立繪。月球會議室以 meeting-room 代替、零號月台咖啡以 rooftop 代替、雨夜以 quiet-room 代替。",
   "characters": {
-    "manager": {
-      "src": "/assets/characters/manager.png",
-      "alt": "穿灰藍色西裝外套的團隊主管",
-      "columns": 4,
-      "defaultExpression": "empathetic",
-      "expressions": {
-        "neutral": 0,
-        "empathetic": 1,
-        "reflective": 2,
-        "resolved": 3
-      },
-      "align": "right"
-    },
-    "employee": {
+    "lin-yucheng": {
       "src": "/assets/characters/employee.png",
-      "alt": "穿芥黃色針織外套、剛加入團隊三個月的小林",
+      "alt": "林雨澄，產品設計師，短髮末端染成淡灰藍色（暫用素材）",
       "columns": 4,
-      "defaultExpression": "uneasy",
+      "defaultExpression": "alert",
       "expressions": {
         "neutral": 0,
-        "uneasy": 1,
-        "relieved": 2,
-        "confident": 3
+        "alert": 1,
+        "wry": 2,
+        "relaxed": 3
       },
       "align": "left"
+    },
+    "zeng-yalin": {
+      "src": "/assets/characters/manager.png",
+      "alt": "曾雅琳，HR Business Partner，深色西裝外套（暫用素材）",
+      "columns": 4,
+      "defaultExpression": "neutral",
+      "expressions": {
+        "neutral": 0,
+        "stop": 1,
+        "tired-humor": 2,
+        "witness": 3
+      },
+      "align": "right"
     }
   },
   "backgrounds": {
     "meeting-room": {
       "src": "/assets/backgrounds/meeting-room-morning.webp",
-      "alt": "晨光中的玻璃會議室，桌上放著兩杯水",
+      "alt": "玻璃牆會議室，桌上放著三杯水與一只藍色資料夾",
       "focalPoint": "50% 48%"
     },
     "open-office": {
       "src": "/assets/backgrounds/open-office-evening.webp",
-      "alt": "入夜後安靜的台北開放式辦公室",
+      "alt": "傍晚的台北開放式辦公室，螢幕反著冷藍色的光",
       "focalPoint": "50% 50%"
     },
     "quiet-room": {
       "src": "/assets/backgrounds/quiet-room-rain.webp",
-      "alt": "雨天裡安靜且私密的談話空間",
+      "alt": "雨夜裡安靜下來的辦公空間",
       "focalPoint": "50% 46%"
     },
     "rooftop": {
       "src": "/assets/backgrounds/rooftop-dusk.webp",
-      "alt": "雨後黃昏的台北辦公大樓屋頂花園",
+      "alt": "雨後的暖色光線，城市噪音仍在遠處",
       "focalPoint": "50% 44%"
     }
   },
   "sceneBackgrounds": {
-    "intro": "meeting-room",
-    "explore": "meeting-room",
-    "feedback": "meeting-room",
-    "support": "quiet-room",
-    "action-plan": "open-office",
-    "pressure": "meeting-room",
-    "repair": "quiet-room",
-    "check-understanding": "quiet-room",
-    "ending-trust": "rooftop",
-    "ending-clear": "open-office",
-    "ending-fragile": "meeting-room",
-    "direct": "meeting-room",
-    "listen": "quiet-room",
-    "ending-good": "rooftop",
-    "ending-neutral": "open-office"
+    "s1-final-cut": "open-office",
+    "s2-invite": "open-office",
+    "s3-meeting": "meeting-room",
+    "s4-notice": "meeting-room",
+    "s5-when-did-you-know": "meeting-room",
+    "s6-receipt": "meeting-room",
+    "s7-not-in-file": "meeting-room",
+    "s8-reaction": "meeting-room",
+    "ending-over-line": "meeting-room",
+    "ending-true": "rooftop",
+    "ending-decent": "open-office",
+    "ending-soft-knife": "quiet-room"
   },
   "scenePresentation": {
-    "intro": {
-      "background": "meeting-room",
-      "character": "employee",
-      "expression": "uneasy",
-      "transition": "fade"
-    },
-    "explore": {
-      "background": "meeting-room",
-      "character": "employee",
-      "expression": "uneasy",
-      "transition": "soft"
-    },
-    "feedback": {
-      "background": "meeting-room",
-      "character": "manager",
-      "expression": "reflective",
-      "transition": "soft"
-    },
-    "support": {
-      "background": "quiet-room",
-      "character": "employee",
-      "expression": "relieved",
-      "transition": "wipe"
-    },
-    "action-plan": {
-      "background": "open-office",
-      "character": "employee",
-      "expression": "confident",
-      "transition": "fade"
-    },
-    "pressure": {
-      "background": "meeting-room",
-      "character": "employee",
-      "expression": "uneasy",
-      "transition": "wipe"
-    },
-    "repair": {
-      "background": "quiet-room",
-      "character": "manager",
-      "expression": "empathetic",
-      "transition": "soft"
-    },
-    "check-understanding": {
-      "background": "quiet-room",
-      "character": "employee",
-      "expression": "relieved",
-      "transition": "soft"
-    },
-    "ending-trust": {
-      "background": "rooftop",
-      "character": "employee",
-      "expression": "confident",
-      "transition": "fade"
-    },
-    "ending-clear": {
-      "background": "open-office",
-      "character": "manager",
-      "expression": "resolved",
-      "transition": "fade"
-    },
-    "ending-fragile": {
-      "background": "meeting-room",
-      "character": "employee",
-      "expression": "neutral",
-      "transition": "fade"
-    },
-    "direct": {
-      "background": "meeting-room",
-      "character": "manager",
-      "expression": "neutral",
-      "transition": "soft"
-    },
-    "listen": {
-      "background": "quiet-room",
-      "character": "employee",
-      "expression": "relieved",
-      "transition": "soft"
-    },
-    "ending-good": {
-      "background": "rooftop",
-      "character": "employee",
-      "expression": "confident",
-      "transition": "fade"
-    },
-    "ending-neutral": {
-      "background": "open-office",
-      "character": "employee",
-      "expression": "neutral",
-      "transition": "fade"
-    }
+    "s1-final-cut": { "background": "open-office", "character": "zeng-yalin", "expression": "neutral", "transition": "fade" },
+    "s2-invite": { "background": "open-office", "transition": "soft" },
+    "s3-meeting": { "background": "meeting-room", "character": "lin-yucheng", "expression": "alert", "transition": "wipe" },
+    "s4-notice": { "background": "meeting-room", "character": "lin-yucheng", "expression": "alert", "transition": "soft" },
+    "s5-when-did-you-know": { "background": "meeting-room", "character": "lin-yucheng", "expression": "neutral", "transition": "soft" },
+    "s6-receipt": { "background": "meeting-room", "character": "zeng-yalin", "expression": "witness", "transition": "soft" },
+    "s7-not-in-file": { "background": "meeting-room", "character": "lin-yucheng", "expression": "neutral", "transition": "soft" },
+    "s8-reaction": { "background": "meeting-room", "character": "lin-yucheng", "expression": "alert", "transition": "soft" },
+    "ending-over-line": { "background": "meeting-room", "character": "lin-yucheng", "expression": "neutral", "transition": "fade" },
+    "ending-true": { "background": "rooftop", "character": "lin-yucheng", "expression": "relaxed", "transition": "fade" },
+    "ending-decent": { "background": "open-office", "character": "lin-yucheng", "expression": "wry", "transition": "fade" },
+    "ending-soft-knife": { "background": "quiet-room", "character": "zeng-yalin", "expression": "tired-humor", "transition": "fade" }
   },
   "screens": {
     "title": {
       "src": "/assets/screens/title-key-art.webp",
-      "alt": "半掩的會議室門、桌邊的兩張椅子與晨光",
+      "alt": "半掩的會議室門與桌邊的椅子",
       "focalPoint": "62% 50%"
     },
     "loading": {
       "src": "/assets/screens/loading-water.webp",
-      "alt": "會議桌上的兩杯水與柔和晨光",
+      "alt": "會議桌上的水杯",
       "focalPoint": "50% 50%"
     }
   },
@@ -176,18 +96,9 @@
     "sceneWipe": "/assets/ui/scene-wipe.svg"
   },
   "transitions": {
-    "none": {
-      "durationMs": 0
-    },
-    "soft": {
-      "durationMs": 260
-    },
-    "fade": {
-      "durationMs": 420
-    },
-    "wipe": {
-      "durationMs": 520,
-      "asset": "sceneWipe"
-    }
+    "none": { "durationMs": 0 },
+    "soft": { "durationMs": 260 },
+    "fade": { "durationMs": 420 },
+    "wipe": { "durationMs": 520, "asset": "sceneWipe" }
   }
 }

@@ -1,11 +1,11 @@
 {
-  "id": "junior-one-on-one",
-  "title": "和資淺同仁的一對一對話",
-  "startScene": "intro",
+  "id": "last-one-on-one",
+  "title": "最後一次一對一",
+  "startScene": "s1-final-cut",
   "initialState": {
     "trust": 0,
-    "clarity": 0,
-    "psychologicalSafety": 0,
-    "ownership": 0
+    "procedure": 0,
+    "boundary": 0,
+    "avoidance": 0
   }
 }

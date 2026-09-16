@@ -1,66 +1,74 @@
 {
-  "version": 1,
+  "version": 2,
   "provider": "OpenAI Sora",
   "model": "sora-2",
   "size": "1280x720",
   "seconds": 8,
   "estimatedPricePerSecondUsd": 0.1,
-  "estimatedTotalUsd": 5.6,
+  "estimatedTotalUsd": 6.4,
   "outputDirectory": "public/assets/cutscenes",
-  "styleBible": "Cinematic 2.5D anime visual-novel cutscene; contemporary Taipei workplace; restrained natural acting; clean line art with painterly light; fictional adult characters; stable anatomy; no readable text, logos, subtitles, watermarks, or camera shake.",
+  "styleBible": "Cinematic 2.5D anime visual-novel cutscene; contemporary Taipei startup office at dusk with rain on glass; restrained natural acting; clean line art with painterly light; fictional adult characters; stable anatomy; no readable text, logos, subtitles, watermarks, or camera shake.",
   "characterBible": {
-    "manager": "Adult Taiwanese woman; shoulder-length straight black hair tucked behind one ear; slate-blue blazer, ivory top, charcoal trousers, black low heels; calm, attentive posture.",
-    "employee": "Young adult Taiwanese woman; chin-length chestnut-brown bob; mustard knit cardigan, ivory blouse, navy ankle trousers, white sneakers; initially guarded, gradually more confident."
+    "lin-yucheng": "Adult Taiwanese woman, mid-twenties, product designer; short hair with faintly grey-blue dyed tips; plain dark T-shirt with a small chest print, pen clipped to a lanyard badge, old digital watch; sharp, dry, guarded but composed.",
+    "zeng-yalin": "Adult Taiwanese woman, mid-thirties, HR business partner; dark blazer over a plain top, white sneakers, tablet with a sticker; calm, precise, minimal gestures, dry humor.",
+    "zhou-yuan": "First-person protagonist; never shown in full. Only hands, shirt cuff with a crease, a flipped-over ID badge, and reflections in glass."
   },
   "items": [
     {
-      "id": "intro",
-      "scene": "intro",
+      "id": "final-cut",
+      "scene": "s1-final-cut",
       "file": "00_intro_first_one_on_one.mp4",
       "trigger": "before-scene",
-      "prompt": "Early morning in a glass meeting room. Slow steady dolly through a half-open door toward two glasses of water and two empty chairs. In the final two seconds, the manager and employee enter at opposite edges, sit down, and exchange a cautious professional nod. Warm sunlight crosses cool blue-gray walls; distant office ambience only. Keep both women consistent with the character bible. No dialogue."
+      "prompt": "Late afternoon in a Taipei startup open office, rain beginning on the windows, screens glowing cool blue. From the protagonist's seated point of view, the HR partner approaches between two rows of desks holding a blue folder and lifts it two centimeters without waving. In the last seconds, the designer at a far desk pulls off one earbud and turns toward camera. Slow push-in, low ambient hum. Keep characters consistent with the character bible. No dialogue, no readable text."
     },
     {
-      "id": "safe-questioning",
-      "scene": "support",
-      "file": "01_safe_questioning.mp4",
-      "trigger": "on-enter",
-      "prompt": "Quiet private office while rain traces the window. Medium two-shot across a small table. The employee grips one cardigan cuff, pauses, slowly exhales, and looks up. The manager closes her notebook, places both hands open on the table, and listens without interrupting. Expressions shift subtly from guarded to cautiously relieved. Slow push-in, soft rainy window light, quiet rain and room tone only. Keep both women consistent with the character bible. No dialogue."
-    },
-    {
-      "id": "pressure-closure",
-      "scene": "pressure",
+      "id": "not-a-discussion",
+      "scene": "s4-notice",
       "file": "02_pressure_closure.mp4",
       "trigger": "on-enter",
-      "prompt": "Cool morning light in the glass meeting room. Static medium-wide two-shot with more empty space between the characters. The manager sits upright and briefly gestures toward a closed notebook; the employee lowers her gaze, folds her hands close to herself, and becomes still. The camera slowly pulls back to make the room feel colder and more distant. Restrained uncomfortable silence, air-conditioning room tone only. Keep both women consistent with the character bible. No dialogue or aggressive gestures."
+      "prompt": "Glass-walled meeting room with cartoon astronaut stickers on the wall, three glasses of water and a blue folder in the center of a round table. Close-up drifts across the folder as a rain streak runs down the glass behind it. The designer repeats a word silently and studies the folder like she is checking button text; the HR partner writes one line on a tablet. Static then slow pull-back; only air-conditioning and rain. Keep characters consistent with the character bible. No dialogue, no readable text."
     },
     {
-      "id": "action-plan",
-      "scene": "action-plan",
+      "id": "receipt-not-consent",
+      "scene": "s6-receipt",
+      "file": "01_safe_questioning.mp4",
+      "trigger": "on-enter",
+      "prompt": "Same glass meeting room. The HR partner turns the blue folder toward the designer without pushing it closer and opens the first page, pointing calmly section by section. The designer flips the page back to the cover, clips her pen closed, and does not sign. Medium two-shot, gentle push-in, cool rainy light. Keep characters consistent with the character bible. No dialogue, no readable text."
+    },
+    {
+      "id": "not-in-file",
+      "scene": "s7-not-in-file",
       "file": "03_action_plan.mp4",
       "trigger": "on-enter",
-      "prompt": "Early evening in a nearly empty Taipei open office. Over-the-shoulder view of the manager and employee arranging three blank sticky notes into a simple sequence on a desk. The employee points to the last note, considers it, then gives a small confident nod; the manager responds with an encouraging smile. Slow lateral camera move, warm desk lamp against cool city windows, subtle office ambience. Keep both women consistent with the character bible. No readable writing and no dialogue."
+      "prompt": "Glass meeting room at 17:18. The designer looks down and taps her old digital watch on and off, then lifts her eyes toward camera and asks a silent question. The HR partner stops typing. The air-conditioner vent visibly stops; the room goes still. Slow push-in on the designer's face, then hold. Keep characters consistent with the character bible. No dialogue, no readable text."
     },
     {
-      "id": "ending-trust",
-      "scene": "ending-trust",
+      "id": "ending-true",
+      "scene": "ending-true",
       "file": "04_ending_trust.mp4",
       "trigger": "on-enter",
-      "prompt": "Taipei office rooftop garden just after rain at blue-gold dusk. The manager and employee walk side by side away from camera. The employee begins with slightly tense shoulders, then relaxes and gives a small confident nod; the manager answers with a warm restrained smile. Wet paving reflects skyline lights, leaves move in a light breeze, and the camera gently arcs to a calm three-quarter profile before settling on the glowing city. Soft wind and distant city ambience only. Keep both women consistent with the character bible. No dialogue."
+      "prompt": "Cut from a dark meeting-room doorway to a small warm café at night, city noise faint outside. Glass window reflects two people sitting side by side, neither wearing an ID badge. The designer slides one coffee cup across the table toward camera with a small, unsentimental smile. Warm orange light against a cool blue street. Slow arc to the reflection, then settle. Keep characters consistent with the character bible. No dialogue, no readable text, no victory tone."
     },
     {
-      "id": "ending-clear",
-      "scene": "ending-clear",
+      "id": "ending-decent",
+      "scene": "ending-decent",
       "file": "05_ending_clear.mp4",
       "trigger": "on-enter",
-      "prompt": "Blue-hour open office after most coworkers have left. The manager and employee stand beside a desk with a blank weekly planner. The manager taps one empty square, the employee moves a small blank card into that square, and both nod with professional clarity. The mood is constructive but still slightly formal. Gentle push-in, practical desk lights and cool window reflections, quiet office ambience. Keep both women consistent with the character bible. No readable text and no dialogue."
+      "prompt": "The designer gathers the blue folder, stands, walks to the meeting-room door and flips her ID badge to face her shirt before leaving. Cut to a week later: a quiet open office at blue hour, the protagonist's hands typing a short formal letter and pressing send; the inbox stays empty. Gentle push-in, practical desk light. Keep characters consistent with the character bible. No dialogue, no readable text."
     },
     {
-      "id": "ending-fragile",
-      "scene": "ending-fragile",
+      "id": "ending-soft-knife",
+      "scene": "ending-soft-knife",
       "file": "06_ending_fragile.mp4",
       "trigger": "on-enter",
-      "prompt": "Late morning in the glass meeting room after a difficult conversation. The employee gathers her notebook, pauses as if wanting to ask something, then chooses silence and leaves through the half-open door. The manager remains seated, notices the untouched second glass of water, and looks thoughtful. The camera holds a respectful distance and slowly pulls back. Cool desaturated light, subdued room tone. Keep both women consistent with the character bible. No dialogue or melodrama."
+      "prompt": "The designer leaves the blue folder untouched on the table, stands, flips her ID badge to the back, and exits; the door closes. Cut to 22:14, empty office, a cleaner's vacuum in the distance. The protagonist's hands hover over a long unsent message, then close the window. Through the glass, the cartoon astronaut sticker keeps its thumbs up. Slow pull-back, cool desaturated light. Keep characters consistent with the character bible. No dialogue, no readable text."
+    },
+    {
+      "id": "ending-over-line",
+      "scene": "ending-over-line",
+      "file": "07_ending_over_line.mp4",
+      "trigger": "on-enter",
+      "prompt": "The designer stands without taking her water. The HR partner rises and stands beside the table without blocking the exit. The designer picks up her phone, stops at the door, flips her ID badge to the back, and does not look back as she leaves. Cut to a phone screen where a half-typed apology is deleted letter by letter. Cold light, held distance, restrained. Keep characters consistent with the character bible. No dialogue, no readable text."
     }
   ]
 }

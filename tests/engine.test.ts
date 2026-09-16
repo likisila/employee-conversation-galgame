@@ -66,3 +66,67 @@ describe('StoryEngine snapshot/restore', () => {
     expect(engine.snapshot).toEqual(target);
   });
 });
+
+describe('StoryEngine conditional lines and routing', () => {
+  function routedContent(): LoadedContent {
+    const base = makeContent();
+    base.scenes = new Map<string, Scene>([
+      ['pick', scene('pick', {
+        lines: [
+          { speaker: null, text: 'always' },
+          { speaker: null, text: 'only-a', conditions: [{ variable: 'pick', operator: 'eq', value: 'a' }] },
+        ],
+        choices: [
+          { id: 'a', text: 'a', next: 'gate', effects: [{ variable: 'pick', operation: 'set', value: 'a' }, { variable: 'trust', operation: 'add', value: 5 }] },
+          { id: 'b', text: 'b', next: 'gate', effects: [{ variable: 'pick', operation: 'set', value: 'b' }] },
+        ],
+      })],
+      ['gate', scene('gate', {
+        route: [
+          { conditions: [{ variable: 'trust', operator: 'gte', value: 5 }], next: 'good' },
+          { next: 'bad' },
+        ],
+      })],
+      ['good', scene('good', { lines: [{ speaker: null, text: 'only-a', conditions: [{ variable: 'pick', operator: 'eq', value: 'a' }] }], ending: true })],
+      ['bad', scene('bad', { ending: true })],
+    ]);
+    base.game = { ...base.game, startScene: 'pick', initialState: { trust: 0 } };
+    return base;
+  }
+
+  it('visibleLines hides lines whose conditions are not met', () => {
+    const engine = new StoryEngine(routedContent());
+    expect(engine.visibleLines.map((line) => line.text)).toEqual(['always']);
+  });
+
+  it('a routing scene is never landed on: choose() settles straight onto the routed target', () => {
+    const engine = new StoryEngine(routedContent());
+    engine.choose('a');
+    expect(engine.currentScene.id).toBe('good');
+    expect(engine.snapshot.sceneId).toBe('good');
+    // 路由後的場景仍依已更新的狀態過濾台詞
+    expect(engine.visibleLines.map((line) => line.text)).toEqual(['only-a']);
+  });
+
+  it('falls through to the default route entry when no condition matches', () => {
+    const engine = new StoryEngine(routedContent());
+    engine.choose('b');
+    expect(engine.currentScene.id).toBe('bad');
+  });
+
+  it('restore() also settles a snapshot that points at a routing scene', () => {
+    const engine = new StoryEngine(routedContent());
+    engine.restore({ sceneId: 'gate', state: { trust: 5 } });
+    expect(engine.currentScene.id).toBe('good');
+  });
+
+  it('throws instead of looping forever on a cyclic route', () => {
+    const base = makeContent();
+    base.scenes = new Map<string, Scene>([
+      ['x', scene('x', { route: [{ next: 'y' }] })],
+      ['y', scene('y', { route: [{ next: 'x' }] })],
+    ]);
+    base.game = { ...base.game, startScene: 'x' };
+    expect(() => new StoryEngine(base)).toThrow(/循環/);
+  });
+});

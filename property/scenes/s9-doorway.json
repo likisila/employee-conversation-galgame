@@ -1,0 +1,32 @@
+{
+  "id": "s9-doorway",
+  "title": "門口",
+  "lines": [],
+  "choices": [],
+  "route": [
+    {
+      "conditions": [{ "variable": "boundary", "operator": "lte", "value": -2 }],
+      "next": "ending-over-line"
+    },
+    {
+      "conditions": [
+        { "variable": "trust", "operator": "gte", "value": 6 },
+        { "variable": "procedure", "operator": "gte", "value": 4 },
+        { "variable": "boundary", "operator": "gte", "value": 2 },
+        { "variable": "avoidance", "operator": "lte", "value": 1 }
+      ],
+      "next": "ending-true"
+    },
+    {
+      "conditions": [
+        { "variable": "procedure", "operator": "gte", "value": 4 },
+        { "variable": "trust", "operator": "gte", "value": 2 },
+        { "variable": "boundary", "operator": "gte", "value": 0 }
+      ],
+      "next": "ending-decent"
+    },
+    {
+      "next": "ending-soft-knife"
+    }
+  ]
+}
