@@ -68,6 +68,29 @@ export function renderLoading(app: HTMLElement, content: LoadedContent): void {
 let keyHandler: ((event: KeyboardEvent) => void) | undefined;
 /** 上一次 render 的場景；同場景內逐句前進時不重播轉場與立繪淡入。 */
 let lastSceneId: string | undefined;
+/** 量測對話框高度、把立繪底線寫成 CSS 變數；換場景時先解除上一次的觀察。 */
+let panelObserver: ResizeObserver | undefined;
+let resizeHandler: (() => void) | undefined;
+
+/**
+ * 立繪永遠站在對話框上緣：不論面板因選項或換行而變高、或視窗變矮，
+ * 都把 `--stage-bottom` 設成「視窗底到面板上緣」的距離，讓 CSS 據此排版。
+ */
+function keepStageAbovePanel(screen: HTMLElement, panel: HTMLElement): void {
+  const update = (): void => {
+    const top = panel.getBoundingClientRect().top;
+    screen.style.setProperty('--stage-bottom', `${Math.max(0, Math.round(window.innerHeight - top))}px`);
+  };
+  panelObserver?.disconnect();
+  if (resizeHandler) window.removeEventListener('resize', resizeHandler);
+  update();
+  if (typeof ResizeObserver !== 'undefined') {
+    panelObserver = new ResizeObserver(update);
+    panelObserver.observe(panel);
+  }
+  resizeHandler = update;
+  window.addEventListener('resize', resizeHandler);
+}
 
 export function render(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks = {}): void {
   const scene = engine.currentScene;
@@ -124,6 +147,10 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       <div class="story-panel"><section class="dialogue" aria-live="polite">${dialogue}${hint}</section><footer>${action}</footer></div>
     </section>
   `;
+
+  const screenEl = app.querySelector<HTMLElement>('.game-screen');
+  const panelEl = app.querySelector<HTMLElement>('.story-panel');
+  if (screenEl && panelEl) keepStageAbovePanel(screenEl, panelEl);
 
   const advance = (): void => {
     if (!engine.advance()) return;
