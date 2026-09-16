@@ -5,49 +5,170 @@
       "alt": "穿灰藍色西裝外套的團隊主管",
       "columns": 4,
       "defaultExpression": "empathetic",
-      "expressions": { "neutral": 0, "empathetic": 1, "reflective": 2, "resolved": 3 }
+      "expressions": {
+        "neutral": 0,
+        "empathetic": 1,
+        "reflective": 2,
+        "resolved": 3
+      },
+      "align": "right"
     },
     "employee": {
       "src": "/assets/characters/employee.png",
       "alt": "穿芥黃色針織外套、剛加入團隊三個月的小林",
       "columns": 4,
       "defaultExpression": "uneasy",
-      "expressions": { "neutral": 0, "uneasy": 1, "relieved": 2, "confident": 3 }
+      "expressions": {
+        "neutral": 0,
+        "uneasy": 1,
+        "relieved": 2,
+        "confident": 3
+      },
+      "align": "left"
     }
   },
   "backgrounds": {
-    "meeting-room": { "src": "/assets/backgrounds/meeting-room-morning.webp", "alt": "晨光中的玻璃會議室，桌上放著兩杯水", "focalPoint": "50% 48%" },
-    "open-office": { "src": "/assets/backgrounds/open-office-evening.webp", "alt": "入夜後安靜的台北開放式辦公室", "focalPoint": "50% 50%" },
-    "quiet-room": { "src": "/assets/backgrounds/quiet-room-rain.webp", "alt": "雨天裡安靜且私密的談話空間", "focalPoint": "50% 46%" },
-    "rooftop": { "src": "/assets/backgrounds/rooftop-dusk.webp", "alt": "雨後黃昏的台北辦公大樓屋頂花園", "focalPoint": "50% 44%" }
+    "meeting-room": {
+      "src": "/assets/backgrounds/meeting-room-morning.webp",
+      "alt": "晨光中的玻璃會議室，桌上放著兩杯水",
+      "focalPoint": "50% 48%"
+    },
+    "open-office": {
+      "src": "/assets/backgrounds/open-office-evening.webp",
+      "alt": "入夜後安靜的台北開放式辦公室",
+      "focalPoint": "50% 50%"
+    },
+    "quiet-room": {
+      "src": "/assets/backgrounds/quiet-room-rain.webp",
+      "alt": "雨天裡安靜且私密的談話空間",
+      "focalPoint": "50% 46%"
+    },
+    "rooftop": {
+      "src": "/assets/backgrounds/rooftop-dusk.webp",
+      "alt": "雨後黃昏的台北辦公大樓屋頂花園",
+      "focalPoint": "50% 44%"
+    }
   },
   "sceneBackgrounds": {
-    "intro": "meeting-room", "explore": "meeting-room", "feedback": "meeting-room",
-    "support": "quiet-room", "action-plan": "open-office", "pressure": "meeting-room",
-    "repair": "quiet-room", "check-understanding": "quiet-room",
-    "ending-trust": "rooftop", "ending-clear": "open-office", "ending-fragile": "meeting-room",
-    "direct": "meeting-room", "listen": "quiet-room", "ending-good": "rooftop", "ending-neutral": "open-office"
+    "intro": "meeting-room",
+    "explore": "meeting-room",
+    "feedback": "meeting-room",
+    "support": "quiet-room",
+    "action-plan": "open-office",
+    "pressure": "meeting-room",
+    "repair": "quiet-room",
+    "check-understanding": "quiet-room",
+    "ending-trust": "rooftop",
+    "ending-clear": "open-office",
+    "ending-fragile": "meeting-room",
+    "direct": "meeting-room",
+    "listen": "quiet-room",
+    "ending-good": "rooftop",
+    "ending-neutral": "open-office"
   },
   "scenePresentation": {
-    "intro": { "background": "meeting-room", "character": "employee", "expression": "uneasy", "transition": "fade" },
-    "explore": { "background": "meeting-room", "character": "employee", "expression": "uneasy", "transition": "soft" },
-    "feedback": { "background": "meeting-room", "character": "manager", "expression": "reflective", "transition": "soft" },
-    "support": { "background": "quiet-room", "character": "employee", "expression": "relieved", "transition": "wipe" },
-    "action-plan": { "background": "open-office", "character": "employee", "expression": "confident", "transition": "fade" },
-    "pressure": { "background": "meeting-room", "character": "employee", "expression": "uneasy", "transition": "wipe" },
-    "repair": { "background": "quiet-room", "character": "manager", "expression": "empathetic", "transition": "soft" },
-    "check-understanding": { "background": "quiet-room", "character": "employee", "expression": "relieved", "transition": "soft" },
-    "ending-trust": { "background": "rooftop", "character": "employee", "expression": "confident", "transition": "fade" },
-    "ending-clear": { "background": "open-office", "character": "manager", "expression": "resolved", "transition": "fade" },
-    "ending-fragile": { "background": "meeting-room", "character": "employee", "expression": "neutral", "transition": "fade" },
-    "direct": { "background": "meeting-room", "character": "manager", "expression": "neutral", "transition": "soft" },
-    "listen": { "background": "quiet-room", "character": "employee", "expression": "relieved", "transition": "soft" },
-    "ending-good": { "background": "rooftop", "character": "employee", "expression": "confident", "transition": "fade" },
-    "ending-neutral": { "background": "open-office", "character": "employee", "expression": "neutral", "transition": "fade" }
+    "intro": {
+      "background": "meeting-room",
+      "character": "employee",
+      "expression": "uneasy",
+      "transition": "fade"
+    },
+    "explore": {
+      "background": "meeting-room",
+      "character": "employee",
+      "expression": "uneasy",
+      "transition": "soft"
+    },
+    "feedback": {
+      "background": "meeting-room",
+      "character": "manager",
+      "expression": "reflective",
+      "transition": "soft"
+    },
+    "support": {
+      "background": "quiet-room",
+      "character": "employee",
+      "expression": "relieved",
+      "transition": "wipe"
+    },
+    "action-plan": {
+      "background": "open-office",
+      "character": "employee",
+      "expression": "confident",
+      "transition": "fade"
+    },
+    "pressure": {
+      "background": "meeting-room",
+      "character": "employee",
+      "expression": "uneasy",
+      "transition": "wipe"
+    },
+    "repair": {
+      "background": "quiet-room",
+      "character": "manager",
+      "expression": "empathetic",
+      "transition": "soft"
+    },
+    "check-understanding": {
+      "background": "quiet-room",
+      "character": "employee",
+      "expression": "relieved",
+      "transition": "soft"
+    },
+    "ending-trust": {
+      "background": "rooftop",
+      "character": "employee",
+      "expression": "confident",
+      "transition": "fade"
+    },
+    "ending-clear": {
+      "background": "open-office",
+      "character": "manager",
+      "expression": "resolved",
+      "transition": "fade"
+    },
+    "ending-fragile": {
+      "background": "meeting-room",
+      "character": "employee",
+      "expression": "neutral",
+      "transition": "fade"
+    },
+    "direct": {
+      "background": "meeting-room",
+      "character": "manager",
+      "expression": "neutral",
+      "transition": "soft"
+    },
+    "listen": {
+      "background": "quiet-room",
+      "character": "employee",
+      "expression": "relieved",
+      "transition": "soft"
+    },
+    "ending-good": {
+      "background": "rooftop",
+      "character": "employee",
+      "expression": "confident",
+      "transition": "fade"
+    },
+    "ending-neutral": {
+      "background": "open-office",
+      "character": "employee",
+      "expression": "neutral",
+      "transition": "fade"
+    }
   },
   "screens": {
-    "title": { "src": "/assets/screens/title-key-art.webp", "alt": "半掩的會議室門、桌邊的兩張椅子與晨光", "focalPoint": "62% 50%" },
-    "loading": { "src": "/assets/screens/loading-water.webp", "alt": "會議桌上的兩杯水與柔和晨光", "focalPoint": "50% 50%" }
+    "title": {
+      "src": "/assets/screens/title-key-art.webp",
+      "alt": "半掩的會議室門、桌邊的兩張椅子與晨光",
+      "focalPoint": "62% 50%"
+    },
+    "loading": {
+      "src": "/assets/screens/loading-water.webp",
+      "alt": "會議桌上的兩杯水與柔和晨光",
+      "focalPoint": "50% 50%"
+    }
   },
   "ui": {
     "dialoguePanel": "/assets/ui/dialogue-panel.svg",
@@ -55,9 +176,18 @@
     "sceneWipe": "/assets/ui/scene-wipe.svg"
   },
   "transitions": {
-    "none": { "durationMs": 0 },
-    "soft": { "durationMs": 260 },
-    "fade": { "durationMs": 420 },
-    "wipe": { "durationMs": 520, "asset": "sceneWipe" }
+    "none": {
+      "durationMs": 0
+    },
+    "soft": {
+      "durationMs": 260
+    },
+    "fade": {
+      "durationMs": 420
+    },
+    "wipe": {
+      "durationMs": 520,
+      "asset": "sceneWipe"
+    }
   }
 }
