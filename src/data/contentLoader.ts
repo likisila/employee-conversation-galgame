@@ -64,7 +64,12 @@ export function loadContent(): LoadedContent {
   }
 
   for (const [sceneId, presentation] of Object.entries(images.scenePresentation)) {
-    if (!scenes.has(sceneId)) throw new Error(`images.scenePresentation 指向不存在的場景 ${sceneId}`);
+    // 視覺設定可能為尚未接進 manifest 的草稿場景而存在；此時略過即可，
+    // 不應讓整個遊戲載入失敗（否則會變成黑畫面）。
+    if (!scenes.has(sceneId)) {
+      console.warn(`images.scenePresentation 參照未載入的場景「${sceneId}」，已略過其視覺設定。`);
+      continue;
+    }
     if (presentation.background && !images.backgrounds[presentation.background]) throw new Error(`場景 ${sceneId} 的背景 ${presentation.background} 不存在`);
     if (presentation.transition && !images.transitions[presentation.transition]) throw new Error(`場景 ${sceneId} 的轉場 ${presentation.transition} 不存在`);
     if (presentation.character) {
