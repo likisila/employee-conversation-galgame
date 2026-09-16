@@ -46,3 +46,5 @@ priority: HIGH
 ## Notes
 
 Sora manifest 的資產 `kind` 目前使用既有 Asset Contract 可接受的 `transition`，避免未經協議新增 `video`／`cutscene` union。若工程端需要更精確型別，請另開 schema handoff。
+
+引擎實際場景 ID（合併後的 active `property/manifest.json`）：`content-warning`、`s1-final-cut`、`s2-invite`、`s3-meeting`、`s4-notice`、`s5-when-did-you-know`、`s6-receipt`、`s7-not-in-file`、`s8-reaction`、`s9-doorway`（純路由）、`ending-over-line`、`ending-true`、`ending-decent`、`ending-soft-knife`。manifest 內 `trigger` 目標（如 `before:notification`、`on-enter:ending-boundary-crossed`）為敘事層名稱，接線時需對應到上述 ID；manifest 語意與 prompt 仍由 GPT 維護，不在本次整合中改寫。

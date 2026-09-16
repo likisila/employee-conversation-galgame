@@ -1,0 +1,38 @@
+{
+  "id": "s5-when-did-you-know",
+  "title": "職位不是我",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "（內心）雨澄看著我幾秒，手離開原子筆。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "admit" }] },
+    { "speaker": "lin-yucheng", "text": "好。至少這句有主詞，也沒有叫我一起承擔決策。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "admit" }] },
+
+    { "speaker": "lin-yucheng", "text": "我失去收入，你失去今晚的胃口。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
+    { "speaker": "zhou-yuan", "text": "（內心）她把兩根手指分開，比出一小段距離。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
+    { "speaker": "lin-yucheng", "text": "不是同一種不容易。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
+    { "speaker": "zhou-yuan", "text": "（內心）雅琳沒有看我，只在平板上記下一行。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
+
+    { "speaker": "zeng-yalin", "text": "周主管，這句不在核准資訊裡。沒有保留職位的轉圜方案。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "bargain" }] },
+    { "speaker": "lin-yucheng", "text": "所以連希望也是限時簽到禮？", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "bargain" }] },
+    { "speaker": "zhou-yuan", "text": "（內心）我看見自己倒映在玻璃上，嘴還停在想補救的形狀。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "bargain" }] },
+
+    { "speaker": "lin-yucheng", "text": "你什麼時候知道的？" },
+    { "speaker": "zhou-yuan", "text": "兩週前知道公司在評估。今天下午拿到最終名單。" },
+    { "speaker": "lin-yucheng", "text": "上週你還說，下季會有新安排。" },
+    { "speaker": "zhou-yuan", "text": "那時我希望替代方案會通過。我把希望說得像資訊，這是我的錯。" },
+    { "speaker": "zhou-yuan", "text": "（內心）她點亮電子錶。十七點零七分。" },
+    { "speaker": "lin-yucheng", "text": "那我問一個不在文件裡的。是我不夠好嗎？" },
+
+    { "speaker": "zhou-yuan", "text": "不是。被取消的是和那條產品線綁定的職位。你的考核不是這次決定的理由。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
+    { "speaker": "lin-yucheng", "text": "職位不是我。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
+    { "speaker": "zhou-yuan", "text": "對。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
+    { "speaker": "lin-yucheng", "text": "我現在還不一定相信。但我要你把這句放進後續書面說明。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
+    { "speaker": "zeng-yalin", "text": "我會確認可以提供的文字，並把限制說清楚。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
+
+    { "speaker": "zhou-yuan", "text": "（內心）我想起自己剛才拿她的回饋速度鋪路。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
+    { "speaker": "zhou-yuan", "text": "不是。雅琳說得對，這不是績效決定。我不該把你可以改善的地方拿來合理化另一件事。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
+    { "speaker": "lin-yucheng", "text": "你知道最麻煩的是什麼嗎？", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
+    { "speaker": "zhou-yuan", "text": "（內心）她重新拿起筆，筆尖卻沒有落下。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
+    { "speaker": "lin-yucheng", "text": "我現在連「不是績效」都要猜是不是另一種安慰。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] }
+  ],
+  "choices": [],
+  "next": "s6-receipt"
+}

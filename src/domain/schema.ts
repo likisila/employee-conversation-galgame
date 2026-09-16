@@ -12,6 +12,8 @@ export interface SpriteSheet {
   src: string;
   alt: string;
   columns: number;
+  /** 單格寬／高。有值時 renderer 依此設定立繪框比例，避免不同尺寸的 sprite sheet 被拉伸。 */
+  frameAspectRatio?: number;
   defaultExpression: string;
   expressions: Record<string, number>;
   align?: 'left' | 'right' | 'center';
@@ -31,6 +33,8 @@ export interface TransitionSpec {
 export interface ScenePresentation {
   background?: string;
   character?: string;
+  /** `character: null`：這一場不顯示任何立繪（例如背景已是描繪該角色的 CG），也不做說話者 fallback。 */
+  hideCharacter?: boolean;
   expression?: string;
   transition?: string;
 }
@@ -68,6 +72,14 @@ export interface Choice {
 export interface Line {
   speaker: string | null;
   text: string;
+  /** 只有全部條件成立時才顯示這句；用來呈現「依先前選擇」的分歧台詞。 */
+  conditions?: Condition[];
+}
+
+/** 依狀態自動決定下一個場景的路由項；由上到下取第一個條件全部成立者。 */
+export interface RouteEntry {
+  conditions?: Condition[];
+  next: string;
 }
 
 export interface Scene {
@@ -77,6 +89,8 @@ export interface Scene {
   choices: Choice[];
   next?: string;
   ending?: boolean;
+  /** 結局／分歧的優先序路由；進入本場景時依序判定並自動前往命中者。 */
+  route?: RouteEntry[];
 }
 
 export interface Game {
@@ -154,16 +168,19 @@ export function parseCharacters(raw: unknown): Character[] {
   });
 }
 
+function parseConditions(raw: unknown): Condition[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  return raw.map((condition) => {
+    if (!isRecord(condition)) throw new Error('condition 格式錯誤');
+    const operator = stringField(condition, 'operator');
+    if (!['eq', 'neq', 'gt', 'gte', 'lt', 'lte'].includes(operator)) throw new Error(`未知 operator: ${operator}`);
+    return { variable: stringField(condition, 'variable'), operator: operator as Condition['operator'], value: asGameValue(condition.value, 'condition.value') };
+  });
+}
+
 function parseChoice(raw: unknown): Choice {
   if (!isRecord(raw)) throw new Error('choice 格式錯誤');
-  const conditions: Condition[] | undefined = Array.isArray(raw.conditions)
-    ? raw.conditions.map((condition) => {
-        if (!isRecord(condition)) throw new Error('condition 格式錯誤');
-        const operator = stringField(condition, 'operator');
-        if (!['eq', 'neq', 'gt', 'gte', 'lt', 'lte'].includes(operator)) throw new Error(`未知 operator: ${operator}`);
-        return { variable: stringField(condition, 'variable'), operator: operator as Condition['operator'], value: asGameValue(condition.value, 'condition.value') };
-      })
-    : undefined;
+  const conditions = parseConditions(raw.conditions);
   const effects: Effect[] | undefined = Array.isArray(raw.effects)
     ? raw.effects.map((effect) => {
         if (!isRecord(effect)) throw new Error('effect 格式錯誤');
@@ -180,8 +197,14 @@ export function parseScene(raw: unknown): Scene {
   const lines = raw.lines.map((line) => {
     if (!isRecord(line)) throw new Error('line 格式錯誤');
     if (line.speaker !== null && typeof line.speaker !== 'string') throw new Error('line.speaker 格式錯誤');
-    return { speaker: line.speaker as string | null, text: stringField(line, 'text') };
+    return { speaker: line.speaker as string | null, text: stringField(line, 'text'), conditions: parseConditions(line.conditions) };
   });
+  const route: RouteEntry[] | undefined = Array.isArray(raw.route)
+    ? raw.route.map((entry) => {
+        if (!isRecord(entry)) throw new Error('route 項目格式錯誤');
+        return { conditions: parseConditions(entry.conditions), next: stringField(entry, 'next') };
+      })
+    : undefined;
   return {
     id: stringField(raw, 'id'),
     title: typeof raw.title === 'string' ? raw.title : undefined,
@@ -189,6 +212,7 @@ export function parseScene(raw: unknown): Scene {
     choices: Array.isArray(raw.choices) ? raw.choices.map(parseChoice) : [],
     next: typeof raw.next === 'string' ? raw.next : undefined,
     ending: typeof raw.ending === 'boolean' ? raw.ending : undefined,
+    route,
   };
 }
 
@@ -232,10 +256,14 @@ export function parseImages(raw: unknown): ImageCatalog {
     }
     if (typeof value.columns !== 'number' || value.columns < 1) throw new Error(`images.characters.${id}.columns 格式錯誤`);
     const align = value.align === 'left' || value.align === 'right' || value.align === 'center' ? value.align : undefined;
+    if (value.frameAspectRatio !== undefined && (typeof value.frameAspectRatio !== 'number' || value.frameAspectRatio <= 0)) {
+      throw new Error(`images.characters.${id}.frameAspectRatio 必須是正數`);
+    }
     characters[id] = {
       src: stringField(value, 'src'),
       alt: stringField(value, 'alt'),
       columns: value.columns,
+      frameAspectRatio: typeof value.frameAspectRatio === 'number' ? value.frameAspectRatio : undefined,
       defaultExpression: stringField(value, 'defaultExpression'),
       expressions,
       align,
@@ -263,6 +291,7 @@ export function parseImages(raw: unknown): ImageCatalog {
     scenePresentation[id] = {
       background: typeof value.background === 'string' ? value.background : undefined,
       character: typeof value.character === 'string' ? value.character : undefined,
+      hideCharacter: value.character === null ? true : undefined,
       expression: typeof value.expression === 'string' ? value.expression : undefined,
       transition: typeof value.transition === 'string' ? value.transition : undefined,
     };

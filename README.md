@@ -1,8 +1,8 @@
 # Employee Conversation Gal Game
 
-一個以 **TypeScript + Vite** 實作的資料驅動對話 / Gal Game 引擎，適合拿來做主管與員工的一對一對話訓練。
+一個以 **TypeScript + Vite** 實作的資料驅動視覺小說引擎。目前載入的作品是《最後一次一對一》：部門主管周予安必須在下班前通知設計師林雨澄，她的職位已被裁撤。玩家的選擇不決定她是否「原諒」你，而是決定她能否帶著尊嚴離開。劇本與設定見 `story.md` 與 `docs/narrative/last-one-on-one/`。
 
-核心原則：**內容放 `property/`，引擎放 `src/`。角色名稱、對話、選項與分支都不 hard-code。**
+核心原則：**內容放 `property/`，引擎放 `src/`。角色名稱、對話、選項、分支與結局判定都不 hard-code。**
 
 ## 快速開始
 
@@ -39,9 +39,11 @@ npm run dev
 ```json
 {
   "conditions": [{ "variable": "trust", "operator": "gte", "value": 2 }],
-  "effects": [{ "variable": "clarity", "operation": "add", "value": 1 }]
+  "effects": [{ "variable": "procedure", "operation": "add", "value": 1 }]
 }
 ```
+
+除了選項，`lines[]` 也可以帶 `conditions`，用來呈現「依先前選擇」才出現的台詞；場景可以帶 `route`（依序判定、取第一個命中者自動跳轉），用來實作有優先序的結局判定。細節見 `property/README.md`。
 
 ## 驗證
 

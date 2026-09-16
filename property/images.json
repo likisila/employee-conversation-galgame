@@ -4,7 +4,7 @@
       "src": "/assets/characters/lin-yucheng.png",
       "alt": "林雨澄，灰藍髮尾、MAKE IT OBVIOUS T 恤與舊電子錶",
       "columns": 6,
-      "frameAspectRatio": 0.333333,
+      "frameAspectRatio": 1.299559,
       "defaultExpression": "neutral",
       "expressions": {
         "neutral": 0,
@@ -20,7 +20,7 @@
       "src": "/assets/characters/zeng-yalin.png",
       "alt": "曾雅琳，深色西裝外套、球鞋與手持平板的 HR Business Partner",
       "columns": 3,
-      "frameAspectRatio": 0.5,
+      "frameAspectRatio": 2.392523,
       "defaultExpression": "neutral",
       "expressions": {
         "neutral": 0,
@@ -73,191 +73,33 @@
     }
   },
   "sceneBackgrounds": {
-    "final-version": "weiguang-office-rain-dusk",
-    "invitation": "weiguang-office-rain-dusk",
-    "disclosure": "moon-meeting-room-rain",
-    "not-discussion": "cg-rights-packet",
-    "documents": "cg-rights-packet",
-    "private-question": "moon-meeting-room-rain",
-    "ending-router": "cg-badge-flip",
-    "ending-true": "cg-true-reflection"
+    "s1-final-cut": "weiguang-office-rain-dusk",
+    "s2-invite": "weiguang-office-rain-dusk",
+    "s3-meeting": "moon-meeting-room-rain",
+    "s4-notice": "cg-rights-packet",
+    "s5-when-did-you-know": "moon-meeting-room-rain",
+    "s6-receipt": "cg-rights-packet",
+    "s7-not-in-file": "moon-meeting-room-rain",
+    "s8-reaction": "moon-meeting-room-rain",
+    "ending-over-line": "cg-badge-flip",
+    "ending-true": "cg-true-reflection",
+    "ending-decent": "rainy-arcade-night",
+    "ending-soft-knife": "weiguang-office-rain-dusk"
   },
   "scenePresentation": {
-    "content-warning": { "actors": [], "transition": "fade" },
-    "final-version": {
-      "background": "weiguang-office-rain-dusk",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "neutral", "align": "left" },
-        { "character": "zeng-yalin", "expression": "neutral", "align": "right" }
-      ],
-      "transition": "fade"
-    },
-    "invitation": {
-      "background": "weiguang-office-rain-dusk",
-      "actors": [{ "character": "lin-yucheng", "expression": "neutral", "align": "left" }],
-      "transition": "soft"
-    },
-    "invite-clear": {
-      "background": "weiguang-office-rain-dusk",
-      "actors": [{ "character": "lin-yucheng", "expression": "alert", "align": "left" }],
-      "transition": "soft"
-    },
-    "invite-vague": {
-      "background": "weiguang-office-rain-dusk",
-      "actors": [{ "character": "lin-yucheng", "expression": "alert", "align": "left" }],
-      "transition": "soft"
-    },
-    "invite-mislead": {
-      "background": "weiguang-office-rain-dusk",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "wry", "align": "left" },
-        { "character": "zeng-yalin", "expression": "dry", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "disclosure": {
-      "background": "moon-meeting-room-rain",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "alert", "align": "left" },
-        { "character": "zeng-yalin", "expression": "neutral", "align": "right" }
-      ],
-      "transition": "wipe"
-    },
-    "disclose-direct": {
-      "background": "moon-meeting-room-rain",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "blank", "align": "left" },
-        { "character": "zeng-yalin", "expression": "neutral", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "disclose-euphemism": {
-      "background": "moon-meeting-room-rain",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "suppressed-anger", "align": "left" },
-        { "character": "zeng-yalin", "expression": "dry", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "disclose-performance": {
-      "background": "moon-meeting-room-rain",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "suppressed-anger", "align": "left" },
-        { "character": "zeng-yalin", "expression": "stop", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "not-discussion": {
-      "background": "cg-rights-packet",
-      "actors": [{ "character": "lin-yucheng", "expression": "alert", "align": "left" }],
-      "transition": "fade"
-    },
-    "decision-honest": {
-      "background": "moon-meeting-room-rain",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "alert", "align": "left" },
-        { "character": "zeng-yalin", "expression": "neutral", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "decision-self-focus": {
-      "background": "moon-meeting-room-rain",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "suppressed-anger", "align": "left" },
-        { "character": "zeng-yalin", "expression": "dry", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "decision-false-hope": {
-      "background": "moon-meeting-room-rain",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "wry", "align": "left" },
-        { "character": "zeng-yalin", "expression": "stop", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "documents": {
-      "background": "cg-rights-packet",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "alert", "align": "left" },
-        { "character": "zeng-yalin", "expression": "neutral", "align": "right" }
-      ],
-      "transition": "fade"
-    },
-    "document-space": {
-      "background": "cg-rights-packet",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "neutral", "align": "left" },
-        { "character": "zeng-yalin", "expression": "neutral", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "document-pressure": {
-      "background": "cg-rights-packet",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "suppressed-anger", "align": "left" },
-        { "character": "zeng-yalin", "expression": "stop", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "document-private-money": {
-      "background": "cg-rights-packet",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "blank", "align": "left" },
-        { "character": "zeng-yalin", "expression": "stop", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "private-question": {
-      "background": "moon-meeting-room-rain",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "suppressed-anger", "align": "left" },
-        { "character": "zeng-yalin", "expression": "neutral", "align": "right" }
-      ],
-      "transition": "fade"
-    },
-    "boundary-clear": {
-      "background": "moon-meeting-room-rain",
-      "actors": [{ "character": "lin-yucheng", "expression": "wry", "align": "left" }],
-      "transition": "soft"
-    },
-    "boundary-debt": {
-      "background": "moon-meeting-room-rain",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "suppressed-anger", "align": "left" },
-        { "character": "zeng-yalin", "expression": "dry", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "boundary-confession": {
-      "background": "moon-meeting-room-rain",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "blank", "align": "left" },
-        { "character": "zeng-yalin", "expression": "stop", "align": "right" }
-      ],
-      "transition": "soft"
-    },
-    "ending-router": { "background": "cg-badge-flip", "actors": [], "transition": "fade" },
-    "ending-crossed": {
-      "background": "cg-badge-flip",
-      "actors": [
-        { "character": "lin-yucheng", "expression": "blank", "align": "left" },
-        { "character": "zeng-yalin", "expression": "stop", "align": "right" }
-      ],
-      "transition": "fade"
-    },
-    "ending-true-message": { "background": "apartment-phone-night", "actors": [], "transition": "fade" },
-    "ending-true": {
-      "background": "cg-true-reflection",
-      "actors": [{ "character": "lin-yucheng", "expression": "relaxed", "align": "left" }],
-      "transition": "fade"
-    },
-    "ending-dignified": {
-      "background": "rainy-arcade-night",
-      "actors": [{ "character": "lin-yucheng", "expression": "neutral", "align": "left" }],
-      "transition": "fade"
-    },
-    "ending-soft-knife": { "background": "weiguang-office-rain-dusk", "actors": [], "transition": "fade" }
+    "content-warning": { "transition": "fade" },
+    "s1-final-cut": { "background": "weiguang-office-rain-dusk", "character": "zeng-yalin", "expression": "neutral", "transition": "fade" },
+    "s2-invite": { "background": "weiguang-office-rain-dusk", "transition": "soft" },
+    "s3-meeting": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "alert", "transition": "wipe" },
+    "s4-notice": { "background": "cg-rights-packet", "character": "lin-yucheng", "expression": "alert", "transition": "fade" },
+    "s5-when-did-you-know": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "suppressed-anger", "transition": "soft" },
+    "s6-receipt": { "background": "cg-rights-packet", "character": "zeng-yalin", "expression": "neutral", "transition": "soft" },
+    "s7-not-in-file": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "suppressed-anger", "transition": "soft" },
+    "s8-reaction": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "alert", "transition": "soft" },
+    "ending-over-line": { "background": "cg-badge-flip", "character": null, "transition": "fade" },
+    "ending-true": { "background": "cg-true-reflection", "character": null, "transition": "fade" },
+    "ending-decent": { "background": "rainy-arcade-night", "character": "lin-yucheng", "expression": "neutral", "transition": "fade" },
+    "ending-soft-knife": { "background": "weiguang-office-rain-dusk", "character": "zeng-yalin", "expression": "dry", "transition": "fade" }
   },
   "screens": {
     "title": {
@@ -272,6 +114,7 @@
     }
   },
   "ui": {
+    "dialoguePanel": "/assets/ui/dialogue-panel.svg",
     "choiceFrame": "/assets/ui/choice-frame.svg",
     "sceneWipe": "/assets/ui/scene-wipe.svg"
   },

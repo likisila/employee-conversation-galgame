@@ -1,34 +1,32 @@
 {
-  "id": "ending-router",
-  "title": "Scene 7：門口",
-  "lines": [
-    { "speaker": null, "text": "17:20。雨澄站起來，走向會議室門口，把識別證翻到背面。" }
-  ],
+  "id": "s9-doorway",
+  "title": "門口",
+  "lines": [],
   "choices": [],
-  "routes": [
+  "route": [
     {
-      "next": "ending-crossed",
-      "conditions": [
-        { "variable": "boundary", "operator": "lte", "value": -2 }
-      ]
+      "conditions": [{ "variable": "boundary", "operator": "lte", "value": -2 }],
+      "next": "ending-over-line"
     },
     {
-      "next": "ending-true-message",
       "conditions": [
         { "variable": "trust", "operator": "gte", "value": 6 },
         { "variable": "procedure", "operator": "gte", "value": 4 },
         { "variable": "boundary", "operator": "gte", "value": 2 },
         { "variable": "avoidance", "operator": "lte", "value": 1 }
-      ]
+      ],
+      "next": "ending-true"
     },
     {
-      "next": "ending-dignified",
       "conditions": [
         { "variable": "procedure", "operator": "gte", "value": 4 },
         { "variable": "trust", "operator": "gte", "value": 2 },
         { "variable": "boundary", "operator": "gte", "value": 0 }
-      ]
+      ],
+      "next": "ending-decent"
     },
-    { "next": "ending-soft-knife" }
+    {
+      "next": "ending-soft-knife"
+    }
   ]
 }

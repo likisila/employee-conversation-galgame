@@ -67,10 +67,11 @@ export function renderLoading(app: HTMLElement, content: LoadedContent): void {
 
 export function render(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks = {}): void {
   const scene = engine.currentScene;
+  const visibleLines = engine.visibleLines;
   const presentation = content.images.scenePresentation[scene.id];
-  const activeLine = [...scene.lines].reverse().find((line) => line.speaker && content.characters.has(line.speaker));
+  const activeLine = [...visibleLines].reverse().find((line) => line.speaker && content.characters.has(line.speaker));
   const fallbackCharacterId = activeLine?.speaker ?? undefined;
-  const characterId = presentation?.character ?? fallbackCharacterId;
+  const characterId = presentation?.hideCharacter ? undefined : presentation?.character ?? fallbackCharacterId;
   const activeCharacter = characterId ? content.characters.get(characterId) : undefined;
   const sprite = activeCharacter ? content.images.characters[activeCharacter.id] : undefined;
   const expression = presentation?.expression ?? sprite?.defaultExpression;
@@ -85,7 +86,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const dialoguePanel = content.images.ui.dialoguePanel;
   const choiceFrame = content.images.ui.choiceFrame;
 
-  const lines = scene.lines.map((line) => {
+  const lines = visibleLines.map((line) => {
     const speaker = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : content.ui.narratorName;
     return `<article class="line"><strong>${escapeHtml(speaker)}</strong><p>${escapeHtml(line.text)}</p></article>`;
   }).join('');
@@ -105,7 +106,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       <div class="scene-transition" aria-hidden="true" style="--transition-art:${cssUrl(transitionAsset)}"></div>
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
-      ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%"></div></div>` : ''}
+      ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
       <div class="story-panel"><section class="dialogue" aria-live="polite">${lines}</section><footer>${action}</footer></div>
     </section>
   `;

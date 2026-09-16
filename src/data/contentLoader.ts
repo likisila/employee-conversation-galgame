@@ -61,6 +61,9 @@ export function loadContent(): LoadedContent {
       if (!scenes.has(choice.next)) throw new Error(`場景 ${scene.id} 的 choice ${choice.id} 指向不存在的 ${choice.next}`);
     }
     if (scene.next && !scenes.has(scene.next)) throw new Error(`場景 ${scene.id} 指向不存在的 ${scene.next}`);
+    for (const entry of scene.route ?? []) {
+      if (!scenes.has(entry.next)) throw new Error(`場景 ${scene.id} 的 route 指向不存在的 ${entry.next}`);
+    }
   }
 
   for (const [sceneId, presentation] of Object.entries(images.scenePresentation)) {
