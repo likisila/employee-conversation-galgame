@@ -2,7 +2,7 @@
 
 owner: GPT
 requested_by: USER
-status: TODO
+status: DONE
 priority: MEDIUM
 
 ## Goal
@@ -83,3 +83,5 @@ priority: MEDIUM
 
 ## Notes
 第一人稱但非心聲的敘述（例如「我先進門，把識別證翻到背面」）同樣請判斷是 thought 還是 narration。
+
+已依章節原稿完成分類：原稿明示為內心的內容才使用 `thought`；動作、時間、鏡頭與結局文字皆改為 `narration`；私訊與公司頻道改為結構化 `message`。混合敘事與內心的資料已拆成獨立項目。

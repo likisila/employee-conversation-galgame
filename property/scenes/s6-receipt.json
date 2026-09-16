@@ -2,19 +2,19 @@
   "id": "s6-receipt",
   "title": "收訖不等於同意",
   "lines": [
-    { "speaker": "zhou-yuan", "text": "（內心）雅琳把藍色資料夾轉向雨澄，沒有推到她手邊，打開第一頁。" },
+    { "speaker": null, "kind": "narration", "text": "雅琳把藍色資料夾轉向雨澄，沒有推到她手邊，打開第一頁。" },
     { "speaker": "zeng-yalin", "text": "我逐項說明。你可以現在問，也可以之後用文件上的信箱詢問。周主管不是唯一窗口。" },
     { "speaker": "zeng-yalin", "text": "這是職位裁撤通知。這一頁列出公司計算的日期與給付；正式內容以書面為準。這裡是保險、設備與作品資料申請方式。最後是內部提問與申訴窗口。" },
     { "speaker": "lin-yucheng", "text": "這個資料夾本來就叫這個？" },
     { "speaker": "zeng-yalin", "text": "不是。" },
     { "speaker": "lin-yucheng", "text": "原本叫什麼？" },
     { "speaker": "zeng-yalin", "text": "人才續航包。" },
-    { "speaker": "zhou-yuan", "text": "（內心）雨澄看著她。" },
+    { "speaker": null, "kind": "narration", "text": "雨澄看著她。" },
     { "speaker": "zeng-yalin", "text": "我改了。" },
-    { "speaker": "zhou-yuan", "text": "（內心）雨澄的嘴角動了一下，不是笑，比笑更疲倦。" },
+    { "speaker": null, "kind": "narration", "text": "雨澄的嘴角動了一下，不是笑，比笑更疲倦。" },
     { "speaker": "lin-yucheng", "text": "這算你今天第一個保護員工的行動嗎？" },
     { "speaker": "zeng-yalin", "text": "第二個。第一個是把簽名欄旁邊的「立即」刪掉。" },
-    { "speaker": "zhou-yuan", "text": "（內心）雨澄把第一頁翻回封面。" },
+    { "speaker": null, "kind": "narration", "text": "雨澄把第一頁翻回封面。" },
     { "speaker": "lin-yucheng", "text": "我今天不簽。我想帶回去看，也想找人確認。" }
   ],
   "choices": [
