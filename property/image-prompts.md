@@ -1,41 +1,70 @@
 # Image Generation Prompts
 
-所有正式圖像以內建 ImageGen 生成。重生成時先讀 `characters/` 與 `property/images.json`，保留角色身分、服裝與畫格順序。
+所有正式圖像以內建 ImageGen 生成。重生成時先讀 `story.md`、`characters/` 與
+`property/images.json`，保留角色身分、服裝、表情畫格順序與場景敘事功能。
 
-## Character: manager
+## 統一視覺方向
 
-- **Use case:** illustration-story
-- **Asset:** 4-column transparent visual-novel sprite sheet
-- **Subject:** adult Taiwanese woman manager; shoulder-length straight dark hair tucked behind one ear; muted blue-gray blazer, cream top, charcoal trousers, black low heels, company badge
-- **Frames:** neutral, empathetic concern, reflective, calmly resolved
-- **Style:** polished contemporary Japanese visual-novel illustration, soft painterly cel shading, realistic adult anatomy
-- **Keep:** identical identity, outfit, proportions and lighting across frames; full body and feet visible
-- **Avoid:** background, floor, labels, borders, text, watermark, school uniform, chibi proportions
+- 現代日系視覺小說插畫；精緻賽璐璐上色、乾淨大形、低雜訊與少量柔和筆觸。
+- 明亮但不歡樂化：抬高陰影、保留雨天藍灰色，以暖白與淡琥珀燈光平衡。
+- 成人寫實比例；不使用校園感、Q 版、過度浪漫或寫實攝影風格。
+- 背景與 CG 為 16:9；下方三分之一保持安靜，避免干擾對話 UI。
+- 不生成可讀文字、商標或浮水印。
 
-## Character: employee
+## Character: 林雨澄
 
-- **Use case:** illustration-story
-- **Asset:** 4-column transparent visual-novel sprite sheet
-- **Subject:** young adult Taiwanese woman, junior teammate; chestnut chin-length bob, mustard cardigan, ivory blouse, navy ankle trousers, white sneakers, company badge
-- **Frames:** neutral, uneasy, relieved, quietly confident
-- **Style:** same style, anatomy and lighting as manager
-- **Keep:** identical identity, outfit and proportions across frames; full body and feet visible
-- **Avoid:** background, labels, text, watermark, childish treatment
+- **Use case:** style-transfer
+- **Asset:** 6-column bust sprite sheet；每格 512×512、人物可見高度約 460 px、底部對齊、水平置中，生成時使用純綠背景，後製為真正透明 PNG。
+- **Subject:** 26 歲台灣女性；下巴長度深色短髮，髮尾淡灰藍；深灰 T 恤、黑色識別證掛繩、舊電子錶。
+- **Frames:** neutral、alert、blank、suppressed-anger、wry、relaxed。
+- **Keep:** 六格身分、服裝、比例與光線一致；畫格順序固定；不同表情不可左右跳位。
+- **Avoid:** 幼態、過度哭泣、背景、地板、標籤、框線、額外人物。
+
+## Character: 曾雅琳
+
+- **Use case:** style-transfer
+- **Asset:** 3-column bust sprite sheet；每格 512×512、人物可見高度約 460 px、底部對齊、水平置中，生成時使用純綠背景，後製為真正透明 PNG。
+- **Subject:** 34 歲台灣女性 HR Business Partner；肩長深髮、深色合身西裝外套、灰色上衣、低調耳環。
+- **Frames:** neutral、stop（抬掌制止）、dry（面無表情的乾式幽默）。
+- **Keep:** 三格身分、服裝、比例與光線一致；畫格順序固定；不同表情不可左右跳位。
+- **Avoid:** 反派化、過度性感化、背景、標籤、框線、額外人物。
+
+## Character: 周予安
+
+- **Use case:** style-transfer
+- **Asset:** single bust sprite；單格 512×512、人物可見高度約 460 px、底部對齊、水平置中，生成時使用純綠背景，後製為真正透明 PNG。
+- **Subject:** 31 歲台灣成人；中性性別表現、略偏男性輪廓；短深棕髮、炭灰西裝外套、藍灰開領襯衫，可露出文件夾一角。
+- **Expression:** neutral；克制、疲憊但不冷酷。
+- **Keep:** 身分、服裝、比例與光線符合玩家角色定位。
+- **Avoid:** 黑色或棋盤格假透明背景、英雄化、過度年輕、額外人物。
 
 ## Backgrounds
 
-All backgrounds: wide 16:9, contemporary Taipei workplace, polished visual-novel painterly realism, no people, no readable text, no logos, quiet lower third for dialogue UI.
+所有背景皆為 16:9、無人物、無可讀文字；保留當代台北與連續雨天。構圖簡潔，陰影明亮可辨。
 
-- **meeting-room-morning:** glass meeting room, warm oak table, two chairs at a considerate angle, two glasses of water, soft morning skyline.
-- **open-office-evening:** mostly empty product office, sleeping monitors, plants, blue-hour city light and a few warm lamps.
-- **quiet-room-rain:** private conversation room, three comfortable chairs, water carafe, plant, rain on the window, warm wall light.
-- **rooftop-dusk:** rain-wet rooftop garden, bench and planters, Taipei skyline, clouds parting with restrained amber dusk.
+- **weiguang-office-rain-dusk:** 傍晚產品辦公室；空桌、螢幕、植栽、玻璃隔間、雨中台北天際線；暖燈與淡藍暮色平衡。
+- **moon-meeting-room-rain:** 玻璃月球會議室；淺木圓桌、三杯水、藍色權益資料夾、太空貼圖與雨景。
+- **rainy-arcade-night:** 雨夜騎樓；濕地反光、遠方車燈、關閉店面與少量暖光，不使用雜亂霓虹。
+- **apartment-phone-night:** 安靜住處桌面；亮起的手機、杯子、筆記本、檯燈與台北夜景。
+- **platform-zero-cafe:** 捷運出口旁咖啡店；明亮蜂蜜色室內與窗外柔藍雨景，保留兩人平等重逢的空間。
+
+## Story CG
+
+- **cg-rights-packet:** 藍色權益資料夾置於淺木圓桌中央；三杯水與三人的手都不碰文件；不露臉，以克制構圖呈現程序壓力。
+- **cg-badge-flip:** 雨澄在月球會議室門口把識別證翻面後離開；雅琳留在室內並保持距離；非浪漫、非追逐。
+- **cg-true-reflection:** 僱傭關係結束後，未佩戴公司識別證的雨澄與予安在咖啡店重逢；隔著雨窗、保有距離，只呈現試探性的溫度。
 
 ## Screens
 
-- **title-key-art:** half-open meeting-room door, two chairs and two untouched glasses of water; early morning; large dark negative space on the left; no text.
-- **loading-water:** close-up of two water glasses on an oak table; objects in lower-right; calm empty space for loading copy; no text.
+- **title-last-one-on-one:** 半開的玻璃會議室門、圓桌、三杯水與藍色資料夾；雨後暮色；左側保留大面積標題空間。
+- **loading-rain-cursor:** 近景雨滴玻璃與柔焦台北天際線；低對比、留出讀取文案空間。
 
 ## UI Assets
 
-Dialogue panel, choice frame and scene wipe are deterministic SVGs rather than generated bitmaps. Their colors and spacing follow `design-system/before-we-talk/MASTER.md`.
+對話框、選項框與場景 wipe 使用確定性的 SVG／CSS，不交給 ImageGen。色彩與間距遵循
+`design-system/before-we-talk/MASTER.md`。
+
+### Favicon
+
+- **Asset:** `public/assets/ui/favicon-source.png`（512×512 來源圖）與 `public/favicon.ico`（瀏覽器用多尺寸圖示）。
+- **Prompt:** 明亮簡潔的現代編輯插畫；畫面中央只有一個藍色權益文件夾，資料夾上有一滴暖琥珀色的雨滴形反光；淡天藍背景、輪廓清楚、色彩極少、16×16 仍可辨識；不含人物、手、文字、數字、標誌、浮水印或邊框。

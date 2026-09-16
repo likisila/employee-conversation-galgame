@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0c1a24" />
+    <!-- 明寫 icon：瀏覽器預設會去網域根目錄要 /favicon.ico，部署在 /<repo>/ 子路徑時會 404；
+         寫在這裡才會被 build 依 base 改寫成正確路徑。 -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <meta name="description" content="二十分鐘，說完一件沒有說法能變好的事。一款關於尊嚴、程序與界線的職場視覺小說。" />
     <title>最後一次一對一</title>
   </head>

@@ -5,6 +5,14 @@
   "choices": [],
   "route": [
     {
+      "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }],
+      "next": "ending-over-line"
+    },
+    {
+      "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }],
+      "next": "ending-over-line"
+    },
+    {
       "conditions": [{ "variable": "boundary", "operator": "lte", "value": -2 }],
       "next": "ending-over-line"
     },

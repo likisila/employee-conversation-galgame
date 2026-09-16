@@ -11,7 +11,8 @@
     { "speaker": null, "kind": "narration", "text": "她走到門口，把識別證翻到背面。", "background": "cg-badge-flip", "character": null },
     { "speaker": null, "kind": "narration", "text": "一週後。雅琳轉寄一封信。雨澄只要求一份描述專業能力的推薦，並指定所有聯絡經由電子郵件。", "background": "rainy-arcade-night", "character": null },
     { "speaker": null, "kind": "narration", "text": "我照實寫完，沒有在最後加上私人訊息。寄出後，收件匣沒有出現新的回覆。那不是失敗。不是每一次尊重都會變成戀愛，也不該。" },
-    { "speaker": null, "kind": "narration", "text": "END 02：體面的句點　　有些好結局不是得到誰，而是沒有再多拿走一樣東西。" }
+    { "speaker": null, "kind": "narration", "text": "END 02：體面的句點" },
+    { "speaker": null, "kind": "narration", "text": "有些好結局不是得到誰，而是沒有再多拿走一樣東西。" }
   ],
   "choices": [],
   "ending": true

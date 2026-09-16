@@ -66,12 +66,15 @@
 ## 路由場景（有優先序的自動跳轉）
 場景可以帶 `route`，引擎會**由上到下**取第一個條件全部成立的項目自動前往，玩家不會停在路由場景上。最後一項不寫 `conditions` 即為預設路徑。
 
+同一項裡的多個 `conditions` 是「而且」；要表達「或」就寫成多項指向同一個場景（例如「私下補錢」**或**「權力關係仍在時告白」都直接鎖 END 04，不受後續界線加分抵銷）。
+
 ```json
 {
   "id": "s9-doorway",
   "lines": [],
   "choices": [],
   "route": [
+    { "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }], "next": "ending-over-line" },
     { "conditions": [{ "variable": "boundary", "operator": "lte", "value": -2 }], "next": "ending-over-line" },
     { "next": "ending-soft-knife" }
   ]
