@@ -78,8 +78,11 @@ let resizeHandler: (() => void) | undefined;
  */
 function keepStageAbovePanel(screen: HTMLElement, panel: HTMLElement): void {
   const update = (): void => {
-    const top = panel.getBoundingClientRect().top;
-    screen.style.setProperty('--stage-bottom', `${Math.max(0, Math.round(window.innerHeight - top))}px`);
+    // 以 .game-screen 自己的底邊為基準（CSS bottom 就是相對它），不依賴 window.innerHeight，
+    // 避免 iOS Safari 動態工具列讓 innerHeight 與實際畫面高度不一致。
+    const screenBottom = screen.getBoundingClientRect().bottom;
+    const panelTop = panel.getBoundingClientRect().top;
+    screen.style.setProperty('--stage-bottom', `${Math.max(0, Math.round(screenBottom - panelTop))}px`);
   };
   panelObserver?.disconnect();
   if (resizeHandler) window.removeEventListener('resize', resizeHandler);
