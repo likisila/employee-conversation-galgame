@@ -28,6 +28,17 @@
         "dry": 2
       },
       "align": "right"
+    },
+    "zhou-yuan": {
+      "src": "/assets/characters/zhou-yuan-full-v1.png",
+      "alt": "周予安，深灰西裝與藍灰襯衫、手持文件夾的產品設計部主管",
+      "columns": 1,
+      "frameAspectRatio": 0.666667,
+      "defaultExpression": "neutral",
+      "expressions": {
+        "neutral": 0
+      },
+      "align": "right"
     }
   },
   "backgrounds": {
@@ -87,19 +98,77 @@
     "ending-soft-knife": "weiguang-office-rain-dusk"
   },
   "scenePresentation": {
-    "content-warning": { "transition": "fade" },
-    "s1-final-cut": { "background": "weiguang-office-rain-dusk", "character": "zeng-yalin", "expression": "neutral", "transition": "fade" },
-    "s2-invite": { "background": "weiguang-office-rain-dusk", "transition": "soft" },
-    "s3-meeting": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "alert", "transition": "wipe" },
-    "s4-notice": { "background": "cg-rights-packet", "character": "lin-yucheng", "expression": "alert", "transition": "fade" },
-    "s5-when-did-you-know": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "suppressed-anger", "transition": "soft" },
-    "s6-receipt": { "background": "cg-rights-packet", "character": "zeng-yalin", "expression": "neutral", "transition": "soft" },
-    "s7-not-in-file": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "suppressed-anger", "transition": "soft" },
-    "s8-reaction": { "background": "moon-meeting-room-rain", "character": "lin-yucheng", "expression": "alert", "transition": "soft" },
-    "ending-over-line": { "background": "cg-badge-flip", "character": null, "transition": "fade" },
-    "ending-true": { "background": "cg-true-reflection", "character": null, "transition": "fade" },
-    "ending-decent": { "background": "rainy-arcade-night", "character": "lin-yucheng", "expression": "neutral", "transition": "fade" },
-    "ending-soft-knife": { "background": "weiguang-office-rain-dusk", "character": "zeng-yalin", "expression": "dry", "transition": "fade" }
+    "content-warning": {
+      "transition": "fade"
+    },
+    "s1-final-cut": {
+      "background": "weiguang-office-rain-dusk",
+      "character": "zeng-yalin",
+      "expression": "neutral",
+      "transition": "fade"
+    },
+    "s2-invite": {
+      "background": "weiguang-office-rain-dusk",
+      "transition": "soft"
+    },
+    "s3-meeting": {
+      "background": "moon-meeting-room-rain",
+      "character": "lin-yucheng",
+      "expression": "alert",
+      "transition": "wipe"
+    },
+    "s4-notice": {
+      "background": "cg-rights-packet",
+      "character": "lin-yucheng",
+      "expression": "alert",
+      "transition": "fade"
+    },
+    "s5-when-did-you-know": {
+      "background": "moon-meeting-room-rain",
+      "character": "lin-yucheng",
+      "expression": "suppressed-anger",
+      "transition": "soft"
+    },
+    "s6-receipt": {
+      "background": "cg-rights-packet",
+      "character": "zeng-yalin",
+      "expression": "neutral",
+      "transition": "soft"
+    },
+    "s7-not-in-file": {
+      "background": "moon-meeting-room-rain",
+      "character": "lin-yucheng",
+      "expression": "suppressed-anger",
+      "transition": "soft"
+    },
+    "s8-reaction": {
+      "background": "moon-meeting-room-rain",
+      "character": "lin-yucheng",
+      "expression": "alert",
+      "transition": "soft"
+    },
+    "ending-over-line": {
+      "background": "cg-badge-flip",
+      "character": null,
+      "transition": "fade"
+    },
+    "ending-true": {
+      "background": "cg-true-reflection",
+      "character": null,
+      "transition": "fade"
+    },
+    "ending-decent": {
+      "background": "rainy-arcade-night",
+      "character": "lin-yucheng",
+      "expression": "neutral",
+      "transition": "fade"
+    },
+    "ending-soft-knife": {
+      "background": "weiguang-office-rain-dusk",
+      "character": "zeng-yalin",
+      "expression": "dry",
+      "transition": "fade"
+    }
   },
   "screens": {
     "title": {
@@ -119,9 +188,18 @@
     "sceneWipe": "/assets/ui/scene-wipe.svg"
   },
   "transitions": {
-    "none": { "durationMs": 0 },
-    "soft": { "durationMs": 260 },
-    "fade": { "durationMs": 420 },
-    "wipe": { "durationMs": 520, "asset": "sceneWipe" }
+    "none": {
+      "durationMs": 0
+    },
+    "soft": {
+      "durationMs": 260
+    },
+    "fade": {
+      "durationMs": 420
+    },
+    "wipe": {
+      "durationMs": 520,
+      "asset": "sceneWipe"
+    }
   }
 }
