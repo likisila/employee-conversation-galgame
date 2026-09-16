@@ -9,6 +9,10 @@ function imageStyle(src?: string, focalPoint = '50% 50%'): string {
   return src ? `background-image:url('${escapeHtml(src)}');background-position:${escapeHtml(focalPoint)}` : '';
 }
 
+function cssUrl(src?: string): string {
+  return src ? `url('${escapeHtml(src)}')` : 'none';
+}
+
 export function renderTitle(app: HTMLElement, content: LoadedContent, onStart: () => void): void {
   const title = content.images.screens.title;
   app.innerHTML = `
@@ -41,19 +45,30 @@ export function renderLoading(app: HTMLElement, content: LoadedContent): void {
 
 export function render(app: HTMLElement, engine: StoryEngine, content: LoadedContent): void {
   const scene = engine.currentScene;
+  const presentation = content.images.scenePresentation[scene.id];
   const activeLine = [...scene.lines].reverse().find((line) => line.speaker && content.characters.has(line.speaker));
-  const activeCharacter = activeLine?.speaker ? content.characters.get(activeLine.speaker) : undefined;
+  const fallbackCharacterId = activeLine?.speaker ?? undefined;
+  const characterId = presentation?.character ?? fallbackCharacterId;
+  const activeCharacter = characterId ? content.characters.get(characterId) : undefined;
   const sprite = activeCharacter ? content.images.characters[activeCharacter.id] : undefined;
-  const frame = sprite ? sprite.expressions[sprite.defaultExpression] ?? 0 : 0;
+  const expression = presentation?.expression ?? sprite?.defaultExpression;
+  const frame = sprite && expression ? sprite.expressions[expression] ?? sprite.expressions[sprite.defaultExpression] ?? 0 : 0;
   const position = sprite && sprite.columns > 1 ? (frame / (sprite.columns - 1)) * 100 : 0;
-  const backgroundId = content.images.sceneBackgrounds[scene.id];
+
+  const backgroundId = presentation?.background ?? content.images.sceneBackgrounds[scene.id];
   const background = backgroundId ? content.images.backgrounds[backgroundId] : undefined;
+  const transitionId = presentation?.transition ?? 'none';
+  const transition = content.images.transitions[transitionId];
+  const transitionAsset = transition?.asset ? content.images.ui[transition.asset] : undefined;
+  const dialoguePanel = content.images.ui.dialoguePanel;
+  const choiceFrame = content.images.ui.choiceFrame;
+
   const lines = scene.lines.map((line) => {
     const speaker = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : content.ui.narratorName;
     return `<article class="line"><strong>${escapeHtml(speaker)}</strong><p>${escapeHtml(line.text)}</p></article>`;
   }).join('');
   const choices = engine.availableChoices.map((choice, index) =>
-    `<button class="choice" data-choice="${escapeHtml(choice.id)}"><span>${String(index + 1).padStart(2, '0')}</span>${escapeHtml(choice.text)}</button>`,
+    `<button class="choice" data-choice="${escapeHtml(choice.id)}" style="--choice-frame:${cssUrl(choiceFrame)}"><span>${String(index + 1).padStart(2, '0')}</span>${escapeHtml(choice.text)}</button>`,
   ).join('');
   const action = scene.ending
     ? `<button class="primary-action full" id="restart">${escapeHtml(content.ui.restartLabel)}</button>`
@@ -64,10 +79,11 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
         : '';
 
   app.innerHTML = `
-    <section class="game-screen" style="${imageStyle(background?.src, background?.focalPoint)}">
+    <section class="game-screen" data-transition="${escapeHtml(transitionId)}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}">
+      <div class="scene-transition" aria-hidden="true" style="--transition-art:${cssUrl(transitionAsset)}"></div>
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
-      ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%"></div></div>` : ''}
+      ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%"></div></div>` : ''}
       <div class="story-panel"><section class="dialogue" aria-live="polite">${lines}</section><footer>${action}</footer></div>
     </section>
   `;
