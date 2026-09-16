@@ -41,6 +41,7 @@ priority: HIGH
 - 驗證 manifest 內每個互斥結局各播放且只播放一支結局影片。
 - 模擬 MP4 404，確認直接進入 canonical scene。
 - active runtime 不得引用 `meeting-departure`、`action-plan`、`ending-trust`、`ending-clear` 或 `ending-fragile` 等舊 Cutscene ID。
+- 不得重新加入已移除的 `scripts/render_cutscenes.py` 或立繪／對話卡合成 workflow。
 
 ## Notes
 

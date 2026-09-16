@@ -104,3 +104,5 @@ OPENAI_API_KEY="..." npm run videos:sora -- --ids=layoff-notification,ending-tru
 請勿把 API key 寫入檔案或提交版本控制。若要由 GitHub 生成，將 key 存為 repository secret `OPENAI_API_KEY`，再手動執行 **Generate Sora cutscenes** workflow；成功後 workflow 會提交 MP4 與生成報告。
 
 每次生成後必須依 manifest 的 `postGenerationReview` 驗證：不得出現 GAL GAME 對話框或 HUD、三位演員與服裝必須連戲、Day 1 的會議室鏡頭必須有 HR 曾雅琳，且僅 TRUE END 可在三週後由林雨澄主動開啟私人會面。
+
+舊版 `render_cutscenes.py`、自動合成立繪／對話卡的 workflow 與其輸出影片已移除，避免後續素材更新重新產生錯誤的 GAL GAME 式 Cutscene。

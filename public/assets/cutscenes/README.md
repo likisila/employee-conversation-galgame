@@ -1,7 +1,6 @@
-# Cutscene bundle
+# Cutscene videos
 
-Generated from `property/cutscenes.json`, story scene JSON, character metadata, and the current visual assets.
+本資料夾只接受依 `property/sora-cutscenes.json` 生成並通過 `postGenerationReview` 的真人微電影 MP4。
 
-- 1280×720 / 24 fps / H.264 MP4
-- Silent so game BGM/SFX can continue underneath
-- Re-render with `python scripts/render_cutscenes.py`
+舊版以背景、角色立繪與對話卡合成的 GAL GAME fallback 已移除。正式 MP4 尚未生成或檔案缺失時，執行端必須略過影片並直接進入對應 canonical scene，不得回退到舊版影片。
+
