@@ -1,0 +1,9 @@
+.story-panel{background-image:var(--dialogue-panel);background-size:100% 100%;background-repeat:no-repeat}
+.choice{background-image:var(--choice-frame);background-size:100% 100%;background-repeat:no-repeat}
+.scene-transition{position:absolute;z-index:20;inset:0;pointer-events:none;background-image:var(--transition-art);background-size:cover;background-position:center;opacity:0}
+.game-screen[data-transition="fade"] .scene-transition{background:#08151d;animation:scene-fade var(--transition-duration) ease-out both}
+.game-screen[data-transition="soft"] .scene-transition{background:rgba(8,21,29,.7);animation:scene-fade var(--transition-duration) ease-out both}
+.game-screen[data-transition="wipe"] .scene-transition{animation:scene-wipe var(--transition-duration) ease-out both}
+@keyframes scene-fade{from{opacity:1}to{opacity:0}}
+@keyframes scene-wipe{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(18%)}}
+@media(prefers-reduced-motion:reduce){.scene-transition{display:none}}
