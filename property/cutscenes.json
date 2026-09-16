@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "format": { "width": 1280, "height": 720, "fps": 24, "codec": "H.264", "audio": false },
+  "items": [
+    {
+      "id": "intro", "scene": "intro", "file": "00_intro_first_one_on_one.mp4", "trigger": "before-scene", "durationMs": 8000,
+      "background": "meeting-room", "camera": "push",
+      "actors": [
+        { "character": "manager", "expression": "empathetic", "x": 360, "height": 590, "opacity": 0.96 },
+        { "character": "employee", "expression": "uneasy", "x": 910, "height": 610 }
+      ],
+      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 1 } ]
+    },
+    {
+      "id": "safe-questioning", "scene": "support", "file": "01_safe_questioning.mp4", "trigger": "on-enter", "durationMs": 8000,
+      "background": "quiet-room", "camera": "push",
+      "actors": [
+        { "character": "manager", "expression": "empathetic", "x": 410, "height": 585 },
+        { "character": "employee", "expression": "relieved", "x": 840, "height": 600 }
+      ],
+      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 1, "caption": "psychological safety ↑   ownership ↑" } ]
+    },
+    {
+      "id": "pressure-closure", "scene": "pressure", "file": "02_pressure_closure.mp4", "trigger": "on-enter", "durationMs": 7000,
+      "background": "meeting-room", "mood": "cold", "camera": "pull",
+      "actors": [
+        { "character": "manager", "expression": "neutral", "x": 335, "height": 600, "opacity": 0.92 },
+        { "character": "employee", "expression": "uneasy", "x": 920, "height": 545 }
+      ],
+      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 1, "caption": "trust ↓   psychological safety ↓" } ]
+    },
+    {
+      "id": "action-plan", "scene": "action-plan", "file": "03_action_plan.mp4", "trigger": "on-enter", "durationMs": 8000,
+      "background": "open-office", "camera": "push",
+      "actors": [
+        { "character": "manager", "expression": "resolved", "x": 390, "height": 585, "opacity": 0.94 },
+        { "character": "employee", "expression": "confident", "x": 850, "height": 610 }
+      ],
+      "cards": [ { "lineIndex": 0, "showSceneTitle": true, "caption": "ownership ↑   clarity ↑" }, { "lineIndex": 1 } ]
+    },
+    {
+      "id": "ending-trust", "scene": "ending-trust", "file": "04_ending_trust.mp4", "trigger": "on-enter", "durationMs": 9000,
+      "background": "rooftop", "mood": "warm", "camera": "push",
+      "actors": [ { "character": "employee", "expression": "confident", "x": 760, "height": 620 } ],
+      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 1, "endingCard": true } ]
+    },
+    {
+      "id": "ending-clear", "scene": "ending-clear", "file": "05_ending_clear.mp4", "trigger": "on-enter", "durationMs": 8000,
+      "background": "open-office", "camera": "push",
+      "actors": [
+        { "character": "manager", "expression": "resolved", "x": 500, "height": 585 },
+        { "character": "employee", "expression": "neutral", "x": 835, "height": 590 }
+      ],
+      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 1, "endingCard": true } ]
+    },
+    {
+      "id": "ending-fragile", "scene": "ending-fragile", "file": "06_ending_fragile.mp4", "trigger": "on-enter", "durationMs": 8000,
+      "background": "meeting-room", "mood": "cold", "camera": "pull",
+      "actors": [ { "character": "employee", "expression": "neutral", "x": 890, "height": 555 } ],
+      "cards": [ { "lineIndex": 0, "showSceneTitle": true }, { "lineIndex": 1, "endingCard": true } ]
+    }
+  ]
+}
