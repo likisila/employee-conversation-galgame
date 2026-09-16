@@ -1,4 +1,5 @@
 import './style.css';
+import './visual.css';
 import { loadContent } from './data/contentLoader';
 import { StoryEngine } from './engine/StoryEngine';
 import { render, renderLoading, renderTitle } from './ui/render';
