@@ -69,9 +69,26 @@ export interface Choice {
   effects?: Effect[];
 }
 
+/**
+ * 台詞類型，決定對話框的呈現方式：
+ * - `dialogue`：角色說出口的話（顯示名字）
+ * - `thought`：內心話（不出聲，淡色＋「內心」標籤）
+ * - `narration`：旁白／場景描述（無名字）
+ * - `message`：Teams／私訊／頻道等文字訊息（訊息卡片）
+ *
+ * 資料可明確寫 `kind`；沒寫時依既有寫法推斷：`（內心）` 開頭 → thought、
+ * `【頻道·發送者】` 開頭 → message、`speaker: null` → narration，其餘 → dialogue。
+ */
+export type LineKind = 'dialogue' | 'thought' | 'narration' | 'message';
+
 export interface Line {
   speaker: string | null;
   text: string;
+  kind?: LineKind;
+  /** message 專用：頻道或訊息類型，例如「私訊」「公司頻道」。 */
+  channel?: string;
+  /** message 專用：發送者顯示名稱（原文寫法，例如「予安」）。 */
+  from?: string;
   /** 只有全部條件成立時才顯示這句；用來呈現「依先前選擇」的分歧台詞。 */
   conditions?: Condition[];
 }
@@ -98,6 +115,8 @@ export interface Game {
   title: string;
   startScene: string;
   initialState: GameState;
+  /** 玩家操作的角色 ID；用來把玩家自己送出的訊息靠右顯示。選填。 */
+  player?: string;
 }
 
 export interface Manifest {
@@ -118,6 +137,10 @@ export interface UiCopy {
   subtitle: string;
   resumeLabel: string;
   newGameLabel: string;
+  /** 內心話的標籤文字。 */
+  thoughtLabel: string;
+  /** 讀取／轉場畫面等待點擊時的提示。 */
+  tapToContinueLabel: string;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -152,7 +175,13 @@ export function parseGame(raw: unknown): Game {
   if (!isRecord(raw) || !isRecord(raw.initialState)) throw new Error('game 格式錯誤');
   const initialState: GameState = {};
   for (const [key, value] of Object.entries(raw.initialState)) initialState[key] = asGameValue(value, `initialState.${key}`);
-  return { id: stringField(raw, 'id'), title: stringField(raw, 'title'), startScene: stringField(raw, 'startScene'), initialState };
+  return {
+    id: stringField(raw, 'id'),
+    title: stringField(raw, 'title'),
+    startScene: stringField(raw, 'startScene'),
+    initialState,
+    player: typeof raw.player === 'string' ? raw.player : undefined,
+  };
 }
 
 export function parseCharacters(raw: unknown): Character[] {
@@ -192,13 +221,41 @@ function parseChoice(raw: unknown): Choice {
   return { id: stringField(raw, 'id'), text: stringField(raw, 'text'), next: stringField(raw, 'next'), conditions, effects };
 }
 
+const LINE_KINDS: readonly LineKind[] = ['dialogue', 'thought', 'narration', 'message'];
+/** `（內心）` 或 `(內心)` 前綴。 */
+const THOUGHT_PREFIX = /^[（(]\s*內心\s*[)）]\s*/;
+/** `【私訊·林雨澄】`、`【公司頻道·執行長】`；分隔符接受 · ・ • ｜ | ： :。 */
+const MESSAGE_PREFIX = /^【([^】·・•｜|：:]+)[·・•｜|：:]([^】]+)】\s*/;
+
+export function parseLine(raw: unknown): Line {
+  if (!isRecord(raw)) throw new Error('line 格式錯誤');
+  if (raw.speaker !== null && typeof raw.speaker !== 'string') throw new Error('line.speaker 格式錯誤');
+  if (raw.kind !== undefined && !LINE_KINDS.includes(raw.kind as LineKind)) throw new Error(`未知 line.kind: ${String(raw.kind)}`);
+  const speaker = raw.speaker as string | null;
+  let text = stringField(raw, 'text');
+  let kind = raw.kind as LineKind | undefined;
+  let channel = typeof raw.channel === 'string' ? raw.channel : undefined;
+  let from = typeof raw.from === 'string' ? raw.from : undefined;
+
+  const thought = THOUGHT_PREFIX.exec(text);
+  const message = MESSAGE_PREFIX.exec(text);
+  if (thought && (kind === undefined || kind === 'thought')) {
+    kind = 'thought';
+    text = text.slice(thought[0].length);
+  } else if (message && (kind === undefined || kind === 'message')) {
+    kind = 'message';
+    channel ??= message[1].trim();
+    from ??= message[2].trim();
+    text = text.slice(message[0].length);
+  }
+  kind ??= speaker === null ? 'narration' : 'dialogue';
+
+  return { speaker, text, kind, channel, from, conditions: parseConditions(raw.conditions) };
+}
+
 export function parseScene(raw: unknown): Scene {
   if (!isRecord(raw) || !Array.isArray(raw.lines)) throw new Error('scene 格式錯誤');
-  const lines = raw.lines.map((line) => {
-    if (!isRecord(line)) throw new Error('line 格式錯誤');
-    if (line.speaker !== null && typeof line.speaker !== 'string') throw new Error('line.speaker 格式錯誤');
-    return { speaker: line.speaker as string | null, text: stringField(line, 'text'), conditions: parseConditions(line.conditions) };
-  });
+  const lines = raw.lines.map(parseLine);
   const route: RouteEntry[] | undefined = Array.isArray(raw.route)
     ? raw.route.map((entry) => {
         if (!isRecord(entry)) throw new Error('route 項目格式錯誤');
@@ -228,6 +285,8 @@ export function parseUi(raw: unknown): UiCopy {
     subtitle: typeof value.subtitle === 'string' ? value.subtitle : '一場需要好好聽完的對話',
     resumeLabel: typeof value.resumeLabel === 'string' ? value.resumeLabel : '繼續上次',
     newGameLabel: typeof value.newGameLabel === 'string' ? value.newGameLabel : '重新開始',
+    thoughtLabel: typeof value.thoughtLabel === 'string' ? value.thoughtLabel : '內心',
+    tapToContinueLabel: typeof value.tapToContinueLabel === 'string' ? value.tapToContinueLabel : '點擊畫面繼續',
   };
 }
 

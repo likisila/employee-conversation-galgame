@@ -23,6 +23,24 @@
 ## 修改對話
 直接改 `scenes/*.json` 裡的 `lines[].text`。
 
+## 台詞類型（對話框樣式）
+每句台詞可寫 `kind`，決定畫面呈現：
+
+| kind | 呈現 | 寫法 |
+|---|---|---|
+| `dialogue` | 名字＋台詞 | `{ "speaker": "lin-yucheng", "text": "我把檔案存好了。" }` |
+| `thought` | 「內心」標籤、左側虛線、淡色字 | `{ "speaker": "zhou-yuan", "text": "（內心）……" }` |
+| `narration` | 無名字、置中 | `{ "speaker": null, "text": "雨澄準時進來。" }` |
+| `message` | Teams 風格訊息卡（頻道標籤、頭像、泡泡） | `{ "speaker": null, "text": "【私訊·林雨澄】……" }` |
+
+沒寫 `kind` 時依上表「寫法」自動判斷，並把 `（內心）`、`【頻道·發送者】` 前綴從顯示文字中移除。也可以明確寫出欄位，不必用前綴：
+
+```json
+{ "speaker": null, "kind": "message", "channel": "Teams", "from": "林雨澄", "text": "收到。" }
+```
+
+`game.json` 的 `player` 指定玩家角色；發送者對得到該角色時（「予安」會對到「周予安」），訊息靠右顯示。
+
 ## 條件台詞（依先前選擇分歧）
 `lines[]` 的每一句都可以帶 `conditions`；全部成立才顯示，沒有 `conditions` 則永遠顯示。
 

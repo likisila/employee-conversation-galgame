@@ -1,4 +1,5 @@
 import type { LoadedContent } from '../data/contentLoader';
+import type { Line } from '../domain/schema';
 import type { StoryEngine } from '../engine/StoryEngine';
 
 /** 標題畫面的行為掛勾。有存檔時提供 onResume，讓玩家選擇繼續。 */
@@ -51,21 +52,78 @@ export function renderTitle(app: HTMLElement, content: LoadedContent, hooks: Tit
   }
 }
 
-export function renderLoading(app: HTMLElement, content: LoadedContent): void {
+/**
+ * 讀取畫面：素材預載完成（`ready`）後顯示「點擊繼續」，玩家點擊或按 Enter／空白鍵才進入遊戲。
+ * 不再用計時器自動跳走。
+ */
+export function renderLoading(app: HTMLElement, content: LoadedContent, ready: Promise<unknown>, onContinue: () => void): void {
   const loading = content.images.screens.loading;
   app.innerHTML = `
-    <section class="loading-screen" style="${imageStyle(loading?.src, loading?.focalPoint)}" aria-busy="true">
+    <section class="loading-screen" style="${imageStyle(loading?.src, loading?.focalPoint)}" aria-busy="true" data-ready="false">
       <div class="loading-copy">
         <p class="eyebrow">BEFORE WE TALK</p>
         <h1>${escapeHtml(content.ui.loadingLabel)}</h1>
         <p>有些話，需要先留一點空白。</p>
         <div class="loading-bar" role="progressbar" aria-label="${escapeHtml(content.ui.loadingLabel)}"><span></span></div>
+        <p class="tap-hint loading-hint" role="status">${escapeHtml(content.ui.tapToContinueLabel)}</p>
       </div>
     </section>
   `;
+  const screen = app.querySelector<HTMLElement>('.loading-screen');
+  if (!screen) return;
+  let isReady = false;
+  let done = false;
+  const proceed = (): void => {
+    if (!isReady || done) return;
+    done = true;
+    setKeyHandler(undefined);
+    onContinue();
+  };
+  // 預載失敗也放行，避免卡在讀取畫面；最短停留時間避免「開始」那一下連點直接跳過。
+  void Promise.all([ready.catch(() => undefined), wait(MIN_DWELL_MS)]).then(() => {
+    if (!screen.isConnected) return;
+    isReady = true;
+    screen.dataset.ready = 'true';
+    screen.setAttribute('aria-busy', 'false');
+  });
+  screen.addEventListener('click', proceed);
+  setKeyHandler((event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    proceed();
+  });
+}
+
+/** 讀取／轉場畫面出現後，至少停留這麼久才接受點擊，避免連點誤跳。 */
+const MIN_DWELL_MS = 350;
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+/** 預載圖片；單張失敗或逾時都視為完成，不阻擋進入遊戲。 */
+export function preloadImages(sources: Array<string | undefined>, timeoutMs = 6000): Promise<void> {
+  const unique = [...new Set(sources.filter((src): src is string => typeof src === 'string' && src.length > 0))];
+  const load = (src: string): Promise<void> => new Promise((resolve) => {
+    const image = new Image();
+    image.onload = () => resolve();
+    image.onerror = () => resolve();
+    image.src = src;
+  });
+  return Promise.race([Promise.all(unique.map(load)).then(() => undefined), wait(timeoutMs)]);
 }
 
 let keyHandler: ((event: KeyboardEvent) => void) | undefined;
+/** 同一時間只保留一個鍵盤處理器（讀取畫面、轉場卡、對話各自換上自己的）。 */
+function setKeyHandler(handler: ((event: KeyboardEvent) => void) | undefined): void {
+  if (keyHandler) document.removeEventListener('keydown', keyHandler);
+  keyHandler = handler;
+  if (handler) document.addEventListener('keydown', handler);
+}
+/** 進入新場景後尚未被玩家點掉的轉場卡；值為場景 ID。 */
+let pendingIntroSceneId: string | undefined;
+/** 轉場卡剛被點掉：這次 render 播放轉場淡出與立繪淡入。 */
+let revealSceneId: string | undefined;
 /** 上一次 render 的場景；同場景內逐句前進時不重播轉場與立繪淡入。 */
 let lastSceneId: string | undefined;
 /** 量測對話框高度、把立繪底線寫成 CSS 變數；換場景時先解除上一次的觀察。 */
@@ -95,6 +153,50 @@ function keepStageAbovePanel(screen: HTMLElement, panel: HTMLElement): void {
   window.addEventListener('resize', resizeHandler);
 }
 
+/** 依訊息發送者名稱找角色：完全相同，或顯示名稱以其結尾（「予安」→「周予安」）。 */
+function findCharacterByName(content: LoadedContent, name: string | undefined): string | undefined {
+  if (!name) return undefined;
+  for (const character of content.characters.values()) {
+    if (character.displayName === name || character.id === name) return character.id;
+  }
+  for (const character of content.characters.values()) {
+    if (character.displayName.endsWith(name)) return character.id;
+  }
+  return undefined;
+}
+
+function renderLine(line: Line, content: LoadedContent, progress: string): string {
+  const kind = line.kind ?? (line.speaker ? 'dialogue' : 'narration');
+  const speakerName = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : '';
+  const text = `<p>${escapeHtml(line.text)}</p>`;
+
+  switch (kind) {
+    case 'thought': {
+      const label = speakerName ? `${escapeHtml(speakerName)}<span class="line-tag">${escapeHtml(content.ui.thoughtLabel)}</span>` : `<span class="line-tag">${escapeHtml(content.ui.thoughtLabel)}</span>`;
+      return `<article class="line line--thought" data-kind="thought" data-line="${progress}"><strong>${label}</strong>${text}</article>`;
+    }
+    case 'narration':
+      return `<article class="line line--narration" data-kind="narration" data-line="${progress}" aria-label="${escapeHtml(content.ui.narratorName)}">${text}</article>`;
+    case 'message': {
+      const senderId = line.speaker ?? findCharacterByName(content, line.from);
+      const sender = line.from ?? speakerName;
+      const self = senderId !== undefined && senderId === content.game.player;
+      // 頭像：對得到角色時用名字後兩字（雨澄、予安），否則用第一個字（執行長 → 執）。
+      const avatarChars = Array.from((senderId ? content.characters.get(senderId)?.displayName : undefined) ?? sender);
+      const avatar = senderId ? avatarChars.slice(-2).join('') : avatarChars.slice(0, 1).join('');
+      return `<article class="line line--message${self ? ' is-self' : ''}" data-kind="message" data-line="${progress}">
+        <div class="message-meta">${line.channel ? `<span class="message-channel">${escapeHtml(line.channel)}</span>` : ''}</div>
+        <div class="message-row">
+          <span class="message-avatar" aria-hidden="true">${escapeHtml(avatar)}</span>
+          <div class="message-bubble"><strong>${escapeHtml(sender)}</strong>${text}</div>
+        </div>
+      </article>`;
+    }
+    default:
+      return `<article class="line line--dialogue" data-kind="dialogue" data-line="${progress}"><strong>${escapeHtml(speakerName || content.ui.narratorName)}</strong>${text}</article>`;
+  }
+}
+
 export function render(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks = {}): void {
   const scene = engine.currentScene;
   const visibleLines = engine.visibleLines;
@@ -114,25 +216,31 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
 
   const backgroundId = presentation?.background ?? content.images.sceneBackgrounds[scene.id];
   const background = backgroundId ? content.images.backgrounds[backgroundId] : undefined;
-  const sameScene = lastSceneId === scene.id;
+  const sceneTransition = presentation?.transition ?? 'none';
+  const enteringScene = lastSceneId !== scene.id;
   lastSceneId = scene.id;
-  const transitionId = sameScene ? 'none' : presentation?.transition ?? 'none';
+  // 進入有轉場的新場景：先停在轉場卡，等玩家點擊才顯示對話。
+  if (enteringScene) {
+    pendingIntroSceneId = sceneTransition !== 'none' ? scene.id : undefined;
+    revealSceneId = undefined;
+  }
+  const phase: 'intro' | 'reveal' | 'play' = pendingIntroSceneId === scene.id ? 'intro' : revealSceneId === scene.id ? 'reveal' : 'play';
+  if (phase === 'reveal') revealSceneId = undefined;
+  // settled＝不重播立繪淡入：只有剛進場（無轉場卡）或剛點掉轉場卡時才播放。
+  const sameScene = !enteringScene && phase === 'play';
+  const transitionId = phase === 'play' && !enteringScene ? 'none' : sceneTransition;
   const transition = content.images.transitions[transitionId];
   const transitionAsset = transition?.asset ? content.images.ui[transition.asset] : undefined;
   const dialoguePanel = content.images.ui.dialoguePanel;
-  const choiceFrame = content.images.ui.choiceFrame;
 
   // 一次只顯示一句；點畫面（或 Enter／空白鍵）才到下一句。
-  const canAdvance = !atLast || (scene.next !== undefined && !scene.ending);
-  const speaker = line ? (line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : content.ui.narratorName) : '';
-  const dialogue = line
-    ? `<article class="line" data-line="${lineIndex + 1}/${visibleLines.length}"><strong>${escapeHtml(speaker)}</strong><p>${escapeHtml(line.text)}</p></article>`
-    : '';
+  const canAdvance = phase === 'intro' || !atLast || (scene.next !== undefined && !scene.ending);
+  const dialogue = line ? renderLine(line, content, `${lineIndex + 1}/${visibleLines.length}`) : '';
   const hint = canAdvance ? `<span class="advance-hint" aria-hidden="true">▼</span>` : '';
 
   const choices = atLast
     ? engine.availableChoices.map((choice, index) =>
-        `<button class="choice" data-choice="${escapeHtml(choice.id)}" style="--choice-frame:${cssUrl(choiceFrame)}"><span>${String(index + 1).padStart(2, '0')}</span>${escapeHtml(choice.text)}</button>`,
+        `<button class="choice" data-choice="${escapeHtml(choice.id)}"><span>${String(index + 1).padStart(2, '0')}</span><span class="choice-text">${escapeHtml(choice.text)}</span></button>`,
       ).join('')
     : '';
   const action = atLast && scene.ending
@@ -142,8 +250,9 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       : '';
 
   app.innerHTML = `
-    <section class="game-screen" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-settled="${sameScene}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}">
+    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-settled="${sameScene}" data-has-choices="${atLast && choices !== ''}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}">
       <div class="scene-transition" aria-hidden="true" style="--transition-art:${cssUrl(transitionAsset)}"></div>
+      ${phase === 'intro' ? `<div class="scene-intro" role="status"><p class="eyebrow">${escapeHtml(content.game.title)}</p>${scene.title ? `<h2>${escapeHtml(scene.title)}</h2>` : ''}<p class="tap-hint">${escapeHtml(content.ui.tapToContinueLabel)}</p></div>` : ''}
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
       ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
@@ -155,7 +264,16 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const panelEl = app.querySelector<HTMLElement>('.story-panel');
   if (screenEl && panelEl) keepStageAbovePanel(screenEl, panelEl);
 
+  const shownAt = performance.now();
   const advance = (): void => {
+    if (phase === 'intro') {
+      // 轉場卡：停留太短的點擊視為連點，忽略。
+      if (performance.now() - shownAt < MIN_DWELL_MS) return;
+      pendingIntroSceneId = undefined;
+      revealSceneId = scene.id;
+      render(app, engine, content, hooks);
+      return;
+    }
     if (!engine.advance()) return;
     render(app, engine, content, hooks);
     hooks.onAdvance?.();
@@ -166,14 +284,12 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     if ((event.target as HTMLElement).closest('button')) return;
     advance();
   });
-  if (keyHandler) document.removeEventListener('keydown', keyHandler);
-  keyHandler = (event: KeyboardEvent): void => {
+  setKeyHandler((event: KeyboardEvent): void => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     if ((event.target as HTMLElement | null)?.closest('button')) return;
     event.preventDefault();
     advance();
-  };
-  document.addEventListener('keydown', keyHandler);
+  });
 
   app.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((button) => {
     button.addEventListener('click', () => {
@@ -185,6 +301,8 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   app.querySelector<HTMLButtonElement>('#restart')?.addEventListener('click', () => {
     engine.restart();
     lastSceneId = undefined;
+    pendingIntroSceneId = undefined;
+    revealSceneId = undefined;
     render(app, engine, content, hooks);
     hooks.onRestart?.();
   });
