@@ -1,0 +1,4 @@
+{
+  "schemaVersion": 1,
+  "note": "Visual presentation is configured from property/images.json; renderer should not special-case scene IDs."
+}
