@@ -3,7 +3,7 @@ name: "Demo 遊戲企劃"
 type: game-design
 prevalence: project-wide
 story: last-one-on-one
-version: 0.1
+version: 0.2
 target-runtime: "Ren'Py or equivalent visual-novel engine"
 ---
 
@@ -51,10 +51,12 @@ target-runtime: "Ren'Py or equivalent visual-novel engine"
 
 | Ending | 條件建議 | 結果 |
 |--------|----------|------|
-| END 04 越線 | boundary ≤ -2 | 雨澄終止談話並改由 HR 接手；玩家面對正式紀錄 |
+| END 04 越線 | 私下補錢，或在權力關係仍存在時告白，或 boundary ≤ -2 | 雨澄終止談話並改由 HR 接手；玩家面對正式紀錄 |
 | TRUE END 真正的告別 | trust ≥ 6、procedure ≥ 4、boundary ≥ 2、avoidance ≤ 1 | 雨澄保有主動權；所有關係結束後，她主動邀請一杯不談工作的咖啡 |
 | END 02 體面的句點 | procedure ≥ 4、trust ≥ 2、boundary ≥ 0 | 對話不溫暖但完整；兩人以推薦與告別收束 |
 | END 03 柔軟的刀 | 其他 | 漂亮話讓資訊與責任更模糊；雨澄拒絕私人聯絡 |
+
+「私下補錢」與「在權力關係仍存在時告白」是不可被後續正向選擇抵銷的重大越線，兩者都直接進入 END 04。其他行為仍依 boundary 累計判定。結局不以平均分布為目標，TRUE END 維持刻意嚴格的門檻。
 
 ## 玩法倫理
 

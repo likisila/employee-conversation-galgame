@@ -560,7 +560,7 @@ word-count: 970
 
 #### END 04：越線
 
-【條件】boundary ≤ -2
+【條件】CHOICE 4 選 C、CHOICE 5 選 C，或 boundary ≤ -2。前兩項為不可由後續加分抵銷的重大越線。
 
 雨澄站起來，沒有拿桌上的水。
 
