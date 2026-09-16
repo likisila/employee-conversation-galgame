@@ -1,4 +1,4 @@
 [
   { "id": "manager", "displayName": "主管", "role": "玩家角色" },
-  { "id": "employee", "displayName": "小林", "role": "資淺同仁" }
+  { "id": "employee", "displayName": "小林", "role": "加入團隊三個月的資淺同仁" }
 ]

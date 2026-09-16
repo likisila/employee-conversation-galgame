@@ -1,0 +1,27 @@
+{
+  "id": "feedback",
+  "title": "把期待講具體",
+  "lines": [
+    { "speaker": "manager", "text": "我目前看到的是：你願意做，也有基本品質，但遇到模糊需求時會自己撐太久，導致後面重做。" },
+    { "speaker": "employee", "text": "嗯，我常常想說再撐一下，也許自己就會想通。" }
+  ],
+  "choices": [
+    {
+      "id": "specific-expectation",
+      "text": "具體化期待：『如果卡超過三十分鐘，或你有兩種以上合理解讀，就先整理你的判斷再來問。』",
+      "next": "check-understanding",
+      "effects": [
+        { "variable": "clarity", "operation": "add", "value": 2 },
+        { "variable": "ownership", "operation": "add", "value": 1 }
+      ]
+    },
+    {
+      "id": "vague-expectation",
+      "text": "維持模糊：『總之主動一點、判斷力再好一點。』",
+      "next": "action-plan",
+      "effects": [
+        { "variable": "clarity", "operation": "add", "value": -1 }
+      ]
+    }
+  ]
+}

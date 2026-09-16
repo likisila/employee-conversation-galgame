@@ -1,9 +1,11 @@
 {
   "id": "junior-one-on-one",
-  "title": "一對一對話練習",
+  "title": "和資淺同仁的一對一對話",
   "startScene": "intro",
   "initialState": {
     "trust": 0,
-    "clarity": 0
+    "clarity": 0,
+    "psychologicalSafety": 0,
+    "ownership": 0
   }
 }

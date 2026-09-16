@@ -1,0 +1,33 @@
+{
+  "id": "action-plan",
+  "title": "收斂成可以執行的行動",
+  "lines": [
+    { "speaker": "employee", "text": "我想先拿下個 API 串接任務試。我會在開始前先寫出需求理解和不確定點，如果卡住就照剛剛的格式來問。" },
+    { "speaker": null, "text": "你準備結束這次一對一。最後一句話會影響小林帶著什麼感受離開。" }
+  ],
+  "choices": [
+    {
+      "id": "close-with-trust",
+      "text": "『可以。我在意的不只是你有沒有一次做對，也包括你能不能更早暴露風險。我們下週一起看這個方法有沒有幫助。』",
+      "next": "ending-trust",
+      "conditions": [
+        { "variable": "trust", "operator": "gte", "value": 2 },
+        { "variable": "psychologicalSafety", "operator": "gte", "value": 2 },
+        { "variable": "ownership", "operator": "gte", "value": 1 }
+      ]
+    },
+    {
+      "id": "close-with-clarity",
+      "text": "『好，這週就照我們整理的準則做，有問題提早問。』",
+      "next": "ending-clear",
+      "conditions": [
+        { "variable": "clarity", "operator": "gte", "value": 2 }
+      ]
+    },
+    {
+      "id": "close-fragile",
+      "text": "『先這樣吧，下次不要再拖到進度落後。』",
+      "next": "ending-fragile"
+    }
+  ]
+}
