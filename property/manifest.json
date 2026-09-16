@@ -15,5 +15,7 @@
     "scenes/ending-trust.json",
     "scenes/ending-clear.json",
     "scenes/ending-fragile.json"
-  ]
+  ],
+  "cutscenes": "cutscenes.json",
+  "soraCutscenes": "sora-cutscenes.json"
 }

@@ -58,3 +58,26 @@ npm run build
 - JSON Editor / 劇本編輯器，讓非工程師直接改內容。
 - 存檔 / 讀檔。
 - AI 產生 scene draft，但仍存回同一套 schema。
+## Sora 劇情過場
+
+`property/sora-cutscenes.json` 定義七段 8 秒、720p 的 Sora 過場，輸出會直接取代 `public/assets/cutscenes/` 內同名的本機 fallback MP4。完整一輪預估費用上限為 USD 5.60。
+
+先檢查提示，不產生費用：
+
+```bash
+npm run videos:sora -- --dry-run
+```
+
+本機生成：
+
+```bash
+OPENAI_API_KEY="..." SORA_MAX_COST_USD=5.60 npm run videos:sora
+```
+
+也可只生成指定鏡頭：
+
+```bash
+OPENAI_API_KEY="..." npm run videos:sora -- --ids=intro,ending-trust
+```
+
+請勿把 API key 寫入檔案或提交版本控制。若要由 GitHub 生成，將 key 存為 repository secret `OPENAI_API_KEY`，再手動執行 **Generate Sora cutscenes** workflow；成功後 workflow 會提交 MP4 與生成報告。
