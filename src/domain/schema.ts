@@ -91,6 +91,16 @@ export interface Line {
   from?: string;
   /** 只有全部條件成立時才顯示這句；用來呈現「依先前選擇」的分歧台詞。 */
   conditions?: Condition[];
+  /**
+   * 從這一句開始換背景，直到同場景中下一句指定為止。
+   * 用來處理一個場景內的時間／地點跳躍（例如結局的「三週後」）。
+   */
+  background?: string;
+  /**
+   * 從這一句開始指定立繪：角色 ID，或 `null` 代表不顯示任何人（角色已離場）。
+   * 未指定時沿用「跟著說話者走」的規則。
+   */
+  character?: string | null;
 }
 
 /** 依狀態自動決定下一個場景的路由項；由上到下取第一個條件全部成立者。 */
@@ -231,6 +241,10 @@ export function parseLine(raw: unknown): Line {
   if (!isRecord(raw)) throw new Error('line 格式錯誤');
   if (raw.speaker !== null && typeof raw.speaker !== 'string') throw new Error('line.speaker 格式錯誤');
   if (raw.kind !== undefined && !LINE_KINDS.includes(raw.kind as LineKind)) throw new Error(`未知 line.kind: ${String(raw.kind)}`);
+  if (raw.background !== undefined && typeof raw.background !== 'string') throw new Error('line.background 必須是字串');
+  if (raw.character !== undefined && raw.character !== null && typeof raw.character !== 'string') {
+    throw new Error('line.character 必須是字串或 null');
+  }
   const speaker = raw.speaker as string | null;
   let text = stringField(raw, 'text');
   let kind = raw.kind as LineKind | undefined;
@@ -250,7 +264,17 @@ export function parseLine(raw: unknown): Line {
   }
   kind ??= speaker === null ? 'narration' : 'dialogue';
 
-  return { speaker, text, kind, channel, from, conditions: parseConditions(raw.conditions) };
+  return {
+    speaker,
+    text,
+    kind,
+    channel,
+    from,
+    conditions: parseConditions(raw.conditions),
+    background: typeof raw.background === 'string' ? raw.background : undefined,
+    // `'character' in raw` 才能區分「沒有指定」與「指定為 null（不顯示立繪）」。
+    character: 'character' in raw ? (raw.character as string | null) : undefined,
+  };
 }
 
 export function parseScene(raw: unknown): Scene {

@@ -1,6 +1,7 @@
 import type { LoadedContent } from '../data/contentLoader';
 import type { Line } from '../domain/schema';
 import type { StoryEngine } from '../engine/StoryEngine';
+import { resolvePresentation } from './presentation';
 
 /** 標題畫面的行為掛勾。有存檔時提供 onResume，讓玩家選擇繼續。 */
 export interface TitleHooks {
@@ -128,6 +129,8 @@ let revealSceneId: string | undefined;
 let lastSceneId: string | undefined;
 /** 上一次 render 顯示的立繪角色；換人時重播立繪淡入。 */
 let lastCharacterId: string | undefined;
+/** 上一次 render 的背景；同場景內換景（例如結局的「三週後」）時補一次轉場。 */
+let lastBackgroundId: string | undefined;
 /** 量測對話框高度、把立繪底線寫成 CSS 變數；換場景時先解除上一次的觀察。 */
 let panelObserver: ResizeObserver | undefined;
 let resizeHandler: (() => void) | undefined;
@@ -184,6 +187,33 @@ function renderNamePlate(line: Line, content: LoadedContent): string {
   return `<div class="name-plate" data-self="${self}" data-kind="${kind}"><span class="plate-mark" aria-hidden="true"></span><span class="plate-name">${escapeHtml(name)}</span>${tags}</div>`;
 }
 
+/** 朗讀用的說話者前綴：對話與內心報名字，旁白報旁白，訊息報頻道與發送者。 */
+function nameOf(line: Line, content: LoadedContent): string {
+  const kind = line.kind ?? (line.speaker ? 'dialogue' : 'narration');
+  const speakerName = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : '';
+  if (kind === 'narration') return `${content.ui.narratorName}：`;
+  if (kind === 'message') return `${line.channel ? `${line.channel}，` : ''}${line.from ?? speakerName}：`;
+  return `${speakerName}：`;
+}
+
+/**
+ * 螢幕閱讀器播報：每次 render 都會整段換掉 `#app`，重新插入的 live region 不一定會被朗讀，
+ * 因此在 `#app` 之外保留一個常駐的 live region，只更新它的文字。
+ */
+function announce(text: string): void {
+  if (typeof document === 'undefined') return;
+  let region = document.getElementById('story-announcer');
+  if (!region) {
+    region = document.createElement('div');
+    region.id = 'story-announcer';
+    region.className = 'visually-hidden';
+    region.setAttribute('role', 'status');
+    region.setAttribute('aria-live', 'polite');
+    document.body.appendChild(region);
+  }
+  region.textContent = text;
+}
+
 function renderLine(line: Line, content: LoadedContent, progress: string): string {
   const kind = line.kind ?? (line.speaker ? 'dialogue' : 'narration');
   const speakerName = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : '';
@@ -231,11 +261,13 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const line = engine.currentLine;
   const atLast = engine.atLastLine;
   const presentation = content.images.scenePresentation[scene.id];
-  // 立繪跟著說話者走：目前這一句（含）之前最後一位有立繪的說話者（對話或內心都算）。
-  // 沒有這樣的人（例如開場旁白、訊息）才退回場景指定的角色；`character: null` 則一律不顯示。
-  const activeLine = visibleLines.slice(0, lineIndex + 1).reverse().find((item) => item.speaker && content.images.characters[item.speaker]);
-  const speakerCharacterId = activeLine?.speaker ?? undefined;
-  const characterId = presentation?.hideCharacter ? undefined : speakerCharacterId ?? presentation?.character;
+  // 背景與立繪都依「讀到第幾句」決定：台詞可用 background／character 在場景中途換景或送角色離場，
+  // 沒有指定時立繪跟著說話者走，再退回場景層級設定。
+  const { backgroundId, characterId } = resolvePresentation(visibleLines, lineIndex, {
+    presentation,
+    sceneBackground: content.images.sceneBackgrounds[scene.id],
+    hasSprite: (id) => content.images.characters[id] !== undefined,
+  });
   const activeCharacter = characterId ? content.characters.get(characterId) : undefined;
   const sprite = activeCharacter ? content.images.characters[activeCharacter.id] : undefined;
   // 場景指定的表情只套在場景指定的那位角色上；換成別人時用該角色的預設表情。
@@ -243,7 +275,6 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const frame = sprite && expression ? sprite.expressions[expression] ?? sprite.expressions[sprite.defaultExpression] ?? 0 : 0;
   const position = sprite && sprite.columns > 1 ? (frame / (sprite.columns - 1)) * 100 : 0;
 
-  const backgroundId = presentation?.background ?? content.images.sceneBackgrounds[scene.id];
   const background = backgroundId ? content.images.backgrounds[backgroundId] : undefined;
   const sceneTransition = presentation?.transition ?? 'none';
   const enteringScene = lastSceneId !== scene.id;
@@ -258,8 +289,11 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   // settled＝不重播立繪淡入：只有剛進場（無轉場卡）、剛點掉轉場卡，或立繪換人時才播放。
   const characterChanged = lastCharacterId !== characterId;
   lastCharacterId = characterId;
+  const backgroundChanged = !enteringScene && lastBackgroundId !== backgroundId;
+  lastBackgroundId = backgroundId;
   const sameScene = !enteringScene && phase === 'play' && !characterChanged;
-  const transitionId = phase === 'play' && !enteringScene ? 'none' : sceneTransition;
+  // 同場景內換景（結局的時間跳躍）不該是硬切，補一次場景自己的轉場。
+  const transitionId = phase === 'play' && !enteringScene ? (backgroundChanged ? sceneTransition : 'none') : sceneTransition;
   const transition = content.images.transitions[transitionId];
   const transitionAsset = transition?.asset ? content.images.ui[transition.asset] : undefined;
   const dialoguePanel = content.images.ui.dialoguePanel;
@@ -289,9 +323,11 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
       ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
-      <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue" aria-live="polite">${dialogue}${hint}</section><footer>${action}</footer></div>
+      <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue">${dialogue}${hint}</section><footer>${action}</footer></div>
     </section>
   `;
+
+  announce(line ? `${nameOf(line, content)}${line.text}` : scene.title ?? '');
 
   const screenEl = app.querySelector<HTMLElement>('.game-screen');
   const panelEl = app.querySelector<HTMLElement>('.story-panel');
@@ -335,6 +371,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     engine.restart();
     lastSceneId = undefined;
     lastCharacterId = undefined;
+    lastBackgroundId = undefined;
     pendingIntroSceneId = undefined;
     revealSceneId = undefined;
     render(app, engine, content, hooks);

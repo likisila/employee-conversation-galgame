@@ -21,11 +21,20 @@ const hooks: RenderHooks = {
 function currentSceneImages(): Array<string | undefined> {
   const scene = engine.currentScene;
   const presentation = content.images.scenePresentation[scene.id];
-  const backgroundId = presentation?.background ?? content.images.sceneBackgrounds[scene.id];
-  // 立繪跟著說話者走，所以這一場會出現的每位說話者立繪都先載。
-  const spriteIds = new Set<string>([...(presentation?.character ? [presentation.character] : []), ...scene.lines.flatMap((line) => (line.speaker ? [line.speaker] : []))]);
+  // 場景中途可能換景（台詞的 background），這些背景也要一起預載。
+  const backgroundIds = new Set<string>(
+    [presentation?.background ?? content.images.sceneBackgrounds[scene.id], ...scene.lines.map((line) => line.background)].filter(
+      (id): id is string => typeof id === 'string',
+    ),
+  );
+  // 立繪跟著說話者走，所以這一場會出現的每位說話者與被指定的角色立繪都先載。
+  const spriteIds = new Set<string>([
+    ...(presentation?.character ? [presentation.character] : []),
+    ...scene.lines.flatMap((line) => (line.speaker ? [line.speaker] : [])),
+    ...scene.lines.flatMap((line) => (typeof line.character === 'string' ? [line.character] : [])),
+  ]);
   return [
-    backgroundId ? content.images.backgrounds[backgroundId]?.src : undefined,
+    ...[...backgroundIds].map((id) => content.images.backgrounds[id]?.src),
     ...[...spriteIds].map((id) => content.images.characters[id]?.src),
   ];
 }

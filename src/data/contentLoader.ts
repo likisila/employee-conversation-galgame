@@ -56,6 +56,14 @@ export function loadContent(): LoadedContent {
   for (const scene of scenes.values()) {
     for (const line of scene.lines) {
       if (line.speaker && !characters.has(line.speaker)) throw new Error(`場景 ${scene.id} 引用了不存在的角色 ${line.speaker}`);
+      // 台詞層級的換景／換人：晚一步才發現不存在會變成場景中途黑畫面，所以在載入時就擋下來。
+      if (line.background && !images.backgrounds[line.background]) {
+        throw new Error(`場景 ${scene.id} 的台詞背景 ${line.background} 不存在`);
+      }
+      if (typeof line.character === 'string') {
+        if (!characters.has(line.character)) throw new Error(`場景 ${scene.id} 的台詞角色 ${line.character} 不存在`);
+        if (!images.characters[line.character]) throw new Error(`場景 ${scene.id} 的台詞角色 ${line.character} 沒有視覺資產`);
+      }
     }
     for (const choice of scene.choices) {
       if (!scenes.has(choice.next)) throw new Error(`場景 ${scene.id} 的 choice ${choice.id} 指向不存在的 ${choice.next}`);
