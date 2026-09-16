@@ -14,6 +14,7 @@ export interface SpriteSheet {
   columns: number;
   defaultExpression: string;
   expressions: Record<string, number>;
+  align?: 'left' | 'right' | 'center';
 }
 
 export interface BackgroundImage {
@@ -230,12 +231,14 @@ export function parseImages(raw: unknown): ImageCatalog {
       expressions[name] = frame;
     }
     if (typeof value.columns !== 'number' || value.columns < 1) throw new Error(`images.characters.${id}.columns 格式錯誤`);
+    const align = value.align === 'left' || value.align === 'right' || value.align === 'center' ? value.align : undefined;
     characters[id] = {
       src: stringField(value, 'src'),
       alt: stringField(value, 'alt'),
       columns: value.columns,
       defaultExpression: stringField(value, 'defaultExpression'),
       expressions,
+      align,
     };
   }
 

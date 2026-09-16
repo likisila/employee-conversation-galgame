@@ -1,4 +1,6 @@
-.story-panel{background-image:var(--dialogue-panel);background-size:100% 100%;background-repeat:no-repeat}
+/* dialogue-panel.svg 內含固定位置的裝飾橫線（頂部 teal、底部 amber）。以 100% 100%
+   拉伸到動態高度的對話框後，這些線會落到文字上形成遮擋，因此改用 style.css 的
+   CSS 面板樣式（邊框 + teal 頂線 + 實色背景），不再套用該 SVG 當背景。 */
 .choice{background-image:var(--choice-frame);background-size:100% 100%;background-repeat:no-repeat}
 .scene-transition{position:absolute;z-index:20;inset:0;pointer-events:none;background-image:var(--transition-art);background-size:cover;background-position:center;opacity:0}
 .game-screen[data-transition="fade"] .scene-transition{background:#08151d;animation:scene-fade var(--transition-duration) ease-out both}
