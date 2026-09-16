@@ -51,6 +51,14 @@ npm test
 npm run build
 ```
 
+## 部署（GitHub Pages）
+
+`.github/workflows/deploy.yml` 會在 push 到 `main` 時自動 build 並部署到 GitHub Pages。
+
+啟用方式：**Settings → Pages → Build and deployment → Source** 選 **GitHub Actions**。之後每次 push 到 `main` 就會自動更新，網址為 `https://<owner>.github.io/<repo>/`。
+
+因為專案站服務在 `/<repo>/` 子路徑，workflow 以 `--base=/<repo>/` build；`property/images.json` 內的 `/assets/...` 邏輯路徑會在載入時透過 `import.meta.env.BASE_URL` 解析成正確 URL（見 `src/data/assetPath.ts`），資料本身不需修改。
+
 ## 存檔 / 讀檔
 
 進度會自動存進瀏覽器 `localStorage`：玩家每做一次選擇或按繼續，就寫入一份快照（目前場景 + 狀態數值）。
