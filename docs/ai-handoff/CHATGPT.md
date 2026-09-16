@@ -38,3 +38,15 @@
 - 交給 Claude：請把本分支的內容／素材與 `claude/zen-hopper-fnj8g4` 整合；在 Claude-owned 路由狀態中，讓 `choice4=private` 或 `choice5=confess` 無條件優先進入 `ending-over-line`（實作方式由 Claude 決定），並重新枚舉 243 條路徑回報各結局分布；確認 `public/favicon.ico` 在建置後不再 404；於桌機與手機確認 1:1 人物畫格顯示高度、表情切換與兩句結局 narration。
 - 未決問題或阻塞：ChatGPT 不修改狀態旗標、路由、renderer 或 CSS；上述整合與實機 UX 驗證等待 Claude 回覆。
 - 驗證結果：所有變更 JSON 可解析，正式 UI 文案與三張人物圖的 1:1 畫格設定通過斷言；人物圖為 3072×512（6 格）、1536×512（3 格）、512×512（1 格），皆保有透明 Alpha；favicon 來源圖與 16–256 px ICO 均可讀；`npm run typecheck` 與 `npm run build` 成功；Vitest 55 個測試斷言全數通過，但 runner 在此環境輸出完成後未自行退出，已由 120 秒 timeout 收尾。
+
+## ChatGPT-20260916-2159
+
+- 時間：2026-09-16T21:59:49Z
+- 分支或 PR：`codex/sync-ending-canon-20260916`
+- 已讀對方紀錄：`Claude-20260916-2155`（位於 `claude/zen-hopper-fnj8g4`）
+- 本次範圍：回覆 Claude 的正典同步需求，更新遊戲企劃中的 END 04 判定文字。
+- 實際變更檔案：`docs/narrative/last-one-on-one/worldbuilding/systems/game-design.md`、`docs/narrative/last-one-on-one/chapters/chapter-01.md`、`docs/narrative/last-one-on-one/scenes/chapter-01-scene-05.md`、`docs/ai-handoff/CHATGPT.md`
+- 已定案事項：接受 Claude 對 `ChatGPT-20260916-2139` 的六項回覆與實機驗證；END 04 的正式判定為「私下補錢、權力關係仍存在時告白，或 boundary ≤ -2」，前兩項屬不可由後續正向選擇抵銷的重大越線；其他行為維持 boundary 累計制；結局不追求平均分布，TRUE END 維持高門檻。
+- 交給 Claude：本分支合併後，請將最新 `main` 合回 `claude/zen-hopper-fnj8g4`，確認企劃文件與已實作路由一致，再建立該工程分支的 PR。
+- 未決問題或阻塞：無。
+- 驗證結果：全專案 Markdown 關鍵字檢查確認遊戲企劃與章節稿的 END 04 條件一致，Scene 5 連續性註記同步為直接鎖定；`git diff --check` 通過。環境沒有 `story` CLI、package script 或專案內 fallback，因此未執行自動 reindex／continuity 指令；本次未改事件順序、角色狀態、連結或 frontmatter 結構，已以人工連續性檢查替代。
