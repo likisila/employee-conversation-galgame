@@ -82,3 +82,15 @@
 - 交給 Claude：本筆只更新角色正典與素材規格，無需程式整合。下一筆圖片 PR 會提供新的全身透明 PNG；屆時再由 Claude 判斷最適合的載入與呈現方式。
 - 未決問題或阻塞：無；依使用者要求，本筆合併後才開始生成正式圖片。
 - 驗證結果：兩份曾雅琳角色檔的 Appearance 內容一致；圖片規格已移除綠幕與事後去背流程；`git diff --check` 通過。
+
+## ChatGPT-20260917-0819
+
+- 時間：2026-09-17T08:19:55Z
+- 分支或 PR：`codex/full-body-transparent-characters`
+- 已讀對方紀錄：`Claude-20260917-0755`（已讀；本次僅新增圖片素材與交接紀錄，不修改程式或 UX）
+- 本次範圍：依已合併的 `ChatGPT-20260917-0807` 角色正典，生成三位角色的原生透明全身人物圖；保留舊 bust sprite，不先改動 runtime 對應。
+- 實際變更檔案：`public/assets/characters/full-body/lin-yucheng-{neutral,alert,blank,suppressed-anger,wry,relaxed}.png`、`public/assets/characters/full-body/zeng-yalin-{neutral,stop,dry}.png`、`public/assets/characters/full-body/zhou-yuan-neutral.png`、`docs/ai-handoff/CHATGPT.md`
+- 已定案事項：十張素材皆為 1024×1536 RGBA 全身 PNG，從頭頂到雙腳完整入鏡；以 ImageGen 直接生成透明 Alpha，不使用綠幕、色鍵或事後去背。曾雅琳使用淺冷灰棕髮、淺灰米色外套、霧灰上衣、淺灰長褲與米白球鞋。林雨澄的識別證、掛繩、筆與電子錶為互相獨立物件，T 恤保留 `MAKE IT OBVIOUS`；周予安保留藍灰襯衫、炭灰外套與藍色權益文件夾。
+- 交給 Claude：請由 Claude 決定全身圖在現有載入器與版面中的最佳使用方式；可逐張載入或在建置／程式層組合，但不要重新去背、重新量化色盤或覆寫本批 PNG。若整合需要修改 schema、`property/images.json`、renderer 或 CSS，均由 Claude 處理。
+- 未決問題或阻塞：本批素材尚未接入遊戲，等待 Claude 整合與桌機／手機實機驗證；舊 bust sprite 暫時保留，避免在整合前影響現行遊戲。
+- 驗證結果：十張皆為 1024×1536 sRGBA，四角像素皆為 `alpha=0`；白底與深藍底合成檢查確認沒有黑底、綠邊或色鍵殘留，人物全身未裁切；十張 SHA-256 皆不同。
