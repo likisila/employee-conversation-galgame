@@ -11,11 +11,20 @@
 /* 一句一句：單句對話、點畫面前進的提示 */
 .game-screen[data-advance="true"]{cursor:pointer}
 .game-screen[data-advance="true"] .story-panel{cursor:pointer}
-.dialogue{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:7.5rem;overflow:visible;padding-right:2rem}
+.dialogue{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:7.5rem;overflow:visible;padding-right:2rem;padding-left:1.9rem}
 .line{padding:.2rem 0 .4rem}.line+.line{border-top:0}
 .line p{font-size:1.12rem;line-height:1.8}
 .advance-hint{position:absolute;right:.25rem;bottom:.1rem;color:var(--teal);font-size:.85rem;animation:advance-bob 1.1s ease-in-out infinite}
 @keyframes advance-bob{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(.25rem);opacity:1}}
+/* 回上一句：對話框左側 1/3 是回溯區，左緣三個往左的小箭頭既是提示，也是可聚焦的按鈕。
+   左側留白固定保留（同右側的前進提示），箭頭出現或消失時台詞不會左右跳動。 */
+.back-hint{position:absolute;left:-.2rem;top:50%;z-index:1;display:flex;align-items:center;gap:.06rem;padding:.4rem .2rem;transform:translateY(-50%);border:0;background:none;color:var(--teal);font-size:.58rem;line-height:1;cursor:pointer}
+.back-hint span{opacity:.8;animation:back-drift 1.5s ease-in-out infinite}
+.back-hint span:nth-child(2){animation-delay:.13s}
+.back-hint span:first-child{animation-delay:.26s}
+.back-hint:hover,.back-hint:focus-visible{color:var(--amber)}
+.back-hint:hover span,.back-hint:focus-visible span{opacity:1}
+@keyframes back-drift{0%,100%{transform:translateX(0);opacity:.35}50%{transform:translateX(-.18rem);opacity:1}}
 @media(max-width:700px){.dialogue{min-height:6rem}.line p{font-size:1.02rem}}
 /* 同場景內逐句前進：不重播立繪淡入 */
 .game-screen[data-settled="true"] .character-sprite{animation:none}

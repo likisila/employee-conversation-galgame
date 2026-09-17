@@ -9,10 +9,18 @@ export interface StorySnapshot {
   lineIndex?: number;
 }
 
+/** 回溯上限：最多保留這麼多步，避免長流程無限累積快照。 */
+const HISTORY_LIMIT = 200;
+
 export class StoryEngine {
   private sceneId: string;
   private state: GameState;
   private lineIndex = 0;
+  /**
+   * 可回溯的進度快照（最舊在前）。玩家做出選擇後整串清空，
+   * 因為做過選擇的那一頁不允許回去重選；載入存檔與重新開始也從零算起。
+   */
+  private history: StorySnapshot[] = [];
 
   constructor(private readonly content: LoadedContent) {
     this.sceneId = content.game.startScene;
@@ -50,6 +58,11 @@ export class StoryEngine {
     return this.lineIndex >= this.visibleLines.length - 1;
   }
 
+  /** 是否還有上一句可以回去。 */
+  get canGoBack(): boolean {
+    return this.history.length > 0;
+  }
+
   get availableChoices(): Choice[] {
     return this.currentScene.choices.filter((choice) => isChoiceAvailable(choice, this.state));
   }
@@ -60,6 +73,7 @@ export class StoryEngine {
    */
   advance(): boolean {
     if (!this.atLastLine) {
+      this.remember();
       this.lineIndex += 1;
       return true;
     }
@@ -70,22 +84,40 @@ export class StoryEngine {
     return false;
   }
 
+  /**
+   * 回到上一句（跨場景時回到上一場的最後一句）。
+   * 沒有可回溯的紀錄時不動作並回傳 false；做過選擇的那一頁不會留在紀錄裡。
+   */
+  back(): boolean {
+    const previous = this.history.pop();
+    if (!previous) return false;
+    this.sceneId = previous.sceneId;
+    this.state = { ...previous.state };
+    this.lineIndex = previous.lineIndex ?? 0;
+    return true;
+  }
+
   choose(choiceId: string): void {
     const choice = this.availableChoices.find((item) => item.id === choiceId);
     if (!choice) throw new Error(`選項不存在或條件未滿足：${choiceId}`);
     this.state = applyChoiceEffects(choice, this.state);
+    // 選擇一旦定案就不能回頭重選，因此連同之前的回溯紀錄一起清掉。
+    this.history = [];
     this.goTo(choice.next);
   }
 
   continue(): void {
     const next = this.currentScene.next;
-    if (next) this.goTo(next);
+    if (!next) return;
+    this.remember();
+    this.goTo(next);
   }
 
   restart(): void {
     this.sceneId = this.content.game.startScene;
     this.state = { ...this.content.game.initialState };
     this.lineIndex = 0;
+    this.history = [];
     this.settle();
   }
 
@@ -105,9 +137,17 @@ export class StoryEngine {
     this.sceneId = snapshot.sceneId;
     this.state = { ...snapshot.state };
     this.lineIndex = 0;
+    // 存檔只記錄停在哪一句，沒有回溯紀錄可還原。
+    this.history = [];
     this.settle();
     const max = Math.max(0, this.visibleLines.length - 1);
     this.lineIndex = Math.min(Math.max(0, Math.floor(snapshot.lineIndex ?? 0)), max);
+  }
+
+  /** 前進前先把目前這一句記進回溯紀錄。 */
+  private remember(): void {
+    this.history.push(this.snapshot);
+    if (this.history.length > HISTORY_LIMIT) this.history.shift();
   }
 
   private goTo(sceneId: string): void {
