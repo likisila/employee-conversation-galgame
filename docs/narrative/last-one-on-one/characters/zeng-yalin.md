@@ -22,7 +22,7 @@ arc: keep-the-process-human-without-pretending-it-is-kind
 
 ## Appearance
 
-34 歲，HR Business Partner。深色西裝外套配球鞋，平板保護殼貼著一張「本文件不是文化」貼紙。說話時很少做多餘動作，遇到荒謬公司術語會停半秒再翻成白話。
+34 歲，HR Business Partner。肩長的淺冷灰棕髮，穿淺灰米色合身西裝外套、霧灰上衣、淺灰直筒長褲與米白球鞋，配戴低調耳環。平板保護殼貼著一張「本文件不是文化」貼紙。整體色調明亮、克制且專業，不使用漂白金髮、甜美校園感或過度柔和的造型。說話時很少做多餘動作，遇到荒謬公司術語會停半秒再翻成白話。
 
 ## Personality & Traits
 
