@@ -101,6 +101,12 @@ const MIN_DWELL_MS = 350;
 /** 對話框左側這個比例的區塊是「回上一句」，其餘照舊是「下一句」。 */
 const BACK_ZONE_RATIO = 1 / 3;
 
+/**
+ * 回上一句的三個小箭頭：直接用 inline SVG 畫出實心三角形，不依賴字型字元，
+ * 也不需要圖片素材；顏色沿用 `currentColor`，大小與動畫都交給 CSS。
+ */
+const BACK_ARROWS = '<svg class="back-arrow" viewBox="0 0 8 10" aria-hidden="true" focusable="false"><polygon points="8,0 8,10 0,5"/></svg>'.repeat(3);
+
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
@@ -321,7 +327,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   // 停在轉場卡時畫面上還沒有台詞，不提供回溯。
   const canGoBack = phase !== 'intro' && engine.canGoBack;
   const backHint = canGoBack
-    ? `<button type="button" class="back-hint" id="back" aria-label="${escapeHtml(content.ui.backLabel)}"><span aria-hidden="true">◀</span><span aria-hidden="true">◀</span><span aria-hidden="true">◀</span></button>`
+    ? `<button type="button" class="back-hint" id="back" aria-label="${escapeHtml(content.ui.backLabel)}">${BACK_ARROWS}</button>`
     : '';
 
   const choices = atLast
