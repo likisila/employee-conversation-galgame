@@ -317,3 +317,31 @@
 - 交給 ChatGPT：上述第 4 點。改好素材後不需要我做任何程式整合——`scene-wipe.svg` 是直接由 `images.json` 的 `ui.sceneWipe` 引用，換檔即生效。
 - 未決問題或阻塞：轉場卡目前維持原狀（標題仍被線劃過），等 ChatGPT 修素材。
 - 驗證結果：本次只新增交接紀錄，未改任何程式；`git diff --check` 通過。工作區已確認與 `main`（`140dbc4`）除本筆紀錄外完全一致。
+
+## Claude-20260917-1120
+
+- 時間：2026-09-17T11:20:00Z
+- 分支或 PR：`claude/blissful-euler-3q2stv`（PR 見下）
+- 已讀對方紀錄：`ChatGPT-20260917-0858`（無新紀錄）
+- 本次範圍：使用者回報「部分場景人物沒有顯示」。我做了全場景稽核並釐清成因，**依使用者決定交由 ChatGPT 判斷怎麼修，本次不含任何程式或資料變更**，只有這筆交接紀錄。
+- 稽核結果（以正式內容逐場逐句跑 `resolvePresentation` ＋ `resolveCharacterFraming`）：
+
+  | 場景 | 背景 | 無立繪的句數 | 成因 |
+  | --- | --- | --- | --- |
+  | `s4-notice` | `cg-rights-packet` | **5／5（整場）** | 背景的 `characterFraming: none` |
+  | `s6-receipt` | `cg-rights-packet` | **14／14（整場）** | 同上 |
+  | `ending-true` | 會議室＋中途換 CG | 17／33 | 部分是 CG 段落（`none`），部分是劇本用 `character: null` 讓角色離場 |
+  | `ending-soft-knife` | 同上 | 9／16 | 同上 |
+  | `ending-decent` | 同上 | 5／11 | 同上 |
+  | `ending-over-line` | 同上 | 8／9 | 同上 |
+  | `s1`／`s3`／`s5`／`s7` | 辦公室／會議室 | 0 | 正常顯示 |
+  | `content-warning`／`s2-invite` 首句 | — | 少數句 | 開場旁白，還沒有人說話（既有行為） |
+
+- 成因說明：`cg-rights-packet` 被 `s4-notice` 與 `s6-receipt` 當成**整場**的背景，而 `ChatGPT-20260917-0858` 的取景規格把這張 CG 定為 `none`（不疊立繪）。規格本身有道理——這張 CG 已經畫了三個人（三雙手圍著圓桌），再疊一個全身立繪會變成畫面上有四個人。但結果是這兩場（合計 19 句對白，含 s6 的整場簽收攻防）從頭到尾看不到任何人。
+- 交給 ChatGPT（三選一，屬背景／分鏡決定，我不自行更動）：
+  1. **換這兩場的背景**：`images.json` 的 `sceneBackgrounds` 把 `s4-notice`／`s6-receipt` 改回 `moon-meeting-room-rain`，CG 只保留給某幾句當短暫鏡頭（台詞層級的 `background` 已支援）。這樣人物會以半身出現，與 s3／s5／s7 一致。
+  2. **換一張沒有人的 CG**：如果這兩場要維持 CG 感，提供一張只有資料夾／桌面、不含人物的版本，我再把 `characterFraming` 改成 `upper-body`。
+  3. **維持現狀**：確認這兩場刻意不出現人物，我就不動，並在此記錄結案。
+- 另請一併確認：結局中 `cg-badge-flip`、`cg-true-reflection` 的段落目前也是 `none`（短暫鏡頭），以及劇本自己寫的 `character: null` 離場段落——這些看起來是刻意的分鏡，我維持不動，如果其中有非預期的請指出。
+- 未決問題或阻塞：上述三選一未定前，s4／s6 維持沒有人物。
+- 驗證結果：本次只新增交接紀錄，未改程式或資料；`git diff --check` 通過，工作區與 `main`（`0b3374f`）除本筆紀錄外完全一致。稽核是以 `loadContent()` 載入正式內容、對每一場的每一句實際呼叫 renderer 用的同兩個函式得出，不是目測。
