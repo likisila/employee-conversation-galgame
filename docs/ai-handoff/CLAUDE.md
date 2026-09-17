@@ -97,3 +97,18 @@
   2. **箭頭的視覺規格請由 ChatGPT 定案**。目前是 Claude 為了讓功能可用而擺上的最小呈現：字型字元 `◀` ×3、青色（`var(--teal)`，hover／focus 轉 `var(--amber)`）、字級 0.58rem、字元間距 0.06rem、由右至左依序亮起並微微左移的波浪動畫，貼齊對話框左緣並垂直置中。字元、字級、顏色、間距與動畫節奏若要調整，請給規格，Claude 照做；Claude 不再自行更動箭頭的視覺形式。
 - 未決問題或阻塞：無。
 - 驗證結果：`npm run typecheck`、`npm test`（9 檔 78 測試）、`npm run build` 全數成功。Chromium 實機重跑同一份逐項檢查（桌機 1280×800 與手機 390×844）：箭頭字元回到 `◀◀◀`、三種觸發方式、跨場景回退不重播轉場卡、選擇後不可回頭、讀檔後不可回溯、右側 2/3 維持前進，結果與 `Claude-20260917-0045` 完全一致。主控台僅有沙箱代理阻擋 Google Fonts 的 `ERR_CERT_AUTHORITY_INVALID`（與本次變更無關）。
+
+## Claude-20260917-0205
+
+- 時間：2026-09-17T02:05:00Z
+- 分支或 PR：`claude/elegant-wozniak-evo2rc`（PR #22 已合併，本分支自最新 `main` 重新拉出）
+- 已讀對方紀錄：`ChatGPT-20260916-2159`（無更新的新紀錄）
+- 本次範圍：依使用者指示，把回上一句的箭頭移到與右側前進提示 `▼` 同高的位置。
+- 實際變更檔案：`src/style.css`、`docs/ai-handoff/CLAUDE.md`
+- 已定案事項：
+  1. 箭頭原本垂直置中於對話框（`top:50%`），改為與 `▼` 對齊。兩個提示共用 `.dialogue` 上的 `--hint-bottom`（距底 .1rem）與 `--hint-size`（▼ 字級 .85rem），`▼` 的視覺中心落在距底 `--hint-bottom + --hint-size / 2`。
+  2. 回溯按鈕保留 1.4rem 高度方便點擊，`bottom` 以 `calc(var(--hint-bottom) + (var(--hint-size) - var(--back-hint-height)) / 2)` 把自己的中心推回同一條線，因此兩邊字級不同仍然同高；不是寫死的數字，日後調整任一邊的字級或距底只需改變數。
+  3. 此為使用者直接指示的版位調整，非 Claude 自行決定的視覺設計；箭頭的字元、字級、顏色與動畫維持不變，仍由 ChatGPT 定案。
+- 交給 ChatGPT：與 `Claude-20260917-0155` 相同，`property/ui.json` 的 `backLabel` 仍未補（目前落在程式預設值「回到上一句」）；箭頭視覺規格仍待 ChatGPT 定案。
+- 未決問題或阻塞：無。
+- 驗證結果：`npm run typecheck`、`npm test`（9 檔 78 測試）、`npm run build` 全數成功。Chromium 實機停掉動畫後量測兩個提示的視覺中心：桌機 1280×800 為 752.20 vs 752.22 px、手機 390×844 為 735.55 vs 735.56 px，差距 0.02 px（次像素捨入），並以截圖確認外觀對齊。另補記 PR #22 的部署驗收：GitHub Actions run #28 的 `typecheck`／`test`／`vite build --base=/employee-conversation-galgame/`／`deploy-pages` 全綠（40 秒完成）；本機以相同指令重現 base-path build，首頁與 `/favicon.ico` 皆回 200。線上站台 `likisila.github.io` 在本執行環境被出口政策阻擋（403），未能親自點擊驗收。
