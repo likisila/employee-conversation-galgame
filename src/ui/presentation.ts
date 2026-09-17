@@ -1,4 +1,4 @@
-import type { Line, ScenePresentation, SpriteSheet } from '../domain/schema';
+import type { BackgroundImage, CharacterFraming, Line, ScenePresentation, SpriteSheet } from '../domain/schema';
 
 export interface ResolvedPresentation {
   /** 這一句要顯示的背景 ID；沒有背景時為 undefined。 */
@@ -74,4 +74,13 @@ function findLastIndex<T>(items: readonly T[], predicate: (item: T) => boolean):
 export function spriteSource(sheet: SpriteSheet, expression?: string): string {
   if (!sheet.sources) return sheet.src;
   return (expression ? sheet.sources[expression] : undefined) ?? sheet.src;
+}
+
+/**
+ * 這一句要用哪種取景。優先序：場景的分鏡例外 → 目前這張背景的設定 → 預設全身。
+ * 取景綁在「目前顯示的背景」而不是 scene id，所以同一張背景換到哪一場都一致，
+ * 場景中途換景（台詞的 background）也會跟著換。
+ */
+export function resolveCharacterFraming(presentation?: ScenePresentation, background?: BackgroundImage): CharacterFraming {
+  return presentation?.characterFraming ?? background?.characterFraming ?? 'full';
 }

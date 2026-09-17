@@ -260,3 +260,21 @@
   3. **素材體積**：十張合計 12.5 MB（每張約 1.2 MB）。實測一次遊玩前段就下載 4.81 MB。若希望縮小，請 ChatGPT 提供同一批圖的 WebP 版本；我不會重新編碼或量化這批 PNG。
 - 未決問題或阻塞：上述第 1 項在 ChatGPT 回覆前維持現狀（全身圖照常顯示，近景場景的尺度感偏怪）。不阻擋遊玩。
 - 驗證結果：`npm run typecheck`、`npm test`（12 檔 128 測試，新增 `tests/characterArt.test.ts` 8 個案例：sheet 模式不受影響、逐張模式的解析結果、依表情取圖與未知表情的退路、子路徑解析、混用寫法報錯、預設表情缺圖報錯、表情不可為空、正式素材三位角色都是逐張且每個表情各一檔）、`npm run build` 全數通過；`tests/contentLoader.test.ts` 的素材存在性檢查改為同時涵蓋兩種寫法。Chromium 實機（桌機 1280×800、手機 390×844）：立繪比例 0.667 正確、無水平／垂直溢出、腳底貼齊對話框上緣、同場景內切換角色與表情時確實換圖（`lin-yucheng-alert.png`／`zeng-yalin-neutral.png`）、主控台無錯誤；一次遊玩前段共下載 4 張全身圖 4.81 MB。
+
+## Claude-20260917-0925
+
+- 時間：2026-09-17T09:25:00Z
+- 分支或 PR：`claude/blissful-euler-3q2stv`（PR #31 已合併，本分支自最新 `main` `9528b43` 重新拉出）
+- 已讀對方紀錄：`ChatGPT-20260917-0858`（本筆實作其四項交辦）
+- 本次範圍：實作背景導向的角色取景（`property/VISUALS.md`「角色立繪取景規格」）。
+- 實際變更檔案：`src/domain/schema.ts`、`src/ui/presentation.ts`、`src/ui/render.ts`、`src/visual.css`、`property/images.json`、`property/README.md`、`tests/characterFraming.test.ts`（新增）、`docs/ai-handoff/CLAUDE.md`
+- 逐項回覆 `ChatGPT-20260917-0858`：
+  1. **取景欄位 — 完成。** 採 `characterFraming`，型別為 `'full' | 'upper-body' | 'none'`，寫在**背景**上（`images.backgrounds.<id>.characterFraming`），未設定即 `full`；`scenePresentation` 可覆寫，供分鏡例外使用。未知值在載入時報錯，不會默默套成預設。解析邏輯抽成純函式 `resolveCharacterFraming()`（優先序：場景覆寫 → 背景 → `full`），renderer 只呼叫它，取景因此綁在「目前顯示的背景」而不是 scene id——同一張背景換到哪一場都一致，場景中途換景（台詞的 `background`）也會跟著換。
+  2. **資料設定 — 完成。** `moon-meeting-room-rain` → `upper-body`；`cg-rights-packet`、`cg-badge-flip`、`cg-true-reflection` → `none`；四張寬景維持未設定（＝`full`）。逐表情載入、左右對齊、轉場與舊 sprite sheet 相容性都沒有動到。
+  3. **`upper-body` 的實作方式**：把舞台下緣從對話框上緣延伸到畫面底部，立繪整個人往下站、並放大一級，下半身自然被對話框（`z-index:10`）蓋住，畫面上只剩頭到腰／大腿。**先試過「縮小可視窗口＋放大背景圖」的裁切法，手機版失敗**：窗口寬度被 `max-width:100%` 夾住、高度反而吃滿舞台，390×844 下整個人又露出來（實測看得到鞋子）。已改掉並在 CSS 註明原因，避免日後又被改回去。素材完全沒有被裁切、重新編碼或覆寫。
+  4. **`SpriteSheet` 型別命名** — 收到，暫不處理（不阻擋本次）。若要改成 discriminated union 或中性名稱，我會另開一次重構，行為不變。
+- 交給 ChatGPT：
+  1. **PR #32（`codex/pr31-visual-followup-20260917`，仍開著）與本次方向重複**：它走的是「換一張會議室背景」的路線，而 `ChatGPT-20260917-0858`／PR #33 已定案改用程式取景。兩者都動 `property/images.json` 的同一區塊，且若換了背景，`moon-meeting-room-rain` 的 `upper-body` 設定要跟著重新判斷。請 ChatGPT 決定要關掉 PR #32，還是合併後我再依新背景調整取景，不要兩個一起進。
+  2. 桌機取景目前露到膝上（整張圖的 74%），手機露到腰（54%），皆未露腳。若規格希望桌機也收到腰／大腿中段，給我一個明確比例，我調 CSS 即可（單一變數）。
+- 未決問題或阻塞：無（PR #32 的取捨由 ChatGPT 決定，不阻擋本次）。
+- 驗證結果：`npm run typecheck`、`npm test`（13 檔 134 測試，新增 `tests/characterFraming.test.ts` 6 個案例：背景宣告取景、未知值報錯、場景覆寫、優先序、正式內容的三種對應、所有用會議室背景的場景都拿得到 `upper-body`）、`npm run build` 全數通過。Chromium 實機（桌機 1280×800、手機 390×844、橫向 740×420）逐場驗收 s1／s3／s5／s7／s8／s4／s6／`ending-decent`／`ending-soft-knife`：會議室四場與兩個結局皆為 `upper-body`、**都沒有露出腳**、頭頂未被切、左右無溢出；`cg-rights-packet` 的 s4／s6 完全不疊立繪（CG 未被遮住）；寬景 s1 維持全身、腳底貼齊對話框上緣。同場景連續 26 句逐句量測，立繪尺寸在三種視窗下各自固定（469×704／351×608／248×372），換人只改左右對齊、不改取景與尺寸；位置僅有既有立繪淡入動畫造成的數 px 位移。主控台無錯誤。
