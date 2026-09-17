@@ -112,3 +112,22 @@
 - 交給 ChatGPT：與 `Claude-20260917-0155` 相同，`property/ui.json` 的 `backLabel` 仍未補（目前落在程式預設值「回到上一句」）；箭頭視覺規格仍待 ChatGPT 定案。
 - 未決問題或阻塞：無。
 - 驗證結果：`npm run typecheck`、`npm test`（9 檔 78 測試）、`npm run build` 全數成功。Chromium 實機停掉動畫後量測兩個提示的視覺中心：桌機 1280×800 為 752.20 vs 752.22 px、手機 390×844 為 735.55 vs 735.56 px，差距 0.02 px（次像素捨入），並以截圖確認外觀對齊。另補記 PR #22 的部署驗收：GitHub Actions run #28 的 `typecheck`／`test`／`vite build --base=/employee-conversation-galgame/`／`deploy-pages` 全綠（40 秒完成）；本機以相同指令重現 base-path build，首頁與 `/favicon.ico` 皆回 200。線上站台 `likisila.github.io` 在本執行環境被出口政策阻擋（403），未能親自點擊驗收。
+
+## Claude-20260917-0225
+
+- 時間：2026-09-17T02:25:00Z
+- 分支或 PR：`claude/elegant-wozniak-evo2rc`（PR #23 已合併，本分支自 `main` 重新拉出）
+- 已讀對方紀錄：`ChatGPT-20260916-2159`（無更新的交接紀錄；但 `main` 已由 PR #24 加入 `public/assets/cutscenes/02_layoff_notification.mp4`，該次未留下 ChatGPT Entry，見下方待確認事項）
+- 本次範圍：依使用者指示，把回上一句的箭頭釘在對話框最下方、位置固定。
+- 實際變更檔案：`src/ui/render.ts`、`src/style.css`、`src/visual.css`、`docs/ai-handoff/CLAUDE.md`
+- 已定案事項：
+  1. 箭頭按鈕的 DOM 位置從 `.dialogue` 內移到 `.story-panel` 的直接子層，改以 `left`／`bottom` 釘在對話框左下角；高度固定 `--back-hint-height: 1.4rem`、距底固定 `--back-hint-bottom: .3rem`。不論台詞幾行、有沒有選項、面板多高，位置都不再變動。
+  2. 修正前的實測：桌機一直在距面板底 31.8px，但手機版在出現選項時會從距面板底 100.4px 跳到 288.2px。修正後三種情境（一般台詞／換行數不同／選項頁）在桌機與手機都固定為距面板底 5.8px、高 22.4px、距面板左 5.8px。
+  3. 連帶修掉一個實際缺陷：手機是單欄版面、選項直接排在對話框底部，箭頭釘到左下角後會壓在最後一個選項按鈕上（箭頭在上層，會吃掉該處的點擊）。已在 `visual.css` 的手機 media query 讓面板底部多留一條箭頭高度的空間。桌機是雙欄、選項在右欄，不會相撞，因此不動。
+  4. 面板留白的擁有者是 `visual.css` 的 `--panel-pad`（該檔在 `style.css` 之後載入，`padding` 簡寫會蓋掉 `style.css` 的 `padding-bottom`），所以這條留白寫在 `visual.css`，不是 `style.css`。
+- 交給 ChatGPT：
+  1. `property/ui.json` 仍缺 `backLabel`（沿續 `Claude-20260917-0155`）。
+  2. 箭頭視覺規格（字元、字級、顏色、間距、動畫）仍待 ChatGPT 定案。本次為使用者直接指示的版位調整。
+  3. `.dialogue` 目前仍保留 1.9rem 的左側留白，那是箭頭還在對話區內時為了避免壓字而加的；箭頭移走後這段留白已無功能，只剩與右側 2rem 對稱的視覺效果。要保留或移除請 ChatGPT 決定，Claude 不自行更動。
+- 未決問題或阻塞：PR #24 加入的過場影片沒有對應的 ChatGPT 交接紀錄，且目前引擎完全沒有影片播放能力（詳見下一筆）。
+- 驗證結果：`npm run typecheck`、`npm test`（9 檔 78 測試）、`npm run build` 全數成功。Chromium 實機（桌機 1280×800、手機 390×844）確認位置固定如上；以 `elementFromPoint` 逐一檢查每個選項按鈕的四個角，修正前手機版有 1 個角被箭頭蓋住，修正後為 0；桌機修正前後都是 0。另比對改動前後的建置：橫向 740×420 有 6 個角落在面板可視範圍外，改動前後數字相同，屬既有的面板捲動行為，非本次造成。行為回歸（點箭頭、`ArrowLeft`、點左 1/3、選擇後箭頭消失）在兩種尺寸皆通過，無 pageerror。

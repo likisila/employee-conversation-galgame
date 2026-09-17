@@ -80,7 +80,10 @@
 /* 手機：出現選項時對話框可再高一點，減少框內捲動 */
 @media(max-width:700px){
   .game-screen[data-has-choices="true"] .story-panel{max-height:68dvh}
-  .story-panel{--panel-pad:1rem}
+  /* 手機是單欄，選項直接排在對話框底部，會撞到釘在左下角的回溯箭頭（箭頭在上層，會把選項
+     按鈕那一角的點擊吃掉）。底部多留一條箭頭的高度，兩者就不重疊。桌機是雙欄、選項在右欄，
+     不會相撞，因此不動。 */
+  .story-panel{--panel-pad:1rem;padding-bottom:calc(var(--panel-pad) + var(--back-hint-bottom) + var(--back-hint-height))}
   .name-plate{font-size:1rem;padding:.32rem 1.1rem .3rem .8rem}
   .message-avatar{width:2rem;height:2rem;font-size:.66rem}
   .scene-intro .tap-hint{margin-top:2rem}

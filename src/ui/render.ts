@@ -342,7 +342,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
       ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
-      <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue">${backHint}${dialogue}${hint}</section><footer>${action}</footer></div>
+      <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue">${dialogue}${hint}</section><footer>${action}</footer>${backHint}</div>
     </section>
   `;
 
