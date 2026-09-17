@@ -6,10 +6,14 @@
 - `game.json`：遊戲標題、起始場景與初始變數。
 - `characters.json`：角色 ID、顯示名稱、職稱等。
 - `ui.json`：按鈕與 UI 文案。引擎對每個欄位都有預設值，沒寫的欄位就落在預設值上；通關後的決策點選單另需 `rewindLabel`（開啟按鈕）、`rewindPrompt`（選單標題）、`rewindChoiceLabel`（「你選了：」前綴）、`rewindCloseLabel`（關閉按鈕）。
-- `images.json`：立繪、背景、轉場與每個場景的視覺設定。背景可用 `characterFraming` 決定立繪取景：`full`（全身，預設）、`upper-body`（只露頭到腰／大腿，下半身藏在對話框後）、`none`（不疊立繪，給劇情 CG）。取景跟著背景走，不寫死場景；`scenePresentation` 也可以覆寫，但只在確有分鏡例外時才寫。手機版（寬度 700px 以下）另有例外：依使用者指示，不分背景一律只露半身、依角色左右對齊微偏一邊，`none` 仍然不顯示立繪。角色立繪有兩種寫法，由 `expressions` 的值決定（同一個角色不可混用）：
+- `images.json`：立繪、背景、轉場與每個場景的視覺設定。背景可用 `characterFraming` 決定立繪取景：`full`（全身，預設）、`upper-body`（只露頭到腰／大腿，下半身藏在對話框後）、`none`（不疊立繪，給劇情 CG）。取景跟著背景走，不寫死場景；`scenePresentation` 也可以覆寫，但只在確有分鏡例外時才寫。**實際版位依使用者指示一律是半身**：桌機與橫版立繪站在對話框左邊、蓋住對話框，台詞往右讓開，`upper-body` 只是鏡頭再推近一級；手機直版則置中、依角色左右對齊微偏一邊。`none` 在哪種版位都不顯示立繪。角色立繪有兩種寫法，由 `expressions` 的值決定（同一個角色不可混用）：
   - **逐張表情圖**（目前三位角色都用這種）：值是該表情自己的圖片路徑，例如 `"alert": "/assets/characters/full-body/lin-yucheng-alert.png"`。不需要 `src` 與 `columns`。
   - **sprite sheet**：值是畫格索引，另外宣告 `src` 與 `columns`。
   兩種都用 `frameAspectRatio`（單格寬／高）決定立繪框比例；全身圖為 1024×1536，所以是 `0.6667`。
+  立繪路徑一律寫原始 PNG 的位置；瀏覽器實際下載的是 `npm run assets:sprites` 產生的同尺寸 WebP
+  交付檔（`/assets/characters/web/*.webp`，約為原檔的 6%），換算在程式端處理，資料不必也不該改寫。
+  **ChatGPT 換過 `full-body/` 裡任何一張 PNG 後，請執行一次 `npm run assets:sprites` 並一併提交交付檔**；
+  忘了做的話 `npm test` 會直接指出哪一張過期。
 - `scenes/*.json`：對話、選項、條件、效果與跳轉。
 - `sora-cutscenes.json`：真人微電影過場的 Sora 提示、鏡頭與連戲規則（由 GPT 維護）；`cutscenes.json` 只保存影片格式與缺檔策略。兩者目前皆不由 runtime 載入，接線見 `coordination/handoff/HANDOFF-20260916-cutscene-integration.md`。
 

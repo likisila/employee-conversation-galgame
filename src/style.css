@@ -11,10 +11,14 @@
 /* 一句一句：單句對話、點畫面前進的提示 */
 .game-screen[data-advance="true"]{cursor:pointer}
 .game-screen[data-advance="true"] .story-panel{cursor:pointer}
-.dialogue{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:7.5rem;overflow:visible;padding-right:2rem;--hint-bottom:.1rem;--hint-size:.85rem}
+.dialogue{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:7.5rem;overflow:visible;padding-right:2rem}
 .line{padding:.2rem 0 .4rem}.line+.line{border-top:0}
 .line p{font-size:1.12rem;line-height:1.8}
-.advance-hint{position:absolute;right:.25rem;bottom:var(--hint-bottom);color:var(--teal);font-size:var(--hint-size);line-height:1;animation:advance-bob 1.1s ease-in-out infinite}
+/* 下一句的 ▼：釘在對話框（.story-panel）的右下角，和左下角的回溯箭頭對稱。
+   原本掛在 .dialogue 裡，位置會跟著台詞長短上下跑（手機直版一句話一行與三行差很多）；
+   改釘在面板上之後，不論台詞幾行、有沒有選項都停在同一個位置。
+   純裝飾（aria-hidden），不吃點擊，點到它等同點畫面。 */
+.advance-hint{position:absolute;right:.75rem;bottom:var(--hint-bottom);z-index:1;pointer-events:none;color:var(--teal);font-size:var(--hint-size);line-height:1;animation:advance-bob 1.1s ease-in-out infinite}
 @keyframes advance-bob{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(.25rem);opacity:1}}
 /* 回上一句：對話框左側 1/3 是回溯區，左下角的單一左箭頭既是提示，也是可聚焦的按鈕。
    外觀依 property/VISUALS.md 的「互動控制元件規格」：由程式產生的線框 inline SVG（圖示 20×20、
@@ -23,7 +27,7 @@
    位置釘在對話框（.story-panel）的左下角，不是 .dialogue 內：尺寸固定 --back-hint-size、
    距底固定 --back-hint-bottom，所以不論台詞幾行、有沒有選項、面板變多高都停在同一個位置。
    先前掛在 .dialogue 裡時，手機版出現選項會讓它從距面板底 100px 跳到 288px。 */
-.story-panel{--back-hint-size:2.75rem;--back-hint-bottom:.1rem}
+.story-panel{--back-hint-size:2.75rem;--back-hint-bottom:.1rem;--hint-bottom:.1rem;--hint-size:.85rem}
 .back-hint{position:absolute;left:.1rem;bottom:var(--back-hint-bottom);z-index:1;box-sizing:border-box;width:var(--back-hint-size);height:var(--back-hint-size);display:flex;align-items:center;justify-content:center;padding:0;border:0;background:none;color:var(--teal);line-height:0;cursor:pointer;transition:color 160ms}
 .back-hint:hover,.back-hint:focus-visible{color:var(--amber)}
 .back-hint--enter .icon{animation:back-hint-in 180ms ease-out both}

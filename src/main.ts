@@ -4,7 +4,7 @@ import { loadContent } from './data/contentLoader';
 import { SaveStore } from './data/saveStore';
 import { StoryEngine, type StorySnapshot } from './engine/StoryEngine';
 import { spriteSource } from './ui/presentation';
-import { preloadImages, render, renderLoading, renderTitle, type RenderHooks } from './ui/render';
+import { preloadImages, prefetchImages, render, renderLoading, renderTitle, type RenderHooks } from './ui/render';
 
 const app = document.querySelector<HTMLElement>('#app');
 if (!app) throw new Error('#app not found');
@@ -47,9 +47,24 @@ function currentSceneImages(): Array<string | undefined> {
   ];
 }
 
+/**
+ * 遊戲中還會用到的其他圖：其餘角色表情、所有背景與劇情 CG。
+ * 這些不擋讀取畫面，等瀏覽器閒下來再背景預取，之後換場景、換表情就不用現場等。
+ * 立繪交付檔是 WebP（見 src/data/assetPath.ts），十張合計不到 1 MB，一次全拿很划算。
+ */
+function remainingGameImages(): Array<string | undefined> {
+  return [
+    ...Object.values(content.images.backgrounds).map((background) => background.src),
+    ...Object.values(content.images.characters).flatMap((sheet) => [sheet.src, ...Object.values(sheet.sources ?? {})]),
+  ];
+}
+
 function enterGame(): void {
   // 讀取完成後停在讀取畫面，等玩家點擊才進入。
-  renderLoading(app!, content, preloadImages(currentSceneImages()), () => render(app!, engine, content, hooks));
+  renderLoading(app!, content, preloadImages(currentSceneImages()), () => {
+    render(app!, engine, content, hooks);
+    prefetchImages(remainingGameImages());
+  });
 }
 
 function startNewGame(): void {
