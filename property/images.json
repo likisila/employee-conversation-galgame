@@ -44,7 +44,8 @@
     "moon-meeting-room-rain": {
       "src": "/assets/backgrounds/moon-meeting-room-rain.webp",
       "alt": "玻璃牆貼著卡通太空人的月球會議室，圓桌上有三杯水與藍色資料夾",
-      "focalPoint": "50% 48%"
+      "focalPoint": "50% 48%",
+      "characterFraming": "upper-body"
     },
     "rainy-arcade-night": {
       "src": "/assets/backgrounds/rainy-arcade-night.webp",
@@ -64,17 +65,20 @@
     "cg-rights-packet": {
       "src": "/assets/cg/cg-rights-packet.webp",
       "alt": "藍色權益資料夾位於桌面中央，三個人的手都沒有碰它",
-      "focalPoint": "50% 52%"
+      "focalPoint": "50% 52%",
+      "characterFraming": "none"
     },
     "cg-badge-flip": {
       "src": "/assets/cg/cg-badge-flip.webp",
       "alt": "林雨澄在會議室門口把公司識別證翻到背面",
-      "focalPoint": "58% 48%"
+      "focalPoint": "58% 48%",
+      "characterFraming": "none"
     },
     "cg-true-reflection": {
       "src": "/assets/cg/cg-true-reflection.webp",
       "alt": "咖啡店玻璃映出兩名沒有佩戴公司識別證的成年人",
-      "focalPoint": "50% 50%"
+      "focalPoint": "50% 50%",
+      "characterFraming": "none"
     }
   },
   "sceneBackgrounds": {

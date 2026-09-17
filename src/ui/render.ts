@@ -4,7 +4,7 @@ import type { StoryEngine } from '../engine/StoryEngine';
 import { playCutscene } from './cutscene';
 import { icon } from './icons';
 import { setKeyHandler } from './keyboard';
-import { resolvePresentation, spriteSource } from './presentation';
+import { resolveCharacterFraming, resolvePresentation, spriteSource } from './presentation';
 
 /** 標題畫面的行為掛勾。有存檔時提供 onResume，讓玩家選擇繼續。 */
 export interface TitleHooks {
@@ -305,7 +305,11 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     sceneBackground: content.images.sceneBackgrounds[scene.id],
     hasSprite: (id) => content.images.characters[id] !== undefined,
   });
-  const activeCharacter = characterId ? content.characters.get(characterId) : undefined;
+  const background = backgroundId ? content.images.backgrounds[backgroundId] : undefined;
+  // 取景由「目前這張背景」決定（規格見 property/VISUALS.md）：寬景全身、會議室近景只露上半身、
+  // 劇情 CG 不疊立繪。場景可在確有分鏡需求時覆寫；都沒寫就是 full。
+  const framing = resolveCharacterFraming(presentation, background);
+  const activeCharacter = framing === 'none' || !characterId ? undefined : content.characters.get(characterId);
   const sprite = activeCharacter ? content.images.characters[activeCharacter.id] : undefined;
   // 場景指定的表情只套在場景指定的那位角色上；換成別人時用該角色的預設表情。
   const expression = (characterId === presentation?.character ? presentation?.expression : undefined) ?? sprite?.defaultExpression;
@@ -314,7 +318,6 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   // 逐張素材時每個表情是一張獨立的圖；sprite sheet 則永遠是同一張，靠 --position 位移。
   const spriteUrl = sprite ? spriteSource(sprite, expression) : undefined;
 
-  const background = backgroundId ? content.images.backgrounds[backgroundId] : undefined;
   const sceneTransition = presentation?.transition ?? 'none';
   // 回上一句：把「上一次 render」的紀錄對齊這一句，避免被當成進新場景而重播轉場卡與淡入。
   if (steppingBack) {
@@ -335,8 +338,9 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const phase: 'intro' | 'reveal' | 'play' = pendingIntroSceneId === scene.id ? 'intro' : revealSceneId === scene.id ? 'reveal' : 'play';
   if (phase === 'reveal') revealSceneId = undefined;
   // settled＝不重播立繪淡入：只有剛進場（無轉場卡）、剛點掉轉場卡，或立繪換人時才播放。
-  const characterChanged = lastCharacterId !== characterId;
-  lastCharacterId = characterId;
+  const shownCharacterId = activeCharacter?.id;
+  const characterChanged = lastCharacterId !== shownCharacterId;
+  lastCharacterId = shownCharacterId;
   const backgroundChanged = !enteringScene && lastBackgroundId !== backgroundId;
   lastBackgroundId = backgroundId;
   const sameScene = !enteringScene && phase === 'play' && !characterChanged;
@@ -383,7 +387,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       ${phase === 'intro' ? `<div class="scene-intro" role="status"><p class="eyebrow">${escapeHtml(content.game.title)}</p>${scene.title ? `<h2>${escapeHtml(scene.title)}</h2>` : ''}<p class="tap-hint">${escapeHtml(content.ui.tapToContinueLabel)}</p></div>` : ''}
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
-      ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(spriteUrl ?? sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
+      ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}" data-framing="${escapeHtml(framing)}"><div class="character-sprite" style="--sprite:url('${escapeHtml(spriteUrl ?? sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
       <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue">${dialogue}${hint}</section><footer>${action}</footer>${backHint}</div>
     </section>
   `;

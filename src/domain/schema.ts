@@ -30,10 +30,22 @@ export interface SpriteSheet {
   align?: 'left' | 'right' | 'center';
 }
 
+/**
+ * 立繪在這張背景上的取景方式（規格見 property/VISUALS.md「角色立繪取景規格」）。
+ * 原始素材永遠是完整全身圖，取景只在顯示階段處理，不另外裁切或重新編碼素材。
+ *
+ * - `full`：全身，腳底落在地面視覺區（有地板的寬景）。
+ * - `upper-body`：近景只露頭到腰／大腿，下緣由舞台裁掉，不露腳（會議室桌面特寫）。
+ * - `none`：不疊立繪（劇情 CG 本身已是敘事主體）。
+ */
+export type CharacterFraming = 'full' | 'upper-body' | 'none';
+
 export interface BackgroundImage {
   src: string;
   alt: string;
   focalPoint?: string;
+  /** 這張背景上的立繪取景；未設定時視為 `full`。 */
+  characterFraming?: CharacterFraming;
 }
 
 export interface TransitionSpec {
@@ -43,6 +55,8 @@ export interface TransitionSpec {
 
 export interface ScenePresentation {
   background?: string;
+  /** 分鏡例外：覆寫背景決定的取景。只有確有需要時才寫。 */
+  characterFraming?: CharacterFraming;
   character?: string;
   /** `character: null`：這一場不顯示任何立繪（例如背景已是描繪該角色的 CG），也不做說話者 fallback。 */
   hideCharacter?: boolean;
@@ -408,9 +422,25 @@ export function parseCutsceneCues(raw: unknown): CutsceneCue[] {
   });
 }
 
+const CHARACTER_FRAMINGS: readonly CharacterFraming[] = ['full', 'upper-body', 'none'];
+
+/** 取景欄位：沒寫就是 undefined（由呼叫端當成 `full`），寫了就必須是已知的值。 */
+function parseCharacterFraming(value: unknown, label: string): CharacterFraming | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'string' || !CHARACTER_FRAMINGS.includes(value as CharacterFraming)) {
+    throw new Error(`${label} 必須是 ${CHARACTER_FRAMINGS.join(' / ')} 之一`);
+  }
+  return value as CharacterFraming;
+}
+
 function parseBackground(raw: unknown, label: string): BackgroundImage {
   if (!isRecord(raw)) throw new Error(`${label} 格式錯誤`);
-  return { src: stringField(raw, 'src'), alt: stringField(raw, 'alt'), focalPoint: typeof raw.focalPoint === 'string' ? raw.focalPoint : undefined };
+  return {
+    src: stringField(raw, 'src'),
+    alt: stringField(raw, 'alt'),
+    focalPoint: typeof raw.focalPoint === 'string' ? raw.focalPoint : undefined,
+    characterFraming: parseCharacterFraming(raw.characterFraming, `${label}.characterFraming`),
+  };
 }
 
 export function parseImages(raw: unknown): ImageCatalog {
@@ -504,6 +534,7 @@ export function parseImages(raw: unknown): ImageCatalog {
     if (!isRecord(value)) throw new Error(`images.scenePresentation.${id} 格式錯誤`);
     scenePresentation[id] = {
       background: typeof value.background === 'string' ? value.background : undefined,
+      characterFraming: parseCharacterFraming(value.characterFraming, `images.scenePresentation.${id}.characterFraming`),
       character: typeof value.character === 'string' ? value.character : undefined,
       hideCharacter: value.character === null ? true : undefined,
       expression: typeof value.expression === 'string' ? value.expression : undefined,
