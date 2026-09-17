@@ -41,6 +41,25 @@
 .line--message.is-self .message-bubble{border-radius:12px 4px 12px 12px;background:#3d3f7a}
 .line--message.is-self .message-avatar{background:#8b5cf6}
 
+/* ───── 私訊的打字與送出（見 src/ui/typing.ts） ─────
+   訊息逐字打出來、標點後停一下、打完停一下才送出；宣告了 drafts 的台詞會先演一次
+   「打了又刪掉」。這裡只是文字特效與一個游標，沒有新的視覺元件——泡泡、顏色、字體
+   全部沿用上面的訊息卡樣式，正式的視覺規格若要調整由 ChatGPT 定案。
+
+   .line-sizer 是整段過程中最長的一段文字，visibility:hidden 只用來把高度先撐好；
+   .line-live 疊在它上面顯示打到哪裡。沒有這一層的話，每多打出一行對話框就往上長一次。 */
+.line-text{position:relative}
+.line-sizer{visibility:hidden}
+.line-live{position:absolute;inset:0}
+.line.is-composing .line-live::after{content:'';display:inline-block;width:2px;height:1.05em;margin-left:2px;vertical-align:-.16em;background:currentColor;animation:caret-blink 1s step-end infinite}
+@keyframes caret-blink{0%,100%{opacity:1}50%{opacity:0}}
+/* 還沒送出：泡泡壓暗一點，讀起來是「輸入框裡的字」而不是已經送到對方那邊的訊息。 */
+.line--message.is-composing .message-bubble{opacity:.78}
+.line--message.is-sent .message-bubble{animation:message-send 240ms ease-out both}
+@keyframes message-send{from{opacity:.65;transform:translateY(.3rem) scale(.985)}to{opacity:1;transform:none}}
+/* 打字期間不顯示「下一句」的 ▼：這一句還沒說完。點畫面＝立刻打完，不前進。 */
+.game-screen[data-typing="true"] .advance-hint{visibility:hidden}
+
 /* ───── 名牌：說話者名字放在對話框上緣，不混在台詞裡 ─────
    仿一般文字冒險的名牌：貼著面板頂線的小標籤，右側斜切。其他角色琥珀色、玩家自己青色並加「你」，
    面板頂線跟著名牌換色，讓「現在是誰在說」一眼可辨。 */

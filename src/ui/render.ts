@@ -5,6 +5,7 @@ import { playCutscene } from './cutscene';
 import { icon } from './icons';
 import { setKeyHandler } from './keyboard';
 import { resolveCharacterFraming, resolvePresentation, spriteSource } from './presentation';
+import { planTyping, runTyping, type TypingHandle, type TypingPlan } from './typing';
 
 /** 標題畫面的行為掛勾。有存檔時提供 onResume，讓玩家選擇繼續。 */
 export interface TitleHooks {
@@ -172,6 +173,15 @@ let choiceStepSceneId: string | undefined;
  */
 let backHintShown = false;
 /**
+ * 正在播放的打字特效（私訊）。畫面每次重畫都會先中止它；播放期間點畫面＝立刻打完，不前進。
+ */
+let activeTyping: TypingHandle | undefined;
+/**
+ * 已經播過打字特效的台詞（`場景 ID#第幾句`）。同一句只演一次：
+ * 回上一句再前進、或在同一場來回時不該每次都重打一遍。重新開始與回到決策點會清空。
+ */
+const typedLines = new Set<string>();
+/**
  * 忘掉上一次 render 的場景紀錄，讓下一次 render 把目前場景當成「剛進場」：
  * 重播轉場卡與立繪淡入。重新開始與回到決策點這兩種跳躍都要這樣宣告。
  */
@@ -184,6 +194,13 @@ function resetSceneTracking(): void {
   steppingBack = false;
   backHintShown = false;
   choiceStepSceneId = undefined;
+  typedLines.clear();
+}
+
+/** 使用者要求減少動態時不播打字特效，直接顯示整句。 */
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 /*
@@ -248,11 +265,23 @@ function announce(text: string): void {
   region.textContent = text;
 }
 
-function renderLine(line: Line, content: LoadedContent, progress: string): string {
+/**
+ * 台詞的文字節點。要播打字特效時多包一層：
+ * `.line-sizer` 是整段最長的文字、`visibility:hidden` 只用來把高度先撐好，
+ * `.line-live` 疊在它上面顯示目前打到哪裡。否則打字時每多一行，對話框就會往上長一次。
+ */
+function renderText(line: Line, typing: TypingPlan | undefined): string {
+  if (!typing) return `<p>${escapeHtml(line.text)}</p>`;
+  return `<p class="line-text"><span class="line-sizer" aria-hidden="true">${escapeHtml(typing.sizerText)}</span><span class="line-live"></span></p>`;
+}
+
+function renderLine(line: Line, content: LoadedContent, progress: string, typing?: TypingPlan): string {
   const kind = line.kind ?? (line.speaker ? 'dialogue' : 'narration');
   const speakerName = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : '';
   const self = line.speaker !== null && line.speaker === content.game.player;
-  const text = `<p>${escapeHtml(line.text)}</p>`;
+  const text = renderText(line, typing);
+  // 打字期間先掛上 is-composing（游標、訊息泡泡壓暗）；打完由 render 拿掉。
+  const composing = typing ? ' is-composing' : '';
 
   switch (kind) {
     case 'thought': {
@@ -260,7 +289,7 @@ function renderLine(line: Line, content: LoadedContent, progress: string): strin
       // 邊框虛線、底色透明，讀起來是「沒說出口的話」。
       const thinker = speakerName || content.ui.narratorName;
       const avatar = avatarText(content, line.speaker ?? undefined, thinker);
-      return `<article class="line line--thought${self ? ' is-self' : ''}" data-kind="thought" data-line="${progress}">
+      return `<article class="line line--thought${self ? ' is-self' : ''}${composing}" data-kind="thought" data-line="${progress}">
         <div class="message-row">
           <span class="message-avatar" aria-hidden="true">${escapeHtml(avatar)}</span>
           <div class="message-bubble">${text}</div>
@@ -268,13 +297,13 @@ function renderLine(line: Line, content: LoadedContent, progress: string): strin
       </article>`;
     }
     case 'narration':
-      return `<article class="line line--narration" data-kind="narration" data-line="${progress}" aria-label="${escapeHtml(content.ui.narratorName)}">${text}</article>`;
+      return `<article class="line line--narration${composing}" data-kind="narration" data-line="${progress}" aria-label="${escapeHtml(content.ui.narratorName)}">${text}</article>`;
     case 'message': {
       const senderId = line.speaker ?? findCharacterByName(content, line.from);
       const sender = line.from ?? speakerName;
       const selfMessage = senderId !== undefined && senderId === content.game.player;
       const avatar = avatarText(content, senderId, sender);
-      return `<article class="line line--message${selfMessage ? ' is-self' : ''}" data-kind="message" data-line="${progress}">
+      return `<article class="line line--message${selfMessage ? ' is-self' : ''}${composing}" data-kind="message" data-line="${progress}">
         <div class="message-meta">${line.channel ? `<span class="message-channel">${escapeHtml(line.channel)}</span>` : ''}</div>
         <div class="message-row">
           <span class="message-avatar" aria-hidden="true">${escapeHtml(avatar)}</span>
@@ -284,12 +313,42 @@ function renderLine(line: Line, content: LoadedContent, progress: string): strin
     }
     default:
       // 對話：名字在名牌上，這裡只放台詞。
-      return `<article class="line line--dialogue${self ? ' is-self' : ''}" data-kind="dialogue" data-line="${progress}">${text}</article>`;
+      return `<article class="line line--dialogue${self ? ' is-self' : ''}${composing}" data-kind="dialogue" data-line="${progress}">${text}</article>`;
   }
+}
+
+/**
+ * 把打字特效接到剛畫好的台詞上：文字寫進 `.line-live`（高度由旁邊的 `.line-sizer` 撐著，
+ * 所以打字時對話框不會一行一行變高），打完拿掉 `is-composing`，訊息再加一次 `is-sent` 的送出動作。
+ */
+function startTyping(app: HTMLElement, plan: TypingPlan, typingKey: string): void {
+  const screen = app.querySelector<HTMLElement>('.game-screen');
+  const article = app.querySelector<HTMLElement>('.dialogue .line');
+  const live = app.querySelector<HTMLElement>('.dialogue .line-live');
+  const paragraph = live?.parentElement;
+  if (!screen || !article || !live || !paragraph) return;
+
+  activeTyping = runTyping(plan, {
+    write: (text) => { live.textContent = text; },
+    onSend: () => { article.classList.add('is-sent'); },
+    onDone: () => {
+      // 演完就把撐高度的那一層拆掉，DOM 回到「沒有特效時本來就會長的樣子」，
+      // 文字不再一式兩份（複製、選取、之後的版位量測都以這一份為準）。
+      paragraph.classList.remove('line-text');
+      paragraph.textContent = plan.finalText;
+      article.classList.remove('is-composing');
+      screen.dataset.typing = 'false';
+      typedLines.add(typingKey);
+      activeTyping = undefined;
+    },
+  });
 }
 
 export function render(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks = {}): void {
   const scene = engine.currentScene;
+  // 畫面要重畫了：上一句的打字特效連同它的計時器一起收掉，不要寫進已經被換掉的節點。
+  activeTyping?.cancel();
+  activeTyping = undefined;
 
   // 進入掛有過場影片的場景時，先播影片再進場景。已看過（含跳過）的不重播；
   // 缺檔或載入失敗由播放器自行跳過，直接進入正式場景。
@@ -372,8 +431,15 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const canAdvance = phase === 'intro' || !atLast
     || (availableChoices.length > 0 && !atChoiceStep)
     || (scene.next !== undefined && !scene.ending);
+  // 私訊的打字特效：訊息逐字打出來再送出，宣告了 drafts 的台詞先演一次「打了又刪掉」。
+  // 只在這一句「第一次往前讀到」時播：停在轉場卡（台詞還看不到）、回上一句、以及使用者
+  // 要求減少動態時都直接顯示整句。
+  const typingKey = `${scene.id}#${lineIndex}`;
+  const typing = line && !atChoiceStep && phase !== 'intro' && !typedLines.has(typingKey) && !prefersReducedMotion()
+    ? planTyping(line)
+    : undefined;
   // 選項頁只放選項：不顯示台詞與名牌，對話框因此矮一截。想重看那一句就按回上一句。
-  const dialogue = line && !atChoiceStep ? renderLine(line, content, `${lineIndex + 1}/${visibleLines.length}`) : '';
+  const dialogue = line && !atChoiceStep ? renderLine(line, content, `${lineIndex + 1}/${visibleLines.length}`, typing) : '';
   const namePlate = line && !atChoiceStep ? renderNamePlate(line, content) : '';
   const speakingSelf = !atChoiceStep && line !== undefined && line.speaker !== null && line.speaker === content.game.player;
   const hint = canAdvance ? `<span class="advance-hint" aria-hidden="true">▼</span>` : '';
@@ -407,7 +473,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       : '';
 
   app.innerHTML = `
-    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-can-back="${canGoBack}" data-settled="${sameScene}" data-has-choices="${atChoiceStep}" data-portrait="${sprite !== undefined}" data-framing="${escapeHtml(framing)}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}${sprite?.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}">
+    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-can-back="${canGoBack}" data-typing="${typing !== undefined}" data-settled="${sameScene}" data-has-choices="${atChoiceStep}" data-portrait="${sprite !== undefined}" data-framing="${escapeHtml(framing)}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}${sprite?.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}">
       <div class="scene-transition" aria-hidden="true" style="--transition-art:${cssUrl(transitionAsset)}"></div>
       ${phase === 'intro' ? `<div class="scene-intro" role="status"><p class="eyebrow">${escapeHtml(content.game.title)}</p>${scene.title ? `<h2>${escapeHtml(scene.title)}</h2>` : ''}<p class="tap-hint">${escapeHtml(content.ui.tapToContinueLabel)}</p></div>` : ''}
       <div class="scene-scrim" aria-hidden="true"></div>
@@ -417,10 +483,18 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     </section>
   `;
 
+  // 播報用的 live region 一開始就拿到整句：螢幕閱讀器不必等打字演完。
   announce(atChoiceStep ? content.ui.choicePrompt : line ? `${nameOf(line, content)}${line.text}` : scene.title ?? '');
+
+  if (typing) startTyping(app, typing, typingKey);
 
   const shownAt = performance.now();
   const advance = (): void => {
+    // 還在打字：先把這一句打完，不前進。
+    if (activeTyping) {
+      activeTyping.finish();
+      return;
+    }
     if (phase === 'intro') {
       // 轉場卡：停留太短的點擊視為連點，忽略。
       if (performance.now() - shownAt < MIN_DWELL_MS) return;
@@ -476,6 +550,12 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   app.querySelector<HTMLElement>('.game-screen')?.addEventListener('click', (event) => {
     // 按鈕（選項、重來、回上一句）各自處理；其他地方點一下就是「下一句」。
     if ((event.target as HTMLElement).closest('button')) return;
+    // 打字進行中：點畫面任何地方都是「不等了，直接打完」，包含左側的回溯區——
+    // 玩家這時想做的是跳過動畫，不是回上一句。真的要回去還有左下角的箭頭與 ArrowLeft。
+    if (activeTyping) {
+      activeTyping.finish();
+      return;
+    }
     if (isBackZone(event)) {
       goBack();
       return;

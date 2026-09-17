@@ -117,6 +117,13 @@ export interface Line {
   /** 只有全部條件成立時才顯示這句；用來呈現「依先前選擇」的分歧台詞。 */
   conditions?: Condition[];
   /**
+   * 「打字又刪除」的草稿：依序打進輸入框、停一下、再逐字刪掉，最後才是這句的正式內容。
+   *
+   * 給私訊這種「在輸入框裡反覆改寫」的段落用。字串本身是既有台詞裡已經寫過的草稿原文
+   * （例如 s2「我寫下『方便聊聊嗎』，刪掉」），這裡只是把它標記成可以演出來的一段。
+   */
+  drafts?: string[];
+  /**
    * 從這一句開始換背景，直到同場景中下一句指定為止。
    * 用來處理一個場景內的時間／地點跳躍（例如結局的「三週後」）。
    */
@@ -292,6 +299,9 @@ export function parseLine(raw: unknown): Line {
   if (raw.character !== undefined && raw.character !== null && typeof raw.character !== 'string') {
     throw new Error('line.character 必須是字串或 null');
   }
+  if (raw.drafts !== undefined && (!Array.isArray(raw.drafts) || !raw.drafts.every((draft) => typeof draft === 'string' && draft.length > 0))) {
+    throw new Error('line.drafts 必須是非空字串的陣列');
+  }
   const speaker = raw.speaker as string | null;
   let text = stringField(raw, 'text');
   let kind = raw.kind as LineKind | undefined;
@@ -318,6 +328,7 @@ export function parseLine(raw: unknown): Line {
     channel,
     from,
     conditions: parseConditions(raw.conditions),
+    drafts: Array.isArray(raw.drafts) ? (raw.drafts as string[]) : undefined,
     background: typeof raw.background === 'string' ? raw.background : undefined,
     // `'character' in raw` 才能區分「沒有指定」與「指定為 null（不顯示立繪）」。
     character: 'character' in raw ? (raw.character as string | null) : undefined,

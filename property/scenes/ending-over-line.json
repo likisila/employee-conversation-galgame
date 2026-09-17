@@ -10,7 +10,7 @@
     { "speaker": "lin-yucheng", "text": "你說你不想假裝這只是工作。" },
     { "speaker": null, "kind": "narration", "text": "她沒有回頭。" },
     { "speaker": "lin-yucheng", "text": "但在你有權力的時候，它就必須先是工作。" },
-    { "speaker": null, "kind": "narration", "text": "門關上。私訊視窗的輸入框出現「對不起，我只是——」。我按住退格鍵。這一次，刪掉不是為了找到更漂亮的說法，是因為她已經說了不要。" },
+    { "speaker": null, "kind": "narration", "text": "門關上。私訊視窗的輸入框出現「對不起，我只是——」。我按住退格鍵。這一次，刪掉不是為了找到更漂亮的說法，是因為她已經說了不要。", "drafts": ["對不起，我只是——"] },
     { "speaker": null, "kind": "narration", "text": "END 04：越線" },
     { "speaker": null, "kind": "narration", "text": "喜歡不會自動取消權力。尊重從停止追問開始。" }
   ],

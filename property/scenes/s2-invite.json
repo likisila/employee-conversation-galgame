@@ -3,7 +3,7 @@
   "title": "邀請",
   "lines": [
     { "speaker": null, "kind": "narration", "text": "16:43。雨澄的私訊視窗，輸入框空白。" },
-    { "speaker": "zhou-yuan", "kind": "thought", "text": "游標閃了六次。我寫下「方便聊聊嗎」，刪掉。寫下「關於下季安排」，刪掉。" },
+    { "speaker": "zhou-yuan", "kind": "thought", "text": "游標閃了六次。我寫下「方便聊聊嗎」，刪掉。寫下「關於下季安排」，刪掉。", "drafts": ["方便聊聊嗎", "關於下季安排"] },
     { "speaker": "zhou-yuan", "kind": "thought", "text": "每一種緩衝，看起來都像替我自己鋪的軟墊。" }
   ],
   "choices": [
