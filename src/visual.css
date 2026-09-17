@@ -209,8 +209,13 @@
     --panel-inset-left:max(0px,calc(var(--portrait-lead) + .75rem - 1rem - var(--panel-pad)));
     padding-left:calc(var(--panel-pad) + var(--panel-inset-left));
   }
-  /* 名牌靠內距推過去即可（它本來就以 --panel-pad 的負邊界貼在內容左緣外側）；
-     回上一句箭頭是絕對定位、不吃內距，要自己加上同一段位移。 */
+  /* 名牌：原本的造型是「掛在面板左上角、跨在頂線上的頁籤」（右緣斜切，所以讀起來是從左邊長出來的）。
+     內容往右讓開之後，名牌跟著移到台詞欄左緣，那個造型就變成一塊浮在頂線中央的貼紙，很怪。
+     有立繪時改成收進面板內、當台詞上方的標籤：不再跨頂線（拿掉負的上邊界），並補一點下邊界。
+     台詞區的最小高度同時收掉一截，讓名牌占掉的高度不會又把對話框撐高。 */
+  .game-screen[data-portrait="true"] .name-plate{margin-top:calc(var(--panel-pad) * -.5);margin-bottom:.35rem}
+  .game-screen[data-portrait="true"] .dialogue{min-height:4.5rem}
+  /* 回上一句箭頭是絕對定位、不吃內距，要自己加上同一段位移。 */
   .game-screen[data-portrait="true"] .back-hint{left:calc(var(--panel-inset-left) + .1rem)}
 }
 
