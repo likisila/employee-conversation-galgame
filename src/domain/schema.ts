@@ -135,6 +135,10 @@ export interface Manifest {
   scenes: string[];
   ui?: string;
   images?: string;
+  /** 影片格式與缺檔策略（ChatGPT 維護的內容設定）。 */
+  cutscenes?: string;
+  /** 過場影片掛在哪個引擎場景之前（Claude 維護的技術對應）。 */
+  cutsceneCues?: string;
 }
 
 export interface UiCopy {
@@ -153,6 +157,12 @@ export interface UiCopy {
   tapToContinueLabel: string;
   /** 回到上一句的按鈕標籤（螢幕閱讀器用）。 */
   backLabel: string;
+  /** 過場影片的「跳過」按鈕文字。 */
+  skipCutsceneLabel: string;
+  /** 過場影片的靜音切換按鈕標籤（螢幕閱讀器用）。 */
+  muteCutsceneLabel: string;
+  /** 過場影片本身的替代說明（螢幕閱讀器用）。 */
+  cutsceneLabel: string;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -180,6 +190,8 @@ export function parseManifest(raw: unknown): Manifest {
     scenes: raw.scenes,
     ui: typeof raw.ui === 'string' ? raw.ui : undefined,
     images: typeof raw.images === 'string' ? raw.images : undefined,
+    cutscenes: typeof raw.cutscenes === 'string' ? raw.cutscenes : undefined,
+    cutsceneCues: typeof raw.cutsceneCues === 'string' ? raw.cutsceneCues : undefined,
   };
 }
 
@@ -314,7 +326,63 @@ export function parseUi(raw: unknown): UiCopy {
     playerLabel: typeof value.playerLabel === 'string' ? value.playerLabel : '你',
     tapToContinueLabel: typeof value.tapToContinueLabel === 'string' ? value.tapToContinueLabel : '點擊畫面繼續',
     backLabel: typeof value.backLabel === 'string' ? value.backLabel : '回到上一句',
+    skipCutsceneLabel: typeof value.skipCutsceneLabel === 'string' ? value.skipCutsceneLabel : '跳過',
+    muteCutsceneLabel: typeof value.muteCutsceneLabel === 'string' ? value.muteCutsceneLabel : '靜音',
+    cutsceneLabel: typeof value.cutsceneLabel === 'string' ? value.cutsceneLabel : '過場影片',
   };
+}
+
+/**
+ * 過場影片的播放設定。語意來源是 ChatGPT 維護的 `property/cutscenes.json`；
+ * 這裡只取執行端真正會用到的欄位，其餘（Sora prompt、style bible）不進 runtime。
+ */
+export interface CutsceneSettings {
+  /** 缺少 MP4 時的行為。目前只支援 `skip-video-and-enter-canonical-scene`。 */
+  missingAssetBehavior: 'skip-video-and-enter-canonical-scene';
+}
+
+/** 一段過場影片掛在哪個引擎場景之前。 */
+export interface CutsceneCue {
+  /** 對應 `property/sora-cutscenes.json` 的 item id。 */
+  id: string;
+  /** MP4 檔名，需與 sora manifest 的 `file` 一致（由測試把關）。 */
+  file: string;
+  /** sora manifest 的敘事層 trigger，原樣保留供對照與測試。 */
+  trigger: string;
+  /** 進入這個引擎場景前播放。 */
+  scene: string;
+  /** 解析後的影片 URL。 */
+  src: string;
+}
+
+export function parseCutsceneSettings(raw: unknown): CutsceneSettings {
+  const value = isRecord(raw) ? raw : {};
+  // 目前只有一種策略；出現未知值時視為錯誤，避免默默用了非預期行為。
+  const behavior = value.missingAssetBehavior;
+  if (behavior !== undefined && behavior !== 'skip-video-and-enter-canonical-scene') {
+    throw new Error(`cutscenes.missingAssetBehavior 不支援：${String(behavior)}`);
+  }
+  return { missingAssetBehavior: 'skip-video-and-enter-canonical-scene' };
+}
+
+export function parseCutsceneCues(raw: unknown): CutsceneCue[] {
+  const value = isRecord(raw) ? raw : {};
+  if (!Array.isArray(value.cues)) throw new Error('cutscene-cues.cues 必須是陣列');
+  const directory = typeof value.directory === 'string' ? value.directory.replace(/\/$/, '') : '/assets/cutscenes';
+  const seenIds = new Set<string>();
+  const seenScenes = new Set<string>();
+  return value.cues.map((item, index) => {
+    if (!isRecord(item)) throw new Error(`cutscene-cues.cues[${index}] 格式錯誤`);
+    const id = stringField(item, 'id');
+    const file = stringField(item, 'file');
+    const scene = stringField(item, 'scene');
+    if (seenIds.has(id)) throw new Error(`cutscene-cues 有重複的 id：${id}`);
+    // 一個場景只掛一段影片，否則進場時該播哪一段是未定義的。
+    if (seenScenes.has(scene)) throw new Error(`cutscene-cues 的場景 ${scene} 掛了多段影片`);
+    seenIds.add(id);
+    seenScenes.add(scene);
+    return { id, file, scene, trigger: stringField(item, 'trigger'), src: `${directory}/${file}` };
+  });
 }
 
 function parseBackground(raw: unknown, label: string): BackgroundImage {

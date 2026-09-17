@@ -61,6 +61,16 @@ npm run build
 
 因為專案站服務在 `/<repo>/` 子路徑，workflow 以 `--base=/<repo>/` build；`property/images.json` 內的 `/assets/...` 邏輯路徑會在載入時透過 `import.meta.env.BASE_URL` 解析成正確 URL（見 `src/data/assetPath.ts`），資料本身不需修改。
 
+## 過場影片
+
+`property/sora-cutscenes.json`（ChatGPT 維護）是影片內容的唯一來源；`property/cutscene-cues.json`（Claude 維護）把它的敘事層 `trigger` 對到引擎場景 ID，決定哪一段影片掛在哪個場景之前。兩份的檔名與 trigger 是否一致由 `tests/cutscenes.test.ts` 把關。
+
+進入掛有影片的場景時，先確認影片載得到才蓋上畫面，接著全螢幕播放，播完自動進入該場景。影片缺檔、解碼失敗或載入逾時都直接進入場景（`property/cutscenes.json` 的 `skip-video-and-enter-canonical-scene`），不會有黑畫面，也不回退到任何替代影片。
+
+播放中可用畫面點擊、Enter／空白鍵、Esc 或右下角的「跳過」按鈕跳過；旁邊的按鈕可切換靜音，偏好記在瀏覽器。已播完或跳過的影片不會重播，這個狀態跟著存檔走，重新載入不會再看一次；「重新開始」則清空，重玩時影片會再播。
+
+實作：`src/ui/cutscene.ts`（播放器）、`src/data/contentLoader.ts`（載入與驗證）、`StoryEngine` 的 `hasWatchedCutscene`／`markCutsceneWatched`。
+
 ## 存檔 / 讀檔
 
 對話採視覺小說節奏：一次只顯示一句，點畫面（或按 Enter／空白鍵）才到下一句；該場台詞讀完後才出現選項或結局按鈕。

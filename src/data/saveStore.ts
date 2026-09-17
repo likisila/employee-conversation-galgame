@@ -51,10 +51,17 @@ function parseEnvelope(raw: unknown, gameId: string): StorySnapshot | null {
   if (typeof raw.snapshot.sceneId !== 'string') return null;
   const state = parseGameState(raw.snapshot.state);
   if (!state) return null;
+  const snapshot: StorySnapshot = { sceneId: raw.snapshot.sceneId, state };
   // lineIndex 為選填（版本 1 早期存檔沒有）；非法值直接忽略而不是整份丟棄。
   const rawIndex = raw.snapshot.lineIndex;
-  const lineIndex = typeof rawIndex === 'number' && Number.isInteger(rawIndex) && rawIndex >= 0 ? rawIndex : undefined;
-  return lineIndex === undefined ? { sceneId: raw.snapshot.sceneId, state } : { sceneId: raw.snapshot.sceneId, state, lineIndex };
+  if (typeof rawIndex === 'number' && Number.isInteger(rawIndex) && rawIndex >= 0) snapshot.lineIndex = rawIndex;
+  // 已看過的過場影片同樣是選填；只收字串，混進其他型別就整個欄位忽略，
+  // 頂多重播一次影片，不值得把整份存檔丟掉。
+  const rawWatched = raw.snapshot.watchedCutscenes;
+  if (Array.isArray(rawWatched) && rawWatched.every((id) => typeof id === 'string')) {
+    snapshot.watchedCutscenes = rawWatched as string[];
+  }
+  return snapshot;
 }
 
 /** 解析瀏覽器 localStorage；在無法存取（SSR、隱私模式）時回傳 null。 */

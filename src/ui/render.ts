@@ -1,6 +1,8 @@
 import type { LoadedContent } from '../data/contentLoader';
 import type { Line } from '../domain/schema';
 import type { StoryEngine } from '../engine/StoryEngine';
+import { playCutscene } from './cutscene';
+import { setKeyHandler } from './keyboard';
 import { resolvePresentation } from './presentation';
 
 /** 標題畫面的行為掛勾。有存檔時提供 onResume，讓玩家選擇繼續。 */
@@ -117,13 +119,6 @@ export function preloadImages(sources: Array<string | undefined>, timeoutMs = 60
   return Promise.race([Promise.all(unique.map(load)).then(() => undefined), wait(timeoutMs)]);
 }
 
-let keyHandler: ((event: KeyboardEvent) => void) | undefined;
-/** 同一時間只保留一個鍵盤處理器（讀取畫面、轉場卡、對話各自換上自己的）。 */
-function setKeyHandler(handler: ((event: KeyboardEvent) => void) | undefined): void {
-  if (keyHandler) document.removeEventListener('keydown', keyHandler);
-  keyHandler = handler;
-  if (handler) document.addEventListener('keydown', handler);
-}
 /** 進入新場景後尚未被玩家點掉的轉場卡；值為場景 ID。 */
 let pendingIntroSceneId: string | undefined;
 /** 轉場卡剛被點掉：這次 render 播放轉場淡出與立繪淡入。 */
@@ -261,6 +256,22 @@ function renderLine(line: Line, content: LoadedContent, progress: string): strin
 
 export function render(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks = {}): void {
   const scene = engine.currentScene;
+
+  // 進入掛有過場影片的場景時，先播影片再進場景。已看過（含跳過）的不重播；
+  // 缺檔或載入失敗由播放器自行跳過，直接進入正式場景。
+  // 這一段刻意放在所有轉場記錄（lastSceneId 等）之前：播完後重新 render 時，
+  // 這個場景仍然算「剛進場」，轉場卡與立繪淡入照常播放。
+  const cue = content.cutsceneCues.get(scene.id);
+  if (cue && lastSceneId !== scene.id && !engine.hasWatchedCutscene(cue.id)) {
+    playCutscene(app, cue, content.ui, () => {
+      engine.markCutsceneWatched(cue.id);
+      // 影片看過就記進存檔，重新載入不會再看一次。
+      hooks.onAdvance?.();
+      render(app, engine, content, hooks);
+    });
+    return;
+  }
+
   const visibleLines = engine.visibleLines;
   const lineIndex = engine.currentLineIndex;
   const line = engine.currentLine;
@@ -408,7 +419,10 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
 
   app.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((button) => {
     button.addEventListener('click', () => {
-      engine.choose(button.dataset.choice!);
+      const choiceId = button.dataset.choice!;
+      // 畫面已經換掉之後才送達的殘留點擊：忽略即可，不該讓整個 UI 拋例外。
+      if (!engine.availableChoices.some((choice) => choice.id === choiceId)) return;
+      engine.choose(choiceId);
       render(app, engine, content, hooks);
       hooks.onAdvance?.();
     });

@@ -131,3 +131,28 @@
   3. `.dialogue` 目前仍保留 1.9rem 的左側留白，那是箭頭還在對話區內時為了避免壓字而加的；箭頭移走後這段留白已無功能，只剩與右側 2rem 對稱的視覺效果。要保留或移除請 ChatGPT 決定，Claude 不自行更動。
 - 未決問題或阻塞：PR #24 加入的過場影片沒有對應的 ChatGPT 交接紀錄，且目前引擎完全沒有影片播放能力（詳見下一筆）。
 - 驗證結果：`npm run typecheck`、`npm test`（9 檔 78 測試）、`npm run build` 全數成功。Chromium 實機（桌機 1280×800、手機 390×844）確認位置固定如上；以 `elementFromPoint` 逐一檢查每個選項按鈕的四個角，修正前手機版有 1 個角被箭頭蓋住，修正後為 0；桌機修正前後都是 0。另比對改動前後的建置：橫向 740×420 有 6 個角落在面板可視範圍外，改動前後數字相同，屬既有的面板捲動行為，非本次造成。行為回歸（點箭頭、`ArrowLeft`、點左 1/3、選擇後箭頭消失）在兩種尺寸皆通過，無 pageerror。
+
+## Claude-20260917-0255
+
+- 時間：2026-09-17T02:55:00Z
+- 分支或 PR：`claude/elegant-wozniak-evo2rc`
+- 已讀對方紀錄：`ChatGPT-20260916-2159`（ChatGPT 交接紀錄無新 Entry）。另已讀 `main` 的 PR #24（`assets: add layoff notification cutscene`，加入 `public/assets/cutscenes/02_layoff_notification.mp4`）——**該次未在 `docs/ai-handoff/CHATGPT.md` 留下 Entry**，違反 `docs/AI_HANDOFF.md` 的「commit／PR 前必須追加一筆」。請 ChatGPT 補登，本筆先行記錄事實。
+- 本次範圍：實作過場影片系統，完成 `coordination/handoff/HANDOFF-20260916-cutscene-integration.md`（owner: Claude、status 原為 TODO／HIGH）。
+- 實際變更檔案：`property/cutscene-cues.json`（新增）、`property/manifest.json`、`src/ui/cutscene.ts`（新增）、`src/ui/keyboard.ts`（新增）、`src/ui/render.ts`、`src/domain/schema.ts`、`src/data/contentLoader.ts`、`src/data/saveStore.ts`、`src/engine/StoryEngine.ts`、`src/visual.css`、`src/vite-env.d.ts`、`tests/cutscenes.test.ts`（新增）、`tests/engine.test.ts`、`tests/history.test.ts`、`tests/saveStore.test.ts`、`README.md`、`coordination/handoff/HANDOFF-20260916-cutscene-integration.md`
+- 先前狀態：影片素材進了 repo 也被 build 複製到 `dist/`，但 `src/` 對 `cutscene`／`video`／`mp4` 是零命中——沒有任何程式會播它。`parseManifest` 直接丟棄 `cutscenes` 與 `soraCutscenes` 兩個欄位。
+- 使用者授權的兩項決策（UX 屬 Claude 範圍，已由使用者確認）：
+  1. **對應表位置**：新增 Claude 維護的 `property/cutscene-cues.json`，不改寫 ChatGPT 維護的 `sora-cutscenes.json`。兩份的 `file` 與 `trigger` 是否一致由測試鎖住，避免漂移。對應依敘事層 scene 文件標題比對得出（scene-01 最終版→`s1-final-cut`、scene-05 收訖不等於同意→`s6-receipt` 等），非猜測。
+  2. **播放控制**：可跳過（畫面點擊／Enter／空白鍵／Esc／右下角「跳過」按鈕）；已看過或已跳過的不重播，狀態進存檔快照，`restart()` 時清空以便重玩；預設帶聲音播放，另有靜音切換按鈕，偏好記在 `localStorage`。不做全域音量系統——專案其他地方沒有音訊，單為過場加一個全域開關反而不一致。
+- 實作重點：
+  1. 影片先在背景探測，確認 `loadedmetadata` 才蓋上畫面。9 段目前只有 1 段存在，若先鋪黑底再去載，玩家會在每個缺檔場景看到一次黑閃；先驗證再顯示就完全沒有這個過渡。
+  2. 探測期間蓋一層透明的 `.cutscene-shield` 並接管鍵盤。這是實作過程中發現的真缺陷：否則玩家可以在待播影片底下繼續點擊，把劇情偷偷往前推。
+  3. `sora-cutscenes.json` 已排除在 runtime 的 `import.meta.glob` 之外。它原本被整份打包進出貨的 JS（18KB 的 Sora prompt 與 style bible），卻沒有任何程式讀它。加上播放器之後 bundle 仍從 84.95 kB 降到 73.60 kB（gzip 27.43 → 22.82 kB）。
+  4. 修掉 `SaveStore.parseEnvelope` 的漏欄位：它以白名單重建快照，`watchedCutscenes` 寫得進去卻讀不回來，導致讀檔後已看過的影片會重播。實機驗證時抓到。
+  5. 修掉一個既有缺陷：畫面換掉後才送達的殘留選項點擊會讓 `engine.choose()` 拋出未處理例外，改為忽略。
+- 交給 ChatGPT：
+  1. **補登 PR #24 的交接紀錄**（見上）。
+  2. **其餘 8 支 MP4 尚未生成**：`sora-cutscenes.json` 宣告 9 段且全部 `status: READY`，但 `public/assets/cutscenes/` 只有 `02_layoff_notification.mp4`。缺檔目前會安靜跳過，不影響遊玩；影片放進來即自動生效，不需要改程式。
+  3. `property/ui.json` 需補四個標籤的正式文案，目前都落在程式預設值：`backLabel`（回到上一句）、`skipCutsceneLabel`（跳過）、`muteCutsceneLabel`（靜音）、`cutsceneLabel`（過場影片）。
+  4. 箭頭與過場控制列的視覺規格仍由 ChatGPT 定案。
+- 未決問題或阻塞：無。缺檔的 8 支影片在瀏覽器主控台會留下 404 訊息（屬預期，影片補齊後自然消失）；未改成 HEAD 預檢，因為那會讓每段影片多一次請求。
+- 驗證結果：`npm run typecheck`、`npm test`（10 檔 96 測試，新增 `tests/cutscenes.test.ts` 15 個案例：對應表與 sora manifest 的防漂移、READY 影片都有掛載點、場景存在且一場一片、四結局各一支互斥影片、單一路徑不重複遇到同一段、parser 的錯誤處理、已看過狀態的存讀）、`npm run build` 全數成功。Chromium 實機四種情境：(A) 缺檔 404 → 無黑閃、1.2 秒內進入場景、畫面正常；(B) 真檔但此環境 Chromium 無 H.264 解碼 → 同樣安靜跳過；(C) 以攔截回傳可播放的 WebM → 覆蓋出現、`currentTime` 前進、跳過與靜音按鈕可用、`aria-pressed` 正確、播完自動進場景、回上一句再前進不重播；(D) Esc 跳過、靜音偏好寫入 `localStorage`、重新載入讀檔不重播。主控台除缺檔 404 與沙箱擋掉的 Google Fonts 憑證外無錯誤。**限制：Playwright 內附的 Chromium 不支援 H.264（`canPlayType('video/mp4; codecs="avc1.42E01E"')` 回空字串），因此真實 MP4 的解碼播放無法在本環境親自驗證，播放路徑是以同 URL 攔截回傳 WebM 驗證的。**

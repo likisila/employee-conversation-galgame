@@ -1,20 +1,30 @@
 import {
   parseCharacters,
+  parseCutsceneCues,
+  parseCutsceneSettings,
   parseGame,
   parseImages,
   parseManifest,
   parseScene,
   parseUi,
   type Character,
+  type CutsceneCue,
+  type CutsceneSettings,
   type Game,
   type ImageCatalog,
   type Manifest,
   type Scene,
   type UiCopy,
 } from '../domain/schema';
-import { resolveCatalogAssets } from './assetPath';
+import { resolveAssetPath, resolveCatalogAssets } from './assetPath';
 
-const modules = import.meta.glob('../../property/**/*.json', { eager: true, import: 'default' }) as Record<string, unknown>;
+// sora-cutscenes.json 是產片用的 prompt 來源，執行端一行都不需要；若讓它進 glob，
+// 18KB 的 prompt 與 style bible 會被打包進出貨的 JS。檔名改由 cutscene-cues.json 提供，
+// 兩份是否一致由 tests/cutscenes.test.ts 把關。
+const modules = import.meta.glob(['../../property/**/*.json', '!../../property/sora-cutscenes.json'], {
+  eager: true,
+  import: 'default',
+}) as Record<string, unknown>;
 
 function normalize(path: string): string {
   return path.replace('../../property/', '');
@@ -35,6 +45,9 @@ export interface LoadedContent {
   scenes: Map<string, Scene>;
   ui: UiCopy;
   images: ImageCatalog;
+  cutscenes: CutsceneSettings;
+  /** 以「進入哪個場景前播放」為索引的過場影片。 */
+  cutsceneCues: Map<string, CutsceneCue>;
 }
 
 export function loadContent(): LoadedContent {
@@ -49,9 +62,19 @@ export function loadContent(): LoadedContent {
   // 依部署 base 解析素材路徑，讓遊戲能部署在子路徑（如 GitHub Pages）。
   const images = resolveCatalogAssets(rawImages);
 
+  const cutscenes = manifest.cutscenes ? parseCutsceneSettings(requireFile(manifest.cutscenes)) : parseCutsceneSettings({});
+  const cueList = manifest.cutsceneCues ? parseCutsceneCues(requireFile(manifest.cutsceneCues)) : [];
+  const cutsceneCues = new Map(
+    cueList.map((cue) => [cue.scene, { ...cue, src: resolveAssetPath(cue.src) }]),
+  );
+
   const characters = new Map(charactersArray.map((item) => [item.id, item]));
   const scenes = new Map(scenesArray.map((item) => [item.id, item]));
   if (!scenes.has(game.startScene)) throw new Error(`startScene "${game.startScene}" 不存在`);
+  // 影片掛在不存在的場景上永遠不會播，屬於資料錯誤，載入時就擋下來。
+  for (const cue of cutsceneCues.values()) {
+    if (!scenes.has(cue.scene)) throw new Error(`過場影片 ${cue.id} 掛在不存在的場景 ${cue.scene}`);
+  }
 
   for (const scene of scenes.values()) {
     for (const line of scene.lines) {
@@ -97,5 +120,5 @@ export function loadContent(): LoadedContent {
     if (transition.asset && !images.ui[transition.asset]) throw new Error(`轉場 ${transitionId} 引用了不存在的 UI asset ${transition.asset}`);
   }
 
-  return { manifest, game, characters, scenes, ui, images };
+  return { manifest, game, characters, scenes, ui, images, cutscenes, cutsceneCues };
 }
