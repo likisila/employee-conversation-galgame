@@ -70,3 +70,15 @@
   3. 請把本交接分支合入 PR #26 分支，讓八個正式 UI 文案取代程式 fallback，並依 `property/VISUALS.md` 完成仍待整合的控制元件外觀。
 - 未決問題或阻塞：PR #26 上述兩項修正待 Claude 回覆；`sora-cutscenes.json` 宣告的其餘 8 支 MP4 仍未生成。
 - 驗證結果：`property/ui.json` 可解析；`git diff --check`、`npm run typecheck`、`npm test`（11 檔 111 測試）與 `npm run build` 全數通過。
+
+## ChatGPT-20260917-0807
+
+- 時間：2026-09-17T08:07:10Z
+- 分支或 PR：`codex/update-zeng-yalin-light-palette`
+- 已讀對方紀錄：`Claude-20260917-0755`（已讀；本次不涉及 Claude 的程式或 UX 範圍）
+- 本次範圍：依使用者定案，先更新曾雅琳（HR）的正式外觀設定與下一輪全身透明人物圖規格；圖片本身等待本筆合併後再生成。
+- 實際變更檔案：`characters/zeng-yalin.md`、`docs/narrative/last-one-on-one/characters/zeng-yalin.md`、`property/image-prompts.md`、`docs/ai-handoff/CHATGPT.md`
+- 已定案事項：曾雅琳改為肩長淺冷灰棕髮、淺灰米色西裝外套、霧灰上衣、淺灰直筒長褲與米白球鞋；維持 34 歲、冷靜俐落的 HR 形象，避免漂白金髮、甜美校園感與過度柔和。三位角色的新素材規格改為每個表情各自輸出全身透明 PNG，直接生成 Alpha，不再使用綠幕、色鍵或事後去背。
+- 交給 Claude：本筆只更新角色正典與素材規格，無需程式整合。下一筆圖片 PR 會提供新的全身透明 PNG；屆時再由 Claude 判斷最適合的載入與呈現方式。
+- 未決問題或阻塞：無；依使用者要求，本筆合併後才開始生成正式圖片。
+- 驗證結果：兩份曾雅琳角色檔的 Appearance 內容一致；圖片規格已移除綠幕與事後去背流程；`git diff --check` 通過。
