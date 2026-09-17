@@ -126,31 +126,9 @@
 .decision-close{margin-top:1rem}
 @media(max-width:700px){.decision-panel{padding:1rem}.decision-item .decision-choice{font-size:.9rem}}
 
-/* ───── 角色取景：由背景決定（規格見 property/VISUALS.md「角色立繪取景規格」）─────
-   素材永遠是完整的 1024×1536 全身圖，這裡只改「畫面上看得到哪一段」，不動素材。
-
-   upper-body（會議室桌面特寫）：把舞台下緣從對話框上緣延伸到畫面底部，立繪整個人往下站，
-   下半身自然被對話框蓋住（對話框 z-index:10 在立繪之上），畫面上只剩頭到腰／大腿，不會露出腳。
-   同時放大一級，讀起來像鏡頭推近，而不是同一個人往下掉。
-
-   一開始試過「縮小可視窗口＋背景圖放大」的裁切法，但手機版窗口寬度會被 max-width 夾住，
-   高度反而吃滿舞台，整個人又露出來（實測 390×844 仍看得到鞋子）。改用這個做法後兩種尺寸都正確。 */
-.character-stage[data-framing="upper-body"]{inset:7vh 0 0}
-.character-stage[data-framing="upper-body"] .character-sprite{height:min(88vh,64rem,calc(52vw / var(--frame-aspect,.6667)))}
-@media(max-width:700px){
-  .character-stage[data-framing="upper-body"]{inset:4dvh 0 0}
-  .character-stage[data-framing="upper-body"] .character-sprite{height:min(104dvh,calc(104vw / var(--frame-aspect,.6667)))}
-}
-@media(orientation:landscape) and (max-height:520px){
-  .character-stage[data-framing="upper-body"]{inset:3rem 0 0}
-  .character-stage[data-framing="upper-body"] .character-sprite{height:min(96vh,calc(52vw / var(--frame-aspect,.6667)))}
-}
-
-/* ───── 手機版：一律只露半身 ─────
-   依使用者指示（2026-09-17）：手機不論背景是哪種取景（`none` 除外，那本來就不顯示立繪），
+/* ───── 手機直版：一律只露半身 ─────
+   依使用者指示（2026-09-17）：手機直版不論背景是哪種取景（`none` 除外，那本來就不顯示立繪），
    都只露上半身，下半身由對話框遮住，並依角色的左右對齊微偏一邊，讓立繪不擋住台詞。
-
-   桌機維持 property/VISUALS.md 的規格：寬景全身、會議室近景半身。
 
    兩個重點：
    1. 拿掉 max-width 的夾制。原本 `max-width:100%` 會在立繪比畫面寬時只壓寬度、不動高度，
@@ -158,7 +136,7 @@
       比素材的 0.667 窄了 13%）。改成只由高度決定尺寸、允許水平溢出（由 .game-screen 裁掉）。
    2. 水平微偏用 transform，因此進場動畫改用 translate 屬性（見 style.css 的 sprite-in），
       兩者是不同屬性，不會互相覆蓋。 */
-@media(max-width:700px){
+@media(max-width:700px) and (orientation:portrait){
   .character-stage{inset:4dvh 0 0;justify-content:center;padding:0}
   .character-sprite{
     height:min(104dvh,calc(104vw / var(--frame-aspect,.6667)));
@@ -168,4 +146,99 @@
   }
   .character-stage[data-align="left"] .character-sprite{--sprite-shift:-14%}
   .character-stage[data-align="right"] .character-sprite{--sprite-shift:14%}
+}
+
+/* ───── 桌機與橫版：半身立繪站在對話框左邊、蓋住對話框，台詞往右讓開 ─────
+   依使用者指示（2026-09-17）。原本立繪被夾在畫面上緣與對話框上緣之間，1280×800 只剩約 290px 高，
+   整個人縮成一小條、看不清臉；而且愈是寬螢幕，對話框愈高、立繪愈小。
+
+   改法：立繪從標題列下方往下站，下緣直接被畫面底邊裁掉（不是被對話框夾住），
+   高度因此不再受對話框限制，可以放大到只露頭到腰／大腿的半身；再把它靠左、疊在對話框之上
+   （z-index 高於 .story-panel 的 10），對話框的內容往右推到人物右緣之外，文字不會被蓋住。
+
+   幾何全部由 .game-screen 上的變數推出來，要調整只改一個數字：
+   --portrait-top      立繪頂端（＝標題列高度，避免蓋住場景標題）
+   --portrait-reveal   露出比例：畫面看得到立繪的前百分之多少（.6＝頭到腰／大腿）
+   --portrait-trim     往左移掉的比例：素材左側約有 25% 透明留白，另外再切掉一點肩膀
+   --portrait-max-width 立繪畫格寬度上限，避免在極寬或極矮的視窗吃掉整個畫面
+   --portrait-lead     人物右緣離畫面左緣的距離；對話框用它算出內容要往右讓多少
+   素材本身沒有被裁切或重新編碼，取景一樣只在顯示階段處理。 */
+@media (min-width:701px),(orientation:landscape){
+  .game-screen[data-portrait="true"]{
+    --portrait-top:4.25rem;
+    --portrait-reveal:.6;
+    --portrait-trim:.28;
+    --portrait-max-width:62vw;
+    --portrait-height:min(
+      calc((100dvh - var(--portrait-top)) / var(--portrait-reveal)),
+      calc(var(--portrait-max-width) / var(--frame-aspect,.6667))
+    );
+    --portrait-width:calc(var(--portrait-height) * var(--frame-aspect,.6667));
+    /* 素材裡人物右緣大約在畫格寬度的 88% 處（十張實測 0.87–0.99，取常見值）。 */
+    --portrait-lead:calc(var(--portrait-width) * (.88 - var(--portrait-trim)));
+  }
+  /* 會議室桌面特寫（規格上的 upper-body）：鏡頭再推近一級，一樣是半身、一樣不露腳。 */
+  .game-screen[data-portrait="true"][data-framing="upper-body"]{--portrait-reveal:.52}
+
+  .character-stage,.character-stage[data-framing="upper-body"]{
+    inset:var(--portrait-top,4.25rem) 0 0;
+    z-index:11;
+    justify-content:flex-start;
+    align-items:flex-start;
+    padding:0;
+  }
+  .character-stage[data-align="left"],.character-stage[data-align="right"]{justify-content:flex-start}
+  .character-stage .character-sprite{
+    flex:none;
+    height:var(--portrait-height);
+    max-height:none;
+    max-width:none;
+    /* 水平位移用 transform；進場動畫用的是 translate 屬性，兩者不會互相覆蓋。 */
+    transform:translateX(calc(var(--portrait-width) * var(--portrait-trim) * -1));
+  }
+
+  /* 對話框：有立繪時改成整條滿版（左右各留 1rem），內容往右讓到人物右緣之外。
+     滿版是為了把讓開後剩下的寬度還給台詞與選項——維持置中的 72rem 會讓文字欄再窄一截。
+     名牌與回上一句箭頭跟著同一個位移，才不會躲在人物後面。 */
+  .game-screen[data-portrait="true"] .story-panel{
+    left:1rem;
+    right:1rem;
+    width:auto;
+    transform:none;
+    /* 人物右緣（--portrait-lead，自畫面左緣起算）減掉面板自己的左邊界與內距，再留 .75rem 空隙。 */
+    --panel-inset-left:max(0px,calc(var(--portrait-lead) + .75rem - 1rem - var(--panel-pad)));
+    padding-left:calc(var(--panel-pad) + var(--panel-inset-left));
+  }
+  /* 名牌靠內距推過去即可（它本來就以 --panel-pad 的負邊界貼在內容左緣外側）；
+     回上一句箭頭是絕對定位、不吃內距，要自己加上同一段位移。 */
+  .game-screen[data-portrait="true"] .back-hint{left:calc(var(--panel-inset-left) + .1rem)}
+}
+
+/* 選項欄不要溢出對話框：有選項時面板可以高一點，欄位本身放不下就自己捲。
+   原本面板 max-height 是 min(46vh,27rem)、列高又是 auto，三個換行的選項就會整個
+   掉出面板下緣（在背景上浮著）。列改成 minmax(0,1fr) 之後高度才吃得到 max-height。 */
+@media (min-width:701px){
+  .story-panel{grid-template-rows:auto minmax(0,1fr)}
+  .game-screen[data-has-choices="true"] .story-panel{max-height:min(62vh,38rem)}
+  .story-panel>.dialogue,.story-panel>footer{min-height:0}
+  .story-panel>footer{
+    align-self:stretch;
+    display:grid;
+    /* safe end：放得下就靠下對齊（和台詞底線齊），放不下時退回靠上，才捲得到第一個選項。 */
+    align-content:safe end;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+  }
+}
+
+/* 手機橫版（矮視窗）：標題列比較矮，立繪起點跟著往上；寬度上限收一點，
+   免得在 844×390 這種很扁的視窗裡人物吃掉太多台詞空間。
+   放在最後是因為要蓋掉上面那段 (min-width:701px) 的面板高度——橫向手機兩個條件都成立。 */
+@media (orientation:landscape) and (max-height:520px){
+  .game-screen[data-portrait="true"]{--portrait-top:3.4rem;--portrait-max-width:52vw}
+  /* 矮視窗又要放三個會換行的選項：面板再高一點、選項本身收緊，才不必捲就看得完。 */
+  .game-screen[data-has-choices="true"] .story-panel{max-height:76vh}
+  .choices h2{margin-bottom:.35rem;font-size:.8rem}
+  .choice{min-height:2.5rem;margin-top:.4rem;padding:.5rem .75rem}
+  .choice .choice-text{font-size:.92rem;line-height:1.5}
 }

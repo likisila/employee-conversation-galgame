@@ -53,13 +53,13 @@ describe('角色立繪的兩種素材寫法', () => {
     expect(spriteSource(characters.x, undefined)).toBe('/assets/characters/full-body/x-neutral.png');
   });
 
-  it('部署在子路徑時，逐張圖的每個表情都會被解析', () => {
+  it('部署在子路徑時，逐張圖的每個表情都會被解析（並換成交付用的 WebP）', () => {
     const catalog = resolveCatalogAssets(parse({ x: fileCharacter }), '/employee-conversation-galgame/');
     expect(catalog.characters.x.sources).toEqual({
-      neutral: '/employee-conversation-galgame/assets/characters/full-body/x-neutral.png',
-      alert: '/employee-conversation-galgame/assets/characters/full-body/x-alert.png',
+      neutral: '/employee-conversation-galgame/assets/characters/web/x-neutral.webp',
+      alert: '/employee-conversation-galgame/assets/characters/web/x-alert.webp',
     });
-    expect(catalog.characters.x.src).toBe('/employee-conversation-galgame/assets/characters/full-body/x-neutral.png');
+    expect(catalog.characters.x.src).toBe('/employee-conversation-galgame/assets/characters/web/x-neutral.webp');
   });
 
   it('不可混用畫格索引與圖片路徑', () => {

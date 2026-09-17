@@ -345,3 +345,76 @@
 - 另請一併確認：結局中 `cg-badge-flip`、`cg-true-reflection` 的段落目前也是 `none`（短暫鏡頭），以及劇本自己寫的 `character: null` 離場段落——這些看起來是刻意的分鏡，我維持不動，如果其中有非預期的請指出。
 - 未決問題或阻塞：上述三選一未定前，s4／s6 維持沒有人物。
 - 驗證結果：本次只新增交接紀錄，未改程式或資料；`git diff --check` 通過，工作區與 `main`（`0b3374f`）除本筆紀錄外完全一致。稽核是以 `loadContent()` 載入正式內容、對每一場的每一句實際呼叫 renderer 用的同兩個函式得出，不是目測。
+
+## Claude-20260917-1215
+
+- 時間：2026-09-17T12:15:00Z
+- 分支或 PR：`claude/brave-wozniak-glu065`（PR 見下）
+- 已讀對方紀錄：`ChatGPT-20260917-0858`（無新紀錄；`Claude-20260917-1120` 交出去的 s4／s6 三選一仍待 ChatGPT 決定，本次不動）
+- 本次範圍：依使用者指示重做桌機／橫版的立繪版位，修兩個跑版問題，並解掉人物圖讀取速度。
+- 實際變更檔案：`src/visual.css`、`src/style.css`、`src/ui/render.ts`、`src/main.ts`、`src/data/assetPath.ts`、`scripts/optimize-sprites.mjs`（新增）、`public/assets/characters/web/*.webp` ＋ `manifest.json`（新增，交付檔）、`tests/spriteDelivery.test.ts`（新增）、`tests/characterArt.test.ts`、`package.json`、`property/README.md`、`docs/ai-handoff/CLAUDE.md`
+
+### 1. 桌機與手機橫版：半身立繪站在對話框左邊、蓋住對話框，台詞往右讓開
+
+使用者的問題是「顯示太小」。成因很具體：立繪原本被夾在畫面上緣與對話框上緣之間（`--stage-bottom`），
+1280×800 只剩約 290px 高，整個人縮成一小條；而且螢幕愈寬、對話框愈高，立繪反而愈小。
+
+改法：立繪從標題列下方往下站，下緣直接由畫面底邊裁掉（不再被對話框夾住），高度因此不受對話框限制；
+再靠左、疊在對話框之上（`z-index:11` > 面板的 `10`），面板內容往右推到人物右緣之外。
+幾何全部由 `.game-screen` 上的變數推出來，要調整只改一個數字：`--portrait-reveal`（露出比例）、
+`--portrait-trim`（往左移掉的比例）、`--portrait-max-width`（畫格寬度上限）、`--portrait-lead`（人物右緣）。
+
+- 1280×800 實測：立繪 290×435 → **794×1190**（露出 61%，頭到腰／大腿，不露腳），台詞從 x=489 起，
+  台詞欄 468px、選項欄 267px。1920×1080：立繪 1124×1687，台詞欄 749px。
+- `upper-body`（會議室）保留為「鏡頭再推近一級」（`--portrait-reveal` .6 → .52），規格語意還在。
+- `none`（劇情 CG）不受影響，仍然完全不疊立繪。手機直版維持 `Claude-20260917-0955` 的置中半身。
+- 文字往右讓開的距離用「人物右緣約在畫格 88%」這個常數算。刻意不做每張圖量測的精準值：
+  十張素材的手臂張開幅度差很多（0.68～0.99），若依圖調整，換個表情台詞就會左右跳一下。
+- 附帶移除 `keepStageAbovePanel()`（量對話框高度寫進 `--stage-bottom` 的 ResizeObserver）：
+  兩種版位都不再需要知道面板多高。
+- 回上一句的點擊區改以台詞區（`.dialogue`）為基準，並加上左界。原本以整個對話框算左側 1/3，
+  立繪蓋上去之後「點人物」會變成「回上一句」；現在點人物＝下一句，和點畫面其他地方一致。
+
+### 2. 兩個跑版（使用者回報）
+
+- **選項框跑版**：面板 `max-height` 是 `min(46vh,27rem)`、列高卻是 `auto`，三個會換行的選項就整個
+  掉出面板下緣浮在背景上（使用者截圖即是此狀）。列改成 `auto minmax(0,1fr)` 讓高度吃得到 max-height，
+  有選項時面板可到 `min(62vh,38rem)`，選項欄自己 `overflow-y:auto`（`align-content:safe end`，
+  放得下靠下、放不下才靠上，才捲得到第一個選項）。手機橫版另外收緊選項內距並放寬到 76vh，
+  844×390 三個兩行選項實測不捲即可看完。
+- **手機直版 ▼ 位置會跑**：`.advance-hint` 原本掛在 `.dialogue` 裡，位置跟著台詞行數上下移動。
+  改成釘在 `.story-panel` 右下角（和左下角的回溯箭頭對稱），並加 `pointer-events:none`。
+  390×844 連續 12 句（5～58 字、面板高度與台詞高度都在變）實測 y 固定在 820–821。
+
+### 3. 人物圖讀取速度
+
+原始全身 PNG 每張 1.2–1.3MB，十張 12.2MB；一場常用到三四個表情，等於光立繪就要下載 4–5MB。
+
+- 新增 `scripts/optimize-sprites.mjs`（`npm run assets:sprites`）：把原始 PNG 轉成**同尺寸、同 Alpha**
+  的 WebP 交付檔放在 `public/assets/characters/web/`。**原始 PNG 一個位元組都沒有被改到**
+  （blob SHA 不變），沒有裁切、沒有重新去背、沒有重新量化色盤；這只是「實際下載哪一份編碼」，
+  屬於資產載入與效能。**12.2MB → 850KB（6%）**，Alpha 通道逐像素無損（最大差 0），
+  不透明區域 RGB 平均差 1.3/255、最大 18。
+- `src/data/assetPath.ts` 新增 `spriteDeliverySrc()`，在載入時把 `full-body/*.png` 換成 `web/*.webp`。
+  `property/images.json` 完全不用改，仍然只記錄原始素材的位置。
+- 進遊戲後閒置時背景預取其餘表情與所有背景（`prefetchImages()`，`requestIdleCallback`），
+  換場景、換表情不用現場等。實測整局所有圖合計 1.9MB，其中立繪 850KB。
+- `tests/spriteDelivery.test.ts` 擋住不同步：交付檔缺少、或來源 PNG 換過而沒重新產生，`npm test` 直接失敗並指名檔案。
+
+### 交給 ChatGPT
+
+1. **`property/VISUALS.md` 的「角色立繪取景規格」要改。** 依使用者指示，`full` 在桌機與橫版已不再是
+   「從頭頂到雙腳完整顯示」——現在**所有版位一律半身**，桌機／橫版是「靠左、蓋住對話框、台詞右移」，
+   `upper-body` 變成「鏡頭再推近一級」。`none` 不變。程式已照使用者要求實作，但那份文件是 ChatGPT 維護的，
+   請補上（或給我文字我照抄）。`property/README.md` 我已先註明現況。
+2. **換素材後請執行 `npm run assets:sprites` 並一併提交 `public/assets/characters/web/`。**
+   只換 PNG 而沒有重新產生交付檔的話，遊戲畫面會沿用舊圖，`npm test` 會直接報哪一張過期。
+   若希望這一步由我來做（ChatGPT 只交 PNG、我再補一個 PR 產生交付檔），也可以，告訴我即可。
+3. 前一筆 `Claude-20260917-1120` 的 s4／s6 三選一仍待決定，本次未動。
+
+- 未決問題或阻塞：無。上列兩項是文件與流程，不阻擋本次版位與效能修正。
+- 驗證結果：`npm run typecheck`、`npm test`（14 檔 138 測試，新增 `tests/spriteDelivery.test.ts` 4 案例）、
+  `npm run build`、`git diff --check` 全數通過。Chromium 實機 1280×800／1920×1080／844×390 橫版／390×844
+  直版逐場驗收（辦公室寬景、會議室、有選項、結局、決策點選單）：立繪靠左且蓋住對話框、台詞與選項都沒有被蓋住、
+  三個選項都在面板內、頭頂未被切也沒露腳、劇情 CG 仍不疊立繪、手機直版維持原樣；主控台無錯誤。
+  網路實測：進場後所有圖合計 1.9MB、**PNG 請求數 0**（立繪全部走 WebP 交付檔）。

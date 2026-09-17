@@ -108,16 +108,41 @@ function wait(ms: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-/** 預載圖片；單張失敗或逾時都視為完成，不阻擋進入遊戲。 */
-export function preloadImages(sources: Array<string | undefined>, timeoutMs = 6000): Promise<void> {
-  const unique = [...new Set(sources.filter((src): src is string => typeof src === 'string' && src.length > 0))];
-  const load = (src: string): Promise<void> => new Promise((resolve) => {
+/** 已經請求過的圖片，避免重複建立 Image 物件重跑同一批來源。 */
+const requestedImages = new Set<string>();
+
+function loadImage(src: string): Promise<void> {
+  requestedImages.add(src);
+  return new Promise((resolve) => {
     const image = new Image();
     image.onload = () => resolve();
     image.onerror = () => resolve();
     image.src = src;
   });
-  return Promise.race([Promise.all(unique.map(load)).then(() => undefined), wait(timeoutMs)]);
+}
+
+function uniqueSources(sources: Array<string | undefined>): string[] {
+  return [...new Set(sources.filter((src): src is string => typeof src === 'string' && src.length > 0))];
+}
+
+/** 預載圖片；單張失敗或逾時都視為完成，不阻擋進入遊戲。 */
+export function preloadImages(sources: Array<string | undefined>, timeoutMs = 6000): Promise<void> {
+  const unique = uniqueSources(sources);
+  return Promise.race([Promise.all(unique.map(loadImage)).then(() => undefined), wait(timeoutMs)]);
+}
+
+/**
+ * 背景預取：讀取畫面只擋「這一場需要的圖」，其餘素材等瀏覽器閒下來再慢慢拿，
+ * 玩家換場景、換表情時就不必現場等。已經請求過的不重複請求，也不回報結果——
+ * 失敗沒關係，真的用到時 `preloadImages` 或 CSS 會再要一次。
+ */
+export function prefetchImages(sources: Array<string | undefined>): void {
+  const pending = uniqueSources(sources).filter((src) => !requestedImages.has(src));
+  if (pending.length === 0) return;
+  const run = (): void => { pending.forEach((src) => { void loadImage(src); }); };
+  const idle = (globalThis as { requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number }).requestIdleCallback;
+  if (typeof idle === 'function') idle(run, { timeout: 2000 });
+  else window.setTimeout(run, 300);
 }
 
 /** 進入新場景後尚未被玩家點掉的轉場卡；值為場景 ID。 */
@@ -152,32 +177,11 @@ function resetSceneTracking(): void {
   backHintShown = false;
 }
 
-/** 量測對話框高度、把立繪底線寫成 CSS 變數；換場景時先解除上一次的觀察。 */
-let panelObserver: ResizeObserver | undefined;
-let resizeHandler: (() => void) | undefined;
-
-/**
- * 立繪永遠站在對話框上緣：不論面板因選項或換行而變高、或視窗變矮，
- * 都把 `--stage-bottom` 設成「視窗底到面板上緣」的距離，讓 CSS 據此排版。
+/*
+ * 舊的 keepStageAbovePanel（用 ResizeObserver 量對話框高度、寫進 --stage-bottom）已移除。
+ * 立繪不再被夾在對話框上方：桌機與橫版改成疊在對話框之上、下緣由畫面底邊裁掉，
+ * 手機直版也只露半身、下半身由對話框蓋住，兩種版位都不需要知道面板多高。
  */
-function keepStageAbovePanel(screen: HTMLElement, panel: HTMLElement): void {
-  const update = (): void => {
-    // 以 .game-screen 自己的底邊為基準（CSS bottom 就是相對它），不依賴 window.innerHeight，
-    // 避免 iOS Safari 動態工具列讓 innerHeight 與實際畫面高度不一致。
-    const screenBottom = screen.getBoundingClientRect().bottom;
-    const panelTop = panel.getBoundingClientRect().top;
-    screen.style.setProperty('--stage-bottom', `${Math.max(0, Math.round(screenBottom - panelTop))}px`);
-  };
-  panelObserver?.disconnect();
-  if (resizeHandler) window.removeEventListener('resize', resizeHandler);
-  update();
-  if (typeof ResizeObserver !== 'undefined') {
-    panelObserver = new ResizeObserver(update);
-    panelObserver.observe(panel);
-  }
-  resizeHandler = update;
-  window.addEventListener('resize', resizeHandler);
-}
 
 /** 依訊息發送者名稱找角色：完全相同，或顯示名稱以其結尾（「予安」→「周予安」）。 */
 function findCharacterByName(content: LoadedContent, name: string | undefined): string | undefined {
@@ -382,21 +386,17 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       : '';
 
   app.innerHTML = `
-    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-can-back="${canGoBack}" data-settled="${sameScene}" data-has-choices="${atLast && choices !== ''}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}">
+    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-can-back="${canGoBack}" data-settled="${sameScene}" data-has-choices="${atLast && choices !== ''}" data-portrait="${sprite !== undefined}" data-framing="${escapeHtml(framing)}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}${sprite?.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}">
       <div class="scene-transition" aria-hidden="true" style="--transition-art:${cssUrl(transitionAsset)}"></div>
       ${phase === 'intro' ? `<div class="scene-intro" role="status"><p class="eyebrow">${escapeHtml(content.game.title)}</p>${scene.title ? `<h2>${escapeHtml(scene.title)}</h2>` : ''}<p class="tap-hint">${escapeHtml(content.ui.tapToContinueLabel)}</p></div>` : ''}
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
       ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}" data-framing="${escapeHtml(framing)}"><div class="character-sprite" style="--sprite:url('${escapeHtml(spriteUrl ?? sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
-      <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue">${dialogue}${hint}</section><footer>${action}</footer>${backHint}</div>
+      <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue">${dialogue}</section><footer>${action}</footer>${backHint}${hint}</div>
     </section>
   `;
 
   announce(line ? `${nameOf(line, content)}${line.text}` : scene.title ?? '');
-
-  const screenEl = app.querySelector<HTMLElement>('.game-screen');
-  const panelEl = app.querySelector<HTMLElement>('.story-panel');
-  if (screenEl && panelEl) keepStageAbovePanel(screenEl, panelEl);
 
   const shownAt = performance.now();
   const advance = (): void => {
@@ -421,13 +421,20 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     hooks.onAdvance?.();
   };
 
-  /** 點擊落在對話框左側 1/3、且確實有上一句可回時，才算「回上一句」。 */
+  /**
+   * 點擊落在台詞區左側 1/3、且確實有上一句可回時，才算「回上一句」。
+   *
+   * 基準是台詞區（.dialogue）而不是整個對話框：桌機與橫版的立繪站在對話框左邊、蓋住它的左半邊，
+   * 若以對話框為基準，點到人物就會被算成「回上一句」。改以台詞區的左右範圍判斷後，
+   * 點人物＝下一句（和點畫面其他地方一致），只有真的點在台詞左側才回上一句。
+   */
   const isBackZone = (event: MouseEvent): boolean => {
     if (!canGoBack) return false;
-    const panel = (event.target as HTMLElement).closest('.story-panel');
-    if (!panel) return false;
-    const rect = panel.getBoundingClientRect();
-    return event.clientX < rect.left + rect.width * BACK_ZONE_RATIO;
+    if (!(event.target as HTMLElement).closest('.story-panel')) return false;
+    const dialogueEl = app.querySelector<HTMLElement>('.dialogue');
+    if (!dialogueEl) return false;
+    const rect = dialogueEl.getBoundingClientRect();
+    return event.clientX >= rect.left && event.clientX < rect.left + rect.width * BACK_ZONE_RATIO;
   };
 
   app.querySelector<HTMLElement>('.game-screen')?.addEventListener('click', (event) => {

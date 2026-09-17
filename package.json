@@ -8,10 +8,12 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -p tsconfig.app.json --pretty false",
     "test": "vitest run",
-    "videos:sora": "node scripts/generate_sora_cutscenes.mjs"
+    "videos:sora": "node scripts/generate_sora_cutscenes.mjs",
+    "assets:sprites": "node scripts/optimize-sprites.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
+    "sharp": "^0.34.5",
     "typescript": "^5.9.2",
     "vite": "^7.1.5",
     "vitest": "^3.2.4"

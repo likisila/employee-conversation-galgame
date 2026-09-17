@@ -1,0 +1,70 @@
+{
+  "encoder": "webp",
+  "options": {
+    "quality": 88,
+    "alphaQuality": 100,
+    "effort": 6
+  },
+  "files": {
+    "lin-yucheng-alert.webp": {
+      "source": "lin-yucheng-alert.png",
+      "sourceSha256": "d40fd29d2eeb3a26baefe2516863a84cb002c9027ad11b9bb87a844c771edd56",
+      "bytes": 89248,
+      "sourceBytes": 1281932
+    },
+    "lin-yucheng-blank.webp": {
+      "source": "lin-yucheng-blank.png",
+      "sourceSha256": "4567ac1da3e29c8d324fbad6931d3bb09ce418af27a3d061f246b1ad743ca769",
+      "bytes": 87820,
+      "sourceBytes": 1269501
+    },
+    "lin-yucheng-neutral.webp": {
+      "source": "lin-yucheng-neutral.png",
+      "sourceSha256": "f1fce80eff43b106c8bff5b022b93cfe8cc1576c432ba39a74b2d2eb32c18cdc",
+      "bytes": 90308,
+      "sourceBytes": 1260011
+    },
+    "lin-yucheng-relaxed.webp": {
+      "source": "lin-yucheng-relaxed.png",
+      "sourceSha256": "c14757b6f9a7c4d59baa85f966066510e9bc052ea3e120347759d6d72bddb556",
+      "bytes": 90000,
+      "sourceBytes": 1279988
+    },
+    "lin-yucheng-suppressed-anger.webp": {
+      "source": "lin-yucheng-suppressed-anger.png",
+      "sourceSha256": "cf9f052de909d12c828f9186ef15837945ce6730f883d7ed28cf26553a99fca2",
+      "bytes": 88794,
+      "sourceBytes": 1272150
+    },
+    "lin-yucheng-wry.webp": {
+      "source": "lin-yucheng-wry.png",
+      "sourceSha256": "87ffc6ab157fc38080db2086af7fa0abfe047d2f7490ec0603a0f4b0022e4f31",
+      "bytes": 88612,
+      "sourceBytes": 1279359
+    },
+    "zeng-yalin-dry.webp": {
+      "source": "zeng-yalin-dry.png",
+      "sourceSha256": "12b89e4e2d6927221bcbbfecf04670c514ef5435f0fd2dcf08f41e8ac033ec89",
+      "bytes": 82962,
+      "sourceBytes": 1308698
+    },
+    "zeng-yalin-neutral.webp": {
+      "source": "zeng-yalin-neutral.png",
+      "sourceSha256": "34797867fb462a768960f85a787831ab5e2fa24eca83ab75e2e919f3482efabd",
+      "bytes": 83438,
+      "sourceBytes": 1305254
+    },
+    "zeng-yalin-stop.webp": {
+      "source": "zeng-yalin-stop.png",
+      "sourceSha256": "1b9440d3e2b1d71cf0899f75df71418d405e20b0732276aaeb745bba5ad199a1",
+      "bytes": 86606,
+      "sourceBytes": 1326449
+    },
+    "zhou-yuan-neutral.webp": {
+      "source": "zhou-yuan-neutral.png",
+      "sourceSha256": "5eb5a07c8278f0030806b756b45cd9b00e30f7fea36b6e612717b330ab827fa7",
+      "bytes": 82890,
+      "sourceBytes": 1199629
+    }
+  }
+}
