@@ -156,3 +156,67 @@
   4. 箭頭與過場控制列的視覺規格仍由 ChatGPT 定案。
 - 未決問題或阻塞：無。缺檔的 8 支影片在瀏覽器主控台會留下 404 訊息（屬預期，影片補齊後自然消失）；未改成 HEAD 預檢，因為那會讓每段影片多一次請求。
 - 驗證結果：`npm run typecheck`、`npm test`（10 檔 96 測試，新增 `tests/cutscenes.test.ts` 15 個案例：對應表與 sora manifest 的防漂移、READY 影片都有掛載點、場景存在且一場一片、四結局各一支互斥影片、單一路徑不重複遇到同一段、parser 的錯誤處理、已看過狀態的存讀）、`npm run build` 全數成功。Chromium 實機四種情境：(A) 缺檔 404 → 無黑閃、1.2 秒內進入場景、畫面正常；(B) 真檔但此環境 Chromium 無 H.264 解碼 → 同樣安靜跳過；(C) 以攔截回傳可播放的 WebM → 覆蓋出現、`currentTime` 前進、跳過與靜音按鈕可用、`aria-pressed` 正確、播完自動進場景、回上一句再前進不重播；(D) Esc 跳過、靜音偏好寫入 `localStorage`、重新載入讀檔不重播。主控台除缺檔 404 與沙箱擋掉的 Google Fonts 憑證外無錯誤。**限制：Playwright 內附的 Chromium 不支援 H.264（`canPlayType('video/mp4; codecs="avc1.42E01E"')` 回空字串），因此真實 MP4 的解碼播放無法在本環境親自驗證，播放路徑是以同 URL 攔截回傳 WebM 驗證的。**
+
+## Claude-20260917-0405
+
+- 時間：2026-09-17T04:05:00Z
+- 分支或 PR：`claude/blissful-euler-3q2stv`（自最新 `main` `180c16a`）
+- 已讀對方紀錄：`ChatGPT-20260916-2159`（ChatGPT 交接紀錄無新 Entry；`Claude-20260917-0255` 請 ChatGPT 補登 PR #24 的交接紀錄一事仍未處理，本筆再次提醒）
+- 本次範圍：依使用者需求「通關後頁面可以自由選擇回到之前的決策點」，新增結局畫面的決策點選單與引擎的決策點回溯。
+- 實際變更檔案：`src/engine/StoryEngine.ts`、`src/data/saveStore.ts`、`src/domain/schema.ts`、`src/ui/render.ts`、`src/visual.css`、`tests/decisionPoints.test.ts`（新增）、`tests/saveStore.test.ts`、`tests/engine.test.ts`、`README.md`、`property/README.md`、`docs/technical/save-load.md`、`docs/ai-handoff/CLAUDE.md`
+- 已定案事項：
+  1. `StoryEngine` 新增 `decisions`：每次 `choose()` 在套用效果「之前」記下 `{ sceneId, lineIndex, state, choiceId }`。這與既有的逐句回溯紀錄（`history`，選擇後清空）是兩回事，決策點整輪保留。
+  2. 新增 `decisionPoints`（唯讀複本）與 `rewindTo(index)`：場景、停在哪一句與所有狀態數值都還原成按下該選項之前，該決策點與其後的紀錄一併作廢，並清空 `history`（否則會一句一句退進已作廢的那條路）。索引不合法時不動作。
+  3. 已看過的過場影片不因回到決策點而重設——那是續玩同一輪；只有 `restart()` 會清空。`restart()` 同時清空決策點。
+  4. 決策紀錄進存檔（`StorySnapshot.decisions`），所以通關後關掉瀏覽器再回來，「繼續上次」仍回得到任一決策點。存檔版本不變：舊存檔沒有這個欄位時只是不顯示按鈕。`SaveStore` 對此欄位的驗證是「任一筆壞掉就整個欄位忽略」，因為決策點是一條有序路徑，挑著留會讓索引錯位。內容改版導致對不上的紀錄，`restore()` 從該筆起截斷。
+  5. UI：結局畫面的「重新開始」下方多一顆「回到決策點」（這一輪沒有做過選擇時不顯示）。點開是蓋在結局畫面上的浮層，列出每個決策點的場景標題與當時選的選項全文；點任一項就跳回去，並重播該場景的轉場卡，讓玩家知道自己被送到哪一場。浮層可用 Esc、「關閉」或點外圍關閉，焦點限制在浮層內、關閉後回到開啟按鈕；浮層開著時 Enter／空白鍵／左方向鍵都不會推進底下的劇情。
+  6. 跳回去之後會立刻重新存檔，重新載入不會又回到結局。
+- 交給 ChatGPT（依角色邊界，Claude 不自行定案正式文案與視覺規格）：
+  1. **`property/ui.json` 需補四個新標籤的正式文案**，目前落在程式預設值：`rewindLabel`（回到決策點）、`rewindPrompt`（回到哪一個決策點？）、`rewindChoiceLabel`（你選了：）、`rewindCloseLabel`（關閉）。`parseUi` 已支援，補進 JSON 即生效。
+  2. **決策點選單的視覺規格待定案**。目前是 Claude 為了讓功能可用而擺上的最小呈現，完全沿用既有元件：選項卡用 `.choice`、關閉鍵用 `.secondary-action`、面板底色用對話框的 `--surface`，只多了半透明遮罩與「場景標題（青色小字）＋選項全文」的兩行排版。字級、間距、遮罩濃度、是否改成整頁列表或時間軸等，請給規格，Claude 照做。
+  3. **沿續前幾筆仍未關閉的項目**：`property/ui.json` 的 `backLabel`、`skipCutsceneLabel`、`muteCutsceneLabel`、`cutsceneLabel` 仍缺正式文案；回上一句箭頭與過場控制列的視覺規格仍待定案；PR #24 的 ChatGPT 交接紀錄仍未補登。
+  4. **是否要在結局畫面加一行說明**（例如「可以回到任何一個決策點重新選擇」）由 ChatGPT 決定；目前畫面上只有按鈕本身，沒有額外說明文案。
+- 未決問題或阻塞：無。
+- 驗證結果：`npm run typecheck`、`npm test`（11 檔 111 測試；新增 `tests/decisionPoints.test.ts` 12 個案例涵蓋「決策點的記錄內容」「回到決策點後狀態與句子還原」「較早的決策點作廢後續紀錄」「改選走到另一個結局」「回去後不能再逐句退回舊路」「索引不合法」「過場影片狀態」「重新開始清空」「快照往返」「回傳值為複本」「壞掉的紀錄截斷」，`tests/saveStore.test.ts` 另加 3 個決策點存檔案例）、`npm run build` 全數成功。Chromium 實機（桌機 1280×800、手機 390×844）各跑一次完整流程：從標題玩到 TRUE END → 結局畫面出現按鈕 → 選單列出 5 個決策點（場景標題與選項全文正確）→ Esc／點遮罩／「關閉」三種關法都回到原本的結局畫面且焦點回到按鈕 → 選單開著時點面板、按 Enter、按左方向鍵都不會推進劇情 → 點第 2 個決策點跳回「三個人的一對一」的選項頁（先播轉場卡、沒有回上一句箭頭）→ 重新載入「繼續上次」仍在同一場 → 改選另一項走到結局後清單重建為 5 筆 → 通關後重新載入仍看得到選單 → 「重新開始」後新的一輪不顯示按鈕。另在 740×420 確認選單面板超出畫面時會自行捲動、Tab／Shift+Tab 在浮層內循環，三種尺寸都沒有水平溢出。主控台僅有沙箱代理阻擋 Google Fonts 的 `ERR_CERT_AUTHORITY_INVALID`（與本次變更無關）。
+
+## Claude-20260917-0517
+
+- 時間：2026-09-17T05:17:00Z
+- 分支或 PR：`claude/blissful-euler-3q2stv`
+- 已讀對方紀錄：`ChatGPT-20260916-2159`（無新紀錄）
+- 本次範圍：依使用者指示「PR 要上去，不然 GPT 看不到」，把「完成後必須開 PR」寫進兩邊的代理指令與交接協定。
+- 實際變更檔案：`AGENTS.md`、`CLAUDE.md`、`docs/AI_HANDOFF.md`、`docs/ai-handoff/CLAUDE.md`
+- 已定案事項：
+  1. 兩邊的入口指令（ChatGPT 的 `AGENTS.md`、Claude 的 `CLAUDE.md`）各加一節「完成後必須開 PR」，流程一致：先追加自己的交接紀錄 → commit → `git push -u origin <branch>` → 立刻開 PR → 回覆使用者時附上 PR 連結。沒有 PR 連結的工作一律視為未完成。
+  2. `docs/AI_HANDOFF.md` 新增「開 PR（交接的送達方式）」一節：交接紀錄寫了但沒開 PR，對方讀不到，交接不算送達；PR 內文至少包含本次 Entry ID、實際變更檔案、交給對方的明確行動、驗證結果；對方回覆時應引用該 PR。
+  3. 這次修改的是分工／交接規則本身，依 `docs/AI_ROLE_BOUNDARIES.md` 第 7 條，屬使用者明確要求，非 Claude 自行變更。
+- 交給 ChatGPT：
+  1. 請依新規則照辦：往後每次更新都要開 PR，並在 PR 內文附上自己的 Entry ID。
+  2. `Claude-20260917-0405` 交出的四個新 UI 標籤文案（`rewindLabel`、`rewindPrompt`、`rewindChoiceLabel`、`rewindCloseLabel`）與決策點選單的視覺規格仍待定案；PR #24 的交接紀錄仍未補登。
+- 未決問題或阻塞：無。
+- 驗證結果：本次只改 Markdown 指令文件，不影響程式；`npm run typecheck`、`npm test`（11 檔 111 測試）、`npm run build` 於同一分支已全數通過（見 `Claude-20260917-0405`）。
+
+## Claude-20260917-0755
+
+- 時間：2026-09-17T07:55:00Z
+- 分支或 PR：`claude/blissful-euler-3q2stv`（PR #26，已合入 PR #27）
+- 已讀對方紀錄：`ChatGPT-20260917-0536`（逐項回覆如下）
+- 本次範圍：合併 ChatGPT 的交接分支，處理它交回的兩項修正要求，並依 `property/VISUALS.md` 新增的「互動控制元件規格」完成控制元件外觀整合。
+- 實際變更檔案：`src/engine/StoryEngine.ts`、`src/ui/icons.ts`（新增）、`src/ui/render.ts`、`src/ui/cutscene.ts`、`src/style.css`、`src/visual.css`、`tests/decisionPoints.test.ts`、`AGENTS.md`、`CLAUDE.md`、`docs/AI_HANDOFF.md`、`docs/ai-handoff/CLAUDE.md`
+- 逐項回覆 `ChatGPT-20260917-0536`：
+  1. **決策點的內容改版驗證 — 完成。** `validDecisionPrefix()` 改為呼叫新的 `isDecisionUsable()`，除了場景與選項 ID 還在之外，另外檢查兩件事：該選項在紀錄當時的狀態下仍然可選（`isChoiceAvailable`，選項條件改過就失效），以及紀錄的句子仍是該場在當時狀態下的最後一句（`decision.lineIndex === 可見台詞數 - 1`，場景加了或刪了台詞就對不上）。任一項不成立即從該筆起截斷。新增兩個測試：「決策場景後來增加台詞」（舊紀錄失效、指向新最後一句的紀錄仍可用且回去後停在新句子並看得到選項）與「選項條件改成在當時狀態下不可選」（失效；條件成立時保留）。
+  2. **PR 規則 — 完成。** `AGENTS.md`、`CLAUDE.md`、`docs/AI_HANDOFF.md` 三處同步改寫：有檔案變更才必須 push；分支尚無 PR 才建立，已有 PR 就更新同一個 PR、不另開新的；純審查、回答或沒有檔案變更的工作不開空 PR，回覆寫在交接紀錄或既有 PR 留言。
+  3. **控制元件外觀 — 完成**（依 `property/VISUALS.md`）：
+     - 新增 `src/ui/icons.ts`，集中產生線框 inline SVG（20×20、線寬 1.75、圓角端點、`currentColor`），讓回上一句與過場控制列共用同一套筆畫參數。
+     - 回上一句：三個字型字元 `◀◀◀` 改為單一線框左箭頭；按鈕 44×44、圖示 20×20、平常 `--teal`、hover／focus `--amber`；移除無限循環動畫，改成只有箭頭「這次才出現」時播一次 180 ms 淡入（renderer 以 `backHintShown` 判斷，否則每前進一句都會重播）；`prefers-reduced-motion` 不播。`.dialogue` 只為避開箭頭而存在的 1.9rem 左側留白已移除。
+     - 過場控制列：靜音鍵與跳過鍵改用線框 Speaker／Speaker Slash／Skip Forward 圖示，移除 `🔊`／`🔇`／`▶▶`；膠囊底色改 `rgba(8,21,29,.78)`、模糊 8 px、按鈕至少 44×44、間距 8 px、距 safe area 16 px；狀態切換只有 160 ms 顏色與背景變化。焦點順序維持「靜音 → 跳過」。
+  4. ChatGPT 對決策點選單 UX 的接受與「結局畫面不加說明句」的決定：**收到，維持現狀不動**。
+- 實作過程中修掉一個自己造成的回歸：靜音鍵換圖示時會重建按鈕內容，事件冒泡到覆蓋層時原本的點擊目標已被拔離按鈕，`closest('button')` 找不到祖先而誤判成「點背景」，一按靜音就把影片跳掉。已在 `.cutscene-controls` 上擋下冒泡並註明原因。這是實機驗證抓到的，單元測試涵蓋不到。
+- 交給 ChatGPT：
+  1. 無新的待辦。`property/ui.json` 的八項正式文案已全部生效，程式預設值不再出現在畫面上。
+  2. `sora-cutscenes.json` 宣告的其餘 8 支 MP4 仍未生成（沿續既有事項，缺檔會安靜跳過，不阻擋遊玩）。
+- 未決問題或阻塞：無。
+- 驗證結果：`npm run typecheck`、`npm test`（11 檔 113 測試，較上一筆 +2 為本次新增的內容改版案例）、`npm run build`、`git diff --check` 全數通過。Chromium 實機（桌機 1280×800、手機 390×844）：
+  - 箭頭：按鈕 44×44、圖示 20×20、`stroke-width` 1.75、圓角端點、預設 `rgb(120,174,183)`、hover `rgb(232,183,95)`、`aria-label`「回到上一句」取自 `ui.json`；逐句追蹤 13 個畫面確認淡入只在箭頭出現的那一次播放（轉場卡後再次出現時也只播一次），其餘每一句都不重播；與台詞矩形零重疊，手機版選項按鈕四角被遮住的數量為 0。
+  - 過場控制列（以攔截回傳可播放的 WebM 驗證，本環境 Chromium 不支援 H.264）：靜音 44×44、跳過 92×44（手機 85×44）、間距 8 px、距右下 16 px、底色 `rgba(8,21,29,.78)`、`blur(8px)`、`transition` 只有 border-color／background／color 各 160 ms、圖示 20 px／1.75 線寬、控制列內無任何 emoji 或字型符號、Tab 順序為靜音→跳過；按靜音後 `aria-pressed=true`、影片繼續播放（`currentTime` 前進）、偏好寫入 `localStorage`、圖示換成 Speaker Slash；按跳過正常回到遊戲畫面。
+  - 決策點流程回歸：五個決策點、Esc／遮罩／關閉三種關法、跳回第 2 個決策點、讀檔續玩、改選重建清單、通關後讀檔仍可用、重新開始後按鈕消失，全部與 `Claude-20260917-0405` 一致；選單文案已換成 `ui.json` 的「想回到哪個決策點？」「當時選擇：」「關閉」。主控台僅有沙箱代理阻擋 Google Fonts 的憑證錯誤。

@@ -1,4 +1,5 @@
 import type { CutsceneCue, UiCopy } from '../domain/schema';
+import { icon } from './icons';
 import { setKeyHandler } from './keyboard';
 
 /**
@@ -100,8 +101,8 @@ export function playCutscene(app: HTMLElement, cue: CutsceneCue, ui: UiCopy, onF
     app.innerHTML = `
       <section class="cutscene" data-cutscene="${escapeHtml(cue.id)}">
         <div class="cutscene-controls">
-          <button type="button" class="cutscene-button" id="cutscene-mute" aria-label="${escapeHtml(ui.muteCutsceneLabel)}" aria-pressed="false"><span aria-hidden="true"></span></button>
-          <button type="button" class="cutscene-button" id="cutscene-skip">${escapeHtml(ui.skipCutsceneLabel)}<span class="cutscene-skip-mark" aria-hidden="true">▶▶</span></button>
+          <button type="button" class="cutscene-button" id="cutscene-mute" aria-label="${escapeHtml(ui.muteCutsceneLabel)}" aria-pressed="false">${icon('speaker')}</button>
+          <button type="button" class="cutscene-button" id="cutscene-skip">${escapeHtml(ui.skipCutsceneLabel)}${icon('skip')}</button>
         </div>
       </section>
     `;
@@ -118,8 +119,8 @@ export function playCutscene(app: HTMLElement, cue: CutsceneCue, ui: UiCopy, onF
       writeMuted(muted);
       if (!muteButton) return;
       muteButton.setAttribute('aria-pressed', String(muted));
-      const mark = muteButton.querySelector('span');
-      if (mark) mark.textContent = muted ? '🔇' : '🔊';
+      // 圖示跟著狀態換成 Speaker／Speaker Slash；不使用 emoji 或字型符號。
+      muteButton.innerHTML = icon(muted ? 'speakerMuted' : 'speaker');
     };
     applyMuted(video.muted);
 
@@ -137,6 +138,10 @@ export function playCutscene(app: HTMLElement, cue: CutsceneCue, ui: UiCopy, onF
       if ((event.target as HTMLElement).closest('button')) return;
       if (skippable()) finish();
     });
+    // 控制列上的點擊永遠不算「點畫面跳過」。這一行不是多餘的保險：靜音鍵在自己的 handler 裡
+    // 會換掉圖示（重建按鈕內容），事件冒泡到上面那個 handler 時，原本的點擊目標已經被拔離
+    // 按鈕，`closest('button')` 會找不到祖先而誤判成點背景，影片就被跳掉了。
+    app.querySelector<HTMLElement>('.cutscene-controls')?.addEventListener('click', (event) => event.stopPropagation());
     app.querySelector<HTMLButtonElement>('#cutscene-skip')?.addEventListener('click', finish);
     muteButton?.addEventListener('click', () => applyMuted(!video.muted));
 

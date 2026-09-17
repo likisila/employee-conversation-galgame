@@ -2,6 +2,7 @@ import type { LoadedContent } from '../data/contentLoader';
 import type { Line } from '../domain/schema';
 import type { StoryEngine } from '../engine/StoryEngine';
 import { playCutscene } from './cutscene';
+import { icon } from './icons';
 import { setKeyHandler } from './keyboard';
 import { resolvePresentation } from './presentation';
 
@@ -131,6 +132,26 @@ let lastCharacterId: string | undefined;
 let lastBackgroundId: string | undefined;
 /** 這次 render 是「回上一句」：接續上一畫面，不重播轉場卡、轉場動畫與立繪淡入。 */
 let steppingBack = false;
+/**
+ * 上一次 render 有沒有顯示回上一句的箭頭。每次 render 都會重建 DOM，
+ * 靠這個旗標判斷箭頭是「這次才出現」還是「本來就在」——只有前者播放一次淡入，
+ * 否則每前進一句都會重播一次動畫（規格要求不做無限循環，也不該每句閃一下）。
+ */
+let backHintShown = false;
+/**
+ * 忘掉上一次 render 的場景紀錄，讓下一次 render 把目前場景當成「剛進場」：
+ * 重播轉場卡與立繪淡入。重新開始與回到決策點這兩種跳躍都要這樣宣告。
+ */
+function resetSceneTracking(): void {
+  lastSceneId = undefined;
+  lastCharacterId = undefined;
+  lastBackgroundId = undefined;
+  pendingIntroSceneId = undefined;
+  revealSceneId = undefined;
+  steppingBack = false;
+  backHintShown = false;
+}
+
 /** 量測對話框高度、把立繪底線寫成 CSS 變數；換場景時先解除上一次的觀察。 */
 let panelObserver: ResizeObserver | undefined;
 let resizeHandler: (() => void) | undefined;
@@ -331,8 +352,11 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const hint = canAdvance ? `<span class="advance-hint" aria-hidden="true">▼</span>` : '';
   // 停在轉場卡時畫面上還沒有台詞，不提供回溯。
   const canGoBack = phase !== 'intro' && engine.canGoBack;
+  // 箭頭剛出現時才播那一次 180ms 淡入；之後每一句都只是重建同一顆按鈕，不再播。
+  const backHintEntering = canGoBack && !backHintShown;
+  backHintShown = canGoBack;
   const backHint = canGoBack
-    ? `<button type="button" class="back-hint" id="back" aria-label="${escapeHtml(content.ui.backLabel)}"><span aria-hidden="true">◀</span><span aria-hidden="true">◀</span><span aria-hidden="true">◀</span></button>`
+    ? `<button type="button" class="back-hint${backHintEntering ? ' back-hint--enter' : ''}" id="back" aria-label="${escapeHtml(content.ui.backLabel)}">${icon('back')}</button>`
     : '';
 
   const choices = atLast
@@ -340,8 +364,13 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
         `<button class="choice" data-choice="${escapeHtml(choice.id)}"><span>${String(index + 1).padStart(2, '0')}</span><span class="choice-text">${escapeHtml(choice.text)}</span></button>`,
       ).join('')
     : '';
+  // 通關畫面：除了重新開始，還可以挑一個之前的決策點回去重選。
+  const decisionCount = engine.decisionPoints.length;
   const action = atLast && scene.ending
-    ? `<button class="primary-action full" id="restart">${escapeHtml(content.ui.restartLabel)}</button>`
+    ? `<div class="ending-actions">
+        <button class="primary-action full" id="restart">${escapeHtml(content.ui.restartLabel)}</button>
+        ${decisionCount > 0 ? `<button type="button" class="secondary-action full" id="rewind">${escapeHtml(content.ui.rewindLabel)}</button>` : ''}
+      </div>`
     : choices
       ? `<section class="choices"><h2>${escapeHtml(content.ui.choicePrompt)}</h2>${choices}</section>`
       : '';
@@ -429,12 +458,108 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   });
   app.querySelector<HTMLButtonElement>('#restart')?.addEventListener('click', () => {
     engine.restart();
-    lastSceneId = undefined;
-    lastCharacterId = undefined;
-    lastBackgroundId = undefined;
-    pendingIntroSceneId = undefined;
-    revealSceneId = undefined;
+    resetSceneTracking();
     render(app, engine, content, hooks);
     hooks.onRestart?.();
+  });
+  app.querySelector<HTMLButtonElement>('#rewind')?.addEventListener('click', () => {
+    openDecisionMenu(app, engine, content, hooks);
+  });
+}
+
+/**
+ * 通關後的決策點選單：列出這一輪做過的每一個選擇，點任一項就回到按下該選項之前，
+ * 從那裡重新選、重新往下走。被回到的那個決策點與其後的紀錄一併作廢。
+ *
+ * 選單蓋在遊戲畫面上（不取代它），因此關閉後畫面還是原本那個結局。
+ */
+function openDecisionMenu(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks): void {
+  const decisions = engine.decisionPoints;
+  if (decisions.length === 0) return;
+
+  const items = decisions.map((decision, index) => {
+    const scene = content.scenes.get(decision.sceneId);
+    const picked = scene?.choices.find((choice) => choice.id === decision.choiceId);
+    return `<li>
+      <button type="button" class="choice decision-item" data-decision="${index}">
+        <span>${String(index + 1).padStart(2, '0')}</span>
+        <span class="choice-text">
+          <span class="decision-scene">${escapeHtml(scene?.title ?? decision.sceneId)}</span>
+          <span class="decision-choice">${escapeHtml(content.ui.rewindChoiceLabel)}${escapeHtml(picked?.text ?? decision.choiceId)}</span>
+        </span>
+      </button>
+    </li>`;
+  }).join('');
+
+  const overlay = document.createElement('section');
+  overlay.className = 'decision-menu';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', content.ui.rewindPrompt);
+  overlay.innerHTML = `
+    <div class="decision-panel">
+      <h2>${escapeHtml(content.ui.rewindPrompt)}</h2>
+      <ol class="decision-list">${items}</ol>
+      <button type="button" class="secondary-action decision-close" id="decision-close">${escapeHtml(content.ui.rewindCloseLabel)}</button>
+    </div>
+  `;
+  app.appendChild(overlay);
+
+  const focusable = (): HTMLButtonElement[] => [...overlay.querySelectorAll<HTMLButtonElement>('button')];
+  focusable()[0]?.focus();
+
+  const close = (): void => {
+    overlay.remove();
+    setKeyHandler(undefined);
+    // 重畫結局畫面，把鍵盤與點擊處理器交還給它，並把焦點還給開啟選單的按鈕。
+    render(app, engine, content, hooks);
+    app.querySelector<HTMLButtonElement>('#rewind')?.focus();
+  };
+
+  overlay.addEventListener('click', (event) => {
+    // 點面板以外的地方（遮罩）等同關閉；點到底下的遊戲畫面不會推進劇情，因為事件停在這一層。
+    if (event.target === overlay) close();
+  });
+  overlay.querySelector<HTMLButtonElement>('#decision-close')?.addEventListener('click', close);
+
+  overlay.querySelectorAll<HTMLButtonElement>('[data-decision]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const index = Number(button.dataset.decision);
+      if (!engine.rewindTo(index)) return;
+      overlay.remove();
+      setKeyHandler(undefined);
+      // 回到決策點是一次跳躍：讓該場景重播轉場卡再顯示那一句，玩家才知道自己被送到哪裡。
+      resetSceneTracking();
+      render(app, engine, content, hooks);
+      // 存檔跟著跳回去，重新載入不會又回到結局。
+      hooks.onAdvance?.();
+    });
+  });
+
+  setKeyHandler((event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      close();
+      return;
+    }
+    if (event.key === 'Tab') {
+      // 焦點留在選單內，不讓 Tab 跑到底下已經被蓋住的結局畫面。
+      const buttons = focusable();
+      if (buttons.length === 0) return;
+      const first = buttons[0];
+      const last = buttons[buttons.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || !overlay.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+      return;
+    }
+    // 其餘會推進劇情的按鍵在選單開著時一律不生效（按鈕自己的 Enter／空白鍵照常）。
+    if ((event.key === 'Enter' || event.key === ' ') && (event.target as HTMLElement | null)?.closest('button')) return;
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowLeft') event.preventDefault();
   });
 }

@@ -1,5 +1,5 @@
 import type { GameState, GameValue } from '../domain/schema';
-import type { StorySnapshot } from '../engine/StoryEngine';
+import type { DecisionRecord, StorySnapshot } from '../engine/StoryEngine';
 
 /**
  * 只依賴 Web Storage 介面的最小子集，方便在測試中注入記憶體實作，
@@ -40,6 +40,24 @@ function parseGameState(raw: unknown): GameState | null {
 }
 
 /**
+ * 解析決策紀錄（通關後回到決策點用）。任何一筆欄位不符就回傳 null，
+ * 由呼叫端整個欄位忽略：決策點是一條有序路徑，挑著留會讓「回到第幾個決策點」錯位。
+ */
+function parseDecisions(raw: unknown): DecisionRecord[] | null {
+  if (!Array.isArray(raw)) return null;
+  const decisions: DecisionRecord[] = [];
+  for (const item of raw) {
+    if (!isRecord(item)) return null;
+    if (typeof item.sceneId !== 'string' || typeof item.choiceId !== 'string') return null;
+    if (typeof item.lineIndex !== 'number' || !Number.isInteger(item.lineIndex) || item.lineIndex < 0) return null;
+    const state = parseGameState(item.state);
+    if (!state) return null;
+    decisions.push({ sceneId: item.sceneId, lineIndex: item.lineIndex, state, choiceId: item.choiceId });
+  }
+  return decisions;
+}
+
+/**
  * 驗證從儲存讀回的信封。任何欄位不符（版本、遊戲 ID、快照結構）都回傳 null，
  * 由呼叫端當成「沒有可用存檔」處理，而不是讓壞資料流進引擎。
  */
@@ -61,6 +79,9 @@ function parseEnvelope(raw: unknown, gameId: string): StorySnapshot | null {
   if (Array.isArray(rawWatched) && rawWatched.every((id) => typeof id === 'string')) {
     snapshot.watchedCutscenes = rawWatched as string[];
   }
+  // 決策紀錄同樣是選填（舊存檔沒有）；壞掉時只是通關後少了決策點選單，不值得丟掉整份存檔。
+  const decisions = parseDecisions(raw.snapshot.decisions);
+  if (decisions) snapshot.decisions = decisions;
   return snapshot;
 }
 

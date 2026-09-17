@@ -136,3 +136,41 @@ describe('已看過的過場影片', () => {
     expect(loaded?.watchedCutscenes).toBeUndefined();
   });
 });
+
+describe('決策點紀錄', () => {
+  const decisions = [
+    { sceneId: 's2-invite', lineIndex: 2, state: { boundary: 0 }, choiceId: 'invite-clear' },
+    { sceneId: 's3-meeting', lineIndex: 26, state: { boundary: 1 }, choiceId: 'notice-direct' },
+  ];
+
+  it('存檔會帶著 decisions 來回，通關後重新載入仍回得到決策點', () => {
+    const storage = new MemoryStorage();
+    const store = new SaveStore('g', storage);
+    store.save({ sceneId: 'ending-true', state: { boundary: 3 }, lineIndex: 0, decisions });
+    expect(store.load()?.decisions).toEqual(decisions);
+  });
+
+  it('舊存檔沒有這個欄位時照常讀取', () => {
+    const storage = new MemoryStorage();
+    const store = new SaveStore('g', storage);
+    store.save({ sceneId: 'ending-true', state: {} });
+    const loaded = store.load();
+    expect(loaded?.sceneId).toBe('ending-true');
+    expect(loaded?.decisions).toBeUndefined();
+  });
+
+  it('任何一筆壞掉就整個欄位忽略（索引不能錯位），但存檔本身仍可用', () => {
+    const storage = new MemoryStorage();
+    const store = new SaveStore('g', storage);
+    store.save({
+      sceneId: 'ending-true',
+      state: { boundary: 3 },
+      lineIndex: 4,
+      decisions: [decisions[0], { ...decisions[1], lineIndex: -1 }],
+    });
+    const loaded = store.load();
+    expect(loaded?.sceneId).toBe('ending-true');
+    expect(loaded?.lineIndex).toBe(4);
+    expect(loaded?.decisions).toBeUndefined();
+  });
+});

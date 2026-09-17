@@ -163,6 +163,14 @@ export interface UiCopy {
   muteCutsceneLabel: string;
   /** 過場影片本身的替代說明（螢幕閱讀器用）。 */
   cutsceneLabel: string;
+  /** 通關畫面上開啟「回到決策點」選單的按鈕文字。 */
+  rewindLabel: string;
+  /** 決策點選單的標題。 */
+  rewindPrompt: string;
+  /** 決策點選單中，每一項顯示「當時選了哪一項」的前綴。 */
+  rewindChoiceLabel: string;
+  /** 關閉決策點選單的按鈕文字。 */
+  rewindCloseLabel: string;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -329,6 +337,10 @@ export function parseUi(raw: unknown): UiCopy {
     skipCutsceneLabel: typeof value.skipCutsceneLabel === 'string' ? value.skipCutsceneLabel : '跳過',
     muteCutsceneLabel: typeof value.muteCutsceneLabel === 'string' ? value.muteCutsceneLabel : '靜音',
     cutsceneLabel: typeof value.cutsceneLabel === 'string' ? value.cutsceneLabel : '過場影片',
+    rewindLabel: typeof value.rewindLabel === 'string' ? value.rewindLabel : '回到決策點',
+    rewindPrompt: typeof value.rewindPrompt === 'string' ? value.rewindPrompt : '回到哪一個決策點？',
+    rewindChoiceLabel: typeof value.rewindChoiceLabel === 'string' ? value.rewindChoiceLabel : '你選了：',
+    rewindCloseLabel: typeof value.rewindCloseLabel === 'string' ? value.rewindCloseLabel : '關閉',
   };
 }
 
