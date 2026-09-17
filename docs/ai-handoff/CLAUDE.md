@@ -156,3 +156,25 @@
   4. 箭頭與過場控制列的視覺規格仍由 ChatGPT 定案。
 - 未決問題或阻塞：無。缺檔的 8 支影片在瀏覽器主控台會留下 404 訊息（屬預期，影片補齊後自然消失）；未改成 HEAD 預檢，因為那會讓每段影片多一次請求。
 - 驗證結果：`npm run typecheck`、`npm test`（10 檔 96 測試，新增 `tests/cutscenes.test.ts` 15 個案例：對應表與 sora manifest 的防漂移、READY 影片都有掛載點、場景存在且一場一片、四結局各一支互斥影片、單一路徑不重複遇到同一段、parser 的錯誤處理、已看過狀態的存讀）、`npm run build` 全數成功。Chromium 實機四種情境：(A) 缺檔 404 → 無黑閃、1.2 秒內進入場景、畫面正常；(B) 真檔但此環境 Chromium 無 H.264 解碼 → 同樣安靜跳過；(C) 以攔截回傳可播放的 WebM → 覆蓋出現、`currentTime` 前進、跳過與靜音按鈕可用、`aria-pressed` 正確、播完自動進場景、回上一句再前進不重播；(D) Esc 跳過、靜音偏好寫入 `localStorage`、重新載入讀檔不重播。主控台除缺檔 404 與沙箱擋掉的 Google Fonts 憑證外無錯誤。**限制：Playwright 內附的 Chromium 不支援 H.264（`canPlayType('video/mp4; codecs="avc1.42E01E"')` 回空字串），因此真實 MP4 的解碼播放無法在本環境親自驗證，播放路徑是以同 URL 攔截回傳 WebM 驗證的。**
+
+## Claude-20260917-0405
+
+- 時間：2026-09-17T04:05:00Z
+- 分支或 PR：`claude/blissful-euler-3q2stv`（自最新 `main` `180c16a`）
+- 已讀對方紀錄：`ChatGPT-20260916-2159`（ChatGPT 交接紀錄無新 Entry；`Claude-20260917-0255` 請 ChatGPT 補登 PR #24 的交接紀錄一事仍未處理，本筆再次提醒）
+- 本次範圍：依使用者需求「通關後頁面可以自由選擇回到之前的決策點」，新增結局畫面的決策點選單與引擎的決策點回溯。
+- 實際變更檔案：`src/engine/StoryEngine.ts`、`src/data/saveStore.ts`、`src/domain/schema.ts`、`src/ui/render.ts`、`src/visual.css`、`tests/decisionPoints.test.ts`（新增）、`tests/saveStore.test.ts`、`tests/engine.test.ts`、`README.md`、`property/README.md`、`docs/technical/save-load.md`、`docs/ai-handoff/CLAUDE.md`
+- 已定案事項：
+  1. `StoryEngine` 新增 `decisions`：每次 `choose()` 在套用效果「之前」記下 `{ sceneId, lineIndex, state, choiceId }`。這與既有的逐句回溯紀錄（`history`，選擇後清空）是兩回事，決策點整輪保留。
+  2. 新增 `decisionPoints`（唯讀複本）與 `rewindTo(index)`：場景、停在哪一句與所有狀態數值都還原成按下該選項之前，該決策點與其後的紀錄一併作廢，並清空 `history`（否則會一句一句退進已作廢的那條路）。索引不合法時不動作。
+  3. 已看過的過場影片不因回到決策點而重設——那是續玩同一輪；只有 `restart()` 會清空。`restart()` 同時清空決策點。
+  4. 決策紀錄進存檔（`StorySnapshot.decisions`），所以通關後關掉瀏覽器再回來，「繼續上次」仍回得到任一決策點。存檔版本不變：舊存檔沒有這個欄位時只是不顯示按鈕。`SaveStore` 對此欄位的驗證是「任一筆壞掉就整個欄位忽略」，因為決策點是一條有序路徑，挑著留會讓索引錯位。內容改版導致對不上的紀錄，`restore()` 從該筆起截斷。
+  5. UI：結局畫面的「重新開始」下方多一顆「回到決策點」（這一輪沒有做過選擇時不顯示）。點開是蓋在結局畫面上的浮層，列出每個決策點的場景標題與當時選的選項全文；點任一項就跳回去，並重播該場景的轉場卡，讓玩家知道自己被送到哪一場。浮層可用 Esc、「關閉」或點外圍關閉，焦點限制在浮層內、關閉後回到開啟按鈕；浮層開著時 Enter／空白鍵／左方向鍵都不會推進底下的劇情。
+  6. 跳回去之後會立刻重新存檔，重新載入不會又回到結局。
+- 交給 ChatGPT（依角色邊界，Claude 不自行定案正式文案與視覺規格）：
+  1. **`property/ui.json` 需補四個新標籤的正式文案**，目前落在程式預設值：`rewindLabel`（回到決策點）、`rewindPrompt`（回到哪一個決策點？）、`rewindChoiceLabel`（你選了：）、`rewindCloseLabel`（關閉）。`parseUi` 已支援，補進 JSON 即生效。
+  2. **決策點選單的視覺規格待定案**。目前是 Claude 為了讓功能可用而擺上的最小呈現，完全沿用既有元件：選項卡用 `.choice`、關閉鍵用 `.secondary-action`、面板底色用對話框的 `--surface`，只多了半透明遮罩與「場景標題（青色小字）＋選項全文」的兩行排版。字級、間距、遮罩濃度、是否改成整頁列表或時間軸等，請給規格，Claude 照做。
+  3. **沿續前幾筆仍未關閉的項目**：`property/ui.json` 的 `backLabel`、`skipCutsceneLabel`、`muteCutsceneLabel`、`cutsceneLabel` 仍缺正式文案；回上一句箭頭與過場控制列的視覺規格仍待定案；PR #24 的 ChatGPT 交接紀錄仍未補登。
+  4. **是否要在結局畫面加一行說明**（例如「可以回到任何一個決策點重新選擇」）由 ChatGPT 決定；目前畫面上只有按鈕本身，沒有額外說明文案。
+- 未決問題或阻塞：無。
+- 驗證結果：`npm run typecheck`、`npm test`（11 檔 111 測試；新增 `tests/decisionPoints.test.ts` 12 個案例涵蓋「決策點的記錄內容」「回到決策點後狀態與句子還原」「較早的決策點作廢後續紀錄」「改選走到另一個結局」「回去後不能再逐句退回舊路」「索引不合法」「過場影片狀態」「重新開始清空」「快照往返」「回傳值為複本」「壞掉的紀錄截斷」，`tests/saveStore.test.ts` 另加 3 個決策點存檔案例）、`npm run build` 全數成功。Chromium 實機（桌機 1280×800、手機 390×844）各跑一次完整流程：從標題玩到 TRUE END → 結局畫面出現按鈕 → 選單列出 5 個決策點（場景標題與選項全文正確）→ Esc／點遮罩／「關閉」三種關法都回到原本的結局畫面且焦點回到按鈕 → 選單開著時點面板、按 Enter、按左方向鍵都不會推進劇情 → 點第 2 個決策點跳回「三個人的一對一」的選項頁（先播轉場卡、沒有回上一句箭頭）→ 重新載入「繼續上次」仍在同一場 → 改選另一項走到結局後清單重建為 5 筆 → 通關後重新載入仍看得到選單 → 「重新開始」後新的一輪不顯示按鈕。另在 740×420 確認選單面板超出畫面時會自行捲動、Tab／Shift+Tab 在浮層內循環，三種尺寸都沒有水平溢出。主控台僅有沙箱代理阻擋 Google Fonts 的 `ERR_CERT_AUTHORITY_INVALID`（與本次變更無關）。

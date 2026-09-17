@@ -66,7 +66,7 @@ describe('StoryEngine snapshot/restore', () => {
     const engine = new StoryEngine(makeContent());
     const target = { sceneId: 'feedback', state: { trust: 4, clarity: 1 } };
     engine.restore(target);
-    expect(engine.snapshot).toEqual({ ...target, lineIndex: 0, watchedCutscenes: [] });
+    expect(engine.snapshot).toEqual({ ...target, lineIndex: 0, watchedCutscenes: [], decisions: [] });
   });
 });
 

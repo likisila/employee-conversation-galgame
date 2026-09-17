@@ -9,11 +9,17 @@
 ## 架構
 
 ```text
-StoryEngine.snapshot  ──→  StorySnapshot { sceneId, state }  ──→  SaveStore.save()  ──→  localStorage
-StoryEngine.restore()  ←──  StorySnapshot                    ←──  SaveStore.load()  ←──  localStorage
+StoryEngine.snapshot  ──→  StorySnapshot { sceneId, state, lineIndex,   ──→  SaveStore.save()  ──→  localStorage
+                                          watchedCutscenes, decisions }
+StoryEngine.restore()  ←──  StorySnapshot                                ←──  SaveStore.load()  ←──  localStorage
 ```
 
-- **`StorySnapshot`**（`src/engine/StoryEngine.ts`）：可序列化的進度，只含目前場景 ID 與狀態數值，不含任何顯示文字或素材路徑。
+- **`StorySnapshot`**（`src/engine/StoryEngine.ts`）：可序列化的進度，只含 ID 與數值，不含任何顯示文字或素材路徑：
+  - `sceneId`、`state`：停在哪一場、目前的狀態數值。
+  - `lineIndex`：該場讀到第幾句。
+  - `watchedCutscenes`：已播完或跳過的過場影片 ID，讓重新載入不重播。
+  - `decisions`：這一輪走過的決策點（場景、停在哪一句、選擇「之前」的狀態、選了哪個選項 ID），供通關後的「回到決策點」使用。
+  除 `sceneId`、`state` 外都是選填：舊存檔缺這些欄位時分別退化為「從第一句開始」「都沒看過」「沒有決策點可回」，不會丟棄整份存檔。
 - **`StoryEngine.snapshot`**：回傳目前進度的深拷貝（state 為複本，非活引用）。
 - **`StoryEngine.restore(snapshot)`**：把進度套回引擎；場景不存在時丟出錯誤，交由呼叫端決定是否丟棄過期存檔。
 - **`SaveStore`**（`src/data/saveStore.ts`）：單一遊戲的持久化層。
@@ -25,7 +31,15 @@ StoryEngine.restore()  ←──  StorySnapshot                    ←──  Sa
   "version": 1,
   "gameId": "<game.id>",
   "updatedAt": "<ISO timestamp>",
-  "snapshot": { "sceneId": "feedback", "state": { "trust": 2 } }
+  "snapshot": {
+    "sceneId": "ending-true",
+    "state": { "boundary": 3 },
+    "lineIndex": 0,
+    "watchedCutscenes": ["02_layoff_notification"],
+    "decisions": [
+      { "sceneId": "s2-invite", "lineIndex": 2, "state": { "boundary": 0 }, "choiceId": "invite-clear" }
+    ]
+  }
 }
 ```
 
@@ -38,6 +52,7 @@ StoryEngine.restore()  ←──  StorySnapshot                    ←──  Sa
 
 - 無 `localStorage`（SSR、隱私模式）→ `save()` 回傳 `false`，`load()` 回傳 `null`。
 - JSON 損壞、版本不符、`gameId` 不符、state 含非原始值 → `load()` 回傳 `null` 並自我清除壞資料。
+- 選填欄位（`lineIndex`、`watchedCutscenes`、`decisions`）格式不對 → 只忽略該欄位，其餘進度照常讀回。`decisions` 是一條有序路徑，任一筆壞掉就整個欄位忽略，以免「回到第幾個決策點」錯位。
 - 寫入丟例外（配額用盡）→ `save()` 回傳 `false`。
 
 `storage` 建構子參數可注入，測試用記憶體實作即可覆蓋以上分支，不需 DOM。
@@ -52,4 +67,5 @@ StoryEngine.restore()  ←──  StorySnapshot                    ←──  Sa
 
 - 存檔 key 用 `character ID` / `sceneId` / 狀態變數名，不用任何 display text。
 - 新增角色、章節或狀態變數都不需要改動存讀檔程式。
-- 文案（繼續上次 / 重新開始）放在 `property/ui.json`，引擎有預設值 fallback。
+- 文案（繼續上次 / 重新開始 / 回到決策點）放在 `property/ui.json`，引擎有預設值 fallback。
+- 決策點清單顯示的是場景 `title` 與選項 `text`，都從 `property/` 讀取；存檔本身只記 ID，內容改版後對不上的紀錄會從該筆起截斷。
