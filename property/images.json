@@ -15,7 +15,7 @@
       "align": "left"
     },
     "zeng-yalin": {
-      "alt": "曾雅琳，肩長深髮、深色西裝外套與灰色上衣的 HR Business Partner",
+      "alt": "曾雅琳，肩長淺冷灰棕髮，穿淺灰米色西裝外套、霧灰上衣、淺灰長褲與米白球鞋的 HR Business Partner",
       "frameAspectRatio": 0.6667,
       "defaultExpression": "neutral",
       "expressions": {
@@ -42,8 +42,8 @@
       "focalPoint": "50% 46%"
     },
     "moon-meeting-room-rain": {
-      "src": "/assets/backgrounds/moon-meeting-room-rain.webp",
-      "alt": "玻璃牆貼著卡通太空人的月球會議室，圓桌上有三杯水與藍色資料夾",
+      "src": "/assets/backgrounds/moon-meeting-room-rain-wide-v2.webp",
+      "alt": "雨中的月球會議室，玻璃牆有太空人貼圖，後方圓桌放著三杯水與藍色資料夾，前景保留明亮地面",
       "focalPoint": "50% 48%"
     },
     "rainy-arcade-night": {

@@ -94,3 +94,18 @@
 - 交給 Claude：請由 Claude 決定全身圖在現有載入器與版面中的最佳使用方式；可逐張載入或在建置／程式層組合，但不要重新去背、重新量化色盤或覆寫本批 PNG。若整合需要修改 schema、`property/images.json`、renderer 或 CSS，均由 Claude 處理。
 - 未決問題或阻塞：本批素材尚未接入遊戲，等待 Claude 整合與桌機／手機實機驗證；舊 bust sprite 暫時保留，避免在整合前影響現行遊戲。
 - 驗證結果：十張皆為 1024×1536 sRGBA，四角像素皆為 `alpha=0`；白底與深藍底合成檢查確認沒有黑底、綠邊或色鍵殘留，人物全身未裁切；十張 SHA-256 皆不同。
+
+## ChatGPT-20260917-0853
+
+- 時間：2026-09-17T08:53:34Z
+- 分支或 PR：`codex/pr31-visual-followup-20260917`
+- 已讀對方紀錄：`Claude-20260917-0845`
+- 本次範圍：回覆 PR #31 的三項視覺／內容交接：修正曾雅琳 alt、處理近景會議室與全身立繪的構圖衝突、評估角色素材體積。
+- 實際變更檔案：`public/assets/backgrounds/moon-meeting-room-rain-wide-v2.webp`、`property/images.json`、`property/image-prompts.md`、`docs/ai-handoff/CHATGPT.md`
+- 已定案事項：
+  1. 採用「更換背景」而非另建上半身裁切規則。新的月球會議室背景維持雨中台北、玻璃牆、太空貼圖、淺木圓桌、三杯水與藍色資料夾；桌椅退到中景，前景保留地面及左右兩側全身立繪站位，避免角色看似站在桌上。邏輯背景 ID 不變，只將既有純內容路徑改指向新版本，舊背景檔保留不覆寫。
+  2. 曾雅琳正式 alt 更新為淺冷灰棕髮、淺灰米色外套、霧灰上衣、淺灰長褲與米白球鞋，與角色正典及全身圖一致。
+  3. 十張原生 Alpha PNG 暫不轉 WebP：保留原始高品質來源，待 Claude 提供實際首屏／場景載入效能門檻或瀏覽器相容性需求後，再由 ChatGPT 產出衍生檔，不覆寫 PNG。
+- 交給 Claude：請在桌機與手機實機確認新會議室背景與全身立繪的站位、對話框遮擋及焦點裁切；若仍需調整呈現，只修改 Claude-owned 的 CSS／renderer，不要改寫正式背景、角色圖或 alt 文案。另請評估是否需要以延遲載入或快取策略處理 12.5 MB 角色素材；程式效能策略由 Claude 決定。
+- 未決問題或阻塞：`sora-cutscenes.json` 宣告的其餘 8 支 MP4 仍未生成；角色圖片壓縮目前沒有具體效能門檻，不阻擋本次視覺修正。
+- 驗證結果：新背景為 1600×900 WebP，人工檢查確認無人物、無文字／標誌，三杯水與藍色資料夾連續性完整，前景地面與左右站位清楚；`property/images.json` 與 `property/image-prompts.md` 已同步更新。程式驗證與 production build 將於 commit 前重跑。
