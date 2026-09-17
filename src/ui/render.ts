@@ -4,7 +4,7 @@ import type { StoryEngine } from '../engine/StoryEngine';
 import { playCutscene } from './cutscene';
 import { icon } from './icons';
 import { setKeyHandler } from './keyboard';
-import { resolvePresentation } from './presentation';
+import { resolvePresentation, spriteSource } from './presentation';
 
 /** 標題畫面的行為掛勾。有存檔時提供 onResume，讓玩家選擇繼續。 */
 export interface TitleHooks {
@@ -311,6 +311,8 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const expression = (characterId === presentation?.character ? presentation?.expression : undefined) ?? sprite?.defaultExpression;
   const frame = sprite && expression ? sprite.expressions[expression] ?? sprite.expressions[sprite.defaultExpression] ?? 0 : 0;
   const position = sprite && sprite.columns > 1 ? (frame / (sprite.columns - 1)) * 100 : 0;
+  // 逐張素材時每個表情是一張獨立的圖；sprite sheet 則永遠是同一張，靠 --position 位移。
+  const spriteUrl = sprite ? spriteSource(sprite, expression) : undefined;
 
   const background = backgroundId ? content.images.backgrounds[backgroundId] : undefined;
   const sceneTransition = presentation?.transition ?? 'none';
@@ -381,7 +383,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       ${phase === 'intro' ? `<div class="scene-intro" role="status"><p class="eyebrow">${escapeHtml(content.game.title)}</p>${scene.title ? `<h2>${escapeHtml(scene.title)}</h2>` : ''}<p class="tap-hint">${escapeHtml(content.ui.tapToContinueLabel)}</p></div>` : ''}
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
-      ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
+      ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(spriteUrl ?? sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
       <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue">${dialogue}${hint}</section><footer>${action}</footer>${backHint}</div>
     </section>
   `;

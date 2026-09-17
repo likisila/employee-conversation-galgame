@@ -130,13 +130,18 @@ describe('《最後一次一對一》ending reachability', () => {
 describe('image assets referenced by property/images.json exist on disk', () => {
   it('every sprite, background, screen and ui src resolves to a file under public/', () => {
     const raw = JSON.parse(readFileSync(join(__dirname, '..', 'property', 'images.json'), 'utf8')) as {
-      characters: Record<string, { src: string }>;
+      characters: Record<string, { src?: string; expressions: Record<string, number | string> }>;
       backgrounds: Record<string, { src: string }>;
       screens: Record<string, { src: string }>;
       ui: Record<string, string>;
     };
+    // 角色有兩種寫法：整張 sprite sheet（src）或逐張表情圖（expressions 的值是路徑），兩種都要檢查。
+    const characterSrcs = Object.values(raw.characters).flatMap((entry) => [
+      ...(entry.src ? [entry.src] : []),
+      ...Object.values(entry.expressions).filter((value): value is string => typeof value === 'string'),
+    ]);
     const srcs = [
-      ...Object.values(raw.characters).map((entry) => entry.src),
+      ...characterSrcs,
       ...Object.values(raw.backgrounds).map((entry) => entry.src),
       ...Object.values(raw.screens).map((entry) => entry.src),
       ...Object.values(raw.ui),

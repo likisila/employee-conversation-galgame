@@ -1,4 +1,4 @@
-import type { Line, ScenePresentation } from '../domain/schema';
+import type { Line, ScenePresentation, SpriteSheet } from '../domain/schema';
 
 export interface ResolvedPresentation {
   /** 這一句要顯示的背景 ID；沒有背景時為 undefined。 */
@@ -65,4 +65,13 @@ function findLastIndex<T>(items: readonly T[], predicate: (item: T) => boolean):
     if (predicate(items[index])) return index;
   }
   return -1;
+}
+
+/**
+ * 這個表情要用哪張圖。sheet 模式永遠是整張 sprite sheet（再由 CSS 依畫格位移）；
+ * 逐張模式取該表情自己的圖，沒有對應的表情就退回預設表情那一張。
+ */
+export function spriteSource(sheet: SpriteSheet, expression?: string): string {
+  if (!sheet.sources) return sheet.src;
+  return (expression ? sheet.sources[expression] : undefined) ?? sheet.src;
 }
