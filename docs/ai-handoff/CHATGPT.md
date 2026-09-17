@@ -50,3 +50,23 @@
 - 交給 Claude：本分支合併後，請將最新 `main` 合回 `claude/zen-hopper-fnj8g4`，確認企劃文件與已實作路由一致，再建立該工程分支的 PR。
 - 未決問題或阻塞：無。
 - 驗證結果：全專案 Markdown 關鍵字檢查確認遊戲企劃與章節稿的 END 04 條件一致，Scene 5 連續性註記同步為直接鎖定；`git diff --check` 通過。環境沒有 `story` CLI、package script 或專案內 fallback，因此未執行自動 reindex／continuity 指令；本次未改事件順序、角色狀態、連結或 frontmatter 結構，已以人工連續性檢查替代。
+
+## ChatGPT-20260917-0536
+
+- 時間：2026-09-17T05:36:34Z
+- 分支或 PR：`codex/pr26-review-handoff-20260917`
+- 已讀對方紀錄：`Claude-20260917-0255`（位於 `main`），以及 PR #26 的 `Claude-20260917-0405`、`Claude-20260917-0517`
+- 本次範圍：補登 PR #24 的 ChatGPT 交接、回覆 PR #26 的決策點功能與 PR 規則、定案待補 UI 文案，並把先前只存在對話中的控制元件視覺規格寫入專案。
+- 實際變更檔案：`property/ui.json`、`property/VISUALS.md`、`docs/ai-handoff/CHATGPT.md`
+- 補登 PR #24：`public/assets/cutscenes/02_layoff_notification.mp4` 已於 PR #24 加入並合併；該片為 1280×720、約 8 秒、H.264／AAC 的手繪微電影過場，保留識別證、掛繩、筆、藍色資料夾與三杯水的連續性。當時漏寫 ChatGPT Entry，本筆補登事實；既有影片檔不在本分支重複修改。
+- 已定案事項：
+  1. 正式 UI 文案：`backLabel`「回到上一句」、`skipCutsceneLabel`「跳過」、`muteCutsceneLabel`「靜音」、`cutsceneLabel`「過場影片」、`rewindLabel`「回到決策點」、`rewindPrompt`「想回到哪個決策點？」、`rewindChoiceLabel`「當時選擇：」、`rewindCloseLabel`「關閉」。
+  2. 箭頭、過場控制列與決策點選單的正式視覺規格已寫入 `property/VISUALS.md`。使用者已確認 UX 由 Claude 負責，因此接受 PR #26 的浮層流程、焦點管理、鍵盤操作、轉場與響應式行為，不要求撤回或重做。
+  3. 結局畫面不增加額外說明句；按鈕與選單標題已足以說明用途。
+  4. PR #26 的決策點主流程、存讀檔相容、history／影片狀態、modal 鍵盤行為與立即存檔均通過審查；本地重跑 `typecheck`、111 項測試與 production build 全部通過。
+- 交給 Claude：
+  1. PR #26 的 `StoryEngine.validDecisionPrefix()` 目前只檢查 scene／choice ID。請再驗證保存的決策是否仍位於可選擇的位置，以及該 choice 在保存的 state 下是否仍可用；內容新增台詞或修改選項條件時，若紀錄已對不上，應從該筆起截斷。請新增「決策場景增加台詞」與「選項條件改變」測試。
+  2. PR 規則請補成：有檔案變更時必須 push；分支尚無 PR 才建立，已有 PR 則更新同一個 PR 並回覆既有連結；純審查、回答或沒有檔案變更的工作不要求建立空 PR。
+  3. 請把本交接分支合入 PR #26 分支，讓八個正式 UI 文案取代程式 fallback，並依 `property/VISUALS.md` 完成仍待整合的控制元件外觀。
+- 未決問題或阻塞：PR #26 上述兩項修正待 Claude 回覆；`sora-cutscenes.json` 宣告的其餘 8 支 MP4 仍未生成。
+- 驗證結果：`property/ui.json` 可解析；`git diff --check`、`npm run typecheck`、`npm test`（11 檔 111 測試）與 `npm run build` 全數通過。

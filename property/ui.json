@@ -9,5 +9,13 @@
   "loadingLabel": "距離五點，還有二十分鐘",
   "subtitle": "有些話沒有正確說法，只有你是否願意承擔",
   "resumeLabel": "繼續上次",
-  "newGameLabel": "重新開始"
+  "newGameLabel": "重新開始",
+  "backLabel": "回到上一句",
+  "skipCutsceneLabel": "跳過",
+  "muteCutsceneLabel": "靜音",
+  "cutsceneLabel": "過場影片",
+  "rewindLabel": "回到決策點",
+  "rewindPrompt": "想回到哪個決策點？",
+  "rewindChoiceLabel": "當時選擇：",
+  "rewindCloseLabel": "關閉"
 }
