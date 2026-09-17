@@ -8,14 +8,25 @@ export interface Character {
   avatar?: string;
 }
 
+/**
+ * 角色立繪。支援兩種素材組織方式，資料寫法由 `expressions` 的值決定：
+ *
+ * - **sprite sheet**：值是畫格索引（數字），所有表情排在同一張圖裡，`columns` 為格數。
+ * - **逐張圖**：值是該表情自己的圖片路徑（字串），適合每個表情各一張的全身透明 PNG。
+ *   解析後 `columns` 恆為 1、畫格索引恆為 0，`sources` 帶著表情對應的圖片，
+ *   因此 renderer 只要多問一次 `sources`，其餘排版與切換邏輯兩種方式共用。
+ */
 export interface SpriteSheet {
+  /** sheet 模式是整張圖；逐張模式是預設表情那一張（找不到對應表情時的退路）。 */
   src: string;
   alt: string;
   columns: number;
-  /** 單格寬／高。有值時 renderer 依此設定立繪框比例，避免不同尺寸的 sprite sheet 被拉伸。 */
+  /** 單格寬／高。有值時 renderer 依此設定立繪框比例，避免不同尺寸的素材被拉伸。 */
   frameAspectRatio?: number;
   defaultExpression: string;
   expressions: Record<string, number>;
+  /** 逐張模式：表情 → 圖片路徑。sheet 模式沒有這個欄位。 */
+  sources?: Record<string, string>;
   align?: 'left' | 'right' | 'center';
 }
 
@@ -415,22 +426,59 @@ export function parseImages(raw: unknown): ImageCatalog {
 
   for (const [id, value] of Object.entries(characterSource)) {
     if (!isRecord(value) || !isRecord(value.expressions)) throw new Error(`images.characters.${id} 格式錯誤`);
-    const expressions: Record<string, number> = {};
-    for (const [name, frame] of Object.entries(value.expressions)) {
-      if (typeof frame !== 'number' || frame < 0) throw new Error(`images.characters.${id}.expressions.${name} 必須是非負數`);
-      expressions[name] = frame;
+    const entries = Object.entries(value.expressions);
+    if (entries.length === 0) throw new Error(`images.characters.${id}.expressions 不可為空`);
+    // 一個角色只能用一種寫法：全是畫格索引（sheet），或全是圖片路徑（逐張）。
+    // 混用會讓「這個表情該讀哪張圖」變成依欄位型別而定的隱藏規則，寧可在載入時就擋下。
+    const perFile = entries.every(([, frame]) => typeof frame === 'string');
+    if (!perFile && !entries.every(([, frame]) => typeof frame === 'number')) {
+      throw new Error(`images.characters.${id}.expressions 不可混用畫格索引與圖片路徑`);
     }
-    if (typeof value.columns !== 'number' || value.columns < 1) throw new Error(`images.characters.${id}.columns 格式錯誤`);
     const align = value.align === 'left' || value.align === 'right' || value.align === 'center' ? value.align : undefined;
     if (value.frameAspectRatio !== undefined && (typeof value.frameAspectRatio !== 'number' || value.frameAspectRatio <= 0)) {
       throw new Error(`images.characters.${id}.frameAspectRatio 必須是正數`);
     }
+    const defaultExpression = stringField(value, 'defaultExpression');
+    const frameAspectRatio = typeof value.frameAspectRatio === 'number' ? value.frameAspectRatio : undefined;
+    const alt = stringField(value, 'alt');
+
+    if (perFile) {
+      const sources: Record<string, string> = {};
+      const expressions: Record<string, number> = {};
+      for (const [name, src] of entries) {
+        if (typeof src !== 'string' || src.length === 0) throw new Error(`images.characters.${id}.expressions.${name} 必須是非空字串`);
+        sources[name] = src;
+        expressions[name] = 0;
+      }
+      if (!sources[defaultExpression]) {
+        throw new Error(`images.characters.${id}.defaultExpression「${defaultExpression}」沒有對應的圖片`);
+      }
+      characters[id] = {
+        // 逐張模式不需要 src，但保留「預設表情那一張」當退路，讓下游不必分兩種情況處理。
+        src: sources[defaultExpression],
+        alt,
+        columns: 1,
+        frameAspectRatio,
+        defaultExpression,
+        expressions,
+        sources,
+        align,
+      };
+      continue;
+    }
+
+    const expressions: Record<string, number> = {};
+    for (const [name, frame] of entries) {
+      if (typeof frame !== 'number' || frame < 0) throw new Error(`images.characters.${id}.expressions.${name} 必須是非負數`);
+      expressions[name] = frame;
+    }
+    if (typeof value.columns !== 'number' || value.columns < 1) throw new Error(`images.characters.${id}.columns 格式錯誤`);
     characters[id] = {
       src: stringField(value, 'src'),
-      alt: stringField(value, 'alt'),
+      alt,
       columns: value.columns,
-      frameAspectRatio: typeof value.frameAspectRatio === 'number' ? value.frameAspectRatio : undefined,
-      defaultExpression: stringField(value, 'defaultExpression'),
+      frameAspectRatio,
+      defaultExpression,
       expressions,
       align,
     };

@@ -3,6 +3,7 @@ import './visual.css';
 import { loadContent } from './data/contentLoader';
 import { SaveStore } from './data/saveStore';
 import { StoryEngine, type StorySnapshot } from './engine/StoryEngine';
+import { spriteSource } from './ui/presentation';
 import { preloadImages, render, renderLoading, renderTitle, type RenderHooks } from './ui/render';
 
 const app = document.querySelector<HTMLElement>('#app');
@@ -35,7 +36,14 @@ function currentSceneImages(): Array<string | undefined> {
   ]);
   return [
     ...[...backgroundIds].map((id) => content.images.backgrounds[id]?.src),
-    ...[...spriteIds].map((id) => content.images.characters[id]?.src),
+    // 逐張素材時一個表情就是一張圖，不能只載「角色的第一張」：場景指定表情的那位角色載指定的那張，
+    // 其他人載各自的預設表情。sprite sheet 兩種情況都回同一張整圖，行為不變。
+    ...[...spriteIds].flatMap((id) => {
+      const sheet = content.images.characters[id];
+      if (!sheet) return [];
+      const expression = id === presentation?.character ? presentation?.expression : undefined;
+      return [spriteSource(sheet, expression)];
+    }),
   ];
 }
 

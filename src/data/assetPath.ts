@@ -24,7 +24,14 @@ export function resolveCatalogAssets(catalog: ImageCatalog, base?: string): Imag
   const resolve = (src: string) => resolveAssetPath(src, base);
   return {
     characters: Object.fromEntries(
-      Object.entries(catalog.characters).map(([id, sheet]) => [id, { ...sheet, src: resolve(sheet.src) }]),
+      Object.entries(catalog.characters).map(([id, sheet]) => [id, {
+        ...sheet,
+        src: resolve(sheet.src),
+        // 逐張模式的每個表情各有一個路徑，一併解析，否則部署在子路徑時會 404。
+        sources: sheet.sources
+          ? Object.fromEntries(Object.entries(sheet.sources).map(([name, src]) => [name, resolve(src)]))
+          : undefined,
+      }]),
     ),
     backgrounds: Object.fromEntries(
       Object.entries(catalog.backgrounds).map(([id, bg]) => [id, { ...bg, src: resolve(bg.src) }]),
