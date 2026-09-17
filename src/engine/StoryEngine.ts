@@ -230,17 +230,34 @@ export class StoryEngine {
 
   /**
    * 存檔裡的決策紀錄取「開頭仍然有效」的那一段：決策點是一條有序的路徑，
-   * 中間若有場景或選項已被改掉（內容改版），後面的紀錄就不再對得上，直接截斷而不是挑著留。
+   * 中間若有一筆對不上內容（改版），後面的紀錄也不再可信，直接截斷而不是挑著留。
    */
   private validDecisionPrefix(decisions: DecisionRecord[] | undefined): DecisionRecord[] {
     if (!Array.isArray(decisions)) return [];
     const valid: DecisionRecord[] = [];
     for (const decision of decisions) {
-      const scene = this.content.scenes.get(decision.sceneId);
-      if (!scene || !scene.choices.some((choice) => choice.id === decision.choiceId)) break;
+      if (!this.isDecisionUsable(decision)) break;
       valid.push({ ...decision, state: { ...decision.state } });
     }
     return valid;
+  }
+
+  /**
+   * 這筆決策紀錄回得去嗎？光是場景與選項 ID 還在並不夠——回到決策點的意思是
+   * 「重新站在那個選項頁上」，所以三件事都要成立，任一項不成立就當作對不上內容：
+   *
+   * 1. 場景與選項還在。
+   * 2. 該選項在當時的狀態下仍然可選（選項條件改過的話，回去也選不到它）。
+   * 3. 紀錄的句子仍是該場在當時狀態下的最後一句（選項頁）。場景後來加了或刪了台詞，
+   *    同一個 index 就不再是選項頁，回去會停在半途。
+   */
+  private isDecisionUsable(decision: DecisionRecord): boolean {
+    const scene = this.content.scenes.get(decision.sceneId);
+    if (!scene) return false;
+    const choice = scene.choices.find((item) => item.id === decision.choiceId);
+    if (!choice || !isChoiceAvailable(choice, decision.state)) return false;
+    const visibleCount = scene.lines.filter((line) => isLineVisible(line, decision.state)).length;
+    return decision.lineIndex === Math.max(0, visibleCount - 1);
   }
 
   private goTo(sceneId: string): void {

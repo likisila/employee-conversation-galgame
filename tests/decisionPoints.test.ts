@@ -176,6 +176,59 @@ describe('通關後回到決策點', () => {
     expect(engine.decisionPoints[0]).toEqual({ sceneId: 's1', lineIndex: 1, state: { boundary: 0 }, choiceId: 'kind' });
   });
 
+  it('決策場景後來增加台詞時，對不上的紀錄從該筆起截斷', () => {
+    // 內容改版：s1 多了一句，原本記在 index 1 的決策點已經不是選項頁。
+    const content = makeContent();
+    content.scenes.get('s1')!.lines.push({ speaker: null, text: 'a3（改版後新增）' });
+    const engine = new StoryEngine(content);
+    engine.restore({
+      sceneId: 'good',
+      state: { boundary: 2 },
+      decisions: [
+        { sceneId: 's1', lineIndex: 1, state: { boundary: 0 }, choiceId: 'kind' },
+        { sceneId: 's2', lineIndex: 0, state: { boundary: 1 }, choiceId: 'stay' },
+      ],
+    });
+    expect(engine.decisionPoints).toEqual([]);
+
+    // 改版後才存的紀錄指向新的最後一句，仍然有效。
+    const afterUpdate = new StoryEngine(content);
+    afterUpdate.restore({
+      sceneId: 'good',
+      state: { boundary: 2 },
+      decisions: [{ sceneId: 's1', lineIndex: 2, state: { boundary: 0 }, choiceId: 'kind' }],
+    });
+    expect(afterUpdate.decisionPoints).toHaveLength(1);
+    expect(afterUpdate.rewindTo(0)).toBe(true);
+    expect(afterUpdate.currentLine?.text).toBe('a3（改版後新增）');
+    expect(afterUpdate.availableChoices.map((choice) => choice.id)).toEqual(['kind', 'harsh']);
+  });
+
+  it('選項條件改成在當時狀態下不可選時，該筆紀錄失效', () => {
+    // 內容改版：kind 現在要 boundary >= 1 才出得來，但紀錄裡按下它時是 0。
+    const content = makeContent();
+    content.scenes.get('s1')!.choices[0].conditions = [{ variable: 'boundary', operator: 'gte', value: 1 }];
+    const engine = new StoryEngine(content);
+    engine.restore({
+      sceneId: 'good',
+      state: { boundary: 2 },
+      decisions: [
+        { sceneId: 's1', lineIndex: 1, state: { boundary: 0 }, choiceId: 'kind' },
+        { sceneId: 's2', lineIndex: 0, state: { boundary: 1 }, choiceId: 'stay' },
+      ],
+    });
+    expect(engine.decisionPoints).toEqual([]);
+
+    // 條件在紀錄的狀態下成立時照常保留。
+    const stillValid = new StoryEngine(content);
+    stillValid.restore({
+      sceneId: 'good',
+      state: { boundary: 2 },
+      decisions: [{ sceneId: 's1', lineIndex: 1, state: { boundary: 1 }, choiceId: 'kind' }],
+    });
+    expect(stillValid.decisionPoints).toHaveLength(1);
+  });
+
   it('存檔裡對不上內容的決策紀錄從該筆起截斷', () => {
     const engine = new StoryEngine(makeContent());
     engine.restore({

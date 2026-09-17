@@ -2,6 +2,7 @@ import type { LoadedContent } from '../data/contentLoader';
 import type { Line } from '../domain/schema';
 import type { StoryEngine } from '../engine/StoryEngine';
 import { playCutscene } from './cutscene';
+import { icon } from './icons';
 import { setKeyHandler } from './keyboard';
 import { resolvePresentation } from './presentation';
 
@@ -132,6 +133,12 @@ let lastBackgroundId: string | undefined;
 /** 這次 render 是「回上一句」：接續上一畫面，不重播轉場卡、轉場動畫與立繪淡入。 */
 let steppingBack = false;
 /**
+ * 上一次 render 有沒有顯示回上一句的箭頭。每次 render 都會重建 DOM，
+ * 靠這個旗標判斷箭頭是「這次才出現」還是「本來就在」——只有前者播放一次淡入，
+ * 否則每前進一句都會重播一次動畫（規格要求不做無限循環，也不該每句閃一下）。
+ */
+let backHintShown = false;
+/**
  * 忘掉上一次 render 的場景紀錄，讓下一次 render 把目前場景當成「剛進場」：
  * 重播轉場卡與立繪淡入。重新開始與回到決策點這兩種跳躍都要這樣宣告。
  */
@@ -142,6 +149,7 @@ function resetSceneTracking(): void {
   pendingIntroSceneId = undefined;
   revealSceneId = undefined;
   steppingBack = false;
+  backHintShown = false;
 }
 
 /** 量測對話框高度、把立繪底線寫成 CSS 變數；換場景時先解除上一次的觀察。 */
@@ -344,8 +352,11 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const hint = canAdvance ? `<span class="advance-hint" aria-hidden="true">▼</span>` : '';
   // 停在轉場卡時畫面上還沒有台詞，不提供回溯。
   const canGoBack = phase !== 'intro' && engine.canGoBack;
+  // 箭頭剛出現時才播那一次 180ms 淡入；之後每一句都只是重建同一顆按鈕，不再播。
+  const backHintEntering = canGoBack && !backHintShown;
+  backHintShown = canGoBack;
   const backHint = canGoBack
-    ? `<button type="button" class="back-hint" id="back" aria-label="${escapeHtml(content.ui.backLabel)}"><span aria-hidden="true">◀</span><span aria-hidden="true">◀</span><span aria-hidden="true">◀</span></button>`
+    ? `<button type="button" class="back-hint${backHintEntering ? ' back-hint--enter' : ''}" id="back" aria-label="${escapeHtml(content.ui.backLabel)}">${icon('back')}</button>`
     : '';
 
   const choices = atLast
