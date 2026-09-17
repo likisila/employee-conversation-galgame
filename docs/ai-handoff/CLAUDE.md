@@ -178,3 +178,20 @@
   4. **是否要在結局畫面加一行說明**（例如「可以回到任何一個決策點重新選擇」）由 ChatGPT 決定；目前畫面上只有按鈕本身，沒有額外說明文案。
 - 未決問題或阻塞：無。
 - 驗證結果：`npm run typecheck`、`npm test`（11 檔 111 測試；新增 `tests/decisionPoints.test.ts` 12 個案例涵蓋「決策點的記錄內容」「回到決策點後狀態與句子還原」「較早的決策點作廢後續紀錄」「改選走到另一個結局」「回去後不能再逐句退回舊路」「索引不合法」「過場影片狀態」「重新開始清空」「快照往返」「回傳值為複本」「壞掉的紀錄截斷」，`tests/saveStore.test.ts` 另加 3 個決策點存檔案例）、`npm run build` 全數成功。Chromium 實機（桌機 1280×800、手機 390×844）各跑一次完整流程：從標題玩到 TRUE END → 結局畫面出現按鈕 → 選單列出 5 個決策點（場景標題與選項全文正確）→ Esc／點遮罩／「關閉」三種關法都回到原本的結局畫面且焦點回到按鈕 → 選單開著時點面板、按 Enter、按左方向鍵都不會推進劇情 → 點第 2 個決策點跳回「三個人的一對一」的選項頁（先播轉場卡、沒有回上一句箭頭）→ 重新載入「繼續上次」仍在同一場 → 改選另一項走到結局後清單重建為 5 筆 → 通關後重新載入仍看得到選單 → 「重新開始」後新的一輪不顯示按鈕。另在 740×420 確認選單面板超出畫面時會自行捲動、Tab／Shift+Tab 在浮層內循環，三種尺寸都沒有水平溢出。主控台僅有沙箱代理阻擋 Google Fonts 的 `ERR_CERT_AUTHORITY_INVALID`（與本次變更無關）。
+
+## Claude-20260917-0517
+
+- 時間：2026-09-17T05:17:00Z
+- 分支或 PR：`claude/blissful-euler-3q2stv`
+- 已讀對方紀錄：`ChatGPT-20260916-2159`（無新紀錄）
+- 本次範圍：依使用者指示「PR 要上去，不然 GPT 看不到」，把「完成後必須開 PR」寫進兩邊的代理指令與交接協定。
+- 實際變更檔案：`AGENTS.md`、`CLAUDE.md`、`docs/AI_HANDOFF.md`、`docs/ai-handoff/CLAUDE.md`
+- 已定案事項：
+  1. 兩邊的入口指令（ChatGPT 的 `AGENTS.md`、Claude 的 `CLAUDE.md`）各加一節「完成後必須開 PR」，流程一致：先追加自己的交接紀錄 → commit → `git push -u origin <branch>` → 立刻開 PR → 回覆使用者時附上 PR 連結。沒有 PR 連結的工作一律視為未完成。
+  2. `docs/AI_HANDOFF.md` 新增「開 PR（交接的送達方式）」一節：交接紀錄寫了但沒開 PR，對方讀不到，交接不算送達；PR 內文至少包含本次 Entry ID、實際變更檔案、交給對方的明確行動、驗證結果；對方回覆時應引用該 PR。
+  3. 這次修改的是分工／交接規則本身，依 `docs/AI_ROLE_BOUNDARIES.md` 第 7 條，屬使用者明確要求，非 Claude 自行變更。
+- 交給 ChatGPT：
+  1. 請依新規則照辦：往後每次更新都要開 PR，並在 PR 內文附上自己的 Entry ID。
+  2. `Claude-20260917-0405` 交出的四個新 UI 標籤文案（`rewindLabel`、`rewindPrompt`、`rewindChoiceLabel`、`rewindCloseLabel`）與決策點選單的視覺規格仍待定案；PR #24 的交接紀錄仍未補登。
+- 未決問題或阻塞：無。
+- 驗證結果：本次只改 Markdown 指令文件，不影響程式；`npm run typecheck`、`npm test`（11 檔 111 測試）、`npm run build` 於同一分支已全數通過（見 `Claude-20260917-0405`）。
