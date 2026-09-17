@@ -176,7 +176,7 @@ describe('通關後回到決策點', () => {
     expect(engine.decisionPoints[0]).toEqual({ sceneId: 's1', lineIndex: 1, state: { boundary: 0 }, choiceId: 'kind' });
   });
 
-  it('決策場景後來增加台詞時，對不上的紀錄從該筆起截斷', () => {
+  it('決策場景後來增加台詞時，對不上的紀錄會被修正成新的位置', () => {
     // 內容改版：s1 多了一句，原本記在 index 1 的決策點已經不是選項頁。
     const content = makeContent();
     content.scenes.get('s1')!.lines.push({ speaker: null, text: 'a3（改版後新增）' });
@@ -189,7 +189,11 @@ describe('通關後回到決策點', () => {
         { sceneId: 's2', lineIndex: 0, state: { boundary: 1 }, choiceId: 'stay' },
       ],
     });
-    expect(engine.decisionPoints).toEqual([]);
+    // 對不上的紀錄先被截斷，接著由狀態反推出同一條路徑，s1 的句子指到改版後的最後一句。
+    expect(engine.decisionPoints).toEqual([
+      { sceneId: 's1', lineIndex: 2, state: { boundary: 0 }, choiceId: 'kind' },
+      { sceneId: 's2', lineIndex: 0, state: { boundary: 1 }, choiceId: 'stay' },
+    ]);
 
     // 改版後才存的紀錄指向新的最後一句，仍然有效。
     const afterUpdate = new StoryEngine(content);
@@ -243,5 +247,70 @@ describe('通關後回到決策點', () => {
     expect(engine.decisionPoints).toEqual([
       { sceneId: 's1', lineIndex: 1, state: { boundary: 0 }, choiceId: 'kind' },
     ]);
+  });
+});
+
+describe('舊存檔（沒有決策紀錄）的路徑反推', () => {
+  it('從存檔狀態反推出這一輪走過的決策點，不必重玩', () => {
+    // 更新前的存檔：停在結局、狀態完整，但沒有 decisions 欄位。
+    const engine = new StoryEngine(makeContent());
+    engine.restore({ sceneId: 'good', state: { boundary: 2 }, lineIndex: 0 });
+    expect(engine.decisionPoints).toEqual([
+      { sceneId: 's1', lineIndex: 1, state: { boundary: 0 }, choiceId: 'kind' },
+      { sceneId: 's2', lineIndex: 0, state: { boundary: 1 }, choiceId: 'stay' },
+    ]);
+  });
+
+  it('反推出來的決策點可以直接跳回去重選', () => {
+    const engine = new StoryEngine(makeContent());
+    engine.restore({ sceneId: 'good', state: { boundary: 2 }, lineIndex: 0 });
+    expect(engine.rewindTo(1)).toBe(true);
+    expect(engine.currentScene.id).toBe('s2');
+    expect(engine.currentState.boundary).toBe(1);
+    engine.choose('leave');
+    expect(engine.currentScene.id).toBe('bad');
+  });
+
+  it('反推結果與實際遊玩記下來的一模一樣', () => {
+    const played = new StoryEngine(makeContent());
+    playToGoodEnding(played);
+    const rebuilt = new StoryEngine(makeContent());
+    // 拿掉 decisions，模擬舊版本存下來的快照。
+    const { decisions, ...legacy } = played.snapshot;
+    expect(decisions).toHaveLength(2);
+    rebuilt.restore(legacy);
+    expect(rebuilt.decisionPoints).toEqual(played.decisionPoints);
+  });
+
+  it('同一個狀態對得上兩條路徑時不反推，寧可不顯示也不列出沒做過的選擇', () => {
+    // s1 的兩個選項改成效果相同：走哪一條，最後的狀態都一樣。
+    const content = makeContent();
+    content.scenes.get('s1')!.choices[1].effects = [{ variable: 'boundary', operation: 'add', value: 1 }];
+    const engine = new StoryEngine(content);
+    engine.restore({ sceneId: 'good', state: { boundary: 2 }, lineIndex: 0 });
+    expect(engine.decisionPoints).toEqual([]);
+  });
+
+  it('狀態對不上任何一條路徑時不反推', () => {
+    const engine = new StoryEngine(makeContent());
+    engine.restore({ sceneId: 'good', state: { boundary: 99 }, lineIndex: 0 });
+    expect(engine.decisionPoints).toEqual([]);
+  });
+
+  it('存檔已經有有效的決策紀錄時，直接沿用而不反推', () => {
+    const engine = new StoryEngine(makeContent());
+    engine.restore({
+      sceneId: 'good',
+      state: { boundary: 2 },
+      decisions: [{ sceneId: 's1', lineIndex: 1, state: { boundary: 0 }, choiceId: 'kind' }],
+    });
+    expect(engine.decisionPoints).toHaveLength(1);
+  });
+
+  it('還沒做過選擇的存檔反推出空清單，不影響讀檔', () => {
+    const engine = new StoryEngine(makeContent());
+    engine.restore({ sceneId: 's1', state: { boundary: 0 }, lineIndex: 0 });
+    expect(engine.decisionPoints).toEqual([]);
+    expect(engine.currentScene.id).toBe('s1');
   });
 });

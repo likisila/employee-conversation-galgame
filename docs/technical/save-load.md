@@ -19,7 +19,8 @@ StoryEngine.restore()  ←──  StorySnapshot                                �
   - `lineIndex`：該場讀到第幾句。
   - `watchedCutscenes`：已播完或跳過的過場影片 ID，讓重新載入不重播。
   - `decisions`：這一輪走過的決策點（場景、停在哪一句、選擇「之前」的狀態、選了哪個選項 ID），供通關後的「回到決策點」使用。
-  除 `sceneId`、`state` 外都是選填：舊存檔缺這些欄位時分別退化為「從第一句開始」「都沒看過」「沒有決策點可回」，不會丟棄整份存檔。
+  除 `sceneId`、`state` 外都是選填：舊存檔缺這些欄位時分別退化為「從第一句開始」「都沒看過」，不會丟棄整份存檔。
+- **決策紀錄的反推**：`decisions` 是後來才加的欄位。缺少（或因內容改版被截斷成空）時，`restore()` 會從 `startScene` 窮舉選擇組合，找出「停在存檔場景、狀態完全相同」的路徑並據此重建決策點；恰好一條才採用，零條或多條都留空，避免列出玩家沒做過的選擇。窮舉有節點上限（`REBUILD_NODE_LIMIT`），內容長大後走不完就當作推不出來，不會讓讀檔卡住。
 - **`StoryEngine.snapshot`**：回傳目前進度的深拷貝（state 為複本，非活引用）。
 - **`StoryEngine.restore(snapshot)`**：把進度套回引擎；場景不存在時丟出錯誤，交由呼叫端決定是否丟棄過期存檔。
 - **`SaveStore`**（`src/data/saveStore.ts`）：單一遊戲的持久化層。
