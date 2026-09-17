@@ -145,3 +145,27 @@
   .character-stage[data-framing="upper-body"]{inset:3rem 0 0}
   .character-stage[data-framing="upper-body"] .character-sprite{height:min(96vh,calc(52vw / var(--frame-aspect,.6667)))}
 }
+
+/* ───── 手機版：一律只露半身 ─────
+   依使用者指示（2026-09-17）：手機不論背景是哪種取景（`none` 除外，那本來就不顯示立繪），
+   都只露上半身，下半身由對話框遮住，並依角色的左右對齊微偏一邊，讓立繪不擋住台詞。
+
+   桌機維持 property/VISUALS.md 的規格：寬景全身、會議室近景半身。
+
+   兩個重點：
+   1. 拿掉 max-width 的夾制。原本 `max-width:100%` 會在立繪比畫面寬時只壓寬度、不動高度，
+      配上 `background-size:100% 100%` 就把人壓扁（實測 390×844 下是 351×608，比例 0.577，
+      比素材的 0.667 窄了 13%）。改成只由高度決定尺寸、允許水平溢出（由 .game-screen 裁掉）。
+   2. 水平微偏用 transform，因此進場動畫改用 translate 屬性（見 style.css 的 sprite-in），
+      兩者是不同屬性，不會互相覆蓋。 */
+@media(max-width:700px){
+  .character-stage{inset:4dvh 0 0;justify-content:center;padding:0}
+  .character-sprite{
+    height:min(104dvh,calc(104vw / var(--frame-aspect,.6667)));
+    max-width:none;
+    --sprite-shift:0%;
+    transform:translateX(var(--sprite-shift));
+  }
+  .character-stage[data-align="left"] .character-sprite{--sprite-shift:-14%}
+  .character-stage[data-align="right"] .character-sprite{--sprite-shift:14%}
+}
