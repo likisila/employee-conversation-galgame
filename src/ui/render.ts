@@ -98,6 +98,9 @@ export function renderLoading(app: HTMLElement, content: LoadedContent, ready: P
 /** 讀取／轉場畫面出現後，至少停留這麼久才接受點擊，避免連點誤跳。 */
 const MIN_DWELL_MS = 350;
 
+/** 對話框左側這個比例的區塊是「回上一句」，其餘照舊是「下一句」。 */
+const BACK_ZONE_RATIO = 1 / 3;
+
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
@@ -131,6 +134,8 @@ let lastSceneId: string | undefined;
 let lastCharacterId: string | undefined;
 /** 上一次 render 的背景；同場景內換景（例如結局的「三週後」）時補一次轉場。 */
 let lastBackgroundId: string | undefined;
+/** 這次 render 是「回上一句」：接續上一畫面，不重播轉場卡、轉場動畫與立繪淡入。 */
+let steppingBack = false;
 /** 量測對話框高度、把立繪底線寫成 CSS 變數；換場景時先解除上一次的觀察。 */
 let panelObserver: ResizeObserver | undefined;
 let resizeHandler: (() => void) | undefined;
@@ -277,6 +282,15 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
 
   const background = backgroundId ? content.images.backgrounds[backgroundId] : undefined;
   const sceneTransition = presentation?.transition ?? 'none';
+  // 回上一句：把「上一次 render」的紀錄對齊這一句，避免被當成進新場景而重播轉場卡與淡入。
+  if (steppingBack) {
+    steppingBack = false;
+    lastSceneId = scene.id;
+    lastCharacterId = characterId;
+    lastBackgroundId = backgroundId;
+    pendingIntroSceneId = undefined;
+    revealSceneId = undefined;
+  }
   const enteringScene = lastSceneId !== scene.id;
   lastSceneId = scene.id;
   // 進入有轉場的新場景：先停在轉場卡，等玩家點擊才顯示對話。
@@ -304,6 +318,11 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const namePlate = line ? renderNamePlate(line, content) : '';
   const speakingSelf = line !== undefined && line.speaker !== null && line.speaker === content.game.player;
   const hint = canAdvance ? `<span class="advance-hint" aria-hidden="true">▼</span>` : '';
+  // 停在轉場卡時畫面上還沒有台詞，不提供回溯。
+  const canGoBack = phase !== 'intro' && engine.canGoBack;
+  const backHint = canGoBack
+    ? `<button type="button" class="back-hint" id="back" aria-label="${escapeHtml(content.ui.backLabel)}"><span aria-hidden="true">◀</span><span aria-hidden="true">◀</span><span aria-hidden="true">◀</span></button>`
+    : '';
 
   const choices = atLast
     ? engine.availableChoices.map((choice, index) =>
@@ -317,13 +336,13 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       : '';
 
   app.innerHTML = `
-    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-settled="${sameScene}" data-has-choices="${atLast && choices !== ''}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}">
+    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-can-back="${canGoBack}" data-settled="${sameScene}" data-has-choices="${atLast && choices !== ''}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}">
       <div class="scene-transition" aria-hidden="true" style="--transition-art:${cssUrl(transitionAsset)}"></div>
       ${phase === 'intro' ? `<div class="scene-intro" role="status"><p class="eyebrow">${escapeHtml(content.game.title)}</p>${scene.title ? `<h2>${escapeHtml(scene.title)}</h2>` : ''}<p class="tap-hint">${escapeHtml(content.ui.tapToContinueLabel)}</p></div>` : ''}
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
       ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}"><div class="character-sprite" style="--sprite:url('${escapeHtml(sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
-      <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue">${dialogue}${hint}</section><footer>${action}</footer></div>
+      <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue">${backHint}${dialogue}${hint}</section><footer>${action}</footer></div>
     </section>
   `;
 
@@ -348,12 +367,39 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     hooks.onAdvance?.();
   };
 
+  const goBack = (): void => {
+    if (!canGoBack || !engine.back()) return;
+    steppingBack = true;
+    render(app, engine, content, hooks);
+    // 存檔跟著退回，重新載入不會又跳到後面那一句。
+    hooks.onAdvance?.();
+  };
+
+  /** 點擊落在對話框左側 1/3、且確實有上一句可回時，才算「回上一句」。 */
+  const isBackZone = (event: MouseEvent): boolean => {
+    if (!canGoBack) return false;
+    const panel = (event.target as HTMLElement).closest('.story-panel');
+    if (!panel) return false;
+    const rect = panel.getBoundingClientRect();
+    return event.clientX < rect.left + rect.width * BACK_ZONE_RATIO;
+  };
+
   app.querySelector<HTMLElement>('.game-screen')?.addEventListener('click', (event) => {
-    // 按鈕（選項、重來）各自處理；其他地方點一下就是「下一句」。
+    // 按鈕（選項、重來、回上一句）各自處理；其他地方點一下就是「下一句」。
     if ((event.target as HTMLElement).closest('button')) return;
+    if (isBackZone(event)) {
+      goBack();
+      return;
+    }
     advance();
   });
+  app.querySelector<HTMLButtonElement>('#back')?.addEventListener('click', goBack);
   setKeyHandler((event: KeyboardEvent): void => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      goBack();
+      return;
+    }
     if (event.key !== 'Enter' && event.key !== ' ') return;
     if ((event.target as HTMLElement | null)?.closest('button')) return;
     event.preventDefault();
