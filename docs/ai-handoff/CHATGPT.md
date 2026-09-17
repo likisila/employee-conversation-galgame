@@ -94,3 +94,22 @@
 - 交給 Claude：請由 Claude 決定全身圖在現有載入器與版面中的最佳使用方式；可逐張載入或在建置／程式層組合，但不要重新去背、重新量化色盤或覆寫本批 PNG。若整合需要修改 schema、`property/images.json`、renderer 或 CSS，均由 Claude 處理。
 - 未決問題或阻塞：本批素材尚未接入遊戲，等待 Claude 整合與桌機／手機實機驗證；舊 bust sprite 暫時保留，避免在整合前影響現行遊戲。
 - 驗證結果：十張皆為 1024×1536 sRGBA，四角像素皆為 `alpha=0`；白底與深藍底合成檢查確認沒有黑底、綠邊或色鍵殘留，人物全身未裁切；十張 SHA-256 皆不同。
+
+## ChatGPT-20260917-0858
+
+- 時間：2026-09-17T08:58:35Z
+- 分支或 PR：`codex/fix-pr31-character-framing`
+- 已讀對方紀錄：`Claude-20260917-0845`（已讀；本筆回覆其中的會議室取景與曾雅琳 alt 兩項交辦）
+- 本次範圍：修正 PR #31 整合後仍沿用舊深色外觀的曾雅琳替代文字，並定案全身透明人物圖在不同背景上的取景規格。
+- 實際變更檔案：`property/images.json`、`property/VISUALS.md`、`docs/ai-handoff/CHATGPT.md`
+- 已定案事項：
+  1. 曾雅琳的 alt 改為肩長淺冷灰棕髮、淺灰米色西裝外套、霧灰上衣與淺灰長褲，與已合併的角色正典及正式圖片一致。
+  2. 原始 1024×1536 全身透明 PNG 必須保持不變，不另做裁切版、不重新編碼或量化；取景由程式在顯示階段處理。
+  3. 取景依目前背景的語意決定，不寫死 scene id：有地板的寬景使用 `full`；`moon-meeting-room-rain` 使用 `upper-body`，下半身由舞台裁切且不露腳；`cg-rights-packet`、`cg-badge-flip`、`cg-true-reflection` 等劇情 CG 使用 `none`，避免另疊立繪。未設定時預設 `full`，只有明確分鏡例外才由場景或台詞覆寫。
+- 交給 Claude：
+  1. 請在 Claude-owned 的 schema、背景資料、renderer 與 CSS 中實作背景導向的角色取景；可使用 `characterFraming` 或等價型別化欄位，技術形式由 Claude 決定。
+  2. 將會議室近景設為上半身裁切、劇情 CG 設為不疊立繪、有地板寬景維持全身，並保留現有逐表情載入、左右對齊、轉場與舊 sprite sheet 相容。
+  3. 請在桌機與手機驗收 s3、s5、s7、s8、相關結局及使用 `cg-rights-packet` 的 s4／s6；確認不再出現腳踩桌面、CG 被遮擋、人物溢出或表情切換跳位。
+  4. `SpriteSheet` 型別目前同時代表 sheet 與逐張圖片，日後可改為 discriminated union 或更中性的名稱；此項不阻擋本次取景修正。
+- 未決問題或阻塞：內容與 UI 規格已完成；實際顯示修正仍待 Claude 依本筆交接實作，合併本 PR 本身不會改變 runtime 畫面。
+- 驗證結果：`property/images.json` 可解析；`git diff --check` 通過；十張正式人物 PNG 未被修改，原始 blob SHA 保持不變。
