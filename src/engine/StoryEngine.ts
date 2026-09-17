@@ -27,8 +27,21 @@ export interface DecisionRecord {
   choiceId: string;
 }
 
+/** 兩份狀態是否完全相同（同樣的鍵、同樣的值）。 */
+function sameState(left: GameState, right: GameState): boolean {
+  const keys = Object.keys(left);
+  if (keys.length !== Object.keys(right).length) return false;
+  return keys.every((key) => left[key] === right[key]);
+}
+
 /** 回溯上限：最多保留這麼多步，避免長流程無限累積快照。 */
 const HISTORY_LIMIT = 200;
+
+/**
+ * 反推舊存檔路徑時最多走過幾個節點。目前這部作品只有 243 條路徑，這個上限綽綽有餘；
+ * 設上限是為了將來內容長大時，讀檔不會因為窮舉而卡住——走不完就當作推不出來。
+ */
+const REBUILD_NODE_LIMIT = 20000;
 
 export class StoryEngine {
   private sceneId: string;
@@ -217,6 +230,11 @@ export class StoryEngine {
     // 重新載入不該重播已經看過的過場。
     this.watchedCutscenes = new Set(Array.isArray(snapshot.watchedCutscenes) ? snapshot.watchedCutscenes : []);
     this.decisions = this.validDecisionPrefix(snapshot.decisions);
+    if (this.decisions.length === 0) {
+      // 更新前存的檔沒有決策紀錄，接續玩到結局時會看不到「回到決策點」。
+      // 這種存檔仍然記著完整狀態，所以從起點反推這一輪走過的路徑；只有唯一解才採用。
+      this.decisions = this.rebuildDecisions(snapshot.sceneId, snapshot.state) ?? [];
+    }
     this.settle();
     const max = Math.max(0, this.visibleLines.length - 1);
     this.lineIndex = Math.min(Math.max(0, Math.floor(snapshot.lineIndex ?? 0)), max);
@@ -226,6 +244,67 @@ export class StoryEngine {
   private remember(): void {
     this.history.push({ sceneId: this.sceneId, state: { ...this.state }, lineIndex: this.lineIndex });
     if (this.history.length > HISTORY_LIMIT) this.history.shift();
+  }
+
+  /**
+   * 反推這一輪走過的決策點：從起始場景窮舉所有選擇組合，找出「停在同一個場景、狀態完全相同」
+   * 的路徑。用於沒有決策紀錄的舊存檔（此欄位是後來才加的），讓它們不必重玩就能使用決策點選單。
+   *
+   * 只有恰好一條路徑對得上才採用。兩條以上代表這個狀態推不出唯一的歷史，寧可不顯示，
+   * 也不要列出玩家沒做過的選擇；一條都沒有（例如存檔被改過或內容已改版）同樣不採用。
+   */
+  private rebuildDecisions(sceneId: string, state: GameState): DecisionRecord[] | undefined {
+    let visited = 0;
+    let found: DecisionRecord[] | undefined;
+    let ambiguous = false;
+
+    const walk = (currentId: string, currentState: GameState, trail: DecisionRecord[]): void => {
+      if (ambiguous || visited >= REBUILD_NODE_LIMIT) return;
+      visited += 1;
+      const settled = this.settledSceneId(currentId, currentState);
+      if (settled === undefined) return;
+      if (settled === sceneId && sameState(currentState, state)) {
+        // 故事是有向無環的，同一條路徑不會再次走到同一個（場景，狀態），所以命中就不必再往下。
+        if (found) ambiguous = true;
+        else found = trail;
+        return;
+      }
+      const scene = this.content.scenes.get(settled);
+      if (!scene) return;
+      const choices = scene.choices.filter((choice) => isChoiceAvailable(choice, currentState));
+      if (choices.length > 0) {
+        const lineIndex = Math.max(0, scene.lines.filter((line) => isLineVisible(line, currentState)).length - 1);
+        for (const choice of choices) {
+          walk(choice.next, applyChoiceEffects(choice, currentState), [
+            ...trail,
+            { sceneId: settled, lineIndex, state: { ...currentState }, choiceId: choice.id },
+          ]);
+        }
+        return;
+      }
+      if (scene.next) walk(scene.next, currentState, trail);
+    };
+
+    walk(this.content.game.startScene, { ...this.content.game.initialState }, []);
+    if (ambiguous || visited >= REBUILD_NODE_LIMIT) return undefined;
+    return found;
+  }
+
+  /**
+   * 純函式版的 route 解析：回傳從 `sceneId` 依狀態自動跳轉後停在的場景。
+   * 與 `settle()` 的差別是不改動引擎狀態、遇到壞資料回傳 undefined 而不拋錯——
+   * 反推舊存檔是「盡力而為」，不該因為某條分支的資料有問題就讓讀檔失敗。
+   */
+  private settledSceneId(sceneId: string, state: GameState): string | undefined {
+    let current = sceneId;
+    for (let hops = 0; hops < 64; hops += 1) {
+      const scene = this.content.scenes.get(current);
+      if (!scene) return undefined;
+      const target = resolveRoute(scene, state);
+      if (target === undefined) return current;
+      current = target;
+    }
+    return undefined;
   }
 
   /**
