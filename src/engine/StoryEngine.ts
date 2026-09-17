@@ -7,6 +7,8 @@ export interface StorySnapshot {
   state: GameState;
   /** 目前場景已讀到第幾句（0 起算）。舊存檔沒有此欄位時視為 0。 */
   lineIndex?: number;
+  /** 已看過的過場影片 ID。舊存檔沒有此欄位時視為全都沒看過。 */
+  watchedCutscenes?: string[];
 }
 
 /** 回溯上限：最多保留這麼多步，避免長流程無限累積快照。 */
@@ -21,6 +23,8 @@ export class StoryEngine {
    * 因為做過選擇的那一頁不允許回去重選；載入存檔與重新開始也從零算起。
    */
   private history: StorySnapshot[] = [];
+  /** 已播完或被玩家跳過的過場影片；同一段不重播，回上一句也不會再看到。 */
+  private watchedCutscenes = new Set<string>();
 
   constructor(private readonly content: LoadedContent) {
     this.sceneId = content.game.startScene;
@@ -56,6 +60,16 @@ export class StoryEngine {
   /** 這一場的台詞是否已全部讀完（沒有台詞的場景視為已讀完）。 */
   get atLastLine(): boolean {
     return this.lineIndex >= this.visibleLines.length - 1;
+  }
+
+  /** 這段過場影片是否已經看過（含玩家主動跳過）。 */
+  hasWatchedCutscene(id: string): boolean {
+    return this.watchedCutscenes.has(id);
+  }
+
+  /** 記下這段過場影片已經看過；播完與跳過都算。 */
+  markCutsceneWatched(id: string): void {
+    this.watchedCutscenes.add(id);
   }
 
   /** 是否還有上一句可以回去。 */
@@ -118,12 +132,19 @@ export class StoryEngine {
     this.state = { ...this.content.game.initialState };
     this.lineIndex = 0;
     this.history = [];
+    // 重新開始是重玩，過場影片要能再看一次。
+    this.watchedCutscenes.clear();
     this.settle();
   }
 
   /** 目前進度的可序列化快照，用於存檔。 */
   get snapshot(): StorySnapshot {
-    return { sceneId: this.sceneId, state: { ...this.state }, lineIndex: this.lineIndex };
+    return {
+      sceneId: this.sceneId,
+      state: { ...this.state },
+      lineIndex: this.lineIndex,
+      watchedCutscenes: [...this.watchedCutscenes],
+    };
   }
 
   /**
@@ -139,6 +160,8 @@ export class StoryEngine {
     this.lineIndex = 0;
     // 存檔只記錄停在哪一句，沒有回溯紀錄可還原。
     this.history = [];
+    // 重新載入不該重播已經看過的過場。
+    this.watchedCutscenes = new Set(Array.isArray(snapshot.watchedCutscenes) ? snapshot.watchedCutscenes : []);
     this.settle();
     const max = Math.max(0, this.visibleLines.length - 1);
     this.lineIndex = Math.min(Math.max(0, Math.floor(snapshot.lineIndex ?? 0)), max);

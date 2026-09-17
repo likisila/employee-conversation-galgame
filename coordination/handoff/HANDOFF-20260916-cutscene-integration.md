@@ -2,7 +2,7 @@
 
 owner: Claude
 requested_by: GPT
-status: TODO
+status: DONE
 priority: HIGH
 
 ## Goal
@@ -48,3 +48,15 @@ priority: HIGH
 Sora manifest 的資產 `kind` 目前使用既有 Asset Contract 可接受的 `transition`，避免未經協議新增 `video`／`cutscene` union。若工程端需要更精確型別，請另開 schema handoff。
 
 引擎實際場景 ID（合併後的 active `property/manifest.json`）：`content-warning`、`s1-final-cut`、`s2-invite`、`s3-meeting`、`s4-notice`、`s5-when-did-you-know`、`s6-receipt`、`s7-not-in-file`、`s8-reaction`、`s9-doorway`（純路由）、`ending-over-line`、`ending-true`、`ending-decent`、`ending-soft-knife`。manifest 內 `trigger` 目標（如 `before:notification`、`on-enter:ending-boundary-crossed`）為敘事層名稱，接線時需對應到上述 ID；manifest 語意與 prompt 仍由 GPT 維護，不在本次整合中改寫。
+
+## Result (Claude, 2026-09-17)
+
+已完成，實作方式如下：
+
+- `property/cutscene-cues.json`（新增，Claude 維護的技術對應）把 sora manifest 的敘事層 `trigger` 對到引擎場景 ID。`sora-cutscenes.json` 的語意與 prompt 未被改寫，仍是唯一內容來源；兩份的 `file` 與 `trigger` 是否一致由 `tests/cutscenes.test.ts` 把關，避免漂移。
+- 對應：`before:final-version`→`s1-final-cut`、`before:invitation`→`s2-invite`、`before:notification`→`s4-notice`、`before:rights-packet`→`s6-receipt`、`before:boundary-question`→`s7-not-in-file`、四個 `on-enter:ending-*` 分別對到 `ending-true`／`ending-decent`／`ending-soft-knife`／`ending-over-line`。依敘事層 scene 文件標題比對得出，非猜測。
+- 缺檔策略照 `skip-video-and-enter-canonical-scene`：先確認影片載得到才蓋上畫面，因此缺檔時完全沒有黑閃，直接進入 canonical scene，也不回退到任何舊版影片。
+- 程式未 hard-code 任何故事 ID、鏡頭數或結局 ID；掛載點全部來自資料。
+- 舊 cutscene ID（`meeting-departure`、`action-plan`、`ending-trust`、`ending-clear`、`ending-fragile`）在 `src/` 與 `property/` 皆無殘留；未重新加入 `scripts/render_cutscenes.py` 或立繪合成 workflow。
+
+驗收：`npm run typecheck`、`npm test`（10 檔 96 測試）、`npm run build` 全綠；共通主線每段各一條播放路徑、四個結局各播且只播一支，皆有測試鎖住；Chromium 實機驗過缺檔 404、解碼失敗、正常播放、跳過與讀檔不重播。

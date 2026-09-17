@@ -23,8 +23,11 @@ function makeContent(): LoadedContent {
     ui: {
       choicePrompt: '', continueLabel: '', restartLabel: '', narratorName: '',
       startLabel: '', loadingLabel: '', subtitle: '', resumeLabel: '', newGameLabel: '', playerLabel: '', tapToContinueLabel: '', backLabel: '',
+      skipCutsceneLabel: '', muteCutsceneLabel: '', cutsceneLabel: '',
     },
     images: { characters: {}, backgrounds: {}, sceneBackgrounds: {}, screens: {}, ui: {}, transitions: {}, scenePresentation: {} },
+    cutscenes: { missingAssetBehavior: 'skip-video-and-enter-canonical-scene' },
+    cutsceneCues: new Map(),
   };
 }
 
@@ -63,7 +66,7 @@ describe('StoryEngine snapshot/restore', () => {
     const engine = new StoryEngine(makeContent());
     const target = { sceneId: 'feedback', state: { trust: 4, clarity: 1 } };
     engine.restore(target);
-    expect(engine.snapshot).toEqual({ ...target, lineIndex: 0 });
+    expect(engine.snapshot).toEqual({ ...target, lineIndex: 0, watchedCutscenes: [] });
   });
 });
 

@@ -20,5 +20,6 @@
     "scenes/ending-soft-knife.json"
   ],
   "cutscenes": "cutscenes.json",
-  "soraCutscenes": "sora-cutscenes.json"
+  "soraCutscenes": "sora-cutscenes.json",
+  "cutsceneCues": "cutscene-cues.json"
 }

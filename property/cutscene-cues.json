@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "directory": "/assets/cutscenes",
+  "cues": [
+    { "id": "final-documents", "file": "00_final_documents.mp4", "trigger": "before:final-version", "scene": "s1-final-cut" },
+    { "id": "meeting-invitation", "file": "01_meeting_invitation.mp4", "trigger": "before:invitation", "scene": "s2-invite" },
+    { "id": "layoff-notification", "file": "02_layoff_notification.mp4", "trigger": "before:notification", "scene": "s4-notice" },
+    { "id": "rights-packet", "file": "03_rights_packet.mp4", "trigger": "before:rights-packet", "scene": "s6-receipt" },
+    { "id": "boundary-question", "file": "04_boundary_question.mp4", "trigger": "before:boundary-question", "scene": "s7-not-in-file" },
+    { "id": "ending-true", "file": "06_ending_true.mp4", "trigger": "on-enter:ending-true", "scene": "ending-true" },
+    { "id": "ending-dignified", "file": "07_ending_dignified.mp4", "trigger": "on-enter:ending-dignified", "scene": "ending-decent" },
+    { "id": "ending-soft-knife", "file": "08_ending_soft_knife.mp4", "trigger": "on-enter:ending-soft-knife", "scene": "ending-soft-knife" },
+    { "id": "ending-boundary-crossed", "file": "09_ending_boundary_crossed.mp4", "trigger": "on-enter:ending-boundary-crossed", "scene": "ending-over-line" }
+  ]
+}

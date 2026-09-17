@@ -109,3 +109,30 @@ describe('SaveStore lineIndex', () => {
     expect(store.load()).toEqual({ sceneId: 's1', state: {} });
   });
 });
+
+describe('已看過的過場影片', () => {
+  it('存檔會帶著 watchedCutscenes 來回', () => {
+    const storage = new MemoryStorage();
+    const store = new SaveStore('g', storage);
+    store.save({ sceneId: 's4-notice', state: {}, lineIndex: 2, watchedCutscenes: ['layoff-notification'] });
+    expect(store.load()?.watchedCutscenes).toEqual(['layoff-notification']);
+  });
+
+  it('舊存檔沒有這個欄位時照常讀取', () => {
+    const storage = new MemoryStorage();
+    const store = new SaveStore('g', storage);
+    store.save({ sceneId: 's4-notice', state: {} });
+    const loaded = store.load();
+    expect(loaded?.sceneId).toBe('s4-notice');
+    expect(loaded?.watchedCutscenes).toBeUndefined();
+  });
+
+  it('欄位型別不對時忽略該欄位，不丟掉整份存檔', () => {
+    const storage = new MemoryStorage();
+    const store = new SaveStore('g', storage);
+    store.save({ sceneId: 's4-notice', state: {}, watchedCutscenes: ['ok', 7 as unknown as string] });
+    const loaded = store.load();
+    expect(loaded?.sceneId).toBe('s4-notice');
+    expect(loaded?.watchedCutscenes).toBeUndefined();
+  });
+});

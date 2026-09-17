@@ -31,8 +31,11 @@ function makeContent(): LoadedContent {
       choicePrompt: '', continueLabel: '', restartLabel: '', narratorName: '',
       startLabel: '', loadingLabel: '', subtitle: '', resumeLabel: '', newGameLabel: '',
       playerLabel: '', tapToContinueLabel: '', backLabel: '',
+      skipCutsceneLabel: '', muteCutsceneLabel: '', cutsceneLabel: '',
     },
     images: { characters: {}, backgrounds: {}, sceneBackgrounds: {}, screens: {}, ui: {}, transitions: {}, scenePresentation: {} },
+    cutscenes: { missingAssetBehavior: 'skip-video-and-enter-canonical-scene' },
+    cutsceneCues: new Map(),
   };
 }
 

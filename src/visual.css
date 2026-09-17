@@ -80,9 +80,28 @@
 /* 手機：出現選項時對話框可再高一點，減少框內捲動 */
 @media(max-width:700px){
   .game-screen[data-has-choices="true"] .story-panel{max-height:68dvh}
-  .story-panel{--panel-pad:1rem}
+  /* 手機是單欄，選項直接排在對話框底部，會撞到釘在左下角的回溯箭頭（箭頭在上層，會把選項
+     按鈕那一角的點擊吃掉）。底部多留一條箭頭的高度，兩者就不重疊。桌機是雙欄、選項在右欄，
+     不會相撞，因此不動。 */
+  .story-panel{--panel-pad:1rem;padding-bottom:calc(var(--panel-pad) + var(--back-hint-bottom) + var(--back-hint-height))}
   .name-plate{font-size:1rem;padding:.32rem 1.1rem .3rem .8rem}
   .message-avatar{width:2rem;height:2rem;font-size:.66rem}
   .scene-intro .tap-hint{margin-top:2rem}
 }
 @media(orientation:landscape) and (max-height:520px){.story-panel{--panel-pad:.8rem}.name-plate{font-size:.95rem;padding:.25rem 1rem .22rem .7rem}}
+
+/* ───── 過場影片：真人微電影，蓋滿畫面，可跳過 ─────
+   影片本身是 16:9，用 contain 置中並以黑底補滿，直式手機不會被裁掉內容。
+   只有環境音、沒有對白，因此不需要字幕軌；控制列固定在右下角，跳過與靜音都是真按鈕。 */
+/* 探測影片能不能載的期間蓋在最上層：透明、不改變畫面，只吃掉點擊，
+   避免玩家在待播的影片底下把劇情往前推。 */
+.cutscene-shield{position:fixed;inset:0;z-index:100;background:transparent}
+.cutscene{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:#000;cursor:pointer;animation:cutscene-in 320ms ease-out both}
+.cutscene-video{width:100%;height:100%;object-fit:contain;background:#000}
+.cutscene-controls{position:absolute;right:max(1rem,env(safe-area-inset-right));bottom:max(1rem,env(safe-area-inset-bottom));display:flex;align-items:center;gap:.5rem}
+.cutscene-button{display:inline-flex;align-items:center;gap:.4rem;min-height:2.5rem;padding:.5rem .9rem;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:rgba(8,21,29,.62);color:var(--paper);font-family:'Noto Sans TC',system-ui,sans-serif;font-size:.85rem;letter-spacing:.08em;cursor:pointer;backdrop-filter:blur(6px);transition:border-color 160ms,background 160ms,color 160ms}
+.cutscene-button:hover,.cutscene-button:focus-visible{border-color:var(--teal);background:rgba(21,41,54,.88);color:#fff}
+.cutscene-skip-mark{font-size:.7rem;opacity:.8}
+#cutscene-mute{padding:.5rem;min-width:2.5rem;justify-content:center}
+@keyframes cutscene-in{from{opacity:0}to{opacity:1}}
+@media(max-width:700px){.cutscene-button{font-size:.8rem;padding:.45rem .75rem}}
