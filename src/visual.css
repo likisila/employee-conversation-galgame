@@ -219,6 +219,13 @@
   .game-screen[data-portrait="true"] .back-hint{left:calc(var(--panel-inset-left) + .1rem)}
 }
 
+/* ───── 選項頁：台詞與選項分成兩次點擊 ─────
+   讀完最後一句再點一下，對話框就換成只有選項的一頁（renderer 的 choiceStepSceneId）。
+   一次只裝一種內容，對話框因此不必同時容納台詞與三個選項——這是把它收矮最有效的一步。
+   這一頁沒有台詞欄要並排，所以排成單欄；選項限一個好讀的寬度，不要拉成整條。 */
+.game-screen[data-has-choices="true"] .story-panel{grid-template-columns:minmax(0,1fr)}
+.game-screen[data-has-choices="true"] .choices{max-width:46rem}
+
 /* 選項欄不要溢出對話框，而且不要把對話框撐高。
    原本面板 max-height 是 min(46vh,27rem)、列高卻是 auto，三個會換行的選項就整個掉出
    面板下緣（浮在背景上）。兩件事一起處理：
@@ -227,10 +234,12 @@
       字級、內距、行距與按鈕間距都調小一級。選項是一句短句，不需要台詞那麼大的字，
       收緊之後 1280×800 的三個兩行選項只要約 33vh，比原本矮，也不再溢出。 */
 @media (min-width:701px){
-  /* 選項欄再寬一點（原本 1.4fr : .8fr）：讓大部分選項一行就放得下。
-     一個選項少換一行，面板就矮 23px，三個就是 69px——比任何內距微調都有效。
-     台詞欄左邊本來就有立繪讓開後留下的空白，讓出這段寬度不影響閱讀。 */
-  .story-panel{grid-template-columns:minmax(0,1fr) minmax(16rem,1.05fr);grid-template-rows:auto minmax(0,1fr)}
+  /* 台詞頁與選項頁都排成單欄（原本是 1.4fr : .8fr 的台詞／選項雙欄）：
+     選項獨立成一頁之後，台詞不必再跟選項並排被擠成半欄寬——844×390 橫版原本一句話要斷成四行。
+     只有結局畫面維持「台詞在左、按鈕在右」。台詞另外限一個好讀的行寬，免得在寬螢幕上橫跨整條。 */
+  .story-panel{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+  .story-panel[data-footer="ending"]{grid-template-columns:minmax(0,1.4fr) minmax(16rem,.8fr)}
+  .dialogue{max-width:44rem}
   .choices h2{margin-bottom:.35rem;font-size:.8rem}
   .choice{min-height:2.5rem;margin-top:.4rem;padding:.5rem .8rem}
   .choice .choice-text{font-size:.94rem;line-height:1.45}
@@ -250,10 +259,7 @@
    放在最後是因為要蓋掉上面那段 (min-width:701px) 的面板高度——橫向手機兩個條件都成立。 */
 @media (orientation:landscape) and (max-height:520px){
   .game-screen[data-portrait="true"]{--portrait-top:3.4rem;--portrait-max-width:52vw}
-  /* 390px 高的視窗要放下三個選項，唯一有效的辦法是讓選項不換行：選項欄再加寬、
-     台詞欄跟著讓（台詞本來就只有一兩句，窄一點還好），台詞區的最小高度也收掉，
-     免得空的台詞區反過來把面板撐高。這樣三個選項各一行，面板約 50vh 而不是 58vh 還被切。 */
-  .story-panel{grid-template-columns:minmax(0,1fr) minmax(0,1.5fr)}
+  /* 390px 高的視窗：台詞區的最小高度收掉，免得空白把面板撐高。 */
   .dialogue{min-height:4rem}
   /* 上限是保險：選項特別長而還是換行時，寧可面板高一點也不要把第三個選項藏起來。 */
   .game-screen[data-has-choices="true"] .story-panel{max-height:70vh}

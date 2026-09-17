@@ -158,6 +158,14 @@ let lastBackgroundId: string | undefined;
 /** 這次 render 是「回上一句」：接續上一畫面，不重播轉場卡、轉場動畫與立繪淡入。 */
 let steppingBack = false;
 /**
+ * 已經從最後一句翻到「選項頁」的場景 ID。
+ *
+ * 台詞與選項分成兩次點擊：讀完最後一句時先只顯示那一句（照常有 ▼），再點一下才換成只有選項的
+ * 一頁。這樣對話框一次只裝一種內容，不必同時容納台詞與三個選項——這是把對話框收矮最有效的一步。
+ * 選項頁不是引擎狀態（引擎仍停在最後一句），所以只記在這裡；按回上一句就是退回那一句。
+ */
+let choiceStepSceneId: string | undefined;
+/**
  * 上一次 render 有沒有顯示回上一句的箭頭。每次 render 都會重建 DOM，
  * 靠這個旗標判斷箭頭是「這次才出現」還是「本來就在」——只有前者播放一次淡入，
  * 否則每前進一句都會重播一次動畫（規格要求不做無限循環，也不該每句閃一下）。
@@ -175,6 +183,7 @@ function resetSceneTracking(): void {
   revealSceneId = undefined;
   steppingBack = false;
   backHintShown = false;
+  choiceStepSceneId = undefined;
 }
 
 /*
@@ -338,7 +347,11 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   if (enteringScene) {
     pendingIntroSceneId = sceneTransition !== 'none' ? scene.id : undefined;
     revealSceneId = undefined;
+    choiceStepSceneId = undefined;
   }
+  // 台詞與選項分成兩次：讀完最後一句再點一下才翻到選項頁，對話框因此一次只放一種內容。
+  const availableChoices = atLast ? engine.availableChoices : [];
+  const atChoiceStep = availableChoices.length > 0 && choiceStepSceneId === scene.id;
   const phase: 'intro' | 'reveal' | 'play' = pendingIntroSceneId === scene.id ? 'intro' : revealSceneId === scene.id ? 'reveal' : 'play';
   if (phase === 'reveal') revealSceneId = undefined;
   // settled＝不重播立繪淡入：只有剛進場（無轉場卡）、剛點掉轉場卡，或立繪換人時才播放。
@@ -354,14 +367,18 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const transitionAsset = transition?.asset ? content.images.ui[transition.asset] : undefined;
   const dialoguePanel = content.images.ui.dialoguePanel;
 
-  // 一次只顯示一句；點畫面（或 Enter／空白鍵）才到下一句。
-  const canAdvance = phase === 'intro' || !atLast || (scene.next !== undefined && !scene.ending);
-  const dialogue = line ? renderLine(line, content, `${lineIndex + 1}/${visibleLines.length}`) : '';
-  const namePlate = line ? renderNamePlate(line, content) : '';
-  const speakingSelf = line !== undefined && line.speaker !== null && line.speaker === content.game.player;
+  // 一次只顯示一句；點畫面（或 Enter／空白鍵）才到下一句。讀完最後一句時，
+  // 「下一步」是翻到選項頁（見 choiceStepSceneId），不是前進劇情。
+  const canAdvance = phase === 'intro' || !atLast
+    || (availableChoices.length > 0 && !atChoiceStep)
+    || (scene.next !== undefined && !scene.ending);
+  // 選項頁只放選項：不顯示台詞與名牌，對話框因此矮一截。想重看那一句就按回上一句。
+  const dialogue = line && !atChoiceStep ? renderLine(line, content, `${lineIndex + 1}/${visibleLines.length}`) : '';
+  const namePlate = line && !atChoiceStep ? renderNamePlate(line, content) : '';
+  const speakingSelf = !atChoiceStep && line !== undefined && line.speaker !== null && line.speaker === content.game.player;
   const hint = canAdvance ? `<span class="advance-hint" aria-hidden="true">▼</span>` : '';
-  // 停在轉場卡時畫面上還沒有台詞，不提供回溯。
-  const canGoBack = phase !== 'intro' && engine.canGoBack;
+  // 停在轉場卡時畫面上還沒有台詞，不提供回溯。選項頁一定回得去（退回剛才那一句）。
+  const canGoBack = phase !== 'intro' && (atChoiceStep || engine.canGoBack);
   // 箭頭剛出現時才播那一次 180ms 淡入；之後每一句都只是重建同一顆按鈕，不再播。
   const backHintEntering = canGoBack && !backHintShown;
   backHintShown = canGoBack;
@@ -369,13 +386,17 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     ? `<button type="button" class="back-hint${backHintEntering ? ' back-hint--enter' : ''}" id="back" aria-label="${escapeHtml(content.ui.backLabel)}">${icon('back')}</button>`
     : '';
 
-  const choices = atLast
-    ? engine.availableChoices.map((choice, index) =>
+  const choices = atChoiceStep
+    ? availableChoices.map((choice, index) =>
         `<button class="choice" data-choice="${escapeHtml(choice.id)}"><span>${String(index + 1).padStart(2, '0')}</span><span class="choice-text">${escapeHtml(choice.text)}</span></button>`,
       ).join('')
     : '';
   // 通關畫面：除了重新開始，還可以挑一個之前的決策點回去重選。
   const decisionCount = engine.decisionPoints.length;
+  const isEnding = atLast && scene.ending;
+  // 對話框底部這次放什麼：結局按鈕／選項／什麼都沒有。CSS 用它決定要單欄還是雙欄
+  // （只有結局畫面維持「台詞在左、按鈕在右」；台詞頁與選項頁都是單欄，台詞才不會被擠窄）。
+  const footerKind = isEnding ? 'ending' : atChoiceStep ? 'choices' : 'none';
   const action = atLast && scene.ending
     ? `<div class="ending-actions">
         <button class="primary-action full" id="restart">${escapeHtml(content.ui.restartLabel)}</button>
@@ -386,17 +407,17 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       : '';
 
   app.innerHTML = `
-    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-can-back="${canGoBack}" data-settled="${sameScene}" data-has-choices="${atLast && choices !== ''}" data-portrait="${sprite !== undefined}" data-framing="${escapeHtml(framing)}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}${sprite?.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}">
+    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-can-back="${canGoBack}" data-settled="${sameScene}" data-has-choices="${atChoiceStep}" data-portrait="${sprite !== undefined}" data-framing="${escapeHtml(framing)}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}${sprite?.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}">
       <div class="scene-transition" aria-hidden="true" style="--transition-art:${cssUrl(transitionAsset)}"></div>
       ${phase === 'intro' ? `<div class="scene-intro" role="status"><p class="eyebrow">${escapeHtml(content.game.title)}</p>${scene.title ? `<h2>${escapeHtml(scene.title)}</h2>` : ''}<p class="tap-hint">${escapeHtml(content.ui.tapToContinueLabel)}</p></div>` : ''}
       <div class="scene-scrim" aria-hidden="true"></div>
       <header class="game-header"><p class="eyebrow">${escapeHtml(content.game.title)}</p><h1>${escapeHtml(scene.title ?? '')}</h1></header>
       ${sprite ? `<div class="character-stage" role="img" aria-label="${escapeHtml(sprite.alt)}" data-expression="${escapeHtml(expression ?? '')}" data-align="${escapeHtml(sprite.align ?? 'center')}" data-framing="${escapeHtml(framing)}"><div class="character-sprite" style="--sprite:url('${escapeHtml(spriteUrl ?? sprite.src)}');--columns:${sprite.columns};--position:${position}%${sprite.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}"></div></div>` : ''}
-      <div class="story-panel" data-self="${speakingSelf}" data-kind="${escapeHtml(line?.kind ?? '')}">${namePlate}<section class="dialogue">${dialogue}</section><footer>${action}</footer>${backHint}${hint}</div>
+      <div class="story-panel" data-self="${speakingSelf}" data-footer="${footerKind}" data-kind="${escapeHtml(atChoiceStep ? 'choices' : line?.kind ?? '')}">${namePlate}${atChoiceStep ? '' : `<section class="dialogue">${dialogue}</section>`}<footer>${action}</footer>${backHint}${hint}</div>
     </section>
   `;
 
-  announce(line ? `${nameOf(line, content)}${line.text}` : scene.title ?? '');
+  announce(atChoiceStep ? content.ui.choicePrompt : line ? `${nameOf(line, content)}${line.text}` : scene.title ?? '');
 
   const shownAt = performance.now();
   const advance = (): void => {
@@ -408,13 +429,28 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       render(app, engine, content, hooks);
       return;
     }
+    // 最後一句之後的下一步是翻到選項頁。引擎不動（仍停在最後一句），
+    // 所以不用存檔——重新載入會回到那一句，再點一下就是選項頁。
+    if (availableChoices.length > 0 && !atChoiceStep) {
+      choiceStepSceneId = scene.id;
+      render(app, engine, content, hooks);
+      return;
+    }
     if (!engine.advance()) return;
     render(app, engine, content, hooks);
     hooks.onAdvance?.();
   };
 
   const goBack = (): void => {
-    if (!canGoBack || !engine.back()) return;
+    if (!canGoBack) return;
+    // 在選項頁按回上一句：翻回剛才那一句，引擎不動。
+    if (atChoiceStep) {
+      choiceStepSceneId = undefined;
+      steppingBack = true;
+      render(app, engine, content, hooks);
+      return;
+    }
+    if (!engine.back()) return;
     steppingBack = true;
     render(app, engine, content, hooks);
     // 存檔跟著退回，重新載入不會又跳到後面那一句。
@@ -465,6 +501,8 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
       // 畫面已經換掉之後才送達的殘留點擊：忽略即可，不該讓整個 UI 拋例外。
       if (!engine.availableChoices.some((choice) => choice.id === choiceId)) return;
       engine.choose(choiceId);
+      // 選完就離開選項頁（下一場即使是同一個場景 ID 也該從台詞開始）。
+      choiceStepSceneId = undefined;
       render(app, engine, content, hooks);
       hooks.onAdvance?.();
     });
