@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { loadContent } from '../src/data/contentLoader';
 import { StoryEngine } from '../src/engine/StoryEngine';
 import { parseCutsceneCues, parseCutsceneSettings } from '../src/domain/schema';
+import { MUTE_KEY, readMuted } from '../src/ui/cutscene';
 
 interface SoraItem { id: string; file: string; trigger: string; status: string }
 
@@ -144,5 +145,23 @@ describe('已看過的過場影片', () => {
     const engine = new StoryEngine(loadContent());
     engine.restore({ sceneId: 's4-notice', state: {} });
     expect(engine.hasWatchedCutscene('layoff-notification')).toBe(false);
+  });
+});
+
+describe('過場影片的靜音預設', () => {
+  const storage = (value: string | null) => ({ getItem: (key: string) => (key === MUTE_KEY ? value : null) });
+
+  it('沒有偏好時預設靜音', () => {
+    expect(readMuted(storage(null))).toBe(true);
+  });
+
+  it('只有玩家自己開過聲音才有聲', () => {
+    expect(readMuted(storage('false'))).toBe(false);
+    expect(readMuted(storage('true'))).toBe(true);
+  });
+
+  it('讀不到瀏覽器儲存時仍然靜音', () => {
+    expect(readMuted(undefined)).toBe(true);
+    expect(readMuted({ getItem: () => { throw new Error('blocked'); } })).toBe(true);
   });
 });

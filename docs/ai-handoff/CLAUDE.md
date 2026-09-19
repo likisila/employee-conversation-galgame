@@ -629,3 +629,32 @@
 - 驗證結果：`npm run typecheck`、`npm test`（15 檔 155 測試）、`npm run build`、`git diff --check` 全數通過。
   Chromium 實機（dev server）：重新開始 → 讀取畫面 → 內容提醒 → 播放 `/assets/cutscenes/00_final_documents.mp4`
   （1280×720、12.04 秒，有靜音與「跳過」按鈕）→ 播完自動進入 s1「最終版」第一句旁白。主控台無錯誤。
+
+## Claude-20260919-0357
+
+- 時間：2026-09-19T03:57:15Z
+- 分支或 PR：`claude/zen-pasteur-wjvhgj`（本地；未 push、沒有 PR）
+- 已讀對方紀錄：`ChatGPT-20260919-0324`（此後無新紀錄）
+- 本次範圍：
+  1. **更正 `Claude-20260919-0354` 的影片位置**：使用者指出放錯位置，要求改在 s2「邀請」之前播放。
+     影片改名為 `01_meeting_invitation.mp4`，接上既有 cue `meeting-invitation → s2-invite`；s1 回到沒有影片。
+     `Claude-20260919-0354` 的其餘內容（風格與 manifest 不符、檔案大小）仍然有效。
+  2. 使用者要求**所有影片預設靜音**。
+- 實際變更檔案：`public/assets/cutscenes/00_final_documents.mp4` → `public/assets/cutscenes/01_meeting_invitation.mp4`（改名，內容不變）、
+  `src/ui/cutscene.ts`、`tests/cutscenes.test.ts`、`docs/ai-handoff/CLAUDE.md`
+- 已定案事項（UX，Claude 範圍）：
+  1. 過場影片一律靜音開播；只有玩家自己按了靜音鍵開聲音，之後的影片才有聲（偏好存在瀏覽器）。
+  2. 偏好只在玩家按鍵時寫入；開播時的預設、以及有聲開播被瀏覽器擋下時自動退回靜音，都不再寫入偏好。
+  3. 儲存 key 由 `ecg:cutscene-muted` 改為 `ecg:cutscene-muted-v2`：舊版每次播放都會把當下狀態寫進去（多半是「有聲」），
+     沿用舊 key 會讓老玩家維持有聲、預設靜音對他們無效。
+  4. 遊戲裡只有過場影片這一種 `<video>`，因此這項設定涵蓋全部影片。
+- 交給 ChatGPT：
+  1. `sora-cutscenes.json` 的 `meeting-invitation` 提示詞描述的是「周予安打字送出邀請、雨澄收到通知」，
+     而這支片的內容是雅琳把藍色資料夾放上周予安的桌子、周予安打字、辦公室遠景。擺放位置依使用者指示；
+     內容是否驗收、manifest 是否要改寫，請 ChatGPT 決定。
+  2. 靜音鍵的圖示與外觀沒有變動，不需要設計更新。
+- 未決問題或阻塞：同 `Claude-20260919-0354`（13.9MB 未壓縮、本機無 ffmpeg；本地 commit 尚未 push、沒有 PR）。
+- 驗證結果：`npm run typecheck`、`npm test`（15 檔 158 測試，新增 3 個靜音預設案例）、`npm run build`、`git diff --check` 全數通過。
+  Chromium 實機（dev server，先把舊 key 設成「有聲」模擬老玩家）：重新開始 → 內容提醒 → s1「最終版」全程無影片 →
+  s1 結束後播放 `/assets/cutscenes/01_meeting_invitation.mp4`，`muted: true`、靜音鍵 `aria-pressed="true"`、
+  v2 key 未被寫入 → 按靜音鍵後變有聲、存成 `false`、影片沒有被跳過 → 播完進入 s2「邀請」第一句。主控台無錯誤。

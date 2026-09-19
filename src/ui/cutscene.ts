@@ -12,15 +12,19 @@ const LOAD_TIMEOUT_MS = 6000;
 /** 影片出現後這麼久內的點擊視為前一個畫面的連點，不算跳過。 */
 const MIN_DWELL_MS = 400;
 
-/** 玩家的靜音偏好；記在瀏覽器，換一段影片仍然沿用。 */
-const MUTE_KEY = 'ecg:cutscene-muted';
+/**
+ * 玩家的靜音偏好；記在瀏覽器，換一段影片仍然沿用。
+ * 影片預設靜音，只有玩家自己按過「開聲音」才會記成 `false`。
+ * 換了新的 key：舊版每次播放都會把當下狀態（多半是有聲）寫進去，沿用舊 key 會讓老玩家永遠有聲。
+ */
+export const MUTE_KEY = 'ecg:cutscene-muted-v2';
 
-function readMuted(): boolean {
+export function readMuted(storage: Pick<Storage, 'getItem'> | undefined = globalThis.window?.localStorage): boolean {
   try {
-    return window.localStorage.getItem(MUTE_KEY) === 'true';
+    return storage?.getItem(MUTE_KEY) !== 'false';
   } catch {
-    // 隱私模式或配額用盡：當作沒有偏好，不影響播放。
-    return false;
+    // 隱私模式或配額用盡：當作沒有偏好，照預設靜音。
+    return true;
   }
 }
 
@@ -114,9 +118,10 @@ export function playCutscene(app: HTMLElement, cue: CutsceneCue, ui: UiCopy, onF
     }
     section.prepend(video);
 
-    const applyMuted = (muted: boolean): void => {
+    // 只有玩家按靜音鍵時才記下偏好；播放時的預設與下面的自動退回都不算玩家的選擇。
+    const applyMuted = (muted: boolean, remember = false): void => {
       video.muted = muted;
-      writeMuted(muted);
+      if (remember) writeMuted(muted);
       if (!muteButton) return;
       muteButton.setAttribute('aria-pressed', String(muted));
       // 圖示跟著狀態換成 Speaker／Speaker Slash；不使用 emoji 或字型符號。
@@ -124,7 +129,7 @@ export function playCutscene(app: HTMLElement, cue: CutsceneCue, ui: UiCopy, onF
     };
     applyMuted(video.muted);
 
-    // 玩家在標題與讀取畫面都點過了，照理可以帶聲音自動播；萬一仍被瀏覽器擋下，
+    // 預設靜音一定能自動播；玩家開了聲音而被瀏覽器擋下時，
     // 退一步改成靜音再試，再失敗就跳過影片，不讓玩家卡住。
     void video.play().catch(() => {
       if (done) return;
@@ -143,7 +148,7 @@ export function playCutscene(app: HTMLElement, cue: CutsceneCue, ui: UiCopy, onF
     // 按鈕，`closest('button')` 會找不到祖先而誤判成點背景，影片就被跳掉了。
     app.querySelector<HTMLElement>('.cutscene-controls')?.addEventListener('click', (event) => event.stopPropagation());
     app.querySelector<HTMLButtonElement>('#cutscene-skip')?.addEventListener('click', finish);
-    muteButton?.addEventListener('click', () => applyMuted(!video.muted));
+    muteButton?.addEventListener('click', () => applyMuted(!video.muted, true));
 
     setKeyHandler((event: KeyboardEvent) => {
       if (event.key === 'Escape') {
