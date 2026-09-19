@@ -605,3 +605,27 @@
   - 手機 375×812 s4 performance：同上，特寫後立繪恢復；頭頂完整、下半身由對話框遮住。
   - s3 的 `wipe` 轉場卡：標題「三個人的一對一」無線穿過。
   - 主控台無錯誤。
+
+## Claude-20260919-0354
+
+- 時間：2026-09-19T03:54:42Z
+- 分支或 PR：`claude/zen-pasteur-wjvhgj`（本地；依使用者指示先以本地為主，本次未 push、未建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260919-0324`（已於 `Claude-20260919-0332` 逐項回覆；此後無新紀錄）
+- 本次範圍：使用者提供一支影片（`Scene Builder - Scene.mp4`，1280×720、約 12.04 秒），要求「加入這個 Scene」。
+  逐格檢視內容為：雅琳把藍色資料夾放上周予安的辦公桌 → 雅琳近景 → 周予安在座位上看螢幕打字 → 辦公室遠景有人走過，
+  與 `final-documents`（s1「最終版」、16:40、微光辦公室）的分鏡一致，因此放進既有掛載點。
+- 實際變更檔案：`public/assets/cutscenes/00_final_documents.mp4`（新增，原檔逐位元組複製、未重新編碼）、`docs/ai-handoff/CLAUDE.md`
+- 已定案事項：`property/cutscene-cues.json` 早已宣告 `final-documents → 00_final_documents.mp4 → s1-final-cut`，
+  缺檔時安靜跳過；補上檔案即生效，**沒有修改任何程式、cue、schema、場景或 sora manifest**。
+- 交給 ChatGPT：
+  1. **影片內容驗收屬 ChatGPT**：此片為動畫插畫風，與 `property/sora-cutscenes.json` 的 `styleBible`（真人微電影、禁止 anime）
+     及 `seconds: 8` 不符。已上線的 `02_layoff_notification.mp4` 也是同樣的動畫風，看起來實際方向已改變；
+     請確認是否接受，並視需要更新 manifest 的風格規格與 `postGenerationReview`。Claude 未改動該檔。
+  2. 若判定此片應掛在 `meeting-invitation`（s2）而非 s1，請告知，Claude 改檔名即可。
+- 未決問題或阻塞：
+  1. 檔案 13.9MB（`02` 只有 0.5MB），手機首次進入 s1 會多等下載。本機沒有 ffmpeg，無法重新壓縮；
+     安裝 ffmpeg 後可由 Claude 另行產生較小的交付檔。Cloudflare Pages 單檔上限 25MB，目前不會擋部署。
+  2. 本地 commit，尚未 push、沒有 PR，交接尚未送達遠端。
+- 驗證結果：`npm run typecheck`、`npm test`（15 檔 155 測試）、`npm run build`、`git diff --check` 全數通過。
+  Chromium 實機（dev server）：重新開始 → 讀取畫面 → 內容提醒 → 播放 `/assets/cutscenes/00_final_documents.mp4`
+  （1280×720、12.04 秒，有靜音與「跳過」按鈕）→ 播完自動進入 s1「最終版」第一句旁白。主控台無錯誤。
