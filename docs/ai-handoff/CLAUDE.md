@@ -658,3 +658,27 @@
   Chromium 實機（dev server，先把舊 key 設成「有聲」模擬老玩家）：重新開始 → 內容提醒 → s1「最終版」全程無影片 →
   s1 結束後播放 `/assets/cutscenes/01_meeting_invitation.mp4`，`muted: true`、靜音鍵 `aria-pressed="true"`、
   v2 key 未被寫入 → 按靜音鍵後變有聲、存成 `false`、影片沒有被跳過 → 播完進入 s2「邀請」第一句。主控台無錯誤。
+
+## Claude-20260919-0408
+
+- 時間：2026-09-19T04:08:10Z
+- 分支或 PR：`claude/zen-pasteur-wjvhgj`（本地；未 push、沒有 PR）
+- 已讀對方紀錄：`ChatGPT-20260919-0324`（此後無新紀錄）
+- 本次範圍：使用者以 Cloudflare Pages「上傳 zip」部署，加入 s2 影片後 zip 達 29.5MB，超過 Pages 單檔 25MB 上限而被拒。
+  `dist/` 裡約 12.8MB 是 `assets/characters/full-body/` 的原始全身 PNG；執行時一律經 `spriteDeliverySrc` 換成
+  `characters/web/` 的 WebP，這些 PNG 從來不會被下載，只是被 Vite 把整個 `public/` 原樣複製進去。
+- 實際變更檔案：`vite.config.ts`、`tests/buildOutput.test.ts`（新增）、`docs/ai-handoff/CLAUDE.md`
+- 已定案事項：
+  1. `vite.config.ts` 新增只在 build 時執行的外掛，建置完成後從 `dist/` 刪除 `SOURCE_ONLY_PUBLIC_DIRS`（目前只有
+     `assets/characters/full-body`）。**repo 裡的原始 PNG 完全不動**，開發伺服器照常提供；只是不出貨。
+  2. 新測試確認所有執行時會下載的素材（立繪、背景、畫面、UI、過場影片）都不在排除清單裡，避免日後誤排除。
+  3. `characters/*-bust-*.png`（三張共約 0.4MB）目前未被引用，但體積小、屬於 ChatGPT 素材，本次不處理。
+- 交給 ChatGPT：
+  1. **新交付的全身 PNG 仍放在 `public/assets/characters/full-body/`**，流程不變；Claude 跑 `npm run assets:sprites` 產生 WebP。
+  2. 其餘 8 支影片若也以 13MB 級交付，zip 很快又會超過 25MB。建議影片交付時控制在每支約 2–4MB（1280×720、H.264），
+     或由 Claude 在有 ffmpeg 的環境重新壓縮。
+- 未決問題或阻塞：`01_meeting_invitation.mp4` 仍是 13.9MB（本機無 ffmpeg）。本地 commit，尚未 push、沒有 PR。
+- 驗證結果：`npm run typecheck`、`tsc -p tsconfig.node.json`、`npm test`（16 檔 159 測試）、`npm run build`、`git diff --check` 通過。
+  `dist/` 由 29.5MB 級降到 17MB、36 個檔案，`assets/characters/full-body` 已不在其中。
+  `vite preview` 實機跑建置版：開始 → 內容提醒 → s1 → s2 選項頁，立繪 13 次請求全部來自 `/assets/characters/web/*.webp`，
+  沒有任何 4xx 回應。
