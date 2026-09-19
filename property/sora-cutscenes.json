@@ -14,18 +14,18 @@
     "docs/narrative/last-one-on-one/plot/timeline.md",
     "docs/narrative/last-one-on-one/continuity/state.md"
   ],
-  "styleBible": "Photorealistic live-action Taiwanese workplace micro-film, grounded contemporary drama with real adult actors, natural skin texture, realistic hair and fabric, restrained facial acting, deliberate cinema-camera movement, motivated practical lighting, realistic glass reflections and full-bleed 16:9 framing. Every clip must look like footage from one coherent short film, never a visual novel or game screen. No anime, illustration, cel shading, character sprites, static cutouts, dialogue boxes, choice buttons, HUD, subtitles, captions, overlay text, split screen, logos or watermarks. Use only diegetic environmental sound; no voice-over and no music.",
+  "styleBible": "Official hand-drawn visual-novel cinematic illustration matching the canonical full-body PNG characters; full-bleed 16:9 scenes, integrated illustrated people and environments, restrained adult acting, meaningful lateral tracks, eyeline reverse shots and rack focus. No live action, photorealistic actors, 3D, pasted sprites, dialogue boxes, HUD, subtitles, readable text, split screens or watermarks. Only optional environmental sound; no intelligible speech, voice-over or music. New production: imagegen start keyframes followed by approved-image Runway video. See property/cutscene-storyboard-v2.md for 26 shots, durations, exact start states and actual delivery status. Legacy provider/model/seconds/price/status fields do not describe v2 production readiness.",
   "continuityBible": "The story takes place in Taipei in 2026. The main event runs from 16:40 to 17:20 on one rainy workday. The company has already eliminated Lin Yu-cheng's position after losing its largest client; this is not a performance action and cannot be reversed in the meeting. Zhou Yu-an is still Lin's manager during the notification and must not seek forgiveness, romance, physical intimacy or emotional reassurance. HR partner Zeng Ya-lin witnesses the entire meeting and protects process boundaries. Only the true ending occurs three weeks later, after every employment, equipment, portfolio and recommendation process has ended, and Lin initiates private contact.",
   "characterBible": {
-    "zhou-yuan": "Zhou Yu-an, age 31, Taiwanese department manager with an understated androgynous presentation, neat dark hair, pale dress shirt with a permanent crease at one cuff, dark trousers, office badge turned face-down before entering the meeting. Tension appears as attention to irrelevant details rather than dramatic emotion. The same live-action actor, face, hair and wardrobe must remain consistent across all clips.",
-    "lin-yucheng": "Lin Yu-cheng, age 26, Taiwanese product designer, short dark hair with very subtle pale gray-blue tips, a small MAKE IT OBVIOUS phrase printed on her T-shirt, an old digital watch and a pen clipped to her badge lanyard. Precise, observant and dryly composed; shock first appears through pauses, her watch, pen, gaze and controlled questions rather than crying. The same live-action actor, face, hair and wardrobe must remain consistent across all clips.",
-    "zeng-yalin": "Zeng Ya-lin, age 34, Taiwanese HR business partner, dark blazer with clean sneakers, carrying a tablet in a protective case. Calm, practical and nearly motionless; she sits closest to the door without blocking the exit and intervenes when process or boundaries are crossed. The same live-action actor, face, hair and wardrobe must remain consistent across all meeting clips."
+    "zhou-yuan": "Zhou Yu-an, 31, exact identity from public/assets/characters/full-body/zhou-yuan-neutral.png: short brown hair, charcoal jacket, blue-gray shirt. Badge already face-down in the meeting. Do not copy the reference folder into every shot. Never operates the HR tablet; stays across the table from Lin.",
+    "lin-yucheng": "Lin Yu-cheng, 26, exact identity from public/assets/characters/full-body/lin-yucheng-neutral.png: short black bob with gray-blue tips, black T-shirt, old RECTANGULAR digital watch on LEFT wrist. Watch, pen, badge lanyard and phone are separate objects. Hide tiny shirt lettering by framing if needed; no readable text. Restrained adult expressions, never exaggerated romantic acting.",
+    "zeng-yalin": "Zeng Ya-lin, 34, user-confirmed reference public/assets/characters/full-body/zeng-yalin-neutral.png: shoulder-length light cool ash-brown hair, light greige blazer, mist-gray top, light gray trousers, off-white sneakers. Calm HR professional. Tablet belongs only to her. Seated on the third side nearest the door without blocking it. No old dark-haired dark-blazer design."
   },
   "propBible": {
-    "rights-packet": "One blue rights folder bearing Lin Yu-cheng's name. It represents the finalized position-elimination notice and rights information, never a coaching notebook, performance plan or action plan.",
+    "rights-packet": "One wide rectangular blue rights folder with thin pages and an unreadable name label. Never a book, pen, tablet or badge. At table centre unless the confirmed ending changes custody; do not encode a branch-specific transfer in a common transition.",
     "water-glasses": "Three water glasses are on the Moon meeting-room table. Only Zeng Ya-lin's glass has been sipped before the conversation ends.",
     "badges": "Zhou Yu-an turns their badge face-down before the meeting; Lin Yu-cheng mirrors this action when leaving.",
-    "room": "The Moon meeting room has glass walls, rain reflections and a small cartoon astronaut decal. Keep table, door, chair and window geography stable across all meeting clips."
+    "room": "Moon meeting room: round table, rainy windows on one side, glass door and astronaut decal on the other. Zhou and Lin opposite, Zeng on the third side near but not blocking the door. Three distinct table sides, never three people in a row. Tablet only on Zeng side. Establish geography with 02-C and preserve eyelines in close-ups; offscreen people remain in place."
   },
   "legacyBannedTerms": [
     "three-month employee",
@@ -48,8 +48,8 @@
       "props": ["rights-packet"],
       "time": "Day 1, 16:40",
       "location": "weiguang-office",
-      "requiredContinuity": "Lin is still unaware that her position has been eliminated and continues working on the cancelled product. Zeng hands the finalized blue rights folder to Zhou. Rain has begun outside.",
-      "prompt": "Opening scene of a live-action workplace micro-film in a cool blue Taipei open office at 16:40 while rain begins outside. Start close on Lin working at her monitor in the background, focused and unaware, then rack focus to Zeng approaching Zhou's desk with the blue rights folder held two centimetres above the surface before placing it down. Zhou reads Lin's name, glances toward her, and turns one cuff between tense fingers. Zeng remains composed beside the desk. Slow controlled lateral dolly, 50 mm lens, realistic monitor and window reflections, natural office movement. Do not reveal the folder as a performance review and do not show any game interface or dialogue box."
+      "requiredContinuity": "Lin remains unaware and working. Zeng alone delivers the single blue folder to Zhou desk before s1. Day 1 rainy late afternoon.",
+      "prompt": "00: three shots, 2 seconds each in final edit. A: Lin alone working at monitor, unaware; short lateral track. B: Zeng holds the single wide blue folder in both hands at waist, then lowers it onto Zhou desk. C: Zhou three-quarter profile already looking toward distant working Lin; rack focus without her noticing. Match official illustrated identities and office. Do not start with the folder already placed. See v2 storyboard for exact input frames."
     },
     {
       "id": "meeting-invitation",
@@ -63,8 +63,8 @@
       "props": ["rights-packet"],
       "time": "Day 1, 16:43",
       "location": "weiguang-office",
-      "requiredContinuity": "Zhou has the final folder. Lin has not yet been told the decision. Zeng is present nearby. The invitation establishes honesty or avoidance but does not turn the meeting into a discussion.",
-      "prompt": "Second scene of the same live-action micro-film at 16:43. Over Zhou's shoulder, show a blank workplace chat composer without legible interface text as Zhou types, hesitates, deletes and finally sends a meeting invitation. In the middle distance, Lin's monitor receives a subtle notification glow; she reads, looks toward Zeng and notices the blue folder near Zhou. Her dry composure tightens for one beat as she saves her work. Zeng watches silently from two rows away. Use a restrained push-in, 50 mm lens and the same rain-blue office lighting. No floating message bubbles, no readable overlay, no celebratory tone and no implication that the meeting is optional."
+      "requiredContinuity": "Invitation is not sent. Lin remains unaware. No notification or choice-dependent reaction. Existing 01 MP4 is a retained older folder-handoff clip, not v2-approved.",
+      "prompt": "01: two shots, 2.5 seconds each. A: close on unsent abstract draft and Zhou hand near backspace; delete a short draft, stop with unsent cursor. B: screen-lit profile of Zhou with unaware Lin working in the distance; short lateral move and rack focus. Never send, trigger a notification or show Lin receiving anything. End before player chooses invitation wording."
     },
     {
       "id": "layoff-notification",
@@ -76,10 +76,10 @@
       "trigger": "before:notification",
       "participants": ["zhou-yuan", "lin-yucheng", "zeng-yalin"],
       "props": ["rights-packet", "water-glasses", "badges", "room"],
-      "time": "Day 1, 17:00–17:07",
+      "time": "Day 1, 17:00 entry before Choice 2",
       "location": "moon-meeting-room",
-      "requiredContinuity": "All three people are present. Zhou's badge is already face-down. The blue folder and three glasses are visible. Lin learns that the completed decision eliminates her position and is not based on performance.",
-      "prompt": "The irreversible notification scene in the same live-action micro-film. In the Moon glass meeting room at 17:00, frame all three adults in a stable medium-wide composition: Zhou opposite Lin, Zeng closest to the door without blocking it, the blue rights folder centred on the table and three water glasses visible, only Zeng's glass touched. Zhou's badge is face-down. Zhou states the decision with restrained directness; do not generate intelligible speech. Lin stops before fully settling into her chair, studies Zhou instead of the folder, then sits and lays the pen from her lanyard flat on the table. Zeng observes and is ready to correct procedure. Rain tracks down the glass behind them. Slow push-in on a 40 mm lens, real micro-expressions and breathing. This is a finalized position elimination, not coaching, performance feedback or a collaborative plan."
+      "requiredContinuity": "Route-neutral entry and seating only; Zhou badge already face-down, folder at centre, HR nearest unobstructed door, three glasses with only HR glass sipped. No pen placement. New entry montage needs Claude timing integration; existing 02 is awaiting remake, not v2-approved.",
+      "prompt": "02: three shots, 2 seconds each. A: oblique view from inside room, Lin just entering with empty hand at door handle; short side-follow. B: centre blue folder with unreadable name label, Lin profile at edge briefly attending to it, hands do not touch. C: oblique wide three-sided seating, Zhou opposite Lin, Zeng third side nearest clear door; three glasses and HR-side tablet. No notification wording, no putting down a pen, no branch-specific reaction. Existing s4 cue is too late for this entry sequence: Claude integration required before replacement; see v2 storyboard."
     },
     {
       "id": "rights-packet",
@@ -93,8 +93,8 @@
       "props": ["rights-packet", "water-glasses", "room"],
       "time": "Day 1, 17:12",
       "location": "moon-meeting-room",
-      "requiredContinuity": "Zeng explains the document and alternative contact channel. Receiving is not agreement. Lin may take the folder for review and must never be pressured to sign immediately.",
-      "prompt": "Procedure scene from the same live-action workplace micro-film at 17:12. Begin with a close insert of Zeng rotating the blue rights folder so it faces Lin but deliberately stopping it in the centre of the table rather than pushing it into her hands. Zeng opens to the rights pages and indicates separate sections with one calm finger. Lin checks her old digital watch, then places both hands away from the signature area and looks from the folder to Zeng. Zhou remains quiet in the edge of frame and does not touch the papers. Rack focus between folder, hands and faces; 65 mm lens, rain reflections and realistic paper movement. The scene must communicate time to review and an independent HR contact, never immediate consent, a performance plan or a demand for a signature."
+      "requiredContinuity": "Folder remains at centre. Receiving is not agreement; no signature or immediate consent. Lin empty hands stay outside signature area; no branch-specific pen position shown.",
+      "prompt": "03: two shots, 2.5 seconds each. A: Zeng hand begins at blue folder outer edge, rotates it toward Lin and opens first page while keeping it at centre. B: Lin looks at left-wrist rectangular digital watch, empty hands outside signature area; rack focus toward face. Keep pen out of framing rather than assuming its branch-dependent location. No signature, coercion, taking folder away or Zhou operating HR tablet."
     },
     {
       "id": "boundary-question",
@@ -108,8 +108,8 @@
       "props": ["rights-packet", "water-glasses", "room"],
       "time": "Day 1, 17:18",
       "location": "moon-meeting-room",
-      "requiredContinuity": "Lin asks whether Zhou tried to keep her. Zhou may disclose the failed alternative proposal but must not turn that effort into emotional debt, confession or a request for gratitude. Zeng remains the witness.",
-      "prompt": "Ethical climax of the same live-action micro-film at 17:18. Hold a close three-quarter profile on Lin as she asks a private question without generated intelligible dialogue; her gaze is steady and her thumb briefly lights the old digital watch. Cut focus within the same continuous composition to Zhou, who absorbs the question, glances once at the blue folder, then answers plainly with open empty hands and no attempt to move closer. Keep Zeng visible in soft focus near the door, attentive and prepared to intervene. The emotional tension comes from distance, eyelines and silence, not romance. Slow minimal dolly on a 50 mm lens. No touching, confession, pleading, gift, private payment, request for forgiveness or suggestion that Lin owes Zhou gratitude."
+      "requiredContinuity": "Watch lights then darkens; Lin prepares boundary question; Zhou does not answer, Zeng pauses typing. Preserve Choice 5. Resolve s7 entry timing before using this montage.",
+      "prompt": "04: three shots, 2 seconds each. A: extreme close on left-wrist rectangular watch just illuminated; press side button and darken it. B: Lin steady three-quarter profile toward opposite Zhou, preparing the boundary question. C: reverse shot of silent Zhou absorbing the question, Zeng hands stationary over her tablet keyboard in depth. End before any answer. No confession, self-justification or request for gratitude. Do not show branch-dependent folder or pen position. Existing s7 entry cue precedes Choice 4 responses: Claude must resolve chronology before replacement."
     },
     {
       "id": "ending-true",
@@ -120,12 +120,12 @@
       "branch": "TRUE END: 真正的告別",
       "file": "06_ending_true.mp4",
       "trigger": "on-enter:ending-true",
-      "participants": ["zhou-yuan", "lin-yucheng"],
-      "props": [],
-      "time": "Three weeks later",
-      "location": "platform-zero-cafe",
-      "requiredContinuity": "All employment, equipment, portfolio, recommendation and rights procedures are finished. Lin initiates the meeting. Neither person wears a company badge. This is the only branch that may suggest a future personal relationship.",
-      "prompt": "True ending of the same live-action micro-film, exactly three weeks later in the warm Zero Platform cafe at night. The employment relationship and every company process are fully finished. Lin has chosen the public meeting place and sits where either person can leave freely. Neither person wears a company badge and no office props are present. Begin outside the cafe glass on two equal silhouettes, then drift inside to a balanced two-shot. Lin, still reserved and fully in control, slides one coffee toward Zhou and allows the smallest dry half-smile; Zhou receives it without reaching toward her or treating the moment as forgiveness. Warm practical lamps contrast with rain-dark glass. 50 mm lens, gentle human camera movement. No office, HR, blue folder, managerial posture, romantic embrace, kiss or triumphant happy-ending montage."
+      "participants": ["zhou-yuan", "lin-yucheng", "zeng-yalin"],
+      "props": ["rights-packet", "water-glasses", "badges", "room"],
+      "time": "Day 1 departure; hard cut to three weeks later",
+      "location": "moon-meeting-room; platform-zero-cafe",
+      "requiredContinuity": "Montage starts with Day 1 meeting departure, Zeng remains in room. Hard cut to three weeks later after all employment procedures finish, Lin-initiated cafe meeting. No badge or HR in cafe; no touching or implied forgiveness.",
+      "prompt": "06: three shots, 3 seconds each. A: Day 1 Moon room, Lin at door with folder already in bag, opens door and turns badge face-down to leave alone, Zeng and Zhou remain. Hard cut B: three weeks later rainy cafe exterior, equal silhouettes of Lin and Zhou, no badges, HR or office props. C: cafe interior, coffee starts before Lin, she slides it toward Zhou with restrained reactions, no touching. All company procedures completed and Lin initiated meeting; no text time card or automatic forgiveness."
     },
     {
       "id": "ending-dignified",
@@ -141,7 +141,7 @@
       "time": "Day 1, after 17:20",
       "location": "moon-meeting-room",
       "requiredContinuity": "Lin takes the blue folder, knows the formal contact channel and leaves without promising private contact. Respect is shown by Zhou not asking for anything more.",
-      "prompt": "Dignified ending of the same live-action workplace micro-film. In the Moon meeting room just after 17:20, Lin closes the blue rights folder, places it securely in her canvas bag and stands. She gives Zeng one clear professional nod, then looks briefly at Zhou without offering reassurance. At the door she turns her badge face-down and leaves on her own. Zhou remains seated and lets the silence stand; Zeng calmly records the completed handoff on her tablet. Hold the closed door and the two untouched water glasses for the final beat. Static 50 mm composition with subtle breathing and rain reflections. No smile promising reunion, private message, future work plan, romance or pursuit."
+      "prompt": "07: three shots, 3 seconds each. A: closed blue folder outside open canvas bag, Lin puts it inside. B: Lin and Zeng facing each other before a brief professional nod, eyeline reverse shot. C: Lin at door before turning badge, turns it face-down and leaves, Zhou remains seated. No private contact promise, reunion, pursuit or embrace."
     },
     {
       "id": "ending-soft-knife",
@@ -152,12 +152,12 @@
       "branch": "END 03: 柔軟的刀",
       "file": "08_ending_soft_knife.mp4",
       "trigger": "on-enter:ending-soft-knife",
-      "participants": ["zhou-yuan", "zeng-yalin"],
-      "props": [],
-      "time": "Day 1, 22:14",
-      "location": "weiguang-office",
-      "requiredContinuity": "Lin left the blue folder behind in the Moon meeting room and required all further contact to go through Zeng; the folder remains there. At 22:14 Zhou considers a private apology in the open office but respects that boundary and sends nothing.",
-      "prompt": "Soft Knife ending of the same live-action workplace micro-film at 22:14 in the nearly empty open office. Lin is no longer present, and the blue rights folder remains off-screen in the Moon meeting room. Start over Zhou's shoulder as a long unsent private message fills a phone or chat composer without legible text. A cleaner's vacuum passes far in the background. Zeng walks behind Zhou, pauses and gives one quiet boundary-setting look. Zhou selects the entire draft, deletes it, closes the composer and puts the phone face-down. Cool late-night monitor light, slow pullback on a 50 mm lens, diegetic air conditioning and distant vacuum only. No blue folder in this office shot, flashback, pursuit, sent message, reassurance, future promise or romance."
+      "participants": ["zhou-yuan", "lin-yucheng", "zeng-yalin"],
+      "props": ["rights-packet", "water-glasses", "badges", "room"],
+      "time": "Day 1 departure; hard cut to 22:14",
+      "location": "moon-meeting-room; weiguang-office",
+      "requiredContinuity": "Lin leaves folder in Moon meeting room and exits. Hard cut to 22:14 office: Zhou unsent draft, Zeng reminds him of formal contact only, Zhou closes window without sending or deleting. No folder in office.",
+      "prompt": "08: four shots, edit lengths 2, 2, 3, 3 seconds. A: blue folder remains on meeting-room table while Lin stands. B: Lin at door turns badge face-down and exits without folder. Hard cut C: same evening 22:14 in office, long unsent message as unreadable abstract lines, Zhou hand paused near mouse. D: Zeng passes behind and pauses to remind him; Zhou CLOSES THE WINDOW without sending. Do not delete the draft: canonical scene only closes the window. No readable time, no Lin or blue folder in office; folder stays in meeting room."
     },
     {
       "id": "ending-boundary-crossed",
@@ -172,16 +172,19 @@
       "props": ["rights-packet", "water-glasses", "badges", "room"],
       "time": "Day 1, around 17:18–17:20",
       "location": "moon-meeting-room",
-      "requiredContinuity": "Zhou has crossed a professional boundary through an unauthorized private payment, confession or emotional pressure. Zeng immediately ends the conversation and takes control of formal follow-up. Lin refuses private contact and leaves.",
-      "prompt": "Boundary-crossed ending of the same live-action workplace micro-film, beginning immediately after an unspecified professional boundary violation so it remains valid for either an unauthorized private-payment offer or a confession. In the Moon meeting room, Zeng decisively raises one hand, closes the blue folder and moves it to the HR side of the table. Lin's expression hardens into clarity rather than heartbreak. She removes the pen from the table, turns her badge face-down and leaves through the unobstructed door without accepting anything from Zhou. Zhou remains isolated across the table while Zeng documents the incident on her tablet. Controlled static 50 mm frame, cool hard reflections and uncomfortable room tone. No physical contact, money exchange, kiss, crying embrace, mutual confession, reconciliation or romantic framing."
+      "requiredContinuity": "Shared consequences only, valid for private-payment, confession and accumulated-boundary routes. HR stops talk, Lin picks up phone and leaves, Zhou deletes unsent draft after door closes. Never show cash, confession or picking up a pen.",
+      "prompt": "09: three shots, 3 seconds each, neutral across every route to this ending. A: after unspecified boundary violation, HR Zeng raises hand to end talk while Lin rises. B: Lin phone begins on table before her; she picks up PHONE, walks to door and turns badge face-down, no water taken. C: door closed, close on Zhou short unsent abstract draft and hand near backspace; hold backspace until empty, stop. No pen pickup, cash, confession reenactment, contact, sent apology or reconciliation."
     }
   ],
   "postGenerationReview": [
-    "Every frame is full-bleed live-action footage with no game UI, dialogue box, subtitles or overlay.",
-    "Actor identity, hair and wardrobe remain stable across clips.",
-    "Zeng Ya-lin is present in every Day 1 meeting-room clip and absent from the three-weeks-later cafe ending.",
-    "The blue folder, three glasses, badges, door, chairs and rain preserve branch-appropriate continuity.",
-    "No clip turns the layoff into coaching, a performance plan, future task planning or an optional discussion.",
-    "No romantic framing appears before the true ending's three-week time jump and Lin-initiated meeting."
+    "The layoff remains a finalized position elimination, never coaching, performance remediation, future task planning or an optional discussion. No romantic framing during the employment relationship.",
+    "Official hand-drawn illustrated identities match current full-body PNG references, especially light ash-brown-haired, light-greige-clothed HR; no live action or 3D.",
+    "Every keyframe is the precise start, not completed action; each shot is separately approved before image-to-video.",
+    "No readable text, UI overlays, subtitles, text cards or pasted sprites.",
+    "Triangle seating, opposite Zhou and Lin, HR third side with clear exit, wide blue folder, three glasses and left-wrist rectangular watch stay consistent. Offscreen people retain spatial continuity.",
+    "01 never sends; 02 never places pen or chooses notification wording; 03 never signs; 04 never answers Choice 5.",
+    "06 only permits personal meeting three weeks later after all procedures and at Lin invitation; HR only in its Day 1 shot.",
+    "08 leaves folder in meeting room and closes office message window without deleting or sending; 09 picks up phone and deletes unsent draft.",
+    "02 and 04 timing requires Claude integration before replacing runtime videos. See property/cutscene-storyboard-v2.md and keyframes/runway-v2/README.md for actual pending delivery status; legacy READY does not mean generated or approved."
   ]
 }

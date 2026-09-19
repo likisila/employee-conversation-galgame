@@ -15,7 +15,7 @@
   **ChatGPT 換過 `full-body/` 裡任何一張 PNG 後，請執行一次 `npm run assets:sprites` 並一併提交交付檔**；
   忘了做的話 `npm test` 會直接指出哪一張過期。
 - `scenes/*.json`：對話、選項、條件、效果與跳轉。
-- `sora-cutscenes.json`：真人微電影過場的 Sora 提示、鏡頭與連戲規則（由 GPT 維護）；`cutscenes.json` 只保存影片格式與缺檔策略。兩者目前皆不由 runtime 載入，接線見 `coordination/handoff/HANDOFF-20260916-cutscene-integration.md`。
+- `sora-cutscenes.json`：過場的內容提示與連戲規則（由 GPT 維護，已同步官方手繪插畫方向，檔名保留相容）；新版逐鏡起始影格、Runway 動作與交付狀態見 `cutscene-storyboard-v2.md`。原 Sora provider／model／固定時長與 READY 為待 Claude 整理的歷史工具契約，不能代表新版素材已交付。`cutscenes.json` 保存影片格式與缺檔策略；實際接線由 `cutscene-cues.json` 維護。02／04 新版分鏡尚需 Claude 處理播放時序，不能僅靠替換 MP4 上線。
 
 ## 目前作品：《最後一次一對一》
 
