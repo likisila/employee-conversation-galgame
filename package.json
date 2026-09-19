@@ -9,7 +9,8 @@
     "typecheck": "tsc -p tsconfig.app.json --pretty false",
     "test": "vitest run",
     "videos:sora": "node scripts/generate_sora_cutscenes.mjs",
-    "assets:sprites": "node scripts/optimize-sprites.mjs"
+    "assets:sprites": "node scripts/optimize-sprites.mjs",
+    "assets:storyboard": "node scripts/optimize-storyboard.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

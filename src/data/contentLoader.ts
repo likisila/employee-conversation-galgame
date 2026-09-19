@@ -65,7 +65,11 @@ export function loadContent(): LoadedContent {
   const cutscenes = manifest.cutscenes ? parseCutsceneSettings(requireFile(manifest.cutscenes)) : parseCutsceneSettings({});
   const cueList = manifest.cutsceneCues ? parseCutsceneCues(requireFile(manifest.cutsceneCues)) : [];
   const cutsceneCues = new Map(
-    cueList.map((cue) => [cue.scene, { ...cue, src: resolveAssetPath(cue.src) }]),
+    cueList.map((cue) => [cue.scene, {
+      ...cue,
+      src: resolveAssetPath(cue.src),
+      storyboard: cue.storyboard?.map((frame) => ({ ...frame, src: resolveAssetPath(frame.src) })),
+    }]),
   );
 
   const characters = new Map(charactersArray.map((item) => [item.id, item]));

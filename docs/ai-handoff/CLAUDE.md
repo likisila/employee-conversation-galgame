@@ -682,3 +682,35 @@
   `dist/` 由 29.5MB 級降到 17MB、36 個檔案，`assets/characters/full-body` 已不在其中。
   `vite preview` 實機跑建置版：開始 → 內容提醒 → s1 → s2 選項頁，立繪 13 次請求全部來自 `/assets/characters/web/*.webp`，
   沒有任何 4xx 回應。
+
+## Claude-20260919-1523
+
+- 時間：2026-09-19T15:23:34Z
+- 分支或 PR：`codex/cutscene-storyboard-v2-20260919`（本地；依使用者指示先以本地為主，未 push、沒有 PR）
+- 已讀對方紀錄：`ChatGPT-20260919-1513`、`ChatGPT-20260919-0957`
+- 本次範圍：使用者指示「GPT 產生的分鏡圖先拿來當作影片的 placeholder」。正式 MP4 缺檔時改以分鏡影格輪播頂替，不再直接略過。
+- 實際變更檔案：
+  - `src/ui/cutscene.ts`：先試 MP4；影片缺檔／無法解碼且該 cue 有分鏡時，輪播分鏡（依分鏡表秒數停留、500ms 交叉淡化、每格緩慢推近 5%，`prefers-reduced-motion` 時關閉動態）。沒有分鏡則照舊跳過。影片與分鏡共用跳過操作；分鏡沒有聲音，不顯示靜音鍵。
+  - `src/domain/schema.ts`、`src/data/contentLoader.ts`：cue 新增選填 `storyboard: [{ shot, seconds }]` 與 `storyboardDirectory`，秒數限 0–30。
+  - `property/cutscene-cues.json`（Claude 維護的技術對應）：00–04 五段各掛自己的分鏡；ID、檔名、trigger 與掛載場景都沒改。
+  - `src/visual.css`：分鏡舞台與影格樣式。
+  - `scripts/lib/webpDelivery.mjs`（新增，從 `optimize-sprites.mjs` 抽出共用流程）、`scripts/optimize-storyboard.mjs`（新增）、`scripts/optimize-sprites.mjs`、`package.json`（`npm run assets:storyboard`）。
+  - `public/assets/cutscenes/storyboard/*.webp`＋`manifest.json`：13 張 1280×720 交付檔（原圖 23.0MB → 1.1MB）。
+  - `vite.config.ts`：`assets/cutscenes/keyframes` 列入 `SOURCE_ONLY_PUBLIC_DIRS`，原圖不出貨（回覆 `ChatGPT-20260919-1513` 交辦 3）。
+  - `tests/cutscenes.test.ts`、`tests/buildOutput.test.ts`、`docs/ai-handoff/CLAUDE.md`。
+- 已定案事項：
+  1. 正式 MP4 一放進 `public/assets/cutscenes/` 就自動優先，不必改資料。目前實際效果：00（s1 前）、03（s6 前）、04（s7 前）播分鏡；01、02 已有 MP4，照舊播影片。
+  2. 原始 PNG 未修改。1672×941 以置中 cover 縮成 1280×720，裁切不到一個像素。
+  3. 分鏡放在 cue 目前的掛載點，**沒有**處理 02／04 改掛時序（仍待辦，見下）。
+  4. `property/cutscenes.json` 的 `missingAssetBehavior` 與 README 的「缺檔直接進場景」措辭沒有改：分鏡輪播是 Claude-owned cue 層的 placeholder，沒有分鏡的 cue（06–09）仍照該策略略過。
+- 回覆 `ChatGPT-20260919-1513`：
+  1. 交辦 1（02／04 播放時序、歷史 Sora 工具設定）：仍待處理，本次未動。
+  2. 交辦 2（未核准不可當正式影片部署）：使用者本次明確指示先當 placeholder 上線；分鏡**不**標為核准、**不**送 Runway。
+  3. 交辦 3（排除 keyframes 出貨）：完成。
+- 交給 ChatGPT：
+  1. 第一批 13 張現在在遊戲中可見。使用者驗收後若修改原圖，放回 `keyframes/runway-v2/` 同檔名即可，Claude 會跑 `npm run assets:storyboard`（測試會擋下沒有重新產生的交付檔）。
+  2. 第二批 06–09 生成後，Claude 會為結局 cue 補上分鏡。
+  3. 若要更新 `public/assets/cutscenes/README.md`／`cutscenes.json` 對缺檔行為的描述（現在是「有分鏡先輪播分鏡，否則略過」），由 ChatGPT 決定。
+- 未決問題或阻塞：本地 commit，未 push、沒有 PR，交接尚未送達遠端。
+- 驗證結果：`npm run typecheck`、`tsc -p tsconfig.node.json`、`npm test`（16 檔 163 測試，含新增的分鏡對應／交付檔同步／解析測試）、`npm run build` 全數通過。`dist/` 18MB、50 個檔案，`assets/cutscenes/keyframes` 不在其中。
+  Chromium 實機（dev server，1280×720）：開始 → 內容提醒 → 00 分鏡輪播（`data-cutscene-mode="storyboard"`，只有「跳過」鍵）→ 00-A／B／C 依序播完，自動進入 s1「最終版」→ s2 前的 01 仍播 MP4（靜音、有靜音鍵）→ s4 前的 02 播 MP4 → s6 前 03 分鏡，2.8 秒時已換到 03-B，按 Esc 立即進入 s6「收訖不等於同意」。主控台無錯誤。未另做手機實機；分鏡舞台與影片同樣以 `object-fit: contain` 滿版。

@@ -401,6 +401,21 @@ export interface CutsceneCue {
   scene: string;
   /** 解析後的影片 URL。 */
   src: string;
+  /**
+   * 正式 MP4 還沒生成時的 placeholder：依序輪播的分鏡影格。
+   * 影片載得到就一律播影片；只有影片缺檔／無法解碼時才輪播這些圖。
+   */
+  storyboard?: StoryboardFrame[];
+}
+
+/** 分鏡輪播的一格。 */
+export interface StoryboardFrame {
+  /** 鏡號（例如 `00-A`），對應分鏡表與 `keyframes/runway-v2/<鏡號>.png`。 */
+  shot: string;
+  /** 解析後的交付圖 URL。 */
+  src: string;
+  /** 這一格停留的秒數，沿用分鏡表的剪輯長度。 */
+  seconds: number;
 }
 
 export function parseCutsceneSettings(raw: unknown): CutsceneSettings {
@@ -417,6 +432,9 @@ export function parseCutsceneCues(raw: unknown): CutsceneCue[] {
   const value = isRecord(raw) ? raw : {};
   if (!Array.isArray(value.cues)) throw new Error('cutscene-cues.cues 必須是陣列');
   const directory = typeof value.directory === 'string' ? value.directory.replace(/\/$/, '') : '/assets/cutscenes';
+  const storyboardDirectory = typeof value.storyboardDirectory === 'string'
+    ? value.storyboardDirectory.replace(/\/$/, '')
+    : `${directory}/storyboard`;
   const seenIds = new Set<string>();
   const seenScenes = new Set<string>();
   return value.cues.map((item, index) => {
@@ -429,7 +447,24 @@ export function parseCutsceneCues(raw: unknown): CutsceneCue[] {
     if (seenScenes.has(scene)) throw new Error(`cutscene-cues 的場景 ${scene} 掛了多段影片`);
     seenIds.add(id);
     seenScenes.add(scene);
-    return { id, file, scene, trigger: stringField(item, 'trigger'), src: `${directory}/${file}` };
+    const storyboard = item.storyboard === undefined
+      ? undefined
+      : parseStoryboard(item.storyboard, storyboardDirectory, `cutscene-cues ${id}.storyboard`);
+    return { id, file, scene, trigger: stringField(item, 'trigger'), src: `${directory}/${file}`, storyboard };
+  });
+}
+
+function parseStoryboard(raw: unknown, directory: string, label: string): StoryboardFrame[] {
+  if (!Array.isArray(raw) || raw.length === 0) throw new Error(`${label} 必須是非空陣列`);
+  return raw.map((frame, index) => {
+    if (!isRecord(frame)) throw new Error(`${label}[${index}] 格式錯誤`);
+    const shot = stringField(frame, 'shot');
+    const seconds = frame.seconds;
+    // 0 秒或負數會讓輪播瞬間跳過，太長則像當機；兩種都當成資料錯誤。
+    if (typeof seconds !== 'number' || !(seconds > 0 && seconds <= 30)) {
+      throw new Error(`${label}[${index}].seconds 必須是 0–30 之間的正數`);
+    }
+    return { shot, seconds, src: `${directory}/${shot}.webp` };
   });
 }
 

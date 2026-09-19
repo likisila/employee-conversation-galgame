@@ -12,7 +12,7 @@ describe('出貨時排除的素材來源目錄', () => {
       ...Object.values(catalog.backgrounds).map((bg) => bg.src),
       ...Object.values(catalog.screens).map((screen) => screen.src),
       ...Object.values(catalog.ui),
-      ...[...content.cutsceneCues.values()].map((cue) => cue.src),
+      ...[...content.cutsceneCues.values()].flatMap((cue) => [cue.src, ...(cue.storyboard ?? []).map((frame) => frame.src)]),
     ];
     expect(runtime.length).toBeGreaterThan(0);
     for (const src of runtime) {

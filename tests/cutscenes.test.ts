@@ -1,4 +1,6 @@
-import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadContent } from '../src/data/contentLoader';
 import { StoryEngine } from '../src/engine/StoryEngine';
@@ -163,5 +165,53 @@ describe('過場影片的靜音預設', () => {
   it('讀不到瀏覽器儲存時仍然靜音', () => {
     expect(readMuted(undefined)).toBe(true);
     expect(readMuted({ getItem: () => { throw new Error('blocked'); } })).toBe(true);
+  });
+});
+
+describe('分鏡 placeholder', () => {
+  const root = path.resolve(__dirname, '..');
+  const content = loadContent();
+  const storyboards = [...content.cutsceneCues.values()].filter((cue) => cue.storyboard);
+
+  it('共通主線五段都有分鏡可以頂替缺檔的影片', () => {
+    expect(storyboards.map((cue) => cue.id)).toEqual(
+      ['final-documents', 'meeting-invitation', 'layoff-notification', 'rights-packet', 'boundary-question'],
+    );
+  });
+
+  it('每一格都指向已產生的交付檔，且鏡號屬於該段（00-A 只能在 00 段）', () => {
+    for (const cue of storyboards) {
+      const segment = cue.file.slice(0, 2);
+      for (const frame of cue.storyboard!) {
+        expect(frame.shot.startsWith(`${segment}-`), `${cue.id} 用了別段的鏡頭 ${frame.shot}`).toBe(true);
+        expect(frame.src).toBe(`/assets/cutscenes/storyboard/${frame.shot}.webp`);
+        expect(existsSync(path.join(root, 'public', frame.src.slice(1))), `缺少 ${frame.src}，請執行 npm run assets:storyboard`)
+          .toBe(true);
+      }
+    }
+  });
+
+  it('交付檔與分鏡原圖同步：原圖換過就必須重新產生', () => {
+    const manifest = JSON.parse(readFileSync(path.join(root, 'public/assets/cutscenes/storyboard/manifest.json'), 'utf8')) as {
+      files: Record<string, { source: string; sourceSha256: string; bytes: number }>;
+    };
+    const entries = Object.entries(manifest.files);
+    expect(entries.length).toBeGreaterThan(0);
+    for (const [output, record] of entries) {
+      const source = readFileSync(path.join(root, 'public/assets/cutscenes/keyframes/runway-v2', record.source));
+      expect(createHash('sha256').update(source).digest('hex'), `${record.source} 換過了，請執行 npm run assets:storyboard`)
+        .toBe(record.sourceSha256);
+      expect(statSync(path.join(root, 'public/assets/cutscenes/storyboard', output)).size).toBe(record.bytes);
+    }
+  });
+
+  it('解析分鏡：組出交付圖路徑，並擋下空陣列與不合理的秒數', () => {
+    const cue = { id: 'a', file: 'a.mp4', trigger: 'before:a', scene: 's1' };
+    const [parsed] = parseCutsceneCues({ directory: '/assets/cutscenes', cues: [{ ...cue, storyboard: [{ shot: '00-A', seconds: 2 }] }] });
+    expect(parsed!.storyboard).toEqual([{ shot: '00-A', seconds: 2, src: '/assets/cutscenes/storyboard/00-A.webp' }]);
+    expect(parseCutsceneCues({ cues: [cue] })[0]!.storyboard).toBeUndefined();
+    expect(() => parseCutsceneCues({ cues: [{ ...cue, storyboard: [] }] })).toThrow(/非空陣列/);
+    expect(() => parseCutsceneCues({ cues: [{ ...cue, storyboard: [{ shot: '00-A', seconds: 0 }] }] })).toThrow(/seconds/);
+    expect(() => parseCutsceneCues({ cues: [{ ...cue, storyboard: [{ shot: '00-A' }] }] })).toThrow(/seconds/);
   });
 });
