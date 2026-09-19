@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { parseLine, type Line } from '../src/domain/schema';
-import { resolvePresentation } from '../src/ui/presentation';
+import { resolveCharacterFraming, resolvePresentation } from '../src/ui/presentation';
 import { loadContent } from '../src/data/contentLoader';
 import { StoryEngine } from '../src/engine/StoryEngine';
+import { isLineVisible } from '../src/engine/rules';
 
 const SPRITES = new Set(['lin-yucheng', 'zeng-yalin', 'zhou-yuan']);
 const context = (presentation?: Parameters<typeof resolvePresentation>[2]['presentation'], sceneBackground?: string) => ({
@@ -132,4 +133,47 @@ describe('real content presentation', () => {
     ]);
     expect(engine.currentScene.id).toBe(content.game.startScene);
   });
+});
+
+describe('s4／s6 文件特寫分鏡（property/VISUALS.md）', () => {
+  // 以會議室人物鏡頭為主，資料夾 CG 只出現在指定的那一句；下一句回會議室並恢復說話者立繪。
+  const cases = [
+    { sceneId: 's4-notice', closeUp: '藍色資料夾特寫', states: ['direct', 'euphemism', 'performance'].map((choice2) => ({ choice2 })) },
+    { sceneId: 's6-receipt', closeUp: '雅琳把藍色資料夾轉向雨澄', states: [{}] },
+  ];
+
+  for (const { sceneId, closeUp, states } of cases) {
+    for (const state of states) {
+      it(`${sceneId} ${JSON.stringify(state)}：只有特寫那句是 CG，其餘每句都在會議室且有人物`, () => {
+        const content = loadContent();
+        const presentation = content.images.scenePresentation[sceneId];
+        const lines = content.scenes.get(sceneId)!.lines.filter((line) => isLineVisible(line, state));
+        const shots = lines.map((line, index) => {
+          const { backgroundId, characterId } = resolvePresentation(lines, index, {
+            presentation,
+            sceneBackground: content.images.sceneBackgrounds[sceneId],
+            hasSprite: (id) => content.images.characters[id] !== undefined,
+          });
+          const framing = resolveCharacterFraming(presentation, backgroundId ? content.images.backgrounds[backgroundId] : undefined);
+          return { line, backgroundId, shown: framing === 'none' ? undefined : characterId };
+        });
+
+        const cg = shots.findIndex((shot) => shot.backgroundId === 'cg-rights-packet');
+        expect(shots.filter((shot) => shot.backgroundId === 'cg-rights-packet')).toHaveLength(1);
+        expect(shots[cg].line.text).toContain(closeUp);
+        expect(shots[cg].shown).toBeUndefined();
+        // 特寫後的下一句立刻回到說話者。
+        expect(shots[cg + 1].shown).toBe(shots[cg + 1].line.speaker);
+
+        shots.forEach((shot, index) => {
+          if (index === cg) return;
+          expect(shot.backgroundId, `${sceneId}[${index}]`).toBe('moon-meeting-room-rain');
+          expect(shot.shown, `${sceneId}[${index}] 應有人物`).toBeDefined();
+          if (shot.line.speaker && content.images.characters[shot.line.speaker]) {
+            expect(shot.shown, `${sceneId}[${index}] 立繪應跟著說話者`).toBe(shot.line.speaker);
+          }
+        });
+      });
+    }
+  }
 });

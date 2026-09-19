@@ -85,9 +85,9 @@
     "s1-final-cut": "weiguang-office-rain-dusk",
     "s2-invite": "weiguang-office-rain-dusk",
     "s3-meeting": "moon-meeting-room-rain",
-    "s4-notice": "cg-rights-packet",
+    "s4-notice": "moon-meeting-room-rain",
     "s5-when-did-you-know": "moon-meeting-room-rain",
-    "s6-receipt": "cg-rights-packet",
+    "s6-receipt": "moon-meeting-room-rain",
     "s7-not-in-file": "moon-meeting-room-rain",
     "s8-reaction": "moon-meeting-room-rain",
     "ending-over-line": "moon-meeting-room-rain",
@@ -116,7 +116,7 @@
       "transition": "wipe"
     },
     "s4-notice": {
-      "background": "cg-rights-packet",
+      "background": "moon-meeting-room-rain",
       "character": "lin-yucheng",
       "expression": "alert",
       "transition": "fade"
@@ -128,7 +128,7 @@
       "transition": "soft"
     },
     "s6-receipt": {
-      "background": "cg-rights-packet",
+      "background": "moon-meeting-room-rain",
       "character": "zeng-yalin",
       "expression": "neutral",
       "transition": "soft"

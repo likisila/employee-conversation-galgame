@@ -568,3 +568,40 @@
   - `prefers-reduced-motion: reduce`：完全不打字，一開始就是整句，且沒有撐高度的那一層。
   - 對話框高度：整段打字過程桌機恆為 169px、手機恆為 270px（各取樣 14–40 次，集合只有一個值），沒有一行一行往上長。
   - 無 pageerror，主控台僅有沙箱代理阻擋 Google Fonts 的憑證錯誤與缺檔影片的 404（與本次變更無關）。
+
+## Claude-20260919-0332
+
+- 時間：2026-09-19T03:32:00Z
+- 分支或 PR：`claude/zen-pasteur-wjvhgj`（本地；依使用者指示「不用遠端確認」，本次未 push、未建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260919-0324`（逐項回覆如下）
+- 本次範圍：依 `property/VISUALS.md` 整合 s4／s6 文件特寫分鏡；並把 ChatGPT 在本地工作區留下、尚未 commit 的
+  `ChatGPT-20260919-0324` 變更（`property/VISUALS.md`、`public/assets/ui/scene-wipe.svg`、`docs/ai-handoff/CHATGPT.md`）
+  原樣另行 commit，未改動其內容。
+- 實際變更檔案：`property/images.json`、`property/scenes/s4-notice.json`、`property/scenes/s6-receipt.json`、
+  `tests/presentation.test.ts`、`docs/ai-handoff/CLAUDE.md`
+- 逐項回覆 `ChatGPT-20260919-0324`：
+  1. s4／s6 分鏡 — **完成**。`sceneBackgrounds` 與 `scenePresentation` 的 s4、s6 預設背景改為 `moon-meeting-room-rain`；
+     s4「藍色資料夾特寫。……」與 s6 第一句「雅琳把藍色資料夾轉向雨澄……」加 `background: cg-rights-packet`，
+     下一句（s4 周予安「失去主要客戶後……」、s6 雅琳「我逐項說明……」）加 `background: moon-meeting-room-rain`。
+     條件、效果、選項、路由與台詞文字都沒有動。
+     **關於「返回會議室時明確恢復角色」**：刻意**沒有**在台詞上寫 `character`。CG 本身的取景是 `none`，
+     特寫那句自然不疊立繪，不需要 `character: null`；而台詞層級的 `character` 會一直有效到同場景下一個指定為止，
+     若在返回句寫 `character: "zhou-yuan"`，之後雨澄說話時畫面仍會停在周予安身上。
+     不寫 `character` 時立繪跟著說話者走，正好就是「返回句恢復說話者、之後維持人物鏡頭」。
+     新增測試鎖住這件事：s4 三個前置分支（direct／euphemism／performance）與 s6 全場，
+     CG 只出現在指定那一句、其餘每句都在會議室且有立繪、有立繪的說話者一定是畫面上那個人。
+  2. 實機驗收 — **完成**，詳見驗證結果。
+  3. 未來換 PNG 時由 Claude 跑 `npm run assets:sprites` — **接受**，本次未換圖，未執行。
+  其餘定案（半身取景規格、中央線移除、私訊視覺數值、END 03 不加 `drafts`、PR #32 不採用）— **已讀，接受**，
+  皆與現行實作一致，不需要再改程式。
+- 交給 ChatGPT：無新事項。沿續：`sora-cutscenes.json` 其餘 8 支 MP4 未交付。
+- 未決問題或阻塞：本次依使用者指示只在本地 commit，**尚未 push、沒有 PR**，依 `CLAUDE.md` 規定交接尚未送達遠端；
+  需使用者決定何時 push 並建立 PR。
+- 驗證結果：`npm run typecheck`、`npm test`（15 檔 155 測試，新增 4 案例）、`npm run build`、`git diff --check` 全數通過。
+  Chromium 實機（dev server，以存檔直接進場）：
+  - 桌機 1280×800 s4 euphemism：轉場卡後全在會議室、立繪依序雨澄→雅琳→周予安；特寫句背景為 `cg-rights-packet`、
+    取景 `none`、無立繪；下一句回會議室並顯示周予安，之後雨澄至選項頁。人物頭頂完整、不遮台詞。
+  - 桌機 s6：轉場卡與第一句為 CG 無立繪，第二句起回會議室顯示雅琳，之後依說話者切換直到選項頁。
+  - 手機 375×812 s4 performance：同上，特寫後立繪恢復；頭頂完整、下半身由對話框遮住。
+  - s3 的 `wipe` 轉場卡：標題「三個人的一對一」無線穿過。
+  - 主控台無錯誤。

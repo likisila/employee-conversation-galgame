@@ -2,8 +2,8 @@
   "id": "s6-receipt",
   "title": "收訖不等於同意",
   "lines": [
-    { "speaker": null, "kind": "narration", "text": "雅琳把藍色資料夾轉向雨澄，沒有推到她手邊，打開第一頁。" },
-    { "speaker": "zeng-yalin", "text": "我逐項說明。你可以現在問，也可以之後用文件上的信箱詢問。周主管不是唯一窗口。" },
+    { "speaker": null, "kind": "narration", "text": "雅琳把藍色資料夾轉向雨澄，沒有推到她手邊，打開第一頁。", "background": "cg-rights-packet" },
+    { "speaker": "zeng-yalin", "text": "我逐項說明。你可以現在問，也可以之後用文件上的信箱詢問。周主管不是唯一窗口。", "background": "moon-meeting-room-rain" },
     { "speaker": "zeng-yalin", "text": "這是職位裁撤通知。這一頁列出公司計算的日期與給付；正式內容以書面為準。這裡是保險、設備與作品資料申請方式。最後是內部提問與申訴窗口。" },
     { "speaker": "lin-yucheng", "text": "這個資料夾本來就叫這個？" },
     { "speaker": "zeng-yalin", "text": "不是。" },
