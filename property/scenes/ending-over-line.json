@@ -7,12 +7,12 @@
     { "speaker": "lin-yucheng", "text": "推薦信和作品申請請改由其他人處理。請不要私訊我。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
     { "speaker": "zeng-yalin", "text": "我會寄出今天的紀錄與其他聯絡窗口。雨澄，你可以先離開，不需要完成任何簽名。" },
     { "speaker": null, "kind": "narration", "text": "雨澄拿起手機，走到門口。她停下來，把識別證翻到背面。", "background": "cg-badge-flip", "character": null },
-    { "speaker": "lin-yucheng", "text": "你說你不想假裝這只是工作。" },
+    { "speaker": "lin-yucheng", "text": "後續的事，請你交給雅琳。" },
     { "speaker": null, "kind": "narration", "text": "她沒有回頭。" },
-    { "speaker": "lin-yucheng", "text": "但在你有權力的時候，它就必須先是工作。" },
-    { "speaker": null, "kind": "narration", "text": "門關上。私訊視窗的輸入框出現「對不起，我只是——」。我按住退格鍵。這一次，刪掉不是為了找到更漂亮的說法，是因為她已經說了不要。", "drafts": ["對不起，我只是——"] },
+    { "speaker": "lin-yucheng", "text": "別再私下找我。" },
+    { "speaker": null, "kind": "narration", "text": "門關上。我在私訊框打出「對不起，我只是——」，又逐字刪掉。", "drafts": ["對不起，我只是——"] },
     { "speaker": null, "kind": "narration", "text": "END 04：越線" },
-    { "speaker": null, "kind": "narration", "text": "喜歡不會自動取消權力。尊重從停止追問開始。" }
+    { "speaker": null, "kind": "narration", "text": "輸入框空了。我沒有再打字。" }
   ],
   "choices": [],
   "ending": true

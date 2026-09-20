@@ -5,23 +5,23 @@
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "收到。需要帶電腦嗎？", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "予安", "text": "不用。先把手邊檔案存好就可以。你的系統權限不會在談話中突然關閉。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "好。五點見。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
-    { "speaker": null, "kind": "narration", "text": "她沒有問「是好事還是壞事」。這讓答案更清楚。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
+    { "speaker": null, "kind": "narration", "text": "我看著那句「五點見」，沒有再回。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
 
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "如果是圓角問題，現在就能吵。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "予安", "text": "雅琳也會在。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "喔。那應該不是圓角。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
     { "speaker": null, "kind": "narration", "text": "她的狀態從綠色變成「忙碌」。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
-    { "speaker": "zhou-yuan", "kind": "thought", "text": "我沒有說謊，我只是把真相裁成她看不出形狀的尺寸。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
+    { "speaker": "zhou-yuan", "kind": "thought", "text": "「忙碌」亮了起來。我還沒告訴她要談什麼。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
 
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "這麼正式？", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
     { "speaker": null, "kind": "narration", "text": "她回了一張戴墨鏡的慶祝鸚鵡貼圖。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
     { "speaker": "zeng-yalin", "text": "刪得掉嗎？", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
     { "speaker": "zhou-yuan", "text": "已經送出了。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
-    { "speaker": "zeng-yalin", "text": "我問的是那句話在你腦中能不能刪掉。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
+    { "speaker": "zeng-yalin", "text": "那待會就別再說是好消息。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
     { "speaker": null, "kind": "narration", "text": "十七分鐘後，那隻鸚鵡還停在對話最下方。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
 
-    { "speaker": null, "kind": "narration", "text": "17:00，月球會議室。BGM 停止，只剩冷氣與雨聲。桌上三杯水、藍色資料夾；玻璃牆貼著卡通太空人。" },
-    { "speaker": null, "kind": "narration", "text": "我先進門，把識別證翻到背面。照片朝向襯衫，像臨時撤回自己的名字。雅琳坐在靠門的位置，把平板平放，沒有擋住出口。" },
+    { "speaker": null, "kind": "narration", "text": "17:00，月球會議室。關上門，外面的談話聲就聽不見了。三杯水圍著藍色資料夾，玻璃牆上貼著卡通太空人。" },
+    { "speaker": null, "kind": "narration", "text": "我先進門，把識別證翻到背面。雅琳坐在靠門的位置，把平板放平，將椅子往桌邊收了一點。" },
     { "speaker": null, "kind": "narration", "text": "雨澄準時進來。" },
 
     { "speaker": "lin-yucheng", "text": "我把檔案存好了。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
@@ -32,7 +32,7 @@
     { "speaker": null, "kind": "narration", "text": "雨澄先看見雅琳，再看見資料夾。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
     { "speaker": "lin-yucheng", "text": "好消息？", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
     { "speaker": "zhou-yuan", "text": "雨澄——", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
-    { "speaker": "lin-yucheng", "text": "我想先知道，你定義裡的壞消息長什麼樣子。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
+    { "speaker": "lin-yucheng", "text": "這就是你說的好消息？", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
 
     { "speaker": "zeng-yalin", "text": "我在場是為了說明文件與後續程序，也會記錄今天提供過哪些資訊。決定內容由周主管說明。" },
     { "speaker": null, "kind": "narration", "text": "桌上三杯水，只有雅琳那杯少了一口。" }

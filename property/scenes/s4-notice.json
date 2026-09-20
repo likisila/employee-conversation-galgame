@@ -2,7 +2,7 @@
   "id": "s4-notice",
   "title": "不是討論",
   "lines": [
-    { "speaker": null, "kind": "narration", "text": "我的聲音沒有我預想的顫抖。這並不讓它比較勇敢。雨澄坐下，看著我，沒有看資料夾。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "direct" }] },
+    { "speaker": null, "kind": "narration", "text": "我說完了。雨澄看著我，沒有低頭看資料夾。我等她開口。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "direct" }] },
     { "speaker": "lin-yucheng", "text": "好。繼續。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "direct" }] },
 
     { "speaker": null, "kind": "narration", "text": "雨澄低頭看了一眼自己的 T 恤。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "euphemism" }] },
@@ -13,20 +13,20 @@
     { "speaker": "lin-yucheng", "text": "這是績效改善計畫？", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
     { "speaker": "zhou-yuan", "text": "不是，我只是想先把背景——", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
     { "speaker": "zeng-yalin", "text": "我需要更正。這次決定不是績效處分，也沒有核准用個人表現作為理由。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
-    { "speaker": null, "kind": "narration", "text": "雨澄終於坐下，把原子筆從掛繩上取下，平放在桌上。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
+    { "speaker": null, "kind": "narration", "text": "雨澄把原子筆從掛繩上取下，平放在桌上。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
     { "speaker": "lin-yucheng", "text": "那你剛才是在幫公司找理由，還是在幫自己找？", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
-    { "speaker": null, "kind": "narration", "text": "我沒有一個能放進紀錄裡的答案。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
+    { "speaker": null, "kind": "narration", "text": "我看了一眼雅琳的平板，沒接話。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
 
-    { "speaker": null, "kind": "narration", "text": "藍色資料夾特寫。雨水在玻璃上拉出一條長痕。", "background": "cg-rights-packet" },
-    { "speaker": "zhou-yuan", "text": "失去主要客戶後，公司取消了你目前負責的產品線，也決定不把這個職位轉到其他團隊。文件上有預計日期、給付項目、保險與設備處理，以及提問窗口。", "background": "moon-meeting-room-rain" },
+    { "speaker": null, "kind": "narration", "text": "資料夾攤在我們中間，封面上是雨澄的名字。", "background": "cg-rights-packet" },
+    { "speaker": "zhou-yuan", "text": "主要客戶解約後，公司取消了你負責的產品線，也決定不把這個職位轉到其他團隊。日期、給付、保險、設備處理和聯絡窗口，都列在文件裡。", "background": "moon-meeting-room-rain" },
     { "speaker": "lin-yucheng", "text": "「決定」。" },
-    { "speaker": null, "kind": "narration", "text": "她重複那兩個字，像在檢查按鈕文字。" },
+    { "speaker": null, "kind": "narration", "text": "她重複了一次，抬頭看我。" },
     { "speaker": "lin-yucheng", "text": "所以你們不是來問我的。這不是討論，只是通知？" }
   ],
   "choices": [
     {
       "id": "answer-admit",
-      "text": "「對，決定已經完成。我很抱歉你到現在才知道。」",
+      "text": "「對，公司已經決定了。抱歉，現在才告訴你。」",
       "next": "s5-when-did-you-know",
       "effects": [
         { "variable": "choice3", "operation": "set", "value": "admit" },

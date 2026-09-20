@@ -3,24 +3,24 @@
   "title": "收訖不等於同意",
   "lines": [
     { "speaker": null, "kind": "narration", "text": "雅琳把藍色資料夾轉向雨澄，沒有推到她手邊，打開第一頁。", "background": "cg-rights-packet" },
-    { "speaker": "zeng-yalin", "text": "我逐項說明。你可以現在問，也可以之後用文件上的信箱詢問。周主管不是唯一窗口。", "background": "moon-meeting-room-rain" },
-    { "speaker": "zeng-yalin", "text": "這是職位裁撤通知。這一頁列出公司計算的日期與給付；正式內容以書面為準。這裡是保險、設備與作品資料申請方式。最後是內部提問與申訴窗口。" },
+    { "speaker": "zeng-yalin", "text": "我一頁一頁說明。有問題隨時問，也可以回去看完再寄信給我，不必經過周主管。", "background": "moon-meeting-room-rain" },
+    { "speaker": "zeng-yalin", "text": "這是職位裁撤通知，日期和公司計算的給付都列在這頁，以書面為準。後面是保險、設備、作品資料的申請方式，還有提問和申訴窗口。" },
     { "speaker": "lin-yucheng", "text": "這個資料夾本來就叫這個？" },
     { "speaker": "zeng-yalin", "text": "不是。" },
     { "speaker": "lin-yucheng", "text": "原本叫什麼？" },
     { "speaker": "zeng-yalin", "text": "人才續航包。" },
     { "speaker": null, "kind": "narration", "text": "雨澄看著她。" },
     { "speaker": "zeng-yalin", "text": "我改了。" },
-    { "speaker": null, "kind": "narration", "text": "雨澄的嘴角動了一下，不是笑，比笑更疲倦。" },
-    { "speaker": "lin-yucheng", "text": "這算你今天第一個保護員工的行動嗎？" },
-    { "speaker": "zeng-yalin", "text": "第二個。第一個是把簽名欄旁邊的「立即」刪掉。" },
+    { "speaker": null, "kind": "narration", "text": "雨澄嘴角動了一下，又低頭看文件。" },
+    { "speaker": "lin-yucheng", "text": "至少這件事，你幫上忙了。" },
+    { "speaker": "zeng-yalin", "text": "還有一件。簽名欄旁邊原本有「立即」兩個字，我也刪了。" },
     { "speaker": null, "kind": "narration", "text": "雨澄把第一頁翻回封面。" },
     { "speaker": "lin-yucheng", "text": "我今天不簽。我想帶回去看，也想找人確認。" }
   ],
   "choices": [
     {
       "id": "doc-protect",
-      "text": "「可以。今天不用做同意的決定；請雅琳再說明哪些簽名只代表收訖。」",
+      "text": "「可以，先帶回去看。雅琳，請再說明哪些簽名只代表收到文件。」",
       "next": "s7-not-in-file",
       "effects": [
         { "variable": "choice4", "operation": "set", "value": "protect" },

@@ -38,7 +38,7 @@
   "backgrounds": {
     "weiguang-office-rain-dusk": {
       "src": "/assets/backgrounds/weiguang-office-rain-dusk.webp",
-      "alt": "傍晚四點四十分的台北新創辦公室，窗外下雨，螢幕與玻璃泛著冷藍色",
+      "alt": "窗外下雨的台北新創辦公室，螢幕與玻璃泛著冷藍色",
       "focalPoint": "50% 46%"
     },
     "moon-meeting-room-rain": {
@@ -49,7 +49,7 @@
     },
     "rainy-arcade-night": {
       "src": "/assets/backgrounds/rainy-arcade-night.webp",
-      "alt": "台北雨夜騎樓，霓虹倒映在積水裡，適合作為離席後的結局轉場",
+      "alt": "台北雨夜騎樓，霓虹倒映在積水裡",
       "focalPoint": "50% 50%"
     },
     "apartment-phone-night": {
@@ -174,7 +174,7 @@
     },
     "loading": {
       "src": "/assets/screens/loading-rain-cursor.webp",
-      "alt": "雨水沿玻璃落下，像刪除線切過遠方城市燈光",
+      "alt": "雨水沿玻璃落下，遠處亮著城市燈光",
       "focalPoint": "50% 50%"
     }
   },

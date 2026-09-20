@@ -5,19 +5,19 @@
     { "speaker": null, "kind": "narration", "text": "雨澄沒有拿藍色資料夾。" },
     { "speaker": "lin-yucheng", "text": "請寄電子檔給我。之後我只和雅琳聯絡。" },
     { "speaker": "zhou-yuan", "text": "我真的很抱歉。" },
-    { "speaker": "lin-yucheng", "text": "你已經說很多次了。" },
+    { "speaker": "lin-yucheng", "text": "道歉我聽到了。" },
     { "speaker": "zhou-yuan", "text": "如果妳願意，我們之後可以——" },
     { "speaker": "lin-yucheng", "text": "不要把「之後」也排進今天的議程。" },
     { "speaker": null, "kind": "narration", "text": "她站起來，把識別證翻到背面。", "background": "cg-badge-flip", "character": null },
-    { "speaker": "lin-yucheng", "text": "你一直想讓這件事聽起來柔軟一點。" },
+    { "speaker": "lin-yucheng", "text": "我現在只想把後面的事弄清楚。" },
     { "speaker": null, "kind": "narration", "text": "她看著桌上的資料夾。" },
-    { "speaker": "lin-yucheng", "text": "但刀包著布，還是刀。只會讓拿刀的人比較不痛。" },
+    { "speaker": "lin-yucheng", "text": "至於我們以後怎麼樣，我現在不想談。" },
     { "speaker": null, "kind": "narration", "text": "門關上。當晚 22:14，辦公室只剩清潔人員的吸塵器聲。", "background": "weiguang-office-rain-dusk", "character": null },
     { "speaker": null, "kind": "narration", "text": "我在私訊框輸入一大段道歉。游標停在送出鍵上。雅琳從身後經過。" },
     { "speaker": "zeng-yalin", "text": "她指定只走正式窗口。", "character": "zeng-yalin" },
     { "speaker": null, "kind": "narration", "text": "我把視窗關掉。藍色資料夾還在月球會議室。卡通太空人隔著玻璃，永遠舉著大拇指。", "character": null },
     { "speaker": null, "kind": "narration", "text": "END 03：柔軟的刀" },
-    { "speaker": null, "kind": "narration", "text": "模糊不是溫柔。有時只是拒絕承認自己正在造成傷害。" }
+    { "speaker": null, "kind": "narration", "text": "吸塵器轉進下一排座位。我還坐著。" }
   ],
   "choices": [],
   "ending": true

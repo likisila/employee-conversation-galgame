@@ -3,28 +3,28 @@
   "title": "答案的重量",
   "lines": [
     { "speaker": null, "kind": "narration", "text": "雨澄沒有立刻回答。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
-    { "speaker": "zhou-yuan", "text": "我願意提供推薦，也願意把我能確認的作品內容寫清楚。要不要再聯絡、用什麼方式聯絡，由你決定。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
+    { "speaker": "zhou-yuan", "text": "推薦信我可以寫，作品內容也會照實說明。你需要時再找我，或請雅琳轉達。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
     { "speaker": "lin-yucheng", "text": "你可以早一點告訴我。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
-    { "speaker": "zhou-yuan", "text": "可以。我沒有。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
+    { "speaker": "zhou-yuan", "text": "是。我拖到今天才說。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
     { "speaker": "lin-yucheng", "text": "我現在還是很生氣。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
-    { "speaker": "zhou-yuan", "text": "你不用先讓我好過一點。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
+    { "speaker": "zhou-yuan", "text": "嗯。我沒要你現在原諒我。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
     { "speaker": null, "kind": "narration", "text": "她看向窗外。雨水把對面大樓的招牌切成一格一格。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
-    { "speaker": "lin-yucheng", "text": "……這句至少不是主管話術。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
+    { "speaker": "lin-yucheng", "text": "……那就讓我先氣著。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
 
     { "speaker": "lin-yucheng", "text": "所以呢？", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
     { "speaker": "zhou-yuan", "text": "我只是希望你知道，我不是什麼都沒做。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
-    { "speaker": "lin-yucheng", "text": "你把努力念給我聽的樣子，很像在遞發票。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
-    { "speaker": "lin-yucheng", "text": "我需要在離職前把這筆人情核銷嗎？", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
+    { "speaker": "lin-yucheng", "text": "我知道你有做事。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
+    { "speaker": "lin-yucheng", "text": "但我今天還得謝謝你嗎？", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
     { "speaker": "zeng-yalin", "text": "不需要。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
-    { "speaker": null, "kind": "narration", "text": "我的手壓在膝上。原來證明自己不是壞人，也可以是另一種索取。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
+    { "speaker": null, "kind": "narration", "text": "我把手壓在膝上，沒再講那幾次會議。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
 
-    { "speaker": null, "kind": "narration", "text": "雨澄的表情先是空白，然後所有情緒都退到我碰不到的地方。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
+    { "speaker": null, "kind": "narration", "text": "雨澄愣住了。她看了雅琳一眼，再看回我。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
     { "speaker": "lin-yucheng", "text": "不。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
     { "speaker": null, "kind": "narration", "text": "我以為她是否定感情。她把椅子往後推。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
-    { "speaker": "lin-yucheng", "text": "我的意思是，你不能在我還要從你手上拿推薦、作品核准和離職文件的時候，把這句話交給我處理。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
+    { "speaker": "lin-yucheng", "text": "推薦信、作品核准、離職文件，我還要找你處理。你現在說喜歡我，要我怎麼回？", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
     { "speaker": null, "kind": "narration", "text": "雅琳起身，站到桌側，但沒有擋住雨澄。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
     { "speaker": "zeng-yalin", "text": "談話到這裡。後續由我單獨聯絡。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
-    { "speaker": null, "kind": "narration", "text": "我張口，雅琳搖了一次頭。那是今天最清楚的一個指令。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] }
+    { "speaker": null, "kind": "narration", "text": "我還想說話，雅琳搖頭。我閉上嘴。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] }
   ],
   "choices": [],
   "next": "s9-doorway"
