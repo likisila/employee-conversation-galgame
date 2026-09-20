@@ -138,11 +138,11 @@ describe('real content presentation', () => {
 describe('s4／s6 文件特寫分鏡（property/VISUALS.md）', () => {
   // 以會議室人物鏡頭為主，資料夾 CG 只出現在指定的那一句；下一句回會議室並恢復說話者立繪。
   const cases = [
-    { sceneId: 's4-notice', closeUp: '藍色資料夾特寫', states: ['direct', 'euphemism', 'performance'].map((choice2) => ({ choice2 })) },
-    { sceneId: 's6-receipt', closeUp: '雅琳把藍色資料夾轉向雨澄', states: [{}] },
+    { sceneId: 's4-notice', states: ['direct', 'euphemism', 'performance'].map((choice2) => ({ choice2 })) },
+    { sceneId: 's6-receipt', states: [{}] },
   ];
 
-  for (const { sceneId, closeUp, states } of cases) {
+  for (const { sceneId, states } of cases) {
     for (const state of states) {
       it(`${sceneId} ${JSON.stringify(state)}：只有特寫那句是 CG，其餘每句都在會議室且有人物`, () => {
         const content = loadContent();
@@ -160,7 +160,11 @@ describe('s4／s6 文件特寫分鏡（property/VISUALS.md）', () => {
 
         const cg = shots.findIndex((shot) => shot.backgroundId === 'cg-rights-packet');
         expect(shots.filter((shot) => shot.backgroundId === 'cg-rights-packet')).toHaveLength(1);
-        expect(shots[cg].line.text).toContain(closeUp);
+        // CG 那一格演的是資料夾，且是旁白描述的畫面——不是寫給製作看的鏡頭指令。
+        // 不比對整句台詞：文案會改，分鏡規則不會（`ChatGPT-20260920-0833` 就是改了這一句）。
+        expect(shots[cg].line.kind).toBe('narration');
+        expect(shots[cg].line.text).toContain('資料夾');
+        expect(shots[cg].line.text, 'CG 那句是玩家看的旁白，不該把「特寫」這種製作指令寫進去').not.toContain('特寫');
         expect(shots[cg].shown).toBeUndefined();
         // 特寫後的下一句立刻回到說話者。
         expect(shots[cg + 1].shown).toBe(shots[cg + 1].line.speaker);

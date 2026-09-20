@@ -68,7 +68,7 @@ export function renderLoading(app: HTMLElement, content: LoadedContent, ready: P
       <div class="loading-copy">
         <p class="eyebrow">BEFORE WE TALK</p>
         <h1>${escapeHtml(content.ui.loadingLabel)}</h1>
-        <p>有些話，需要先留一點空白。</p>
+        <p class="loading-note">${escapeHtml(content.ui.loadingNote)}</p>
         <div class="loading-bar" role="progressbar" aria-label="${escapeHtml(content.ui.loadingLabel)}"><span></span></div>
         <p class="tap-hint loading-hint" role="status">${escapeHtml(content.ui.tapToContinueLabel)}</p>
       </div>

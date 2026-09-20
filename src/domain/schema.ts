@@ -187,6 +187,11 @@ export interface UiCopy {
   playerLabel: string;
   /** 讀取／轉場畫面等待點擊時的提示。 */
   tapToContinueLabel: string;
+  /**
+   * 讀取畫面在素材還沒載完時的說明句。載完之後換成 `tapToContinueLabel`，兩句不會同時出現。
+   * 這句原本寫死在 renderer 裡；`ChatGPT-20260920-0833` 定了新文案，改由 `property/ui.json` 提供。
+   */
+  loadingNote: string;
   /** 回到上一句的按鈕標籤（螢幕閱讀器用）。 */
   backLabel: string;
   /** 過場影片的「跳過」按鈕文字。 */
@@ -369,6 +374,7 @@ export function parseUi(raw: unknown): UiCopy {
     newGameLabel: typeof value.newGameLabel === 'string' ? value.newGameLabel : '重新開始',
     playerLabel: typeof value.playerLabel === 'string' ? value.playerLabel : '你',
     tapToContinueLabel: typeof value.tapToContinueLabel === 'string' ? value.tapToContinueLabel : '點擊畫面繼續',
+    loadingNote: typeof value.loadingNote === 'string' ? value.loadingNote : '讀取完成後，點擊畫面繼續。',
     backLabel: typeof value.backLabel === 'string' ? value.backLabel : '回到上一句',
     skipCutsceneLabel: typeof value.skipCutsceneLabel === 'string' ? value.skipCutsceneLabel : '跳過',
     muteCutsceneLabel: typeof value.muteCutsceneLabel === 'string' ? value.muteCutsceneLabel : '靜音',

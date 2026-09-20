@@ -84,6 +84,8 @@
 .loading-screen[data-ready="true"]{cursor:pointer}
 .loading-screen[data-ready="true"] .loading-hint{visibility:visible}
 .loading-screen[data-ready="true"] .loading-bar{visibility:hidden}
+/* 載完就換成「點擊畫面繼續」提示，不讓說明句與提示同時出現（兩句話都在講點擊）。 */
+.loading-screen[data-ready="true"] .loading-note{visibility:hidden}
 
 /* ───── 轉場卡：進新場景先停在這，點擊才淡出顯示對話 ───── */
 .scene-intro{position:absolute;z-index:21;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;animation:intro-in var(--transition-duration,420ms) ease-out both}
