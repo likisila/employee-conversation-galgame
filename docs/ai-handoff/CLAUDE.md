@@ -816,3 +816,18 @@
 - 未決問題或阻塞：無新增；`00-B`／`03-B` 修正時程仍由 ChatGPT 決定。本地 commit，未 push、沒有 PR。
 - 驗證結果：`npm run typecheck`、`npm test`（17 檔 170／170，`tests/cutscenes.test.ts` 22 案例含更新後的斷言全數通過）、`npm run build` 全數通過。Chromium 實機（dev server）：重新開始 → 內容提醒最後一句 → 點擊後**直接**進入 `s1-final-cut`「最終版」的轉場卡，畫面全程沒有出現過場黑邊、控制列或「跳過」按鈕，`get_page_text` 在點擊前後只看到「內容提醒」→「最終版」兩個狀態、中間沒有過場文字或空白幀；主控台無錯誤。`rights-packet`（`s6-receipt` 之前）沿用同一段程式邏輯，測試已覆蓋，未另外實機重播。
 - 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。
+
+## Claude-20260925-2235
+
+- 時間：2026-09-25T14:35:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260925-2138`（無新增紀錄）
+- 本次範圍：使用者上線複驗後指出 `Claude-20260925-2214`／`2221` 兩筆動到的對象是錯的——那兩筆調整的 `final-documents`（00）／`rights-packet`（03）從來沒有真正的 MP4，只在缺檔時短暫顯示分鏡 placeholder；使用者實際在玩的是真的會播放的 `01_meeting_invitation.mp4`（`meeting-invitation` cue，掛在 `s2-invite` 之前）。Claude 接著兩次嘗試描述這支影片的具體缺陷（先猜分鏡 `03-B` 的手腕姿勢，再猜影片開頭道具像平板），**兩次都被使用者否認**；使用者明確指出不該用猜的，答案應該已經在對話最初的描述裡。
+- 已定案事項（不論根本原因為何都成立的處置，先讓玩家看不到這支影片）：
+  1. `public/assets/cutscenes/01_meeting_invitation.mp4` 整支移到 `coordination/pending-review/cutscenes/01_meeting_invitation.mp4`（未刪除，只是不再出貨）；`property/cutscene-cues.json` 的 `meeting-invitation` cue **沒有改動**，`file`／`trigger`／`scene` 仍對得上 `sora-cutscenes.json`，既有的「每段 cue 對得上 sora manifest」「每段 READY 的影片都有掛載點」兩條測試不受影響。
+  2. 檔案變成缺檔後，播放器既有邏輯自動接手：`<video>` 404 → 這段 cue 有 `storyboard`（`01-A`、`01-B`）→ 自動改播分鏡輪播，不需要任何程式改動。`01-A`／`01-B` 已逐張目視確認，沒有發現道具或人體結構問題，可以先頂著。
+  3. **不在此筆記錄具體缺陷內容**：先前兩次寫進交接紀錄的猜測（手腕姿勢、道具像平板）都已被使用者推翻，`coordination/pending-review/cutscenes/README.md` 的移出原因已改寫為中性描述，避免文件留著錯誤結論。
+- 交給 ChatGPT：暫不新增（`00-B`／`03-B` 既有交辦沿續 `Claude-20260925-2214`）；`01_meeting_invitation.mp4` 的具體缺陷待使用者說明後才能整理成可交付的需求。
+- 未決問題或阻塞：**`01_meeting_invitation.mp4` 真正的缺陷尚未確認**——這是這筆最重要的未決事項。移出整支影片是安全處置，但不代表已找到根本原因；下一步是直接請使用者指出具體是哪裡、哪個時間點的問題，不再由 Claude 猜測。本地 commit，未 push、沒有 PR。
+- 驗證結果：`npm run typecheck`、`npm test`（17 檔 170／170）、`npm run build` 全數通過。移動檔案未觸發任何測試的檔案存在性檢查（`tests/cutscenes.test.ts` 只驗證 `cue.src` 字串格式）。
+- 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`；下一步待使用者明確指出缺陷後再處理，不再主動猜測。
