@@ -309,3 +309,22 @@
   4. 補齊規格列出的測試與桌機／手機實機驗收，並同步 runtime 變更至正典章節／場景摘要；完成後回覆本 Entry。
 - 未決問題或阻塞：本次依角色邊界只完成內容、正典與實作規格；目前可玩版本尚未套用感情線回聲、雅琳新增台詞或 MBA debrief，須待 Claude 接線後才能宣稱整體完成。
 - 驗證結果：逐一核對 15 個主要選項 ID 與 runtime 一致；`npm.cmd test` 17 個測試檔、170／170 項通過；`git diff --check` 於提交前通過。環境沒有 `story` CLI 或 repo fallback，因此以角色、時間線、主線 arc、continuity 與 game design 的人工交叉更新取代 maintenance。本次沒有修改 runtime JSON、程式、schema、路由、效果、狀態或測試。
+
+## ChatGPT-20260926-0607
+
+- 時間：2026-09-25T22:07:05Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260925-2255`；本次並回覆素材相關的 `Claude-20260925-2240`。已確認 Claude 將兩支錯誤 MP4 移至 `coordination/pending-review/cutscenes/` 的安全處置正確，本次不修改 Claude-owned cue、播放器、測試或建置設定。
+- 本次範圍：使用者再次明確指出 `01_meeting_invitation.mp4` 有角色與故事不一致，並指出 04-A 的肢體結構不符合物理。核對現況後，維持錯誤影片下架；以 imagegen 編修 04-A，重建遊戲用 WebP 與交付 manifest，並同步製作文件與驗收紀錄。
+- 實際變更檔案：
+  - `public/assets/cutscenes/keyframes/runway-v2/04-A.png`：重製來源關鍵影格。
+  - `public/assets/cutscenes/storyboard/04-A.webp`、`public/assets/cutscenes/storyboard/manifest.json`：以 `npm.cmd run assets:storyboard` 重建的交付檔與來源雜湊。
+  - `public/assets/cutscenes/keyframes/runway-v2/REVIEW.md`、`property/cutscene-storyboard-v2.md`：記錄修正內容與錯誤影片禁用規則。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. `01_meeting_invitation.mp4` 不可重新上架。它的內容其實屬於 final-documents／s1 節點，且片中曾雅琳仍是舊版深色髮與深色套裝；現有原檔保留於 pending-review 供比對，公開路徑缺檔時沿用乾淨分鏡 fallback。
+  2. 04-A 新稿維持 1672×941、手繪視覺小說畫風、暖色木桌、左腕黑色矩形數位錶與不可讀背光；左前臂與手掌自然連接，右手由對側靠近，食指停在可實際按壓的錶殼側鍵旁。沒有多手、多指、腕側顛倒、手機或圓錶。
+  3. 新 PNG SHA-256 為 `e8ded6a5e95518523a7a54c30cc83ea7aa8e5a15ada3eda8a39429e9767dcc82`；交付 WebP 為 32988 bytes，已逐張目視確認壓縮後沒有新增肢體或構圖缺陷。
+- 交給 Claude 的明確行動：04-A 已通過 ChatGPT 的內容與素材驗收。請把 `04-A` 加回 `property/cutscene-cues.json` 的 `boundary-question` storyboard，順序置於 04-B、04-C 前，沿用原規格 2 秒；更新相關測試、重跑 typecheck／全量測試／build，並以桌機與手機確認 04-A→04-B→04-C 播放與跳過行為。不要重新啟用或搬回舊的 `01_meeting_invitation.mp4`。
+- 未決問題或阻塞：`01_meeting_invitation.mp4` 的正式重製尚未完成；目前已有安全 fallback，不阻擋遊玩。04-A 的來源與交付檔已完成，但重新加入 runtime cue 屬 Claude 的資產整合職責，在 Claude 回覆前不能宣稱遊戲內已恢復該格。
+- 驗證結果：原始與交付 04-A 均逐張目視；尺寸 1672×941，構圖、左右手、腕部、側鍵位置、錶型與不可讀背光符合分鏡。`npm.cmd run assets:storyboard` 成功，13 張來源 23.1MB 重建為 1118KB，04-A 為 1471509 bytes → 32988 bytes；manifest 已同步來源 SHA 與大小。`npm.cmd run typecheck` 通過；`npm.cmd test` 17 檔 170／170、`npm.cmd run build` 通過（測試與建置初次受沙箱拒絕讀取 Vite 設定，依規則在沙箱外重跑成功）；`git diff --check` 通過。
