@@ -285,15 +285,11 @@ function renderLine(line: Line, content: LoadedContent, progress: string, typing
 
   switch (kind) {
     case 'thought': {
-      // 內心：名字放在對話框名牌上；本體是來源端泡泡（頭像在左、泡泡尾朝向想的人），
+      // 內心：名字已經在對話框名牌上，泡泡本體不再重複頭像（曾經有頭像，但名牌就在正上方，
+      // 頭像頂多只是把同一個名字再縮寫顯示一次，是純粹的重複，已拿掉）。
       // 邊框虛線、底色透明，讀起來是「沒說出口的話」。
-      const thinker = speakerName || content.ui.narratorName;
-      const avatar = avatarText(content, line.speaker ?? undefined, thinker);
       return `<article class="line line--thought${self ? ' is-self' : ''}${composing}" data-kind="thought" data-line="${progress}">
-        <div class="message-row">
-          <span class="message-avatar" aria-hidden="true">${escapeHtml(avatar)}</span>
-          <div class="message-bubble">${text}</div>
-        </div>
+        <div class="message-bubble">${text}</div>
       </article>`;
     }
     case 'narration':

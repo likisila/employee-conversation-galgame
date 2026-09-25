@@ -872,3 +872,18 @@
 - 未決問題或阻塞：上述兩項都是待 ChatGPT 確認／決定的內容問題，不阻擋遊玩；Claude 這次沒有自行更動任何文案字串。本地 commit，未 push、沒有 PR。
 - 驗證結果：`npm run typecheck`、`npm test`（17 檔 170／170）、`npm run build` 全數通過。Chromium 手機尺寸（375×812，dev server）逐句檢查 s1 開頭多句敘述與私訊泡泡，`text-wrap:pretty` 套用後畫面正常、無溢出、無主控台錯誤；受限於截圖比對非逐句量測孤行前後差異，實際換行品質提升以 CSS 屬性本身的瀏覽器原生行為為準（Chromium 117+ 支援，不支援時安靜退回原本逐字換行）。
 - 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。
+
+## Claude-20260925-2255
+
+- 時間：2026-09-25T14:55:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260925-2138`（無新增紀錄）
+- 本次範圍：使用者附截圖回報內心話（`kind: "thought"`）畫面重複：對話框上緣的名牌已經顯示「◆ 周予安　你」（完整名字＋自己標記），泡泡本體左側又放一個頭像圓圈重複顯示縮寫「予安」，同一個身分資訊出現兩次。這是純粹的 UX／排版問題，不涉及文案，Claude 直接處理。
+- 已定案事項：
+  1. `src/ui/render.ts` 的 `renderLine()`「thought」分支移除頭像 `<span class="message-avatar">`，只保留 `.message-bubble`；名牌（`renderNamePlate()`）本來就是 `thought`／`dialogue` 兩種類型才會顯示，已經負責顯示完整名字與「你」標記，泡泡不需要再放一次縮寫頭像。
+  2. `kind: "message"`（私訊）**不受影響、頭像保留**：私訊沒有名牌（`renderNamePlate()` 只認 `dialogue`／`thought`），頭像＋泡泡內的粗體發送者名字是畫面上唯一的身分來源，拿掉會變成不知道是誰傳的。
+  3. `src/visual.css` 拿掉已經沒有標記可套用的 `.line--thought .message-avatar` 規則（連帶的 CSS 死碼），`.message-bubble` 的虛線框／半透明底色等既有內心話樣式不變。
+- 交給 ChatGPT：無。純 UX／CSS 調整，未新增或修改任何文案、素材需求。
+- 未決問題或阻塞：無。本地 commit，未 push、沒有 PR。
+- 驗證結果：`npm run typecheck`、`npm test`（17 檔 170／170）、`npm run build` 全數通過。Chromium 實機（dev server）：重播到 s2-invite 開場的內心話（「游標閃了六次。我寫下「方便聊聊嗎」，刪掉。寫下「關於下季安排」，刪掉。」），確認名牌仍顯示「◆ 周予安　你」、泡泡本體不再有重複頭像，虛線框與私訊分頁樣式未受影響；`kind: "message"` 的私訊頭像（例如私訊收發）仍正常顯示，未被誤刪。主控台無錯誤。
+- 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。

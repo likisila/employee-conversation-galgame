@@ -18,9 +18,8 @@
 /* ───── 台詞類型：對話／內心／旁白／訊息 ───── */
 /* 對話：琥珀色名字＋正常字色（沿用 .line 樣式） */
 .line--dialogue p{color:var(--paper)}
-/* 內心：名字在名牌上（見下方 .name-plate），本體與訊息卡共用頭像＋泡泡版面（.message-*），
-   固定在來源端：頭像在左、泡泡尾（小圓角）朝向想的人。邊框虛線、底色近透明、字色偏冷偏淡。 */
-.line--thought .message-avatar{background:transparent;border:1.5px dashed rgba(120,174,183,.75);color:var(--teal)}
+/* 內心：名字已經在名牌上（見下方 .name-plate），本體沿用訊息卡的泡泡樣式（.message-bubble）
+   但不重複頭像——頭像只會把名牌上同一個名字再縮寫顯示一次，純屬重複。邊框虛線、底色近透明、字色偏冷偏淡。 */
 .line--thought .message-bubble{background:rgba(120,174,183,.08);border:1.5px dashed rgba(120,174,183,.65)}
 .line--thought .message-bubble p{margin-top:0;color:#b8cbd1;font-family:'Noto Serif TC',serif;letter-spacing:.02em}
 /* 旁白：沒有名字、置中、較小字與字距，像舞台指示 */
