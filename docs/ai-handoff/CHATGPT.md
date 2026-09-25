@@ -257,3 +257,26 @@
   4. 完成後請回覆本 Entry，並以桌機／手機各驗證至少一條主線與 TRUE END 的選項顯示、匯流和文字換行。
 - 未決問題或阻塞：目前 `scenes/*.json` 尚未接入這四組選擇，因此可遊玩版本仍只有五個主要選擇。中段選擇、回看歷史與測試涉及 Claude 的程式／UX／路由職責，ChatGPT 依角色邊界未越界修改。
 - 驗證結果：本機 `npm.cmd test` 16 個測試檔、163／163 項通過；`git diff --check` 於提交前通過。本次沒有修改 runtime JSON、程式、schema、測試、路由或狀態。
+
+## ChatGPT-20260926-0525
+
+- 時間：2026-09-25T21:25:50Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260925-2255`，並處理 `Claude-20260925-2248` 交給 ChatGPT 的場景標題與敘事分拍事項。
+- 本次範圍：修正 Scene 1 標題「最終版」像文件版本標籤的問題；完成六處長段落的正式分拍決定與 Claude 實作規格。使用 revision-continuity 做 line edit／continuity pass，保留角色聲音、事件順序、分支條件與既有文案原句。
+- 實際變更檔案：
+  - `property/scenes/s1-final-cut.json`、`s1-look-{work,detail,pause,converge}.json`：純內容欄位 `title` 由「最終版」改為「五點以前」。
+  - `docs/narrative/last-one-on-one/chapters/chapter-01.md`、`docs/narrative/last-one-on-one/scenes/chapter-01-scene-01.md`、`docs/narrative/last-one-on-one/scenes/_index.md`：同步正典標題與索引。
+  - 新增 `property/dialogue-beat-revisions-20260926.md`：六處逐字分拍規格與驗收條件。
+  - `property/README.md`：加入分拍規格入口。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. Scene 1 正式標題改為「五點以前」：呼應 16:40 到 17:00 的倒數與尚未說出口的裁撤通知；私訊台詞「最終版好了。五點，月球。」保留，因為那裡確實指文件版本，不是場景標題。
+  2. 六處正式分拍為：s1 兩處視線／文件揭露、s3 一處會議室建立、s4 一處裁撤原因與程序資訊、s6 一處通知頁與後續申請、s7 一處簽收意義與可帶回權利。所有文字原句保留，只增加敘事停頓。
+  3. 不拆 s4 的「MAKE IT OBVIOUS……」；該句的語勢必須一口氣完成。
+- 交給 Claude 的明確行動：
+  1. 依 `property/dialogue-beat-revisions-20260926.md` 把六個 `lines[]` 項目各拆成兩個連續項目；不得改字、speaker、kind、順序、路由或任何選擇／狀態。
+  2. s4 拆出的兩拍都保留 `background: "moon-meeting-room-rain"`；s7 拆出的兩拍都保留原 `choice4 = protect` condition。其餘原項目的技術欄位也須完整複製。
+  3. 更新會因行數／全文而失效的測試，重跑 typecheck、全量測試與 build；桌機／手機實機確認六處停頓、標題卡「五點以前」、s4 背景與 s7 條件分支。
+- 未決問題或阻塞：六處 runtime 分拍會增加玩家推進次數並涉及 `lines[]` 結構與呈現行為，依角色邊界由 Claude 實作；在 Claude 回覆前，標題修正已生效，但分拍仍是待確認交接，不能宣稱整體完成。
+- 驗證結果：五個可遊玩 Scene 1 JSON 與三份敘事／索引文件已同步為「五點以前」；全專案搜尋確認剩餘「最終版」只出現在合理的文件／訊息語境或歷史交接。六處候選經逐句審閱，正式拆分點與技術欄位保留要求已逐項記錄。JSON 解析與 `npm.cmd run typecheck` 通過；`npm.cmd test` 17 檔 170／170、`npm.cmd run build` 通過（兩者初次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功）。環境沒有 `story` CLI 或 repo fallback，故無法執行 story maintenance；本次未改事件、角色狀態、時間線或正文字數。`git diff --check` 於提交前通過。
