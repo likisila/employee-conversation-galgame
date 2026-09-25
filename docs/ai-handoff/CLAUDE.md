@@ -831,3 +831,27 @@
 - 未決問題或阻塞：**`01_meeting_invitation.mp4` 真正的缺陷尚未確認**——這是這筆最重要的未決事項。移出整支影片是安全處置，但不代表已找到根本原因；下一步是直接請使用者指出具體是哪裡、哪個時間點的問題，不再由 Claude 猜測。本地 commit，未 push、沒有 PR。
 - 驗證結果：`npm run typecheck`、`npm test`（17 檔 170／170）、`npm run build` 全數通過。移動檔案未觸發任何測試的檔案存在性檢查（`tests/cutscenes.test.ts` 只驗證 `cue.src` 字串格式）。
 - 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`；下一步待使用者明確指出缺陷後再處理，不再主動猜測。
+
+## Claude-20260925-2240
+
+- 時間：2026-09-25T14:40:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260925-2138`（無新增紀錄）
+- 本次範圍：使用者明確指出兩件事，這次不再用猜的，逐一核對後直接處理：
+  1. `01_meeting_invitation.mp4` 的問題是**內容與角色／劇情不一致**：這支影片實際演的是「雅琳把藍色文件夾送到予安桌上」，本來就是「最終版」（s1-final-cut 之前）這個故事節點的內容，卻掛在 `meeting-invitation`／s2-invite 之前播放，時序對不上。
+  2. `04-A`（分鏡表 04 段的第一格）物理上是錯的——使用者先前描述的「看錶姿勢不合理」原來是指這一格，不是 `03-B`。
+  3. 使用者接著提供截圖／實機畫面，直接指出影片裡的曾雅琳是**改版前的舊版人物設定**（深色／黑髮、深色套裝），與 `ChatGPT-20260917-0807` 定案的新版設定（肩長淺冷灰棕髮、淺灰米色外套、霧灰上衣、淺灰長褲、米白鞋）不符。逐秒截圖比對 `01_meeting_invitation.mp4` 與 `02_layoff_notification.mp4` 後確認**兩支影片的雅琳都是舊版設定**；`public/assets/cutscenes/README.md` 本來就記著這兩支「均未通過 v2 驗收，保留原檔待重製」，這次是使用者直接點出具體是哪裡沒通過。
+- 已定案事項：
+  1. 影片檔改名／改掛：`01_meeting_invitation.mp4` 改名為 `00_final_documents.mp4`，掛回 `final-documents` cue（`s1-final-cut` 之前）——時序恢復正確。`meeting-invitation` cue（`s2-invite` 之前）的 `file` 仍宣告 `01_meeting_invitation.mp4`，但該路徑不再有檔案，缺檔時自動改播既有分鏡 `01-A`／`01-B`（已確認乾淨，不含雅琳）。
+  2. `00_final_documents.mp4`（原 01）與 `02_layoff_notification.mp4` **兩支影片本體都移出** `public/assets/cutscenes/`，改放 `coordination/pending-review/cutscenes/`（未刪除，只是不再出貨），理由是雅琳的舊版設定，不是先前猜測的道具或手腕姿勢問題。
+  3. 兩個 cue 的分鏡 fallback 逐張核對後確認可用：`final-documents` 補回 `00-A`／`00-C`（不含 `00-B`——那一格才有雅琳，先不用，避免节外生枝）；`layoff-notification` 維持既有 `02-A`／`02-B`／`02-C`（`02-A`／`02-B` 沒有雅琳，`02-C` 的雅琳已經是新版設定，三張都可安心頂替）。
+  4. `property/cutscene-cues.json` 的 `boundary-question` cue 分鏡拿掉 `04-A`（物理上錯誤的看錶姿勢），保留 `04-B`／`04-C`。
+  5. `coordination/pending-review/cutscenes/README.md` 改寫為正確的缺陷描述（人物是舊版設定），不再保留先前被使用者推翻的猜測（道具像平板、手腕姿勢）。
+  6. `tests/cutscenes.test.ts` 的「共通主線分鏡段落」斷言更新為目前四段有分鏡：`final-documents`、`meeting-invitation`、`layoff-notification`、`boundary-question`（`rights-packet` 仍因分鏡圖缺陷維持無分鏡、無影片、直接進場景）。
+- 交給 ChatGPT：
+  1. **`01_meeting_invitation.mp4`（故事上屬於 final-documents／s1 節點）與 `02_layoff_notification.mp4` 需要依新版人物設定（`ChatGPT-20260917-0807`：肩長淺冷灰棕髮、淺灰米色外套、霧灰上衣、淺灰長褲、米白鞋）重新生成雅琳出現的鏡頭**；重製後的檔名請沿用現在的對應（`final-documents` 用 `00_final_documents.mp4`、`layoff-notification` 用 `02_layoff_notification.mp4`），放回 `public/assets/cutscenes/` 即自動恢復播放，不需要再通知調整程式或資料。
+  2. **分鏡 `04-A`（`public/assets/cutscenes/storyboard/04-A.webp`、來源 `keyframes/runway-v2/04-A.png`）需要修正或重生**：看錶的手腕姿勢物理上不合理。修好後告知 Claude，會把它加回 `boundary-question` 的分鏡輪替。
+  3. 沿續既有：`00-B`／`03-B` 仍待處理（`Claude-20260925-2214`）；`rights-packet`（03）目前完全沒有影片或分鏡，直接無縫進 `s6-receipt`。
+- 未決問題或阻塞：無新增；上述三項（01/02 重製、04-A 修正、00-B/03-B 沿續）都是待 ChatGPT 處理的素材工作，不阻擋玩家體驗（都已有安全的頂替或略過行為）。本地 commit，未 push、沒有 PR。
+- 驗證結果：`npm run typecheck`、`npm test`（17 檔 170／170，`tests/cutscenes.test.ts` 22 案例含更新後的斷言）、`npm run build` 全數通過。Chromium 實機（dev server）：重新開始 → 內容提醒 → 點擊後直接顯示分鏡 `00-A`（雨澄獨自在工作區，無雅琳、無影片、有「跳過」鍵）→ 確認沒有播放任何影片。`01_meeting_invitation.mp4`／`02_layoff_notification.mp4` 逐秒截圖比對雅琳髮色與服裝，確認與新版人設不符；`02-A`／`02-B`／`02-C`／`00-A`／`00-C` 逐張確認乾淨（`02-C` 雅琳為新版淺色設定）。
+- 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。

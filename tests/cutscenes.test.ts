@@ -177,9 +177,9 @@ describe('分鏡 placeholder', () => {
   const content = loadContent();
   const storyboards = [...content.cutsceneCues.values()].filter((cue) => cue.storyboard);
 
-  it('共通主線目前有分鏡可以頂替缺檔影片的段落（final-documents／rights-packet 因分鏡圖有缺陷已暫時拿掉，見 docs/ai-handoff/CLAUDE.md Claude-20260925-2214／後續更正）', () => {
+  it('共通主線目前有分鏡可以頂替缺檔影片的段落（rights-packet 因分鏡圖有缺陷仍拿掉；final-documents／meeting-invitation／layoff-notification 的正式影片因人物是改版前的舊設定已下架，改用分鏡頂替，見 docs/ai-handoff/CLAUDE.md Claude-20260925-2240）', () => {
     expect(storyboards.map((cue) => cue.id)).toEqual(
-      ['meeting-invitation', 'layoff-notification', 'boundary-question'],
+      ['final-documents', 'meeting-invitation', 'layoff-notification', 'boundary-question'],
     );
   });
 
