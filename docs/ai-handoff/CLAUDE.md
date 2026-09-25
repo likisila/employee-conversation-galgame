@@ -753,3 +753,28 @@
 - 交給 ChatGPT：無新增。02／04 掛載方案仍在 Claude 待辦，尚未開始；要動工前會先提方案再實作。
 - 未決問題或阻塞：本地 commit，未 push、沒有 PR。
 - 驗證結果：`npm run typecheck`、`npm test`（16 檔 163／163）、`npm run build` 於 `8d3ab62` 之上重跑全部通過。Cloudflare Pages 上傳 zip 已依 `8d3ab62` 之後的最新 commit 重建（`ui.json` 會打包進出貨 JS）。
+
+## Claude-20260925-2203
+
+- 時間：2026-09-25T14:03:58Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依 `docs/AI_HANDOFF.md`「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260925-2138`（本次全數落實其交辦）
+- 本次範圍：依 `property/romance-microchoices.md` 完成四組感情線微選擇的技術整合——場景拆分、新的 `Choice.minor` 旗標、`Scene.choicePrompt` 欄位、決策點選單排除微選擇、測試與實機驗證。
+- 實際變更檔案：
+  - 新增：`property/scenes/s1-look-{work,detail,pause,converge}.json`、`property/scenes/s5-memory-{food,coffee,unsaid,converge}.json`、`property/scenes/s7-recommend-{precision,witness,honesty,converge}.json`、`property/scenes/ending-true-question-{place,weeks,unasked}.json`、`property/scenes/ending-true-finale.json`（共 16 個新場景檔）、`tests/romanceMicrochoices.test.ts`。
+  - 修改：`property/scenes/s1-final-cut.json`、`s5-when-did-you-know.json`、`s7-not-in-file.json`、`ending-true.json`（插入點改為 3 個 `minor` 選項，原內容搬到對應分支／匯流場景）、`property/manifest.json`（登記 16 個新場景）、`property/images.json`（新場景的 `sceneBackgrounds`，以及 `s1-look-converge` 的立繪延續設定）、`property/README.md`（記錄整合完成、新增「感情線微選擇」技術寫法一節）、`src/domain/schema.ts`（`Choice.minor?`、`Scene.choicePrompt?`）、`src/engine/StoryEngine.ts`（`choose()`／`rebuildDecisions()` 排除 `minor` 選項）、`src/ui/render.ts`（選項頁使用 `scene.choicePrompt ?? ui.choicePrompt`）、`tests/contentLoader.test.ts`、`tests/cutscenes.test.ts`、`tests/endingRoutes.test.ts`、`tests/presentation.test.ts`（配合場景拆分調整既有斷言，見下）。
+- 已定案事項：
+  1. **插入點採「選擇前／三個分支／匯流」四場景拆分**：分支場景各自 `next` 指向同一個匯流場景，匯流場景延續被取代的原內容（含所有既有 `conditions`）。TRUE END 那組把 `ending: true` 從 `ending-true`（選擇前）移到新的 `ending-true-finale`（匯流＋收尾），`ending-true` 本身多了三個問題選項；`ending-true` 這個場景 ID 本身不變，過場影片 cue（`on-enter:ending-true`）與 s9-doorway 的路由目標都不必改。
+  2. **新增 `Choice.minor?: boolean`**：`minor` 選項在 `StoryEngine.choose()` 不寫入 `decisions`（決策點紀錄），`rebuildDecisions()`（舊存檔路徑反推）遇到「只有 minor 選項」的場景時任選一項往下走、不展開分支、不記進反推路徑——因為 minor 選項不帶任何 `effects`，多探或少探都不會改變狀態，也就不會製造或消除歧義。這保證「回到之前的選擇」選單與存檔反推都只看得到五個主要決策，親自在瀏覽器通關 TRUE END 後打開選單確認為 5 筆、場景與選項文字皆對應五個主要選擇，沒有任何一筆是感情線微選擇。
+  3. **新增 `Scene.choicePrompt?: string`**：場景可覆寫這一頁選項的提示句（四組微選擇各自的「你怎麼回答？」「你記得的是什麼？」「你最先想到她的哪一面？」「你想問什麼？」），沒寫就落回 `ui.choicePrompt`「請選擇：」；`render.ts` 的選項標題與螢幕閱讀器播報都改用這個解析值。
+  4. **`s7-recommend-clarity` 改名為 `s7-recommend-precision`**：`tests/contentLoader.test.ts` 有一條測試會擋下舊原型殘留字（`clarity` 在列），純屬命名巧合踩到既有防護網，與文案或角色無關；場景內容、選項文字、匯流內容完全不變，只有場景 ID／檔名／choice id 改名。
+  5. **未新增任何視覺素材或轉場**：分支與匯流場景不寫 `scenePresentation`，立繪維持「跟著說話者走」的既有規則直接運作，只有 `s1-look-converge`（唯一一句、且是無說話者的旁白）額外指定 `character: "lin-yucheng"` 以維持立繪連續，避免那一句短暫無人物；背景沿用各自主場景的既有背景（office／會議室／咖啡店），沒有新增或修改任何圖片、CSS 或轉場規格。
+  6. **標題沿用主場景**：四組分支與匯流場景的 `title` 都與插入點原場景相同（「最終版」「職位不是我」「沒有寫在文件裡」「TRUE END：真正的告別」），避免畫面頂端標題在微選擇期間閃爍或消失。
+- 交給 ChatGPT：無新增待辦。四組感情線微選擇的文案原樣採用，沒有改寫任何一句對白；`s7-recommend-clarity`→`s7-recommend-precision` 只是技術檔名／ID 改名，UI 上顯示的選項文字未變。
+- 未決問題或阻塞：無。本地 commit，未 push、沒有 PR，依現行僅本地交付規則不代表交接未完成。
+- 驗證結果：
+  - `npm run typecheck`、`npm run build` 全數通過。
+  - `npm test`：17 檔 170／170 通過（新增 `tests/romanceMicrochoices.test.ts` 7 案例：四組選項皆為 `minor` 且無 `effects`／`conditions`；三個分支正確匯流到既有下一步；第四組只掛在 TRUE END；前三組微選擇任選組合（27 種）在五個主要選擇相同時結局與狀態完全相同；第四組任一選項不改變結局場景或狀態；微選擇不會擠進決策點選單，通關後仍只有五筆且依序對應五個主要選擇；回到第五個決策點仍正常運作）。既有 243 條主要路徑的結局分布、TRUE END 高門檻、越線一律鎖 END 04 等測試改為只展開 `minor: false` 的選項分支（微選擇任選一項帶過），全數維持原斷言（`ending-true` 結局場景 ID 改為 `ending-true-finale` 已同步更新斷言）。
+  - Chromium 實機（dev server，桌機視窗）：從標題開始，逐句點到 s1 的「你怎麼回答？」選了 B「妳先說，這版最滿意哪裡？」，確認分支對白、匯流句「我看著藍色資料夾。」立繪正確顯示林雨澄（`character-stage` 存在、`aria-label` 對得上、`data-framing="full"`）、header 標題全程維持「最終版」；接續玩到 s5 微選擇（「你記得的是什麼？」）、s7 微選擇（「你最先想到她的哪一面？」）與匯流後原本第五個主要選擇（`keep-advocate`／`keep-credit`／`keep-confess` 三個選項文字與 `effects` 皆未變）；一路選 `invite-clear／notice-direct／answer-admit／doc-protect／keep-advocate` 到 TRUE END，第四組微選擇（「你想問什麼？」）三個選項與標題正確顯示，選 C 後正常收尾至「我端起咖啡。這次，我們沒有約好幾點結束。」；打開「回到之前的選擇」選單，逐項核對為 5 筆、依序是五個主要選擇的場景標題與選項全文，沒有任何一筆是微選擇。主控台無錯誤。
+  - `npm run assets:*` 未執行：本次沒有新增或修改任何圖片／影片素材，原始 PNG／WebP 皆未變動。
+- 提交後續：本次完成後將重建 `cloudflare-pages-upload/last-one-on-one-site.zip`（持久記憶要求的固定收尾步驟），commit 訊息會列出本筆 Entry ID。

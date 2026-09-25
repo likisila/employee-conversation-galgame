@@ -15,12 +15,14 @@
   **ChatGPT 換過 `full-body/` 裡任何一張 PNG 後，請執行一次 `npm run assets:sprites` 並一併提交交付檔**；
   忘了做的話 `npm test` 會直接指出哪一張過期。
 - `scenes/*.json`：對話、選項、條件、效果與跳轉。
+- `romance-microchoices.md`：四組不影響結局的感情線微選擇正式文案；已由 Claude 整合進 `scenes/*.json`（見下方「感情線微選擇」一節的技術寫法）。
 - `sora-cutscenes.json`：過場的內容提示與連戲規則（由 GPT 維護，已同步官方手繪插畫方向，檔名保留相容）；新版逐鏡起始影格、Runway 動作與交付狀態見 `cutscene-storyboard-v2.md`。原 Sora provider／model／固定時長與 READY 為待 Claude 整理的歷史工具契約，不能代表新版素材已交付。`cutscenes.json` 保存影片格式與缺檔策略；實際接線由 `cutscene-cues.json` 維護。02／04 新版分鏡尚需 Claude 處理播放時序，不能僅靠替換 MP4 上線。
 
 ## 目前作品：《最後一次一對一》
 
 - 狀態變數：`trust`（坦誠）、`procedure`（程序）、`boundary`（界線）、`avoidance`（逃避）。四者預設隱藏，不以好感度呈現。
 - 每個主要選擇會額外 `set` 一個 `choice1`…`choice5` 字串，供後續場景的條件台詞使用。
+- 四組感情線微選擇（`property/romance-microchoices.md`）已接進 s1、s5、s7 與 TRUE END 的對應插入點，只改變當下對話，不改動上述狀態、五個主要選擇或結局分布；技術寫法見下方「感情線微選擇」一節。
 - 場景流程：`content-warning → s1-final-cut → s2-invite → s3-meeting → s4-notice → s5-when-did-you-know → s6-receipt → s7-not-in-file → s8-reaction → s9-doorway →（四個結局之一）`。
 - `s9-doorway` 是純路由節點，依序判定：**越線**（`boundary <= -2`）→ **TRUE END**（`trust >= 6`、`procedure >= 4`、`boundary >= 2`、`avoidance <= 1`）→ **體面的句點**（`procedure >= 4`、`trust >= 2`、`boundary >= 0`）→ **柔軟的刀**（其餘）。
 
@@ -109,3 +111,12 @@
 
 ## 分支變數
 `game.json` 的 `initialState` 可新增任意字串、數值或布林值。選項透過 `effects` 修改狀態（`add` 僅限數值、`set` 可為任何型別），透過 `conditions` 決定是否顯示。
+
+## 感情線微選擇（不影響結局的選項）
+選項可以加 `"minor": true`，代表這是不影響結局的短對話分支（例如感情線）：不記入通關後「回到之前的選擇」的決策點選單，也不算進主要決策路徑，因此一律不帶 `effects`。場景也可以加 `"choicePrompt"` 覆寫這一頁選項的提示句（不寫就用 `ui.json` 的 `choicePrompt`）。
+
+實作方式是把插入點拆成「選擇前」「三個分支各一場」「匯流後」四個場景：分支場景各自 `next` 指向同一個匯流場景，匯流場景延續原本被取代的內容。四組感情線微選擇（`s1-look-*`、`s5-memory-*`、`s7-recommend-*`、`ending-true-question-*` 與對應的 `*-converge` / `ending-true-finale`）都照這個結構寫，可以當範本。
+
+```json
+{ "id": "recommend-witness", "text": "「妳記得每個測試者說過什麼……」", "next": "s7-recommend-witness", "minor": true }
+```

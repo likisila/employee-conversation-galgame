@@ -1,0 +1,12 @@
+{
+  "id": "s5-memory-food",
+  "title": "職位不是我",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "妳晚餐只吃了兩片餅乾。" },
+    { "speaker": "lin-yucheng", "text": "你記得我吃了幾片，卻沒告訴我公司在評估我的職位。" },
+    { "speaker": "zhou-yuan", "text": "對。" },
+    { "speaker": "lin-yucheng", "text": "這就是最讓人生氣的地方。你不是沒看見我。" }
+  ],
+  "choices": [],
+  "next": "s5-memory-converge"
+}

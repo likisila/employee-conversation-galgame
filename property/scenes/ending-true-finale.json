@@ -1,0 +1,13 @@
+{
+  "id": "ending-true-finale",
+  "title": "TRUE END：真正的告別",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "所以今天算什麼？" },
+    { "speaker": null, "kind": "narration", "text": "她把另一杯咖啡推到我面前。", "background": "cg-true-reflection" },
+    { "speaker": "lin-yucheng", "text": "算第一次見面。" },
+    { "speaker": null, "kind": "narration", "text": "TRUE END：真正的告別" },
+    { "speaker": null, "kind": "narration", "text": "我端起咖啡。這次，我們沒有約好幾點結束。" }
+  ],
+  "choices": [],
+  "ending": true
+}

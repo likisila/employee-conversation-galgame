@@ -83,15 +83,31 @@
   },
   "sceneBackgrounds": {
     "s1-final-cut": "weiguang-office-rain-dusk",
+    "s1-look-work": "weiguang-office-rain-dusk",
+    "s1-look-detail": "weiguang-office-rain-dusk",
+    "s1-look-pause": "weiguang-office-rain-dusk",
+    "s1-look-converge": "weiguang-office-rain-dusk",
     "s2-invite": "weiguang-office-rain-dusk",
     "s3-meeting": "moon-meeting-room-rain",
     "s4-notice": "moon-meeting-room-rain",
     "s5-when-did-you-know": "moon-meeting-room-rain",
+    "s5-memory-food": "moon-meeting-room-rain",
+    "s5-memory-coffee": "moon-meeting-room-rain",
+    "s5-memory-unsaid": "moon-meeting-room-rain",
+    "s5-memory-converge": "moon-meeting-room-rain",
     "s6-receipt": "moon-meeting-room-rain",
     "s7-not-in-file": "moon-meeting-room-rain",
+    "s7-recommend-precision": "moon-meeting-room-rain",
+    "s7-recommend-witness": "moon-meeting-room-rain",
+    "s7-recommend-honesty": "moon-meeting-room-rain",
+    "s7-recommend-converge": "moon-meeting-room-rain",
     "s8-reaction": "moon-meeting-room-rain",
     "ending-over-line": "moon-meeting-room-rain",
     "ending-true": "moon-meeting-room-rain",
+    "ending-true-question-place": "platform-zero-cafe",
+    "ending-true-question-weeks": "platform-zero-cafe",
+    "ending-true-question-unasked": "platform-zero-cafe",
+    "ending-true-finale": "platform-zero-cafe",
     "ending-decent": "moon-meeting-room-rain",
     "ending-soft-knife": "moon-meeting-room-rain"
   },
@@ -104,6 +120,9 @@
       "character": "zeng-yalin",
       "expression": "neutral",
       "transition": "fade"
+    },
+    "s1-look-converge": {
+      "character": "lin-yucheng"
     },
     "s2-invite": {
       "background": "weiguang-office-rain-dusk",

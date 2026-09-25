@@ -1,0 +1,13 @@
+{
+  "id": "s7-recommend-precision",
+  "title": "沒有寫在文件裡",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "妳總是先找到一句話裡最含糊的那個詞。" },
+    { "speaker": null, "kind": "narration", "text": "雨澄看了一眼自己的 T 恤。" },
+    { "speaker": "lin-yucheng", "text": "聽起來像很難管理。" },
+    { "speaker": "zhou-yuan", "text": "對不想說清楚的人來說，是。" },
+    { "speaker": null, "kind": "narration", "text": "她嘴角動了一下。" }
+  ],
+  "choices": [],
+  "next": "s7-recommend-converge"
+}

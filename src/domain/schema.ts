@@ -92,6 +92,11 @@ export interface Choice {
   next: string;
   conditions?: Condition[];
   effects?: Effect[];
+  /**
+   * 不影響結局的感情線微選擇：不記入通關後的「回到決策點」選單，也不算進主要決策路徑。
+   * 這種選項一律沒有 `effects`（不改動任何狀態），純粹是短對話分支。
+   */
+  minor?: boolean;
 }
 
 /**
@@ -150,6 +155,8 @@ export interface Scene {
   ending?: boolean;
   /** 結局／分歧的優先序路由；進入本場景時依序判定並自動前往命中者。 */
   route?: RouteEntry[];
+  /** 這一頁選項的提示句；沒寫就用 `ui.choicePrompt`（給感情線微選擇等場景專屬的提示用）。 */
+  choicePrompt?: string;
 }
 
 export interface Game {
@@ -287,7 +294,8 @@ function parseChoice(raw: unknown): Choice {
         return { variable: stringField(effect, 'variable'), operation, value: asGameValue(effect.value, 'effect.value') };
       })
     : undefined;
-  return { id: stringField(raw, 'id'), text: stringField(raw, 'text'), next: stringField(raw, 'next'), conditions, effects };
+  const minor = typeof raw.minor === 'boolean' ? raw.minor : undefined;
+  return { id: stringField(raw, 'id'), text: stringField(raw, 'text'), next: stringField(raw, 'next'), conditions, effects, minor };
 }
 
 const LINE_KINDS: readonly LineKind[] = ['dialogue', 'thought', 'narration', 'message'];
@@ -357,6 +365,7 @@ export function parseScene(raw: unknown): Scene {
     next: typeof raw.next === 'string' ? raw.next : undefined,
     ending: typeof raw.ending === 'boolean' ? raw.ending : undefined,
     route,
+    choicePrompt: typeof raw.choicePrompt === 'string' ? raw.choicePrompt : undefined,
   };
 }
 

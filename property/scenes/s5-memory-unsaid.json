@@ -1,0 +1,14 @@
+{
+  "id": "s5-memory-unsaid",
+  "title": "職位不是我",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "我本來想在那天告訴妳，最後沒有。" },
+    { "speaker": "lin-yucheng", "text": "因為保密？" },
+    { "speaker": "zhou-yuan", "text": "一部分。" },
+    { "speaker": "lin-yucheng", "text": "另一部分呢？" },
+    { "speaker": "zhou-yuan", "text": "我不想看見妳知道以後的表情。" },
+    { "speaker": "lin-yucheng", "text": "所以你把那個表情留到今天。" }
+  ],
+  "choices": [],
+  "next": "s5-memory-converge"
+}

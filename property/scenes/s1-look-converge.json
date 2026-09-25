@@ -1,0 +1,9 @@
+{
+  "id": "s1-look-converge",
+  "title": "最終版",
+  "lines": [
+    { "speaker": null, "kind": "narration", "text": "我看著藍色資料夾。" }
+  ],
+  "choices": [],
+  "next": "s2-invite"
+}

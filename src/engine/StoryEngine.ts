@@ -157,7 +157,10 @@ export class StoryEngine {
     const choice = this.availableChoices.find((item) => item.id === choiceId);
     if (!choice) throw new Error(`選項不存在或條件未滿足：${choiceId}`);
     // 先記下這個決策點（含選擇前的狀態），通關後才回得來。
-    this.decisions.push({ sceneId: this.sceneId, lineIndex: this.lineIndex, state: { ...this.state }, choiceId });
+    // 感情線微選擇（`minor`）不算決策點：不影響結局，不該擠進「回到決策點」選單。
+    if (!choice.minor) {
+      this.decisions.push({ sceneId: this.sceneId, lineIndex: this.lineIndex, state: { ...this.state }, choiceId });
+    }
     this.state = applyChoiceEffects(choice, this.state);
     // 選擇一旦定案就不能回頭重選，因此連同之前的回溯紀錄一起清掉。
     this.history = [];
@@ -272,14 +275,21 @@ export class StoryEngine {
       const scene = this.content.scenes.get(settled);
       if (!scene) return;
       const choices = scene.choices.filter((choice) => isChoiceAvailable(choice, currentState));
-      if (choices.length > 0) {
+      const majorChoices = choices.filter((choice) => !choice.minor);
+      if (majorChoices.length > 0) {
         const lineIndex = Math.max(0, scene.lines.filter((line) => isLineVisible(line, currentState)).length - 1);
-        for (const choice of choices) {
+        for (const choice of majorChoices) {
           walk(choice.next, applyChoiceEffects(choice, currentState), [
             ...trail,
             { sceneId: settled, lineIndex, state: { ...currentState }, choiceId: choice.id },
           ]);
         }
+        return;
+      }
+      if (choices.length > 0) {
+        // 純感情線微選擇：不影響狀態，選哪一項都通向同一段主線，反推路徑時任取一個即可——
+        // 不必當成決策點記錄，也不必窮舉三個分支（都不改狀態，多探也不會消除或製造歧義）。
+        walk(choices[0].next, applyChoiceEffects(choices[0], currentState), trail);
         return;
       }
       if (scene.next) walk(scene.next, currentState, trail);

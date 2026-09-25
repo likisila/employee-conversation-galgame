@@ -1,0 +1,13 @@
+{
+  "id": "s7-recommend-honesty",
+  "title": "沒有寫在文件裡",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "妳不肯讓錯誤畫面假裝什麼事都沒發生。" },
+    { "speaker": "lin-yucheng", "text": "所以才把提示畫面改得不像死亡通知。" },
+    { "speaker": "zhou-yuan", "text": "嗯。" },
+    { "speaker": null, "kind": "narration", "text": "雨澄看向藍色資料夾。" },
+    { "speaker": "lin-yucheng", "text": "可惜現實版還沒改完。" }
+  ],
+  "choices": [],
+  "next": "s7-recommend-converge"
+}

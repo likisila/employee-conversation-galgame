@@ -30,12 +30,12 @@
     { "speaker": "lin-yucheng", "text": "先說好，我還沒有原諒那個「下季會有新安排」。" },
     { "speaker": "zhou-yuan", "text": "嗯，那次是我亂保證。" },
     { "speaker": "lin-yucheng", "text": "也不要把今天當成你的好結局。" },
-    { "speaker": "zhou-yuan", "text": "那今天算什麼？" },
-    { "speaker": null, "kind": "narration", "text": "她把一杯咖啡推到我面前。", "background": "cg-true-reflection" },
-    { "speaker": "lin-yucheng", "text": "算第一次見面。" },
-    { "speaker": null, "kind": "narration", "text": "TRUE END：真正的告別" },
-    { "speaker": null, "kind": "narration", "text": "我端起咖啡。這次，我們沒有約好幾點結束。" }
+    { "speaker": "lin-yucheng", "text": "既然今天不談工作，你可以問一個不工作的問題。" }
   ],
-  "choices": [],
-  "ending": true
+  "choicePrompt": "你想問什麼？",
+  "choices": [
+    { "id": "question-place", "text": "「為什麼選這家店？」", "next": "ending-true-question-place", "minor": true },
+    { "id": "question-weeks", "text": "「這三週過得怎麼樣？」", "next": "ending-true-question-weeks", "minor": true },
+    { "id": "question-unasked", "text": "「妳那天其實想問我的，是不是不只工作？」", "next": "ending-true-question-unasked", "minor": true }
+  ]
 }

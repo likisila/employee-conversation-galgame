@@ -19,10 +19,12 @@
     { "speaker": null, "kind": "narration", "text": "遠處，雨澄摘下一邊耳機，轉過來。" },
     { "speaker": "lin-yucheng", "text": "主管，沒有資料時會出現的提示畫面，我改完了。" },
     { "speaker": null, "kind": "narration", "text": "她把筆夾回識別證掛繩。T 恤胸前的小字寫著 MAKE IT OBVIOUS。" },
-    { "speaker": "lin-yucheng", "text": "現在終於不像死亡通知。要看嗎？" },
-    { "speaker": null, "kind": "narration", "text": "我看著藍色資料夾。" },
-    { "speaker": "zhou-yuan", "kind": "thought", "text": "晚一點。我先看完這份。" }
+    { "speaker": "lin-yucheng", "text": "現在終於不像死亡通知。要看嗎？" }
   ],
-  "choices": [],
-  "next": "s2-invite"
+  "choicePrompt": "你怎麼回答？",
+  "choices": [
+    { "id": "look-work", "text": "「看。給我三分鐘。」", "next": "s1-look-work", "minor": true },
+    { "id": "look-detail", "text": "「妳先說，這版最滿意哪裡？」", "next": "s1-look-detail", "minor": true },
+    { "id": "look-pause", "text": "「先存檔。今天不要再改了。」", "next": "s1-look-pause", "minor": true }
+  ]
 }

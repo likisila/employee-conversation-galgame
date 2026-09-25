@@ -87,10 +87,15 @@ describe('real content presentation', () => {
     }
   });
 
-  it('結局開場仍在會議室：第一句的背景不是後段才發生的 CG', () => {
+  it('結局開場仍在會議室：路由後第一個場景的背景不是後段才發生的 CG', () => {
+    // 檢查的對象是 s9-doorway 路由後直接落腳的場景，而不是所有 `ending: true` 的場景——
+    // TRUE END 現在多了感情線微選擇（見 property/romance-microchoices.md 微選擇四），
+    // 真正帶 `ending: true` 的 ending-true-finale 是從咖啡店那段對話接續下來的，本來就不在會議室。
     const content = loadContent();
-    for (const scene of content.scenes.values()) {
-      if (!scene.ending) continue;
+    const doorway = content.scenes.get('s9-doorway');
+    expect(doorway?.route?.length ?? 0).toBeGreaterThan(0);
+    for (const entry of doorway!.route!) {
+      const scene = content.scenes.get(entry.next)!;
       const first = resolvePresentation(scene.lines, 0, {
         presentation: content.images.scenePresentation[scene.id],
         sceneBackground: content.images.sceneBackgrounds[scene.id],
@@ -113,11 +118,10 @@ describe('real content presentation', () => {
     expect(unused, `未被使用的背景：${unused.join(', ')}`).toHaveLength(0);
   });
 
-  it('TRUE END 的時間跳躍會換景（會議室 → 住處 → 咖啡店）', () => {
+  it('TRUE END 的時間跳躍會換景（會議室 → 住處 → 咖啡店），感情線微選擇後才進 CG 收尾', () => {
     const content = loadContent();
     const scene = content.scenes.get('ending-true');
     expect(scene).toBeDefined();
-    const engine = new StoryEngine(content);
     const backgrounds = scene!.lines.map((_, index) =>
       resolvePresentation(scene!.lines, index, {
         presentation: content.images.scenePresentation['ending-true'],
@@ -129,8 +133,22 @@ describe('real content presentation', () => {
       'moon-meeting-room-rain',
       'apartment-phone-night',
       'platform-zero-cafe',
-      'cg-true-reflection',
     ]);
+
+    // 微選擇四（見 property/romance-microchoices.md）匯流之後才進 cg-true-reflection 收尾，
+    // 那段落已經搬到 ending-true-finale（真正帶 `ending: true` 的場景）。
+    const finale = content.scenes.get('ending-true-finale');
+    expect(finale).toBeDefined();
+    const finaleBackgrounds = finale!.lines.map((_, index) =>
+      resolvePresentation(finale!.lines, index, {
+        presentation: content.images.scenePresentation['ending-true-finale'],
+        sceneBackground: content.images.sceneBackgrounds['ending-true-finale'],
+        hasSprite: (id) => content.images.characters[id] !== undefined,
+      }).backgroundId,
+    );
+    expect([...new Set(finaleBackgrounds)]).toEqual(['platform-zero-cafe', 'cg-true-reflection']);
+
+    const engine = new StoryEngine(content);
     expect(engine.currentScene.id).toBe(content.game.startScene);
   });
 });

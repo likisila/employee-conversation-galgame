@@ -17,22 +17,12 @@
     { "speaker": "lin-yucheng", "text": "你什麼時候知道的？" },
     { "speaker": "zhou-yuan", "text": "兩週前知道公司在評估。今天下午拿到最終名單。" },
     { "speaker": "lin-yucheng", "text": "上週你還說，下季會有新安排。" },
-    { "speaker": "zhou-yuan", "text": "我在等替代方案，還沒核准就先跟你說了。我不該那樣保證。" },
-    { "speaker": null, "kind": "narration", "text": "她點亮電子錶。十七點零七分。" },
-    { "speaker": "lin-yucheng", "text": "那……是我做得不夠好嗎？" },
-
-    { "speaker": "zhou-yuan", "text": "不是。被取消的是和那條產品線綁定的職位。你的考核不是這次決定的理由。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
-    { "speaker": "lin-yucheng", "text": "所以不是我的考核有問題？", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
-    { "speaker": "zhou-yuan", "text": "對。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
-    { "speaker": "lin-yucheng", "text": "我要書面說明也寫清楚這一點。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
-    { "speaker": "zeng-yalin", "text": "我會確認書面能怎麼寫，再回覆你。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
-
-    { "speaker": null, "kind": "narration", "text": "剛才是我先提她的回饋速度。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
-    { "speaker": "zhou-yuan", "text": "不是。剛才我提回饋速度，說錯了。這次裁撤跟你的考核無關。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
-    { "speaker": "lin-yucheng", "text": "你知道最麻煩的是什麼嗎？", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
-    { "speaker": null, "kind": "narration", "text": "她重新拿起筆，筆尖卻沒有落下。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
-    { "speaker": "lin-yucheng", "text": "我現在連「不是績效」都要猜是不是另一種安慰。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] }
+    { "speaker": "lin-yucheng", "text": "那天我們改到十一點。你還把咖啡放在我桌上。" }
   ],
-  "choices": [],
-  "next": "s6-receipt"
+  "choicePrompt": "你記得的是什麼？",
+  "choices": [
+    { "id": "memory-food", "text": "「妳晚餐只吃了兩片餅乾。」", "next": "s5-memory-food", "minor": true },
+    { "id": "memory-coffee", "text": "「妳說，等產品上線要請我喝一杯不像辦公室的咖啡。」", "next": "s5-memory-coffee", "minor": true },
+    { "id": "memory-unsaid", "text": "「我本來想在那天告訴妳，最後沒有。」", "next": "s5-memory-unsaid", "minor": true }
+  ]
 }

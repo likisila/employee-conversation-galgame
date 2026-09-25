@@ -1,0 +1,13 @@
+{
+  "id": "ending-true-question-unasked",
+  "title": "TRUE END：真正的告別",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "妳那天其實想問我的，是不是不只工作？" },
+    { "speaker": null, "kind": "narration", "text": "雨澄拿起咖啡，沒有立刻喝。" },
+    { "speaker": "lin-yucheng", "text": "你現在終於可以問了。" },
+    { "speaker": "zhou-yuan", "text": "那答案呢？" },
+    { "speaker": "lin-yucheng", "text": "第一次見面就問這麼快？" }
+  ],
+  "choices": [],
+  "next": "ending-true-finale"
+}

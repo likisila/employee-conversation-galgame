@@ -57,9 +57,13 @@ describe('過場影片的資料契約', () => {
   });
 
   it('四個結局各自掛一段互斥的影片', () => {
-    const endings = [...content.scenes.values()].filter((scene) => scene.ending);
-    expect(endings).toHaveLength(4);
-    const files = endings.map((scene) => content.cutsceneCues.get(scene.id)?.file);
+    // 影片掛在 s9-doorway 路由後直接落腳的場景，不是每個 `ending: true` 的場景——
+    // TRUE END 路由到的仍是 ending-true（微選擇四的起點），真正的 `ending: true`
+    // 在感情線微選擇匯流之後的 ending-true-finale，那裡沒有另外掛影片。
+    const doorway = content.scenes.get('s9-doorway')!;
+    const endingSceneIds = [...new Set((doorway.route ?? []).map((entry) => entry.next))];
+    expect(endingSceneIds).toHaveLength(4);
+    const files = endingSceneIds.map((id) => content.cutsceneCues.get(id)?.file);
     expect(files.every((file) => typeof file === 'string')).toBe(true);
     expect(new Set(files).size).toBe(4);
   });

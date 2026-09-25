@@ -1,0 +1,23 @@
+{
+  "id": "s5-memory-converge",
+  "title": "職位不是我",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "我在等替代方案，卻把還沒核准的安排說得像已經確定。我不該那樣保證。" },
+    { "speaker": null, "kind": "narration", "text": "她點亮電子錶，時間是十七點零七分。" },
+    { "speaker": "lin-yucheng", "text": "那……是我做得不夠好嗎？" },
+
+    { "speaker": "zhou-yuan", "text": "不是。被取消的是和那條產品線綁定的職位。你的考核不是這次決定的理由。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
+    { "speaker": "lin-yucheng", "text": "所以不是我的考核有問題？", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
+    { "speaker": "zhou-yuan", "text": "對。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
+    { "speaker": "lin-yucheng", "text": "我要書面說明也寫清楚這一點。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
+    { "speaker": "zeng-yalin", "text": "我會確認書面能怎麼寫，再回覆你。", "conditions": [{ "variable": "choice2", "operator": "neq", "value": "performance" }] },
+
+    { "speaker": null, "kind": "narration", "text": "剛才是我先提她的回饋速度。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
+    { "speaker": "zhou-yuan", "text": "不是。剛才我提回饋速度，說錯了。這次裁撤跟你的考核無關。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
+    { "speaker": "lin-yucheng", "text": "你知道最麻煩的是什麼嗎？", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
+    { "speaker": null, "kind": "narration", "text": "她重新拿起筆，筆尖卻沒有落下。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
+    { "speaker": "lin-yucheng", "text": "我現在連「不是績效」都要猜是不是另一種安慰。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] }
+  ],
+  "choices": [],
+  "next": "s6-receipt"
+}

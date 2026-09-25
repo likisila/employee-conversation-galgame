@@ -49,13 +49,18 @@ describe('《最後一次一對一》ending reachability', () => {
   function play(choices: string[]): StoryEngine {
     const engine = new StoryEngine(loadContent());
     let index = 0;
-    // 沿著流程走：有選項就選下一個指定選項，否則按「繼續」，直到結局。
+    // 沿著流程走：有主要選項就選下一個指定選項；只有感情線微選擇（`minor`）時任選一項
+    // 帶過（不影響結局，見 property/romance-microchoices.md）；都沒有就按「繼續」，直到結局。
     for (let guard = 0; guard < 32 && !engine.currentScene.ending; guard += 1) {
-      if (engine.availableChoices.length > 0) {
+      const available = engine.availableChoices;
+      const majorChoices = available.filter((choice) => !choice.minor);
+      if (majorChoices.length > 0) {
         const id = choices[index];
         index += 1;
-        expect(engine.availableChoices.map((choice) => choice.id), `場景 ${engine.currentScene.id} 沒有選項 ${id}`).toContain(id);
+        expect(majorChoices.map((choice) => choice.id), `場景 ${engine.currentScene.id} 沒有選項 ${id}`).toContain(id);
         engine.choose(id!);
+      } else if (available.length > 0) {
+        engine.choose(available[0].id);
       } else {
         engine.continue();
       }
@@ -74,7 +79,7 @@ describe('《最後一次一對一》ending reachability', () => {
 
   it('TRUE END：clear invite, direct notice, admit, protect the document, advocate without asking for credit', () => {
     const engine = play(['invite-clear', 'notice-direct', 'answer-admit', 'doc-protect', 'keep-advocate']);
-    expect(engine.currentScene.id).toBe('ending-true');
+    expect(engine.currentScene.id).toBe('ending-true-finale');
     const state = engine.currentState;
     expect(state.trust).toBeGreaterThanOrEqual(6);
     expect(state.procedure).toBeGreaterThanOrEqual(4);
@@ -118,7 +123,13 @@ describe('《最後一次一對一》ending reachability', () => {
 
   it('conditional lines follow the invitation actually sent', () => {
     const engine = new StoryEngine(loadContent());
-    while (engine.availableChoices.length === 0) engine.continue();
+    // s1 開頭有一組感情線微選擇（不影響結局）在 s2 的邀請選項之前，任選一項帶過即可。
+    for (let guard = 0; guard < 32; guard += 1) {
+      const available = engine.availableChoices;
+      if (available.length === 0) { engine.continue(); continue; }
+      if (available.every((choice) => choice.minor)) { engine.choose(available[0].id); continue; }
+      break;
+    }
     engine.choose('invite-goodnews');
     const texts = engine.visibleLines.map((line) => line.text);
     expect(texts.some((text) => text.includes('好消息？'))).toBe(true);

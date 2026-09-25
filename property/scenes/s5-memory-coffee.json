@@ -1,0 +1,13 @@
+{
+  "id": "s5-memory-coffee",
+  "title": "職位不是我",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "妳說，等產品上線要請我喝一杯不像辦公室的咖啡。" },
+    { "speaker": null, "kind": "narration", "text": "雨澄低頭看著電子錶。" },
+    { "speaker": "lin-yucheng", "text": "產品沒有上線。" },
+    { "speaker": "zhou-yuan", "text": "嗯。" },
+    { "speaker": "lin-yucheng", "text": "那杯咖啡也不用補成安慰獎。" }
+  ],
+  "choices": [],
+  "next": "s5-memory-converge"
+}

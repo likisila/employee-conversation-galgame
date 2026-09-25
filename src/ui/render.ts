@@ -452,6 +452,8 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     ? `<button type="button" class="back-hint${backHintEntering ? ' back-hint--enter' : ''}" id="back" aria-label="${escapeHtml(content.ui.backLabel)}">${icon('back')}</button>`
     : '';
 
+  // 場景可以帶自己的選項提示句（感情線微選擇用來問「你怎麼回答？」之類），沒寫就用全域預設。
+  const choicePrompt = scene.choicePrompt ?? content.ui.choicePrompt;
   const choices = atChoiceStep
     ? availableChoices.map((choice, index) =>
         `<button class="choice" data-choice="${escapeHtml(choice.id)}"><span>${String(index + 1).padStart(2, '0')}</span><span class="choice-text">${escapeHtml(choice.text)}</span></button>`,
@@ -469,7 +471,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
         ${decisionCount > 0 ? `<button type="button" class="secondary-action full" id="rewind">${escapeHtml(content.ui.rewindLabel)}</button>` : ''}
       </div>`
     : choices
-      ? `<section class="choices"><h2>${escapeHtml(content.ui.choicePrompt)}</h2>${choices}</section>`
+      ? `<section class="choices"><h2>${escapeHtml(choicePrompt)}</h2>${choices}</section>`
       : '';
 
   app.innerHTML = `
@@ -484,7 +486,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   `;
 
   // 播報用的 live region 一開始就拿到整句：螢幕閱讀器不必等打字演完。
-  announce(atChoiceStep ? content.ui.choicePrompt : line ? `${nameOf(line, content)}${line.text}` : scene.title ?? '');
+  announce(atChoiceStep ? choicePrompt : line ? `${nameOf(line, content)}${line.text}` : scene.title ?? '');
 
   if (typing) startTyping(app, typing, typingKey);
 
