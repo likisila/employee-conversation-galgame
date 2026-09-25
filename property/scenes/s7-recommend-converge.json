@@ -2,7 +2,9 @@
   "id": "s7-recommend-converge",
   "title": "沒有寫在文件裡",
   "lines": [
-    { "speaker": "zhou-yuan", "text": "我先不寄。等妳整理好作品，再由妳決定需要哪一版。" },
+    { "speaker": "zhou-yuan", "text": "我不會先替妳寫好一個版本。等妳整理完作品，再由妳決定需要我證明哪一部分。" },
+    { "speaker": "lin-yucheng", "text": "好。不要把你覺得感人的部分放進去。" },
+    { "speaker": "zhou-yuan", "text": "不會。" },
     { "speaker": null, "kind": "narration", "text": "她低頭，把電子錶按亮，又按暗。" },
     { "speaker": "lin-yucheng", "text": "還有一件事。" },
     { "speaker": null, "kind": "narration", "text": "雅琳沒有打字。" },

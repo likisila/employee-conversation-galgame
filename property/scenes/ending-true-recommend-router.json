@@ -1,0 +1,10 @@
+{
+  "id": "ending-true-recommend-router",
+  "lines": [],
+  "choices": [],
+  "route": [
+    { "conditions": [{ "variable": "s7Memory", "operator": "eq", "value": "recommend-precision" }], "next": "ending-true-recommend-precision" },
+    { "conditions": [{ "variable": "s7Memory", "operator": "eq", "value": "recommend-witness" }], "next": "ending-true-recommend-witness" },
+    { "next": "ending-true-recommend-honesty" }
+  ]
+}

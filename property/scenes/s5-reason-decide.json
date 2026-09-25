@@ -1,0 +1,12 @@
+{
+  "id": "s5-reason-decide",
+  "title": "職位不是我",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "我不想讓妳最後一段工作時間也只剩這件事。" },
+    { "speaker": "lin-yucheng", "text": "那一段時間本來就是我的。" },
+    { "speaker": "lin-yucheng", "text": "你連我什麼時候知道，都一起替我決定了。" },
+    { "speaker": "zhou-yuan", "text": "是。" }
+  ],
+  "choices": [],
+  "next": "s5-reason-converge"
+}

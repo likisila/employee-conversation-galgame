@@ -2,7 +2,8 @@
   "id": "s7-not-in-file",
   "title": "沒有寫在文件裡",
   "lines": [
-    { "speaker": "zeng-yalin", "text": "這一處只確認你收到文件，不等於接受所有內容，也不等於放棄提問。你可以先不簽，帶回電子副本與紙本。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
+    { "speaker": "zeng-yalin", "text": "這一處只確認你收到文件，不等於接受所有內容，也不等於放棄提問。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
+    { "speaker": "zeng-yalin", "text": "你可以先不簽，帶回電子副本與紙本。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
     { "speaker": "lin-yucheng", "text": "如果我之後有問題？", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
     { "speaker": "zeng-yalin", "text": "直接找我。你也可以帶你信任的人一起確認。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
     { "speaker": null, "kind": "narration", "text": "雨澄把資料夾拉近，翻到印著信箱的那一頁。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
@@ -30,8 +31,8 @@
   ],
   "choicePrompt": "你最先想到她的哪一面？",
   "choices": [
-    { "id": "recommend-precision", "text": "「妳總是先找到一句話裡最含糊的那個詞。」", "next": "s7-recommend-precision", "minor": true },
-    { "id": "recommend-witness", "text": "「妳記得每個測試者說過什麼，也記得實習生不敢在會議上說什麼。」", "next": "s7-recommend-witness", "minor": true },
-    { "id": "recommend-honesty", "text": "「妳不肯讓錯誤畫面假裝什麼事都沒發生。」", "next": "s7-recommend-honesty", "minor": true }
+    { "id": "recommend-precision", "text": "「妳總是先找到一句話裡最含糊的那個詞。」", "next": "s7-recommend-precision", "minor": true, "effects": [{ "variable": "s7Memory", "operation": "set", "value": "recommend-precision" }] },
+    { "id": "recommend-witness", "text": "「妳記得每個測試者說過什麼，也記得實習生不敢在會議上說什麼。」", "next": "s7-recommend-witness", "minor": true, "effects": [{ "variable": "s7Memory", "operation": "set", "value": "recommend-witness" }] },
+    { "id": "recommend-honesty", "text": "「妳不肯讓錯誤畫面假裝什麼事都沒發生。」", "next": "s7-recommend-honesty", "minor": true, "effects": [{ "variable": "s7Memory", "operation": "set", "value": "recommend-honesty" }] }
   ]
 }

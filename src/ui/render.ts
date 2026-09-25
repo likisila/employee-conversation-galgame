@@ -4,6 +4,7 @@ import type { StoryEngine } from '../engine/StoryEngine';
 import { playCutscene } from './cutscene';
 import { icon } from './icons';
 import { setKeyHandler } from './keyboard';
+import { computeDebrief, formatDebriefSummary } from '../domain/mba';
 import { resolveCharacterFraming, resolvePresentation, spriteSource } from './presentation';
 import { planTyping, runTyping, type TypingHandle, type TypingPlan } from './typing';
 
@@ -455,9 +456,10 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
         `<button class="choice" data-choice="${escapeHtml(choice.id)}"><span>${String(index + 1).padStart(2, '0')}</span><span class="choice-text">${escapeHtml(choice.text)}</span></button>`,
       ).join('')
     : '';
-  // 通關畫面：除了重新開始，還可以挑一個之前的決策點回去重選。
+  // 通關畫面：除了重新開始，還可以挑一個之前的決策點回去重選，或查看 MBA 案例分析。
   const decisionCount = engine.decisionPoints.length;
   const isEnding = atLast && scene.ending;
+  const hasDebrief = isEnding && content.mba.endings[scene.id] !== undefined;
   // 對話框底部這次放什麼：結局按鈕／選項／什麼都沒有。CSS 用它決定要單欄還是雙欄
   // （只有結局畫面維持「台詞在左、按鈕在右」；台詞頁與選項頁都是單欄，台詞才不會被擠窄）。
   const footerKind = isEnding ? 'ending' : atChoiceStep ? 'choices' : 'none';
@@ -465,6 +467,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     ? `<div class="ending-actions">
         <button class="primary-action full" id="restart">${escapeHtml(content.ui.restartLabel)}</button>
         ${decisionCount > 0 ? `<button type="button" class="secondary-action full" id="rewind">${escapeHtml(content.ui.rewindLabel)}</button>` : ''}
+        ${hasDebrief ? `<button type="button" class="secondary-action full" id="debrief">${escapeHtml(content.mba.copy.entryButton)}</button>` : ''}
       </div>`
     : choices
       ? `<section class="choices"><h2>${escapeHtml(choicePrompt)}</h2>${choices}</section>`
@@ -594,6 +597,9 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   app.querySelector<HTMLButtonElement>('#rewind')?.addEventListener('click', () => {
     openDecisionMenu(app, engine, content, hooks);
   });
+  app.querySelector<HTMLButtonElement>('#debrief')?.addEventListener('click', () => {
+    openDebrief(app, engine, content, hooks);
+  });
 }
 
 /**
@@ -691,4 +697,127 @@ function openDecisionMenu(app: HTMLElement, engine: StoryEngine, content: Loaded
     if ((event.key === 'Enter' || event.key === ' ') && (event.target as HTMLElement | null)?.closest('button')) return;
     if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowLeft') event.preventDefault();
   });
+}
+
+/**
+ * 通關後可選的 MBA Organizational Debrief：把這一輪的五個主要選擇還原成組織行為案例分析。
+ * 只讀 `engine.decisionPoints`（已排除感情線微選擇）與結局場景 ID，不改動存檔、結局或選擇歷史。
+ * 蓋在結局畫面上，與 `openDecisionMenu` 同一套遮罩／焦點循環／Esc 關閉做法，但內容長很多，
+ * 面板本身可捲動（見 style.css 的 `.debrief-panel`）。
+ */
+function openDebrief(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks): void {
+  const endingId = engine.currentScene.id;
+  const result = computeDebrief(content, endingId, engine.decisionPoints.map((decision) => decision.choiceId));
+  if (!result) return;
+  const copy = content.mba.copy;
+  const heading = (key: string, fallback: string): string => escapeHtml(copy.sectionHeadings[key] ?? fallback);
+
+  const section = (headingKey: string, fallback: string, body: string): string => `
+    <section class="debrief-section">
+      <h3>${heading(headingKey, fallback)}</h3>
+      ${body}
+    </section>`;
+
+  const body = [
+    section('path', '你的管理路徑', `<ol>${result.choiceTexts.map((text) => `<li>${escapeHtml(text)}</li>`).join('')}</ol>`),
+    section('state', '這次形成的組織狀態', `<ul class="debrief-state">${result.dimensions.map((dimension) =>
+      `<li><strong>${escapeHtml(dimension.label)}：${escapeHtml(dimension.level)}</strong> — ${escapeHtml(dimension.evidence)}</li>`).join('')}</ul>`),
+    section('stakeholders', '利害關係人結果', `<ul>${result.stakeholders.map((stakeholder) =>
+      `<li><strong>${escapeHtml(stakeholder.name)}</strong>：${escapeHtml(stakeholder.outcome)}</li>`).join('')}</ul>`),
+    section('causalChains', '三條因果鏈', `<ul>${result.causalChains.map((chain) => `<li>${escapeHtml(chain)}</li>`).join('')}</ul>`),
+    section('theories', '理論鏡頭', `<p>${escapeHtml(result.theories.join('、'))}</p>`),
+    section('alternative', '換一種做法', `<p>改善：${escapeHtml(result.alternative.improvement)}</p><p>代價：${escapeHtml(result.alternative.cost)}</p>`),
+    section('tradeoffs', '沒有單一最佳答案的地方', `<p>${escapeHtml(result.tradeoffsText)}</p>`),
+    section('limitations', '案例限制', `<ul>${result.limitations.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`),
+  ].join('');
+
+  const overlay = document.createElement('section');
+  overlay.className = 'debrief-menu';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', copy.entryButton);
+  overlay.innerHTML = `
+    <div class="debrief-panel">
+      <h2>${escapeHtml(result.endingTitle)} — ${escapeHtml(copy.entryButton)}</h2>
+      <p class="debrief-description">${escapeHtml(copy.entryDescription)}</p>
+      ${body}
+      <div class="debrief-actions">
+        <button type="button" class="secondary-action" id="debrief-copy">${escapeHtml(copy.copyButton)}</button>
+        <button type="button" class="secondary-action" id="debrief-close">${escapeHtml(copy.closeButton)}</button>
+      </div>
+      <p class="debrief-copied" id="debrief-copied-notice" role="status" hidden>${escapeHtml(copy.copiedNotice)}</p>
+    </div>
+  `;
+  app.appendChild(overlay);
+
+  const focusable = (): HTMLButtonElement[] => [...overlay.querySelectorAll<HTMLButtonElement>('button')];
+  focusable()[0]?.focus();
+
+  const close = (): void => {
+    overlay.remove();
+    setKeyHandler(undefined);
+    render(app, engine, content, hooks);
+    app.querySelector<HTMLButtonElement>('#debrief')?.focus();
+  };
+
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) close();
+  });
+  overlay.querySelector<HTMLButtonElement>('#debrief-close')?.addEventListener('click', close);
+  overlay.querySelector<HTMLButtonElement>('#debrief-copy')?.addEventListener('click', () => {
+    void copyToClipboard(formatDebriefSummary(result)).then(() => {
+      const notice = overlay.querySelector<HTMLElement>('#debrief-copied-notice');
+      if (notice) notice.hidden = false;
+    });
+  });
+
+  setKeyHandler((event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      close();
+      return;
+    }
+    if (event.key === 'Tab') {
+      const buttons = focusable();
+      if (buttons.length === 0) return;
+      const first = buttons[0];
+      const last = buttons[buttons.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || !overlay.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+      return;
+    }
+    if ((event.key === 'Enter' || event.key === ' ') && (event.target as HTMLElement | null)?.closest('button')) return;
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowLeft') event.preventDefault();
+  });
+}
+
+/** 複製到剪貼簿；沒有（或被拒絕）Clipboard API 時退回隱藏 textarea + execCommand。 */
+async function copyToClipboard(text: string): Promise<void> {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+  } catch {
+    // 掉到下面的退路。
+  }
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand('copy');
+  } catch {
+    // 兩種方式都失敗就放棄；畫面上的摘要內容還在，玩家仍能手動選取複製。
+  } finally {
+    textarea.remove();
+  }
 }

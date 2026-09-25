@@ -57,6 +57,17 @@ function makeContent(): LoadedContent {
     images: { characters: {}, backgrounds: {}, sceneBackgrounds: {}, screens: {}, ui: {}, transitions: {}, scenePresentation: {} },
     cutscenes: { missingAssetBehavior: 'skip-video-and-enter-canonical-scene' },
     cutsceneCues: new Map(),
+    mba: {
+      copy: {
+        entryButton: '', keepEndingButton: '', entryDescription: '', closeButton: '', copyButton: '', copiedNotice: '',
+        sectionHeadings: {}, tradeoffsText: '', limitations: [],
+      },
+      dimensions: {},
+      scores: {},
+      stakeholders: {},
+      choiceTheories: {},
+      endings: {},
+    },
   };
 }
 

@@ -94,7 +94,10 @@ export interface Choice {
   effects?: Effect[];
   /**
    * 不影響結局的感情線微選擇：不記入通關後的「回到決策點」選單，也不算進主要決策路徑。
-   * 這種選項一律沒有 `effects`（不改動任何狀態），純粹是短對話分支。
+   * 大多沒有 `effects`，純粹是短對話分支；若有，只能用來設定本作品自訂的「敘事記憶」變數
+   * （例如 `s1Memory`／`s7Memory`，供後續場景的台詞或 `route` 依早先的微選擇分支），
+   * 不得寫入 `trust`／`procedure`／`boundary`／`avoidance` 或 `choice1`…`choice5`，
+   * 否則會影響結局判定與 243 條主要路徑分布。
    */
   minor?: boolean;
 }
@@ -178,6 +181,8 @@ export interface Manifest {
   cutscenes?: string;
   /** 過場影片掛在哪個引擎場景之前（Claude 維護的技術對應）。 */
   cutsceneCues?: string;
+  /** 結局後可選的 MBA Organizational Debrief 內容（ChatGPT 維護，見 property/mba-debrief.md）。 */
+  mba?: string;
 }
 
 export interface UiCopy {
@@ -244,6 +249,7 @@ export function parseManifest(raw: unknown): Manifest {
     images: typeof raw.images === 'string' ? raw.images : undefined,
     cutscenes: typeof raw.cutscenes === 'string' ? raw.cutscenes : undefined,
     cutsceneCues: typeof raw.cutsceneCues === 'string' ? raw.cutsceneCues : undefined,
+    mba: typeof raw.mba === 'string' ? raw.mba : undefined,
   };
 }
 
@@ -603,4 +609,158 @@ export function parseImages(raw: unknown): ImageCatalog {
     };
   }
   return { characters, backgrounds, sceneBackgrounds, screens, ui, transitions, scenePresentation };
+}
+
+/**
+ * 結局後可選的 MBA Organizational Debrief 內容（見 property/mba-debrief.md）。
+ * 內容（理論、stakeholder、結局分析、限制）全部是 ChatGPT 提供的正式文案，這裡只定義
+ * 承載它的資料形狀；六項 organizational state 的計算（分數加總、等級門檻、證據句挑選）
+ * 在 `src/domain/mba.ts`。
+ */
+export interface MbaDimension {
+  /** 玩家畫面看到的維度名稱，例如「資訊品質」。 */
+  label: string;
+  /** 對應 `MbaScoreRow` 的哪一欄。 */
+  scoreKey: 'C' | 'I' | 'F' | 'A' | 'S' | 'P';
+}
+
+/** 十五個主要選項各自對六個維度的加減分，以及這個選項的路徑證據摘要。 */
+export interface MbaScoreRow {
+  C: number;
+  I: number;
+  F: number;
+  A: number;
+  S: number;
+  P: number;
+  evidence: string;
+}
+
+export interface MbaStakeholder {
+  name: string;
+  formalPower: string;
+  wanted: string;
+  information: string;
+  risk: string;
+}
+
+export interface MbaEnding {
+  /** 這個結局的管理策略摘要（也當作「微光互動」這個 stakeholder 的結果句）。 */
+  strategy: string;
+  /** 角色 ID → 這個結局下的一段結果描述（雨澄／予安／雅琳）。 */
+  stakeholderOutcomes: Record<string, string>;
+  unintendedConsequence: string;
+  theoryNote: string;
+  /** 一句「改善方案；代價是……」，UI 依「；代價是」拆成改善與犧牲兩段顯示。 */
+  alternative: string;
+}
+
+export interface MbaCopy {
+  entryButton: string;
+  keepEndingButton: string;
+  entryDescription: string;
+  closeButton: string;
+  copyButton: string;
+  copiedNotice: string;
+  sectionHeadings: Record<string, string>;
+  tradeoffsText: string;
+  limitations: string[];
+}
+
+export interface MbaContent {
+  copy: MbaCopy;
+  dimensions: Record<string, MbaDimension>;
+  scores: Record<string, MbaScoreRow>;
+  stakeholders: Record<string, MbaStakeholder>;
+  /** `choice1`…`choice5` → 這個決策點相關的理論名稱。 */
+  choiceTheories: Record<string, string[]>;
+  /** 結局場景 ID → 該結局的分析內容。 */
+  endings: Record<string, MbaEnding>;
+}
+
+function parseMbaScoreRow(raw: unknown, label: string): MbaScoreRow {
+  if (!isRecord(raw)) throw new Error(`${label} 格式錯誤`);
+  const num = (key: string): number => {
+    if (typeof raw[key] !== 'number') throw new Error(`${label}.${key} 必須是數字`);
+    return raw[key];
+  };
+  return { C: num('C'), I: num('I'), F: num('F'), A: num('A'), S: num('S'), P: num('P'), evidence: stringField(raw, 'evidence') };
+}
+
+function parseMbaStakeholder(raw: unknown, label: string): MbaStakeholder {
+  if (!isRecord(raw)) throw new Error(`${label} 格式錯誤`);
+  return {
+    name: stringField(raw, 'name'),
+    formalPower: stringField(raw, 'formalPower'),
+    wanted: stringField(raw, 'wanted'),
+    information: stringField(raw, 'information'),
+    risk: stringField(raw, 'risk'),
+  };
+}
+
+function parseMbaEnding(raw: unknown, label: string): MbaEnding {
+  if (!isRecord(raw) || !isRecord(raw.stakeholderOutcomes)) throw new Error(`${label} 格式錯誤`);
+  const stakeholderOutcomes: Record<string, string> = {};
+  for (const [id, value] of Object.entries(raw.stakeholderOutcomes)) {
+    if (typeof value !== 'string') throw new Error(`${label}.stakeholderOutcomes.${id} 必須是字串`);
+    stakeholderOutcomes[id] = value;
+  }
+  return {
+    strategy: stringField(raw, 'strategy'),
+    stakeholderOutcomes,
+    unintendedConsequence: stringField(raw, 'unintendedConsequence'),
+    theoryNote: stringField(raw, 'theoryNote'),
+    alternative: stringField(raw, 'alternative'),
+  };
+}
+
+export function parseMbaContent(raw: unknown): MbaContent {
+  const value = isRecord(raw) ? raw : {};
+  const copySource = isRecord(value.copy) ? value.copy : {};
+  const headingsSource = isRecord(copySource.sectionHeadings) ? copySource.sectionHeadings : {};
+  const sectionHeadings: Record<string, string> = {};
+  for (const [id, text] of Object.entries(headingsSource)) {
+    if (typeof text === 'string') sectionHeadings[id] = text;
+  }
+  const copy: MbaCopy = {
+    entryButton: typeof copySource.entryButton === 'string' ? copySource.entryButton : '查看案例分析',
+    keepEndingButton: typeof copySource.keepEndingButton === 'string' ? copySource.keepEndingButton : '先保留故事結尾',
+    entryDescription: typeof copySource.entryDescription === 'string' ? copySource.entryDescription : '',
+    closeButton: typeof copySource.closeButton === 'string' ? copySource.closeButton : '返回結局',
+    copyButton: typeof copySource.copyButton === 'string' ? copySource.copyButton : '複製本次摘要',
+    copiedNotice: typeof copySource.copiedNotice === 'string' ? copySource.copiedNotice : '已複製。',
+    sectionHeadings,
+    tradeoffsText: typeof copySource.tradeoffsText === 'string' ? copySource.tradeoffsText : '',
+    limitations: Array.isArray(copySource.limitations) ? copySource.limitations.filter((item): item is string => typeof item === 'string') : [],
+  };
+
+  const dimensionsSource = isRecord(value.dimensions) ? value.dimensions : {};
+  const dimensions: Record<string, MbaDimension> = {};
+  const validKeys: readonly MbaDimension['scoreKey'][] = ['C', 'I', 'F', 'A', 'S', 'P'];
+  for (const [id, entry] of Object.entries(dimensionsSource)) {
+    if (!isRecord(entry) || !validKeys.includes(entry.scoreKey as MbaDimension['scoreKey'])) {
+      throw new Error(`mba.dimensions.${id} 格式錯誤`);
+    }
+    dimensions[id] = { label: stringField(entry, 'label'), scoreKey: entry.scoreKey as MbaDimension['scoreKey'] };
+  }
+
+  const scoresSource = isRecord(value.scores) ? value.scores : {};
+  const scores: Record<string, MbaScoreRow> = {};
+  for (const [id, entry] of Object.entries(scoresSource)) scores[id] = parseMbaScoreRow(entry, `mba.scores.${id}`);
+
+  const stakeholdersSource = isRecord(value.stakeholders) ? value.stakeholders : {};
+  const stakeholders: Record<string, MbaStakeholder> = {};
+  for (const [id, entry] of Object.entries(stakeholdersSource)) stakeholders[id] = parseMbaStakeholder(entry, `mba.stakeholders.${id}`);
+
+  const theoriesSource = isRecord(value.choiceTheories) ? value.choiceTheories : {};
+  const choiceTheories: Record<string, string[]> = {};
+  for (const [id, entry] of Object.entries(theoriesSource)) {
+    if (!Array.isArray(entry) || !entry.every((item) => typeof item === 'string')) throw new Error(`mba.choiceTheories.${id} 必須是字串陣列`);
+    choiceTheories[id] = entry;
+  }
+
+  const endingsSource = isRecord(value.endings) ? value.endings : {};
+  const endings: Record<string, MbaEnding> = {};
+  for (const [id, entry] of Object.entries(endingsSource)) endings[id] = parseMbaEnding(entry, `mba.endings.${id}`);
+
+  return { copy, dimensions, scores, stakeholders, choiceTheories, endings };
 }

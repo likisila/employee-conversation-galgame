@@ -1,0 +1,12 @@
+{
+  "id": "s5-reason-hope",
+  "title": "職位不是我",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "我還在等替代方案，總覺得沒核准以前不該先說。" },
+    { "speaker": "lin-yucheng", "text": "所以你把不確定留給自己，把確定的工作留給我繼續做。" },
+    { "speaker": "zhou-yuan", "text": "對。" },
+    { "speaker": "lin-yucheng", "text": "至少現在不要再把那叫保護。" }
+  ],
+  "choices": [],
+  "next": "s5-reason-converge"
+}

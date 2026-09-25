@@ -29,13 +29,8 @@
     { "speaker": null, "kind": "narration", "text": "零號月台咖啡。暖色燈光，玻璃上映出兩個沒有識別證的身影。", "background": "platform-zero-cafe" },
     { "speaker": "lin-yucheng", "text": "先說好，我還沒有原諒那個「下季會有新安排」。" },
     { "speaker": "zhou-yuan", "text": "嗯，那次是我亂保證。" },
-    { "speaker": "lin-yucheng", "text": "也不要把今天當成你的好結局。" },
-    { "speaker": "lin-yucheng", "text": "既然今天不談工作，你可以問一個不工作的問題。" }
+    { "speaker": "lin-yucheng", "text": "也不要把今天當成你的好結局。" }
   ],
-  "choicePrompt": "你想問什麼？",
-  "choices": [
-    { "id": "question-place", "text": "「為什麼選這家店？」", "next": "ending-true-question-place", "minor": true },
-    { "id": "question-weeks", "text": "「這三週過得怎麼樣？」", "next": "ending-true-question-weeks", "minor": true },
-    { "id": "question-unasked", "text": "「妳那天其實想問我的，是不是不只工作？」", "next": "ending-true-question-unasked", "minor": true }
-  ]
+  "choices": [],
+  "next": "ending-true-recommend-router"
 }

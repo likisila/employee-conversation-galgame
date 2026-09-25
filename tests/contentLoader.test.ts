@@ -70,9 +70,11 @@ describe('《最後一次一對一》ending reachability', () => {
     return engine;
   }
 
-  it('uses the four approved state variables and nothing from the old prototype', () => {
+  it('uses the four approved state variables (plus narrative-memory ones) and nothing from the old prototype', () => {
     const content = loadContent();
-    expect(Object.keys(content.game.initialState).sort()).toEqual(['avoidance', 'boundary', 'procedure', 'trust']);
+    // trust／procedure／boundary／avoidance 決定結局；s1Memory／s7Memory 只是感情線微選擇的
+    // 敘事記憶（見 tests/romanceMicrochoices.test.ts），不參與結局判定。
+    expect(Object.keys(content.game.initialState).sort()).toEqual(['avoidance', 'boundary', 'procedure', 's1Memory', 's7Memory', 'trust']);
     expect(content.game.id).toBe('last-one-on-one');
     expect([...content.characters.keys()].sort()).toEqual(['lin-yucheng', 'zeng-yalin', 'zhou-yuan']);
   });

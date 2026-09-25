@@ -10,7 +10,9 @@
     { "speaker": "lin-yucheng", "text": "後續的事，請你交給雅琳。" },
     { "speaker": null, "kind": "narration", "text": "她沒有回頭。" },
     { "speaker": "lin-yucheng", "text": "別再私下找我。" },
-    { "speaker": null, "kind": "narration", "text": "門關上。我在私訊框打出「對不起，我只是——」，又逐字刪掉。", "drafts": ["對不起，我只是——"] },
+    { "speaker": null, "kind": "narration", "text": "門關上。" },
+    { "speaker": "zeng-yalin", "text": "這次我已經記下來，也已經說停。" },
+    { "speaker": null, "kind": "narration", "text": "我在私訊框打出「對不起，我只是——」，又逐字刪掉。", "drafts": ["對不起，我只是——"] },
     { "speaker": null, "kind": "narration", "text": "END 04：越線" },
     { "speaker": null, "kind": "narration", "text": "輸入框空了。我沒有再打字。" }
   ],

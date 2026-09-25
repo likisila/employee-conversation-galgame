@@ -2,7 +2,7 @@
   "id": "s1-look-converge",
   "title": "五點以前",
   "lines": [
-    { "speaker": null, "kind": "narration", "text": "我看著藍色資料夾。" }
+    { "speaker": null, "kind": "narration", "text": "我正要把椅子轉向她，視線先落在藍色資料夾上。" }
   ],
   "choices": [],
   "next": "s2-invite"

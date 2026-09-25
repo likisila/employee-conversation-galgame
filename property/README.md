@@ -18,15 +18,18 @@
 - `romance-microchoices.md`：四組不影響結局的感情線微選擇正式文案；已由 Claude 整合進 `scenes/*.json`（見下方「感情線微選擇」一節的技術寫法）。
 - `dialogue-beat-revisions-20260926.md`：六處長段落的正式分拍規格；由 Claude 依原技術欄位拆成連續畫面。
 - `narrative-integration-revision-20260926.md`：感情線 setup/payoff 與曾雅琳角色弧的整合修訂；取代孤立的 Scene 5 回憶段落。
-- `mba-organizational-debrief.md`：結局後 MBA 案例分析、理論映射、organizational state 與期末報告規劃的正式內容／實作需求。
+- `mba-organizational-debrief.md`：結局後 MBA 案例分析、理論映射、organizational state 與期末報告規劃的正式內容／實作需求；已由 Claude 整合為 `mba-debrief.json` ＋ `src/domain/mba.ts`（見下方「MBA Organizational Debrief」一節）。
+- `mba-debrief.json`：上述內容的結構化資料——十五個主要選項對六個維度的加減分與路徑證據、stakeholder matrix、五個決策點的理論映射、四個結局的策略／stakeholder 結果／非預期後果／理論重點／替代方案，以及 Debrief 畫面的文案與區塊標題。`manifest.json` 的 `mba` 欄位指向它。
 - `sora-cutscenes.json`：過場的內容提示與連戲規則（由 GPT 維護，已同步官方手繪插畫方向，檔名保留相容）；新版逐鏡起始影格、Runway 動作與交付狀態見 `cutscene-storyboard-v2.md`。原 Sora provider／model／固定時長與 READY 為待 Claude 整理的歷史工具契約，不能代表新版素材已交付。`cutscenes.json` 保存影片格式與缺檔策略；實際接線由 `cutscene-cues.json` 維護。02／04 新版分鏡尚需 Claude 處理播放時序，不能僅靠替換 MP4 上線。
 
 ## 目前作品：《最後一次一對一》
 
 - 狀態變數：`trust`（坦誠）、`procedure`（程序）、`boundary`（界線）、`avoidance`（逃避）。四者預設隱藏，不以好感度呈現。
 - 每個主要選擇會額外 `set` 一個 `choice1`…`choice5` 字串，供後續場景的條件台詞使用。
-- 四組感情線微選擇（`property/romance-microchoices.md`）已接進 s1、s5、s7 與 TRUE END 的對應插入點，只改變當下對話，不改動上述狀態、五個主要選擇或結局分布；技術寫法見下方「感情線微選擇」一節。
-- 場景流程：`content-warning → s1-final-cut → s2-invite → s3-meeting → s4-notice → s5-when-did-you-know → s6-receipt → s7-not-in-file → s8-reaction → s9-doorway →（四個結局之一）`。
+- 另有 `s1Memory`／`s7Memory` 兩個「敘事記憶」字串：由 s1、s7 的感情線微選擇各自 `set`，只用來讓 Scene 5、TRUE END 自動路由到對應的回聲場景（見下方「感情線微選擇」一節），不參與結局判定、不進「回到之前的選擇」選單。
+- 四組感情線微選擇（`property/narrative-integration-revision-20260926.md`）已接進 s1、s5、s7 與 TRUE END 的對應插入點：s1／s7 的選擇會分別在 Scene 5、TRUE END 被回收（setup/payoff），不改動上述核心狀態、五個主要選擇或結局分布；技術寫法見下方「感情線微選擇」一節。
+- 曾雅琳的角色弧（Scene 1／3／6，見同一份修訂文件）與六處對話分拍（`property/dialogue-beat-revisions-20260926.md`）已整合進對應場景，純屬敘事節奏與新增對白，不影響任何技術欄位。
+- 場景流程：`content-warning → s1-final-cut →（感情線微選擇）→ s2-invite → s3-meeting → s4-notice → s5-when-did-you-know →（依 s1Memory 自動路由的回聲＋新的感情線微選擇）→ s6-receipt → s7-not-in-file →（感情線微選擇）→ s8-reaction → s9-doorway →（四個結局之一，TRUE END 再依 s7Memory 自動路由一段推薦信回聲＋感情線微選擇才到 ending-true-finale）`。
 - `s9-doorway` 是純路由節點，依序判定：**越線**（`boundary <= -2`）→ **TRUE END**（`trust >= 6`、`procedure >= 4`、`boundary >= 2`、`avoidance <= 1`）→ **體面的句點**（`procedure >= 4`、`trust >= 2`、`boundary >= 0`）→ **柔軟的刀**（其餘）。
 
 ## 修改角色名字
@@ -116,10 +119,22 @@
 `game.json` 的 `initialState` 可新增任意字串、數值或布林值。選項透過 `effects` 修改狀態（`add` 僅限數值、`set` 可為任何型別），透過 `conditions` 決定是否顯示。
 
 ## 感情線微選擇（不影響結局的選項）
-選項可以加 `"minor": true`，代表這是不影響結局的短對話分支（例如感情線）：不記入通關後「回到之前的選擇」的決策點選單，也不算進主要決策路徑，因此一律不帶 `effects`。場景也可以加 `"choicePrompt"` 覆寫這一頁選項的提示句（不寫就用 `ui.json` 的 `choicePrompt`）。
+選項可以加 `"minor": true`，代表這是不影響結局的短對話分支（例如感情線）：不記入通關後「回到之前的選擇」的決策點選單，也不算進主要決策路徑。大多數不帶 `effects`；s1、s7 的三個選項例外，各自 `set` 一個敘事記憶字串（`s1Memory`／`s7Memory`），供 Scene 5、TRUE END 的 `route` 自動挑對應分支——**這個 `effects` 只能寫敘事記憶變數，不得寫 `trust`／`procedure`／`boundary`／`avoidance` 或 `choice1`…`choice5`**，否則會影響結局判定與 243 條主要路徑分布。場景也可以加 `"choicePrompt"` 覆寫這一頁選項的提示句（不寫就用 `ui.json` 的 `choicePrompt`）。
 
-實作方式是把插入點拆成「選擇前」「三個分支各一場」「匯流後」四個場景：分支場景各自 `next` 指向同一個匯流場景，匯流場景延續原本被取代的內容。四組感情線微選擇（`s1-look-*`、`s5-memory-*`、`s7-recommend-*`、`ending-true-question-*` 與對應的 `*-converge` / `ending-true-finale`）都照這個結構寫，可以當範本。
+兩種實作方式，依有沒有下游回聲決定：
+
+1. **單純分支**（沒有下游回聲，例如 TRUE END 最後那組提問）：插入點拆成「選擇前」「三個分支各一場」「匯流後」四個場景，分支場景各自 `next` 指向同一個匯流場景。`ending-true-question-*` 與 `ending-true-finale` 是範本。
+2. **setup → 自動路由 → payoff**（s1 的選擇要在 Scene 5 被回收、s7 的選擇要在 TRUE END 被回收）：setup 端的選項 `effects` 寫入敘事記憶；payoff 端前面加一個「路由場景」（`lines: []`、`route` 依敘事記憶挑分支，見「路由場景」一節），玩家不會停在這個場景上。`s5-echo-router → s5-echo-work/detail/pause` 與 `ending-true-recommend-router → ending-true-recommend-precision/witness/honesty` 是範本；兩邊之後才各自接一組不帶敘事記憶的單純分支（`s5-why-not-question` 系列的 `reason-*`）或直接匯流。
 
 ```json
-{ "id": "recommend-witness", "text": "「妳記得每個測試者說過什麼……」", "next": "s7-recommend-witness", "minor": true }
+{ "id": "look-work", "text": "「看。給我三分鐘。」", "next": "s1-look-work", "minor": true, "effects": [{ "variable": "s1Memory", "operation": "set", "value": "look-work" }] }
 ```
+
+## MBA Organizational Debrief（結局後可選的案例分析）
+四個結局畫面都有「查看案例分析」按鈕（沒有對應內容時自動不顯示）。內容資料是 `mba-debrief.json`（見上方「property 資料夾」一節），計算在 `src/domain/mba.ts` 的 `computeDebrief()`：
+
+- 只吃五個主要選擇的 ID（`engine.decisionPoints.map(d => d.choiceId)`，本來就已排除感情線微選擇）與結局場景 ID，不讀存檔以外的任何東西，因此同一條路徑每次算出來的內容完全相同。
+- 六項 organizational state：五個主要選擇在該維度的加減分加總，門檻 `高 >= 5`、`中 >= 1`、`脆弱 >= -2`、其餘 `低`；證據句取該維度絕對值最大的選項，同分時取較晚的選擇。END 04（越線）的員工主體性／心理安全／程序完整三項會封頂在「脆弱」，不因其他選擇正向而顯得體面。
+- 因果鏈與理論鏡頭依「五個選擇裡影響最大的決策點」動態挑選，不是每次都顯示同一批。
+- 畫面文案（按鈕、區塊標題、案例限制等）都在 `mba-debrief.json` 的 `copy`，改文案不需要碰 `src/`。
+- 要新增／調整結局分析，改 `mba-debrief.json` 的 `endings.<結局場景 id>` 即可；`endings` 缺該結局時，那個結局畫面就不會顯示「查看案例分析」按鈕。

@@ -16,13 +16,8 @@
 
     { "speaker": "lin-yucheng", "text": "你什麼時候知道的？" },
     { "speaker": "zhou-yuan", "text": "兩週前知道公司在評估。今天下午拿到最終名單。" },
-    { "speaker": "lin-yucheng", "text": "上週你還說，下季會有新安排。" },
-    { "speaker": "lin-yucheng", "text": "那天我們改到十一點。你還把咖啡放在我桌上。" }
+    { "speaker": "lin-yucheng", "text": "上週你還說，下季會有新安排。" }
   ],
-  "choicePrompt": "你記得的是什麼？",
-  "choices": [
-    { "id": "memory-food", "text": "「妳晚餐只吃了兩片餅乾。」", "next": "s5-memory-food", "minor": true },
-    { "id": "memory-coffee", "text": "「妳說，等產品上線要請我喝一杯不像辦公室的咖啡。」", "next": "s5-memory-coffee", "minor": true },
-    { "id": "memory-unsaid", "text": "「我本來想在那天告訴妳，最後沒有。」", "next": "s5-memory-unsaid", "minor": true }
-  ]
+  "choices": [],
+  "next": "s5-echo-router"
 }

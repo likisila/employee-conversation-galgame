@@ -5,6 +5,7 @@ import {
   parseGame,
   parseImages,
   parseManifest,
+  parseMbaContent,
   parseScene,
   parseUi,
   type Character,
@@ -13,6 +14,7 @@ import {
   type Game,
   type ImageCatalog,
   type Manifest,
+  type MbaContent,
   type Scene,
   type UiCopy,
 } from '../domain/schema';
@@ -48,6 +50,8 @@ export interface LoadedContent {
   cutscenes: CutsceneSettings;
   /** 以「進入哪個場景前播放」為索引的過場影片。 */
   cutsceneCues: Map<string, CutsceneCue>;
+  /** 結局後可選的 MBA Organizational Debrief 內容。 */
+  mba: MbaContent;
 }
 
 export function loadContent(): LoadedContent {
@@ -62,6 +66,7 @@ export function loadContent(): LoadedContent {
   // 依部署 base 解析素材路徑，讓遊戲能部署在子路徑（如 GitHub Pages）。
   const images = resolveCatalogAssets(rawImages);
 
+  const mba = manifest.mba ? parseMbaContent(requireFile(manifest.mba)) : parseMbaContent({});
   const cutscenes = manifest.cutscenes ? parseCutsceneSettings(requireFile(manifest.cutscenes)) : parseCutsceneSettings({});
   const cueList = manifest.cutsceneCues ? parseCutsceneCues(requireFile(manifest.cutsceneCues)) : [];
   const cutsceneCues = new Map(
@@ -124,5 +129,5 @@ export function loadContent(): LoadedContent {
     if (transition.asset && !images.ui[transition.asset]) throw new Error(`轉場 ${transitionId} 引用了不存在的 UI asset ${transition.asset}`);
   }
 
-  return { manifest, game, characters, scenes, ui, images, cutscenes, cutsceneCues };
+  return { manifest, game, characters, scenes, ui, images, cutscenes, cutsceneCues, mba };
 }

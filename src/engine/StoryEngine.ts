@@ -38,10 +38,11 @@ function sameState(left: GameState, right: GameState): boolean {
 const HISTORY_LIMIT = 200;
 
 /**
- * 反推舊存檔路徑時最多走過幾個節點。目前這部作品只有 243 條路徑，這個上限綽綽有餘；
+ * 反推舊存檔路徑時最多走過幾個節點。243 條主要路徑乘上三組感情線微選擇（各 3 選 1，
+ * 不影響狀態但仍要展開，因為現在可能有效果不同的分支）約 6500 條完整路徑、十餘萬個節點；
  * 設上限是為了將來內容長大時，讀檔不會因為窮舉而卡住——走不完就當作推不出來。
  */
-const REBUILD_NODE_LIMIT = 20000;
+const REBUILD_NODE_LIMIT = 300000;
 
 export class StoryEngine {
   private sceneId: string;
@@ -259,6 +260,7 @@ export class StoryEngine {
   private rebuildDecisions(sceneId: string, state: GameState): DecisionRecord[] | undefined {
     let visited = 0;
     let found: DecisionRecord[] | undefined;
+    let foundKey: string | undefined;
     let ambiguous = false;
 
     const walk = (currentId: string, currentState: GameState, trail: DecisionRecord[]): void => {
@@ -267,29 +269,32 @@ export class StoryEngine {
       const settled = this.settledSceneId(currentId, currentState);
       if (settled === undefined) return;
       if (settled === sceneId && sameState(currentState, state)) {
-        // 故事是有向無環的，同一條路徑不會再次走到同一個（場景，狀態），所以命中就不必再往下。
-        if (found) ambiguous = true;
-        else found = trail;
+        // 感情線微選擇（`minor`）不進 trail，所以同一條主線路徑可能被走過好幾次
+        // （例如三個微選擇分支各自匯流回同一步）——用內容比對，不是「命中第二次就當歧義」，
+        // 否則會把「其實是同一條主要決策路徑」誤判成推不出來。
+        const key = JSON.stringify(trail);
+        if (found === undefined) {
+          found = trail;
+          foundKey = key;
+        } else if (key !== foundKey) {
+          ambiguous = true;
+        }
         return;
       }
       const scene = this.content.scenes.get(settled);
       if (!scene) return;
       const choices = scene.choices.filter((choice) => isChoiceAvailable(choice, currentState));
-      const majorChoices = choices.filter((choice) => !choice.minor);
-      if (majorChoices.length > 0) {
+      if (choices.length > 0) {
+        // 窮舉每一個選項（含 minor）：minor 選項現在可能帶「敘事記憶」效果，不能再假設
+        // 「選哪一項都通向同一段主線、狀態不變」。只有主要選擇才記進 trail（決策點選單）。
         const lineIndex = Math.max(0, scene.lines.filter((line) => isLineVisible(line, currentState)).length - 1);
-        for (const choice of majorChoices) {
-          walk(choice.next, applyChoiceEffects(choice, currentState), [
+        for (const choice of choices) {
+          const nextTrail = choice.minor ? trail : [
             ...trail,
             { sceneId: settled, lineIndex, state: { ...currentState }, choiceId: choice.id },
-          ]);
+          ];
+          walk(choice.next, applyChoiceEffects(choice, currentState), nextTrail);
         }
-        return;
-      }
-      if (choices.length > 0) {
-        // 純感情線微選擇：不影響狀態，選哪一項都通向同一段主線，反推路徑時任取一個即可——
-        // 不必當成決策點記錄，也不必窮舉三個分支（都不改狀態，多探也不會消除或製造歧義）。
-        walk(choices[0].next, applyChoiceEffects(choices[0], currentState), trail);
         return;
       }
       if (scene.next) walk(scene.next, currentState, trail);

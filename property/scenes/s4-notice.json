@@ -18,7 +18,8 @@
     { "speaker": null, "kind": "narration", "text": "我看了一眼雅琳的平板，沒接話。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
 
     { "speaker": null, "kind": "narration", "text": "資料夾攤在我們中間，封面上是雨澄的名字。", "background": "cg-rights-packet" },
-    { "speaker": "zhou-yuan", "text": "主要客戶解約後，公司取消了你負責的產品線，也決定不把這個職位轉到其他團隊。日期、給付、保險、設備處理和聯絡窗口，都列在文件裡。", "background": "moon-meeting-room-rain" },
+    { "speaker": "zhou-yuan", "text": "主要客戶解約後，公司取消了你負責的產品線，也決定不把這個職位轉到其他團隊。", "background": "moon-meeting-room-rain" },
+    { "speaker": "zhou-yuan", "text": "日期、給付、保險、設備處理和聯絡窗口，都列在文件裡。", "background": "moon-meeting-room-rain" },
     { "speaker": "lin-yucheng", "text": "「決定」。" },
     { "speaker": null, "kind": "narration", "text": "她重複了一次，抬頭看我。" },
     { "speaker": "lin-yucheng", "text": "所以你們不是來問我的。這不是討論，只是通知？" }

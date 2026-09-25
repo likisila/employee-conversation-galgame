@@ -1,0 +1,10 @@
+{
+  "id": "s5-echo-router",
+  "lines": [],
+  "choices": [],
+  "route": [
+    { "conditions": [{ "variable": "s1Memory", "operator": "eq", "value": "look-work" }], "next": "s5-echo-work" },
+    { "conditions": [{ "variable": "s1Memory", "operator": "eq", "value": "look-detail" }], "next": "s5-echo-detail" },
+    { "next": "s5-echo-pause" }
+  ]
+}

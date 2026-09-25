@@ -20,7 +20,8 @@
     { "speaker": "zeng-yalin", "text": "那待會就別再說是好消息。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
     { "speaker": null, "kind": "narration", "text": "十七分鐘後，那隻鸚鵡還停在對話最下方。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
 
-    { "speaker": null, "kind": "narration", "text": "17:00，月球會議室。關上門，外面的談話聲就聽不見了。三杯水圍著藍色資料夾，玻璃牆上貼著卡通太空人。" },
+    { "speaker": null, "kind": "narration", "text": "17:00，月球會議室。關上門，外面的談話聲就聽不見了。" },
+    { "speaker": null, "kind": "narration", "text": "三杯水圍著藍色資料夾，玻璃牆上貼著卡通太空人。" },
     { "speaker": null, "kind": "narration", "text": "我先進門，把識別證翻到背面。雅琳坐在靠門的位置，把平板放平，將椅子往桌邊收了一點。" },
     { "speaker": null, "kind": "narration", "text": "雨澄準時進來。" },
 
@@ -34,7 +35,11 @@
     { "speaker": "zhou-yuan", "text": "雨澄——", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
     { "speaker": "lin-yucheng", "text": "這就是你說的好消息？", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
 
-    { "speaker": "zeng-yalin", "text": "我在場是為了說明文件與後續程序，也會記錄今天提供過哪些資訊。決定內容由周主管說明。" },
+    { "speaker": "zeng-yalin", "text": "我會說明文件與後續程序，也會記錄今天提供過哪些資訊。" },
+    { "speaker": "lin-yucheng", "text": "妳是來保護公司，還是保護我？" },
+    { "speaker": "zeng-yalin", "text": "兩件事都在我的職責裡。有衝突的時候，我至少把衝突寫進紀錄。" },
+    { "speaker": null, "kind": "narration", "text": "雅琳看向予安。" },
+    { "speaker": "zeng-yalin", "text": "決定內容由周主管說明。" },
     { "speaker": null, "kind": "narration", "text": "桌上三杯水，只有雅琳那杯少了一口。" }
   ],
   "choices": [

@@ -1,0 +1,130 @@
+{
+  "copy": {
+    "entryButton": "查看案例分析",
+    "keepEndingButton": "先保留故事結尾",
+    "entryDescription": "分析不會替你的選擇打分；它會整理這次決策造成的組織後果與可替代做法。",
+    "closeButton": "返回結局",
+    "copyButton": "複製本次摘要",
+    "copiedNotice": "已複製到剪貼簿。",
+    "sectionHeadings": {
+      "path": "你的管理路徑",
+      "state": "這次形成的組織狀態",
+      "stakeholders": "利害關係人結果",
+      "causalChains": "三條因果鏈",
+      "theories": "理論鏡頭",
+      "alternative": "換一種做法",
+      "tradeoffs": "沒有單一最佳答案的地方",
+      "limitations": "案例限制"
+    },
+    "tradeoffsText": "資訊揭露時機、程序速度與關係維護的 trade-off。",
+    "limitations": ["短篇模擬", "單一文化與公司情境", "未呈現完整勞動法與高層決策過程"]
+  },
+  "dimensions": {
+    "management_credibility": { "label": "管理可信度", "scoreKey": "C" },
+    "information_quality": { "label": "資訊品質", "scoreKey": "I" },
+    "perceived_fairness": { "label": "感知公平", "scoreKey": "F" },
+    "employee_agency": { "label": "員工主體性", "scoreKey": "A" },
+    "psychological_safety": { "label": "心理安全", "scoreKey": "S" },
+    "process_integrity": { "label": "程序完整", "scoreKey": "P" }
+  },
+  "scores": {
+    "invite-clear": { "C": 1, "I": 2, "F": 1, "A": 1, "S": 1, "P": 1, "evidence": "事前說明會議性質、HR 在場與準備方式" },
+    "invite-vague": { "C": 0, "I": -1, "F": 0, "A": -1, "S": -1, "P": 0, "evidence": "隱去性質，讓員工自行從 HR 出席猜測" },
+    "invite-goodnews": { "C": -2, "I": -2, "F": -1, "A": -1, "S": -1, "P": -1, "evidence": "用錯誤正向預期取得配合" },
+    "notice-direct": { "C": 1, "I": 2, "F": 1, "A": 1, "S": 1, "P": 1, "evidence": "清楚命名職位裁撤與非績效原因" },
+    "notice-euphemism": { "C": -1, "I": -1, "F": -1, "A": 0, "S": -1, "P": 0, "evidence": "以組織優化與角色影響遮蔽結果" },
+    "notice-performance": { "C": -2, "I": -2, "F": -2, "A": -1, "S": -2, "P": -1, "evidence": "把結構性裁撤錯誤歸因到個人表現" },
+    "answer-admit": { "C": 1, "I": 1, "F": 1, "A": 2, "S": 1, "P": 1, "evidence": "承認決定已定，區分不能改與仍可選事項" },
+    "answer-deflect": { "C": -1, "I": -1, "F": -1, "A": -1, "S": -1, "P": 0, "evidence": "把員工失業與主管不舒服放在同一層次" },
+    "answer-bargain": { "C": -2, "I": -2, "F": -2, "A": -2, "S": -2, "P": -2, "evidence": "以不存在的轉圜交換流程配合" },
+    "doc-protect": { "C": 1, "I": 1, "F": 2, "A": 2, "S": 1, "P": 2, "evidence": "保留審閱、拒簽、第二窗口與可信任陪同者" },
+    "doc-pressure": { "C": -1, "I": 0, "F": -2, "A": -2, "S": -1, "P": -2, "evidence": "以行政效率要求當場完成收訖" },
+    "doc-private": { "C": -2, "I": -1, "F": -2, "A": -2, "S": -2, "P": -2, "evidence": "用私人金錢混淆正式責任與情感債務" },
+    "keep-advocate": { "C": 1, "I": 1, "F": 1, "A": 1, "S": 2, "P": 1, "evidence": "提供事實與資源但不索取感謝或聯絡" },
+    "keep-credit": { "C": -1, "I": 0, "F": -1, "A": -1, "S": -1, "P": 0, "evidence": "把曾經爭取轉成員工應回報的情感帳" },
+    "keep-confess": { "C": -2, "I": -1, "F": -2, "A": -2, "S": -2, "P": -2, "evidence": "在資源依賴尚未解除時要求私人回應" }
+  },
+  "stakeholders": {
+    "zhou-yuan": {
+      "name": "周予安",
+      "formalPower": "分配工作、提供推薦、影響作品說明；不能撤銷已核准裁撤",
+      "wanted": "完成通知、降低傷害、證明自己曾爭取",
+      "information": "提前兩週知道評估，當日下午取得最終名單",
+      "risk": "把自我形象、愧疚或感情轉嫁給雨澄處理"
+    },
+    "lin-yucheng": {
+      "name": "林雨澄",
+      "formalPower": "無法改變裁撤；可拒簽、提問、選擇窗口與後續聯絡",
+      "wanted": "取得完整資訊、保留權利、把職位取消與自我價值分開",
+      "information": "進場前資訊最少，且曾收到錯誤的下季期待",
+      "risk": "經濟損失、資訊落差、被要求安撫主管或交換配合"
+    },
+    "zeng-yalin": {
+      "name": "曾雅琳",
+      "formalPower": "管理文件、簽收、紀錄、窗口與終止談話；不能撤銷裁撤",
+      "wanted": "降低程序傷害，不再讓自己的沉默替施壓背書",
+      "information": "知道核准範圍、程序與風險，但未參與最初業務決策",
+      "risk": "同時代表公司與程序保障，任何「中立」都可能偏向既有權力"
+    },
+    "company": {
+      "name": "微光互動／決策層",
+      "formalPower": "決定組織與職位、控制揭露時間與資源",
+      "wanted": "快速降低成本、控制法律與營運風險",
+      "information": "掌握客戶流失、替代方案與最終決策",
+      "risk": "把成本外部化給員工與中階主管，造成信任、留任與聲譽損失"
+    }
+  },
+  "choiceTheories": {
+    "choice1": ["Informational Justice", "Psychological Contract", "Uncertainty Management"],
+    "choice2": ["Informational／Interpersonal Justice", "Attribution Theory", "Impression Management"],
+    "choice3": ["Procedural Justice", "Employee Voice", "Locus of Control", "Ethical Leadership"],
+    "choice4": ["Procedural Justice", "Power-Dependence", "Equity Theory", "Agency Problem"],
+    "choice5": ["Social Exchange", "Leader–Member Exchange", "Emotional Labor", "Power and Dependence", "Ethical Leadership"]
+  },
+  "endings": {
+    "ending-true-finale": {
+      "strategy": "高資訊透明、高程序保障、高界線意識；接受員工不必原諒。",
+      "stakeholderOutcomes": {
+        "lin-yucheng": "雨澄保有文件與聯絡主導權",
+        "zhou-yuan": "予安承擔但沒有被赦免",
+        "zeng-yalin": "雅琳的程序介入有效"
+      },
+      "unintendedConsequence": "清楚與克制仍不能消除失業、延遲告知或關係受損。",
+      "theoryNote": "公平程序不能補償不利結果，但能降低二次傷害；權力真正結束後，私人關係才可能重新協商。",
+      "alternative": "更早建立裁撤評估期的資訊邊界與工作安排；代價是機密、組織波動與錯誤預警風險。"
+    },
+    "ending-decent": {
+      "strategy": "程序大致完整，資訊或關係修復不足；員工只保留正式合作。",
+      "stakeholderOutcomes": {
+        "lin-yucheng": "雨澄安全離開並取得推薦",
+        "zhou-yuan": "予安沒有獲得私人關係",
+        "zeng-yalin": "雅琳成為後續窗口"
+      },
+      "unintendedConsequence": "正確程序可能讓管理者誤以為關係也已修復。",
+      "theoryNote": "Compliance 不等於 trust；程序公平可存在於低親密、低認同的關係中。",
+      "alternative": "後續只做一次、由員工主導的正式確認；代價是主管必須接受沉默也是答案。"
+    },
+    "ending-soft-knife": {
+      "strategy": "高度使用善意與道歉，但資訊、責任或界線不夠清楚。",
+      "stakeholderOutcomes": {
+        "lin-yucheng": "雨澄改走 HR 窗口",
+        "zhou-yuan": "予安仍想用更多文字修復",
+        "zeng-yalin": "雅琳必須阻止非必要私訊"
+      },
+      "unintendedConsequence": "越想降低衝突，越延長員工處理含糊資訊與主管情緒的時間。",
+      "theoryNote": "Interpersonal warmth 不能取代 informational justice；情緒勞動被轉嫁給權力較低者。",
+      "alternative": "使用「事實—可選事項—下一步」三段式說明；代價是談話會顯得較冷，也更早暴露不可逆性。"
+    },
+    "ending-over-line": {
+      "strategy": "私人補償或情感揭露侵入正式程序，使退出成本與回應壓力升高。",
+      "stakeholderOutcomes": {
+        "lin-yucheng": "雨澄終止直接聯絡",
+        "zeng-yalin": "雅琳接管並留下正式紀錄",
+        "zhou-yuan": "予安失去程序與私人關係的主導權"
+      },
+      "unintendedConsequence": "原本想證明關心的行為，使所有善意都被權力關係污染。",
+      "theoryNote": "Social exchange 在高權力差距下可能成為隱性債務；個人善意不能凌駕制度責任。",
+      "alternative": "正式資源交由制度處理，私人情感等依賴關係結束後再由對方決定是否重啟；代價是不保證仍有表達機會。"
+    }
+  }
+}
