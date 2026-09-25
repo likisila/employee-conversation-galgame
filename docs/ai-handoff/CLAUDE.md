@@ -800,3 +800,19 @@
 - 未決問題或阻塞：`00-B`／`03-B`（及連帶拿掉的 `00-C`）修正時程由 ChatGPT 決定；本次調整只是暫時的播放層級應對，不代表這兩張圖已經合格或已刪除。本地 commit，未 push、沒有 PR。
 - 驗證結果：`npm run typecheck`、`npm test`（17 檔 170／170，`tests/cutscenes.test.ts` 22 案例全數通過，含分鏡格數／來源檔存在性／manifest 同步等既有斷言，皆未受影響）、`npm run build` 全數通過。Chromium 實機（dev server）：重新開始 → 內容提醒 → `final-documents` cue 只顯示 `00-A`（雨澄獨自在工作區，無缺陷）3 秒後直接進 `s1-final-cut`「最終版」，過場控制列只有「跳過」、沒有靜音鍵（與影片模式一致的既有邏輯），主控台無錯誤；`rights-packet` 段落邏輯相同（單格 `03-A`，測試已覆蓋，未另外實機重播）。
 - 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。
+
+## Claude-20260925-2221
+
+- 時間：2026-09-25T14:21:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260925-2138`（無新增紀錄）
+- 本次範圍：**更正 `Claude-20260925-2214` 的處理方式**。使用者實機複驗後回報「過場畫面沒有被拿掉」——上一筆把 `final-documents`／`rights-packet` 的分鏡陣列縮成單張圖（`00-A`／`03-A`，各 3 秒），但那仍然是一個完整的過場畫面（黑邊、「跳過」按鈕、擋鍵盤／點擊三秒），使用者要的是這兩處完全沒有過場中斷，不是「更短的過場」。
+- 已定案事項：
+  1. `property/cutscene-cues.json` 的 `final-documents`、`rights-packet` 兩個 cue 移除 `storyboard` 欄位（不是刪掉整個 cue——理由見下）。播放器（`src/ui/cutscene.ts`）的既有邏輯：正式 MP4 本來就不存在，`<video>` 幾乎立刻觸發 `error`；沒有 `storyboard` 時錯誤處理直接呼叫 `finish()`，而 `mountStage()`（畫面真正換成過場黑邊／控制列的那一步）根本沒被呼叫過。畫面因此完全停在前一幕，觀感上就是「什麼都沒發生」，直接接續播放原本的場景——這才是使用者要的「移除過場」。
+  2. **沒有刪掉這兩個 cue 本身**：`property/sora-cutscenes.json`（ChatGPT 維護）仍把 `final-documents`／`rights-packet` 標記 `status: "READY"`，`tests/cutscenes.test.ts` 有一條既有斷言要求每個 `READY` 項目都要有對應的 cue 掛載點；若整個刪掉 cue 會踩到這條防線。保留 cue（只是拿掉 `storyboard`）同時滿足「畫面上不中斷」與「資料契約仍然自洽」兩邊。
+  3. `00-A.webp`／`00-C.webp`／`03-A.webp` 三張圖（連同 `00-B`／`03-B`）目前都不再被任何 cue 引用，純粹待命；`00-A`／`03-A` 本身沒有缺陷，之後如果要恢復分鏡輪播或换成別的呈現方式，這兩張可以直接復用。
+  4. 更新 `tests/cutscenes.test.ts` 對應斷言：「共通主線五段都有分鏡」改為「共通主線目前有分鏡的段落」，陣列從 5 個 cue id 縮成 3 個（`meeting-invitation`、`layoff-notification`、`boundary-question`），並在測試描述裡註記原因與本筆 Entry ID，避免日後有人看到斷言變動以為是誤刪。
+- 交給 ChatGPT：沿續 `Claude-20260925-2214` 的兩項——`00-B`（文件夾畫成平板）與 `03-B`（看錶手腕姿勢）待修正或重生；正式 `00_final_documents.mp4`、`03_rights_packet.mp4` 交付後，這兩處會自動恢復播放影片，不需要額外通知。
+- 未決問題或阻塞：無新增；`00-B`／`03-B` 修正時程仍由 ChatGPT 決定。本地 commit，未 push、沒有 PR。
+- 驗證結果：`npm run typecheck`、`npm test`（17 檔 170／170，`tests/cutscenes.test.ts` 22 案例含更新後的斷言全數通過）、`npm run build` 全數通過。Chromium 實機（dev server）：重新開始 → 內容提醒最後一句 → 點擊後**直接**進入 `s1-final-cut`「最終版」的轉場卡，畫面全程沒有出現過場黑邊、控制列或「跳過」按鈕，`get_page_text` 在點擊前後只看到「內容提醒」→「最終版」兩個狀態、中間沒有過場文字或空白幀；主控台無錯誤。`rights-packet`（`s6-receipt` 之前）沿用同一段程式邏輯，測試已覆蓋，未另外實機重播。
+- 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。
