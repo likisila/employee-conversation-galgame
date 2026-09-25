@@ -918,3 +918,25 @@
   - `npm test`：19 個測試檔、**188／188** 通過。新增 `tests/narrativeIntegration20260926.test.ts`（10 案例）、`tests/mba.test.ts`（7 案例）；`tests/romanceMicrochoices.test.ts` 改寫後 8 案例全過，其中「27 種微選擇組合在五個主要選擇相同時結局與核心狀態欄位完全相同」與「回到決策點選單只有五筆、都不是微選擇場景」兩項關鍵不變量仍然成立。既有 243 條主要路徑結局分布、TRUE END 高門檻、越線一律鎖 END 04 等測試未受影響（`tests/endingRoutes.test.ts`、`tests/contentLoader.test.ts` 全過）。
   - Chromium 實機（dev server，桌機視窗）完整跑一輪 TRUE END：`invite-clear／notice-direct／answer-admit／doc-protect／keep-advocate`，途中選 s1「看，給我三分鐘」、s5「我還在等替代方案」、s7「先找到含糊的詞」——逐句確認六處分拍各自成為獨立畫面、Scene 1／3／6 的雅琳新台詞正常顯示、`s5-echo-router` 正確依 `s1Memory` 路由到 `s5-echo-work`、`ending-true-recommend-router` 正確依 `s7Memory` 路由到 `ending-true-recommend-precision`（顯示「推薦信第一段寫我會追問含糊需求」，與所選一致）、走到 `ending-true-finale`。點「查看案例分析」：八個區塊（管理路徑、組織狀態六項皆「高」＋證據句、四位利害關係人結果、三條因果鏈、五個理論、換一種做法、trade-off、案例限制）全部正確顯示；點「複製本次摘要」通知正確出現（Clipboard 寫入無例外）；「返回結局」正確回到原本的結局畫面且按鈕仍在。390×812 手機尺寸重開分析面板，長文可正常捲動、無溢出、兩顆按鈕並排不擠壓。全程主控台無錯誤（`read_console_messages` 確認）。四結局中僅實機驗證 TRUE END；END 02／03／04 與 END 04 的「脆弱」封頂、複製摘要不含內部數值等由上述單元測試覆蓋，未逐一實機重播。
 - 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。
+
+## Claude-20260926-0641
+
+- 時間：2026-09-25T22:41:49Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260926-0607`（最新）。其交給 Claude 的行動——把 `04-A` 加回 `property/cutscene-cues.json` 的 `boundary-question` storyboard——本次未處理，屬於獨立的資產整合工作，使用者本次要求的是部署工具設定；列在下方「未決問題」，留待下一次處理或使用者指定時再做，不併入本次範圍。
+- 本次範圍：使用者要求「直接部署到 Cloudflare」的可行性，確認後決定改為半自動：Claude 建好工具與腳本，使用者自行建立並貼入 Cloudflare API Token／Account ID／Pages 專案名稱（不經過 Claude）。這是建置／部署工具範圍，屬 Claude 職責，不涉及文案、圖片、影片或 UI 視覺設計。
+- 實際變更檔案：
+  - `package.json`：新增 devDependency `wrangler`，新增 script `deploy:cf`。
+  - `scripts/deploy-cloudflare.mjs`（新增）：檢查 `CLOUDFLARE_API_TOKEN`／`CLOUDFLARE_ACCOUNT_ID`／`CLOUDFLARE_PAGES_PROJECT` 三個環境變數與 `dist/index.html` 是否存在，再呼叫 `wrangler pages deploy dist --project-name <project>`；缺任何一項會直接報錯並指向說明文件，不會讓 wrangler 用互動模式提示。
+  - `docs/CLOUDFLARE_DEPLOY.md`（新增）：說明如何建立最小權限（僅 Cloudflare Pages Edit、限定單一帳號）的 API Token、取得 Account ID 與專案名稱、用 `setx` 在使用者自己的終端機設定環境變數（不經過對話貼入 token）、以及 `npm run build && npm run deploy:cf` 的使用方式。
+  - `cloudflare-pages-upload/HOW-TO-UPDATE.md`（此檔在 repo 外，`C:\Users\reneo\Desktop\cloudflare-pages-upload\`，不受版本控制）：加一段指向新文件，說明原本手動 zip 上傳流程仍然有效，新方式是額外選項。
+  - `docs/ai-handoff/CLAUDE.md`：本 Entry。
+- 已定案事項：
+  1. 不由 Claude 經手或儲存 Cloudflare API Token；憑證由使用者在自己的終端機用 `setx` 設定為環境變數，部署腳本只讀取環境變數，從不印出其值。
+  2. 手動 zip 上傳流程（既有的 `npm run` 建置 + tar 打包 + 拖進 Cloudflare Dashboard）保持不變，新的 `npm run deploy:cf` 是額外的、使用者可選的自動化路徑，兩者互不取代。
+  3. 這次修改不影響 `dist/` 建置輸出本身（只新增部署工具與文件），依持久記憶規則判斷不需要重建 `last-one-on-one-site.zip`。
+- 交給 ChatGPT：無。純建置／部署工具工作，未新增或修改任何文案、素材或 UI 視覺設計。
+- 未決問題或阻塞：
+  1. `ChatGPT-20260926-0607` 交給 Claude 的「把 04-A 加回 `property/cutscene-cues.json`」尚未處理（見上方「已讀對方紀錄」），需另外排入後續工作。
+  2. 新的 `deploy:cf` 路徑尚未實機跑過完整部署（需要使用者先建立 Cloudflare Token 才能測試），目前只驗證了「缺環境變數時會正確報錯並停止」，未驗證有真實憑證時能成功部署。
+- 驗證結果：`node scripts/deploy-cloudflare.mjs`（未設任何環境變數）正確輸出缺少的三個變數名稱並以 exit code 1 結束，未呼叫 wrangler。`npm install -D wrangler` 成功、`package.json`／`package-lock.json`（已在 `.gitignore`，未納入版控）更新一致。本次未修改任何 runtime 程式、schema、場景或測試，未跑 `npm run typecheck`／`npm test`／`npm run build`（本次未觸及 `src/`／`property/` 內容）。

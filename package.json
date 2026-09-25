@@ -10,13 +10,15 @@
     "test": "vitest run",
     "videos:sora": "node scripts/generate_sora_cutscenes.mjs",
     "assets:sprites": "node scripts/optimize-sprites.mjs",
-    "assets:storyboard": "node scripts/optimize-storyboard.mjs"
+    "assets:storyboard": "node scripts/optimize-storyboard.mjs",
+    "deploy:cf": "node scripts/deploy-cloudflare.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
     "sharp": "^0.34.5",
     "typescript": "^5.9.2",
     "vite": "^7.1.5",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "wrangler": "^4.141.0"
   }
 }
