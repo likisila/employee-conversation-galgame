@@ -778,3 +778,25 @@
   - Chromium 實機（dev server，桌機視窗）：從標題開始，逐句點到 s1 的「你怎麼回答？」選了 B「妳先說，這版最滿意哪裡？」，確認分支對白、匯流句「我看著藍色資料夾。」立繪正確顯示林雨澄（`character-stage` 存在、`aria-label` 對得上、`data-framing="full"`）、header 標題全程維持「最終版」；接續玩到 s5 微選擇（「你記得的是什麼？」）、s7 微選擇（「你最先想到她的哪一面？」）與匯流後原本第五個主要選擇（`keep-advocate`／`keep-credit`／`keep-confess` 三個選項文字與 `effects` 皆未變）；一路選 `invite-clear／notice-direct／answer-admit／doc-protect／keep-advocate` 到 TRUE END，第四組微選擇（「你想問什麼？」）三個選項與標題正確顯示，選 C 後正常收尾至「我端起咖啡。這次，我們沒有約好幾點結束。」；打開「回到之前的選擇」選單，逐項核對為 5 筆、依序是五個主要選擇的場景標題與選項全文，沒有任何一筆是微選擇。主控台無錯誤。
   - `npm run assets:*` 未執行：本次沒有新增或修改任何圖片／影片素材，原始 PNG／WebP 皆未變動。
 - 提交後續：本次完成後將重建 `cloudflare-pages-upload/last-one-on-one-site.zip`（持久記憶要求的固定收尾步驟），commit 訊息會列出本筆 Entry ID。
+
+## Claude-20260925-2214
+
+- 時間：2026-09-25T14:14:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260925-2138`（無新增紀錄）
+- 本次範圍：使用者實機複驗時回報兩張分鏡 placeholder 圖有問題，逐張目視確認後，依使用者指示先把這兩張從播放輪替中移除，兩段 cue 改為單張靜態圖頂替影片，不等 ChatGPT 重繪即先讓玩家看到的畫面正確。
+- 使用者回報並經目視確認的兩個缺陷：
+  1. **`public/assets/cutscenes/storyboard/00-B.webp`**（分鏡表 00-B，對應 `cutscene-storyboard-v2.md` 的「雅琳站在予安桌邊…把文件夾平放桌面」）：雅琳手上那個物件畫成平整光滑的深藍矩形薄板，看起來是平板電腦，不是有紙頁厚度的藍色文件夾。這正是 `cutscene-storyboard-v2.md` 該格自己列的失敗案例之一（「文件變平板」）。與人物設定衝突：`image-prompts.md` 明寫「藍色文件夾只有一個…不能變成…平板」，而雅琳的平板是她個人另一件道具，兩者不可混為同一物。
+  2. **`public/assets/cutscenes/storyboard/03-B.webp`**（分鏡表 03-B，對應「雨澄低頭看左腕矩形舊數位錶」）：畫面中雨澄抬起的手腕與另一手在錶附近的相對位置看起來解剖上不合理（手腕／前臂彎折方向與另一手貼近錶面的姿勢對不上一般人體結構），是生成圖常見的手部/手腕變形，物理上站不住。
+- 已定案事項（依使用者指示的技術處理，Claude 範圍內的播放邏輯調整，未改任何圖片檔案本身）：
+  1. `property/cutscene-cues.json` 的 `final-documents`（掛在 `s1-final-cut` 之前）分鏡陣列從 `[00-A, 00-B, 00-C]` 三格縮成只剩 `[00-A]`（3 秒）；`rights-packet`（掛在 `s6-receipt` 之前）從 `[03-A, 03-B]` 兩格縮成只剩 `[03-A]`（3 秒）。
+  2. 播放器（`src/ui/cutscene.ts`）本來就原生支援單格分鏡：顯示滿設定秒數後直接呼叫 `finish()` 進場景，不需要任何程式改動——這兩段 cue 現在的行為就是「單張靜態圖片頂替影片」，不再是多格輪播。
+  3. `00-B`、`00-C`、`03-B` 三張圖與對應的 `runway-v2` 原始 keyframe 都還在磁碟上，只是不再被任何 cue 引用；沒有刪除檔案，`public/assets/cutscenes/storyboard/manifest.json` 與原圖 SHA-256 同步檢查因此不受影響（該測試逐一檢查 manifest 全部項目，不看有沒有被 cue 引用）。`00-C` 本身沒有回報缺陷，這次只是連同縮成單張圖一併不用，不代表它有問題。
+  4. 正式 MP4（`00_final_documents.mp4`、`03_rights_packet.mp4`）一旦放進 `public/assets/cutscenes/`，仍會照舊自動優先於分鏡 placeholder，不受本次調整影響。
+- 交給 ChatGPT：
+  1. **`00-B`（HR 放下文件夾／看起來像平板）與 `03-B`（雨澄看錶的手腕姿勢）需要修正或重生**，才能再次排進分鏡輪替；目前這兩張已經從遊戲裡拿掉，不會被玩家看到，不急著這週處理。
+  2. 若之後要恢復三格／兩格的完整分鏡效果（而不是目前的單張圖），麻煩在重生 `00-B`／`03-B`（如果還要 `00-C`／`03-B`）合格後告知，Claude 會把 `cutscene-cues.json` 的分鏡陣列補回去；不需要另外通知 Claude 調整程式，純資料調整。
+  3. 正式 `00_final_documents.mp4`、`03_rights_packet.mp4` 若在此之前就完成，可以直接連同其餘尚缺的 6 支影片一併交付，兩段分鏡 placeholder 屆時自動失效，不必等上述兩張圖修好。
+- 未決問題或阻塞：`00-B`／`03-B`（及連帶拿掉的 `00-C`）修正時程由 ChatGPT 決定；本次調整只是暫時的播放層級應對，不代表這兩張圖已經合格或已刪除。本地 commit，未 push、沒有 PR。
+- 驗證結果：`npm run typecheck`、`npm test`（17 檔 170／170，`tests/cutscenes.test.ts` 22 案例全數通過，含分鏡格數／來源檔存在性／manifest 同步等既有斷言，皆未受影響）、`npm run build` 全數通過。Chromium 實機（dev server）：重新開始 → 內容提醒 → `final-documents` cue 只顯示 `00-A`（雨澄獨自在工作區，無缺陷）3 秒後直接進 `s1-final-cut`「最終版」，過場控制列只有「跳過」、沒有靜音鍵（與影片模式一致的既有邏輯），主控台無錯誤；`rights-packet` 段落邏輯相同（單格 `03-A`，測試已覆蓋，未另外實機重播）。
+- 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。
