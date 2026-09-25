@@ -17,6 +17,8 @@
 - `scenes/*.json`：對話、選項、條件、效果與跳轉。
 - `romance-microchoices.md`：四組不影響結局的感情線微選擇正式文案；已由 Claude 整合進 `scenes/*.json`（見下方「感情線微選擇」一節的技術寫法）。
 - `dialogue-beat-revisions-20260926.md`：六處長段落的正式分拍規格；由 Claude 依原技術欄位拆成連續畫面。
+- `narrative-integration-revision-20260926.md`：感情線 setup/payoff 與曾雅琳角色弧的整合修訂；取代孤立的 Scene 5 回憶段落。
+- `mba-organizational-debrief.md`：結局後 MBA 案例分析、理論映射、organizational state 與期末報告規劃的正式內容／實作需求。
 - `sora-cutscenes.json`：過場的內容提示與連戲規則（由 GPT 維護，已同步官方手繪插畫方向，檔名保留相容）；新版逐鏡起始影格、Runway 動作與交付狀態見 `cutscene-storyboard-v2.md`。原 Sora provider／model／固定時長與 READY 為待 Claude 整理的歷史工具契約，不能代表新版素材已交付。`cutscenes.json` 保存影片格式與缺檔策略；實際接線由 `cutscene-cues.json` 維護。02／04 新版分鏡尚需 Claude 處理播放時序，不能僅靠替換 MP4 上線。
 
 ## 目前作品：《最後一次一對一》

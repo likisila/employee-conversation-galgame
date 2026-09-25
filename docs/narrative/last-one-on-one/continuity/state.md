@@ -8,7 +8,7 @@ character-state:
   - character: lin-yucheng
     state: 已知職位遭裁撤且非績效處分；後續聯絡與文件持有依結局分歧。
   - character: zeng-yalin
-    state: 持有通知紀錄，為正式程序第二窗口。
+    state: 持有通知紀錄，為正式程序第二窗口；曾在前公司相似會議中沉默，因此本次主動更正、記錄並在越線時終止談話。
 object-state:
   - artifact: rights-packet
     state: TRUE END／體面句點由雨澄帶走；柔軟的刀留在會議室；越線由 HR 接管。

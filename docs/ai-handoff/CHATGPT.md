@@ -280,3 +280,32 @@
   3. 更新會因行數／全文而失效的測試，重跑 typecheck、全量測試與 build；桌機／手機實機確認六處停頓、標題卡「五點以前」、s4 背景與 s7 條件分支。
 - 未決問題或阻塞：六處 runtime 分拍會增加玩家推進次數並涉及 `lines[]` 結構與呈現行為，依角色邊界由 Claude 實作；在 Claude 回覆前，標題修正已生效，但分拍仍是待確認交接，不能宣稱整體完成。
 - 驗證結果：五個可遊玩 Scene 1 JSON 與三份敘事／索引文件已同步為「五點以前」；全專案搜尋確認剩餘「最終版」只出現在合理的文件／訊息語境或歷史交接。六處候選經逐句審閱，正式拆分點與技術欄位保留要求已逐項記錄。JSON 解析與 `npm.cmd run typecheck` 通過；`npm.cmd test` 17 檔 170／170、`npm.cmd run build` 通過（兩者初次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功）。環境沒有 `story` CLI 或 repo fallback，故無法執行 story maintenance；本次未改事件、角色狀態、時間線或正文字數。`git diff --check` 於提交前通過。
+
+## ChatGPT-20260926-0555
+
+- 時間：2026-09-25T21:55:29Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260925-2255`。本次不處理其中沿續的影片／關鍵影格素材待辦；焦點是使用者最新指出的故事整合、HR 深度與 MBA 課程報告缺口。
+- 本次範圍：
+  1. 重新檢查使用者最初貼入的 MBA Organizational Gal Game 規格，確認其中明訂每次通關後要有 MBA Organizational Debrief，但目前 runtime 與企劃都沒有相關資料或 Claude 實作需求。
+  2. 把已上線、各自立即匯流的四組感情線微選擇重構為兩條 setup/payoff：Scene 1 的回答在 Scene 5 被雨澄用來追問資訊隱瞞；Scene 7 對專業能力的描述在 TRUE END 推薦信中回收。
+  3. 為曾雅琳建立「過去在相似會議中沉默並因此獲益，現在拒絕再讓沉默替程序背書」的角色弧，分別在 Scene 1、3、6 演出事前爭取、雙重角色與過去代價。
+  4. 補齊完整 MBA debrief、organizational state 計算、15 個主要選項映射、stakeholder matrix、五個決策理論、四結局分析、期末報告 13 節大綱與 Claude 實作／測試需求。
+- 實際變更檔案：
+  - 新增 `property/narrative-integration-revision-20260926.md`、`property/mba-organizational-debrief.md`。
+  - 更新 `property/README.md`。
+  - 更新正典：`docs/narrative/last-one-on-one/characters/zeng-yalin.md`、`plot/arcs/last-one-on-one.md`、`plot/timeline.md`、`continuity/state.md`、`worldbuilding/systems/game-design.md`。
+  - 追加本交接紀錄。
+- 已定案事項：
+  1. Scene 5 不再使用餅乾／咖啡／沒說出口的孤立回憶選擇；改為根據 Scene 1 的具體回答，由雨澄追問予安當時為何選擇不說。新選擇回答的是責任與沉默，不另開感情插曲。
+  2. Scene 7 微選擇保留，但 TRUE END 必須逐一回收為推薦信內容，再由雨澄主動結束工作話題、開啟私人提問。
+  3. 微選擇仍不影響結局或 MBA 評估，但需要可供條件台詞使用的敘事記憶；不得出現在主要決策回看清單。
+  4. 雅琳不是中立裁判或善良 HR。她代表公司、無權撤銷裁撤，也曾因沉默受益；她的成長是公開承認角色衝突並在本次會議介入。
+  5. MBA 分析只在故事結束後由玩家選擇開啟；不打分、不顯示內部數值。六項 organizational state 由五個主要選擇計算，微選擇完全排除。
+- 交給 Claude 的明確行動：
+  1. 依 `property/narrative-integration-revision-20260926.md` 取代目前 Scene 5 孤立回憶、保存 Scene 1／7 微選擇作條件回聲，並整合 Scene 1／3／6 的雅琳台詞。技術變數、schema、路由、場景拆分與測試由 Claude 決定。
+  2. 微選擇記憶不得改變 `trust`、`procedure`、`boundary`、`avoidance`、五個主要決策、243 條主要路徑結局分布或回看清單。
+  3. 依 `property/mba-organizational-debrief.md` 實作四結局後可選的案例分析頁、六項文字化組織狀態、路徑理論／因果／stakeholder／替代策略、摘要複製功能與行動版閱讀。正式內容已齊，不需 Claude 自行補文案。
+  4. 補齊規格列出的測試與桌機／手機實機驗收，並同步 runtime 變更至正典章節／場景摘要；完成後回覆本 Entry。
+- 未決問題或阻塞：本次依角色邊界只完成內容、正典與實作規格；目前可玩版本尚未套用感情線回聲、雅琳新增台詞或 MBA debrief，須待 Claude 接線後才能宣稱整體完成。
+- 驗證結果：逐一核對 15 個主要選項 ID 與 runtime 一致；`npm.cmd test` 17 個測試檔、170／170 項通過；`git diff --check` 於提交前通過。環境沒有 `story` CLI 或 repo fallback，因此以角色、時間線、主線 arc、continuity 與 game design 的人工交叉更新取代 maintenance。本次沒有修改 runtime JSON、程式、schema、路由、效果、狀態或測試。

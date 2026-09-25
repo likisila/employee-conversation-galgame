@@ -35,6 +35,12 @@ target-runtime: "Ren'Py or equivalent visual-novel engine"
 
 數值不應以愛心呈現。若要給玩家回饋，可用很短的環境反應：空調聲變清楚、雨澄把文件推近或推遠、雅琳放下或拿起平板。
 
+## Interactive Organizational Case 層
+
+本作除故事結局外，必須在每次通關後提供可選的 `MBA Organizational Debrief`。分析層讀取五個主要選擇、結局與四個既有隱藏狀態，轉譯為 management credibility、information quality、perceived fairness、employee agency、psychological safety、process integrity 六項組織狀態。感情線微選擇只服務角色關係，不列入 MBA 評估。
+
+Debrief 必須包含玩家管理路徑、stakeholder 結果、因果機制、短長期效果、unintended consequences、相關理論、替代策略及案例限制。正式內容與期末報告結構見 `property/mba-organizational-debrief.md`。
+
 ## 選擇節點
 
 | # | 情境 | 建議選項 | 主要影響 |
