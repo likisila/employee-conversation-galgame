@@ -384,3 +384,34 @@
   5. 完成後重跑四結局與 390×812 行動版，依 `property/ob-playthrough-review-20260926.md` 第四節驗收並回覆本 Entry。
 - 未決問題或阻塞：內容端無缺漏；後續只剩 Claude-owned schema、計算、UX、測試與接線。Claude 回覆前不可宣稱新版最後評估頁已完成。
 - 驗證結果：`property/mba-debrief.json` 可由 PowerShell `ConvertFrom-Json` 正常解析；內容檔 `git diff --check` 通過；`npm.cmd run typecheck`、`npm.cmd test`（19 檔 188／188）、`npm.cmd run build` 全數通過（測試與建置初次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功）。既有未提交 `src/ui/render.ts`、`src/visual.css` 與 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-0542
+
+- 時間：2026-09-26T21:42:25Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260926-1450`（最新）。接受其證據方向、公司 outcome、理論白話顯示與兩套替代策略實作，也接受 END 04 三個維度只要進入越線結局就優先引用 `doc-private`／`keep-confess` 的技術判斷；本次不要求縮回「只有數字實際被封頂時」才套用。
+- 本次範圍：使用者指定 `$sepia` 並要求修正「查看案例分析」全部文案。依 Sepia 的 recreate 流程，先完成缺陷清單，再保留所有 OB 事實、分數與判斷，全面重寫玩家可見文字；實機閱讀 END 03 後，另找出理論整包帶入與因果鏈錯置的邏輯／UX 問題，完成逐選項理論對照與正式句型。
+- 實際變更檔案：
+  - `property/mba-debrief.json`：重寫入口說明、八個標題、trade-off、限制、十五條路徑證據、四位 stakeholder 描述、十七個理論解釋、四結局策略／結果／延遲後果／理論重點與八個替代做法；只改既有純內容欄位，未改分數、ID、schema、條件或路由。
+  - `property/mba-debrief-sepia-revision-20260927.md`（新增）：Sepia 診斷、正式語氣、程式內硬編碼字串替換、零分混合證據句型、因果鏈句型、十五選項理論映射、三理論選取規則、複製摘要文案與驗收表。
+  - `property/mba-organizational-debrief.md`：標明玩家可見文案以 JSON 為唯一來源，並把理論顯示規則改為依實際選項固定三個。
+  - `property/README.md`：加入 Sepia 修訂入口。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- Sepia 診斷：原稿的問題形成群聚——抽象名詞密集、主詞被拿掉、中英混寫、理論與替代方案句型過度整齊、因果鏈像報表、每段都收成完整漂亮結論。這不是少量措辭問題，因此採 recreate，不做表面同義詞替換。參考聲音是四結局既有短句與具體立場，例如「謝謝你把程序說完。不是謝謝這個決定。」
+- 已定案事項：
+  1. 英文只保留在正式理論名稱；一般說明不再使用 `trade-off`、`Compliance`、`trust`、`voice`。
+  2. 每段先寫雨澄、予安、雅琳或公司做了什麼，再談理論；不再以「高資訊透明」「關係修復不足」等抽象名詞代替行為。
+  3. 理論固定顯示三個，必須依十五個實際選項 ID 配對，不能再用 `choice1`…`choice5` 把一整組理論帶入。`doc-pressure` 不得顯示只適用私人補償的 Equity Theory。
+  4. 因果鏈改為三句，不再使用箭頭；第三句必須寫「這一步……。放回整條路徑看……」，避免把負面結局錯誤歸因給其中一個正向選擇。
+  5. 畫面用「做法一／二」「它能改變」「要付出的代價」，不用「替代策略 1／2」「改善」。零分混合證據也改為兩個選擇互相抵銷的自然句子。
+- 交給 Claude 的明確行動：
+  1. 逐字實作 `property/mba-debrief-sepia-revision-20260927.md` 第三、五節的硬編碼畫面與複製摘要文案，包括主標題分隔符、`套回你剛才的選擇`、做法標籤、無穩定證據句及零分混合句。
+  2. 把因果鏈從單一箭頭字串改為規格中的三句呈現，並保留「這一步」與「放回整條路徑看」的語意區分。
+  3. 把理論映射由 decision-point key 改為十五個 choice ID；每條路徑顯示三個理論，依規格優先順序選取，並確保證據來自真正帶入該理論的選項。
+  4. 更新 `tests/mba.test.ts` 五個綁死舊證據字串的斷言，改驗本次正式新文案；新增 `doc-pressure` 不出現 Equity Theory、理論恰三個、因果鏈無箭頭且正向選擇不被寫成直接造成負面結局的測試。
+  5. 完成後實機跑四個結局，而非只跑 TRUE END；桌機與 390×812 都依修訂文件第六節驗收，並回覆本 Entry。
+- 未決問題或阻塞：玩家可見內容已完成；程式內硬編碼標籤、理論選取、因果鏈結構與測試屬 Claude。Claude 接線前，畫面仍會看到舊的「在這條路徑中」「替代策略／改善／代價」與箭頭因果鏈，不能宣稱全頁修訂已上線。
+- 驗證結果：
+  - `property/mba-debrief.json` 可由 `ConvertFrom-Json` 解析；內容檔 `git diff --check` 通過；`npm.cmd run typecheck` 與 `npm.cmd run build` 通過。
+  - `npm.cmd test`：190／195 通過；五項失敗全部是 `tests/mba.test.ts` 逐字要求舊 evidence 文案，計算結果已產生正確的新 evidence，無其他測試失敗。依角色邊界未改 Claude-owned 測試。
+  - Chromium 實機讀取 END 03：新入口、stakeholder、狀態證據、理論解釋、兩套做法、trade-off 與限制均已載入；同時確認仍待 Claude 接線的硬編碼模板與理論誤配問題。瀏覽器無載入錯誤。
