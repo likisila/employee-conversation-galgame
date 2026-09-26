@@ -328,3 +328,31 @@
 - 交給 Claude 的明確行動：04-A 已通過 ChatGPT 的內容與素材驗收。請把 `04-A` 加回 `property/cutscene-cues.json` 的 `boundary-question` storyboard，順序置於 04-B、04-C 前，沿用原規格 2 秒；更新相關測試、重跑 typecheck／全量測試／build，並以桌機與手機確認 04-A→04-B→04-C 播放與跳過行為。不要重新啟用或搬回舊的 `01_meeting_invitation.mp4`。
 - 未決問題或阻塞：`01_meeting_invitation.mp4` 的正式重製尚未完成；目前已有安全 fallback，不阻擋遊玩。04-A 的來源與交付檔已完成，但重新加入 runtime cue 屬 Claude 的資產整合職責，在 Claude 回覆前不能宣稱遊戲內已恢復該格。
 - 驗證結果：原始與交付 04-A 均逐張目視；尺寸 1672×941，構圖、左右手、腕部、側鍵位置、錶型與不可讀背光符合分鏡。`npm.cmd run assets:storyboard` 成功，13 張來源 23.1MB 重建為 1118KB，04-A 為 1471509 bytes → 32988 bytes；manifest 已同步來源 SHA 與大小。`npm.cmd run typecheck` 通過；`npm.cmd test` 17 檔 170／170、`npm.cmd run build` 通過（測試與建置初次受沙箱拒絕讀取 Vite 設定，依規則在沙箱外重跑成功）；`git diff --check` 通過。
+
+## ChatGPT-20260926-2225
+
+- 時間：2026-09-26T14:25:14Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260926-2132`。其打字草稿自動前進與 04-A 重新接回分鏡均不在本次變更範圍；本次實機 Playthrough 已包含目前最新 runtime。
+- 本次範圍：依使用者更正「課程不是 HR，是組織行為」，把課程定位寫成可搜尋、可沿用的正式 Review 門檻，並以組織行為而非 HR 合規角度重新實玩四個結局與最後評估頁。
+- 實際變更檔案：
+  - `property/mba-organizational-debrief.md`：新增「課程定位與 Review 門檻」，明定本課程是 Organizational Behavior（OB）、不是 HR；HR 與程序只是案例情境，Review 必須檢查權力／依賴、組織公平、心理安全、employee voice、心理契約、信任、情緒勞動、管理行為與 stakeholder 後果。
+  - `property/ob-playthrough-review-20260926.md`（新增）：記錄四結局代表路徑、對白／場景判定、最後評估頁通過項與教學閉環缺口、下一輪驗收標準。
+  - `property/README.md`：加入課程定位、正式 Review 文件索引與入口。
+  - `docs/narrative/last-one-on-one/worldbuilding/systems/game-design.md`：把 OB、非 HR 的定位同步進遊戲設計正典。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 課程與最後評估頁的第一判準是組織行為學習，不是 HR 標準作業、法遵或勞動法正確性；未來可用「組織行為」「Organizational Behavior」「OB」「不是 HR／非 HR」搜尋到規則。
+  2. 故事與對白通過 OB 案例判定：角色聲音、權力不對稱、voice、心理安全、social exchange、情緒勞動及 delayed consequence 均由可觀察行為演出，沒有把理論塞進角色台詞。
+  3. 目前最後評估頁可以整理六項組織狀態、因果鏈、stakeholder 結果與 trade-off，但尚未完成完整教學閉環：理論只有英文名稱；證據句可能與維度方向相反；替代策略只有一個；stakeholder 權力／資訊／風險被壓縮。
+- 交給 Claude 的明確行動：
+  1. 調整 organizational state 的證據選取：證據需與最後等級方向一致；若 END 04 因重大越線封頂為「脆弱」，證據必須引用造成封頂的越線選擇，不能引用後續正向行為。END 03 亦不得以正向 `keep-advocate` 證據解釋「脆弱」可信度／資訊品質／心理安全。
+  2. 在理論鏡頭呈現路徑相依的白話解釋，至少回答「哪個行為 → 哪個 OB 機制 → 何種組織後果」。優先使用內容資料已有的 `theoryNote`；schema、計算與 UI 實作由 Claude 決定。
+  3. 依正式規格支援每個結局兩個替代策略，或先回交 ChatGPT 補第二組正式內容後再實作；不得由 Claude 自行創作文案。
+  4. 讓 stakeholder 區塊能帶出正式權力、資訊差與風險；目前「微光互動／決策層」顯示的是整體管理策略摘要，不是該 stakeholder 的具體結果，請修正資料映射／呈現並補測試。
+  5. 完成後依 `property/ob-playthrough-review-20260926.md` 第四節重跑四結局與 390×812 行動版驗收，並回覆本 Entry。
+- 未決問題或阻塞：上述四項會涉及 `src/domain/mba.ts`、schema／資料結構、Debrief UX 與測試，依角色邊界由 Claude 接手；ChatGPT 本次只更新內容／正典／審查文件，未修改程式或 UX。第二個替代策略正式文案尚未補寫，若 Claude 採陣列方案需先交回內容需求。
+- 驗證結果：
+  - 實機完成 TRUE END、END 02、END 03、END 04，逐一開啟「查看案例分析」並核對六項組織狀態、三條因果鏈、理論鏡頭、替代做法、trade-off 與案例限制。
+  - 390×812 實測 END 03：body 390／390、分析面板 375／375，無水平溢出；「複製本次摘要」「返回結局」兩鍵各 148／148，文字完整。瀏覽器 console 無 error／warning。
+  - `npm.cmd run typecheck` 通過；`npm.cmd test` 19 檔 188／188、`npm.cmd run build` 通過（測試與建置初次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功）。`git diff --check` 於提交前執行。

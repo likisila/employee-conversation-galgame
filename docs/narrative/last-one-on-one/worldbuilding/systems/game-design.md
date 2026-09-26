@@ -39,6 +39,8 @@ target-runtime: "Ren'Py or equivalent visual-novel engine"
 
 本作除故事結局外，必須在每次通關後提供可選的 `MBA Organizational Debrief`。分析層讀取五個主要選擇、結局與四個既有隱藏狀態，轉譯為 management credibility、information quality、perceived fairness、employee agency、psychological safety、process integrity 六項組織狀態。感情線微選擇只服務角色關係，不列入 MBA 評估。
 
+**課程定位是組織行為（Organizational Behavior，OB），不是 HR。** HR 人員、裁撤通知與文件程序只構成案例情境與 stakeholder 關係；Debrief 的教學核心是權力／依賴、組織公平、心理安全、員工 voice、心理契約、信任、情緒勞動及管理者行為的組織後果，不得退化為 HR 標準流程、法遵檢核或勞動法建議。所有 Playthrough 與最後評估頁 Review 依 `property/mba-organizational-debrief.md` 的「課程定位與 Review 門檻」執行。
+
 Debrief 必須包含玩家管理路徑、stakeholder 結果、因果機制、短長期效果、unintended consequences、相關理論、替代策略及案例限制。正式內容與期末報告結構見 `property/mba-organizational-debrief.md`。
 
 ## 選擇節點

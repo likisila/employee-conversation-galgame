@@ -18,7 +18,8 @@
 - `romance-microchoices.md`：四組不影響結局的感情線微選擇正式文案；已由 Claude 整合進 `scenes/*.json`（見下方「感情線微選擇」一節的技術寫法）。
 - `dialogue-beat-revisions-20260926.md`：六處長段落的正式分拍規格；由 Claude 依原技術欄位拆成連續畫面。
 - `narrative-integration-revision-20260926.md`：感情線 setup/payoff 與曾雅琳角色弧的整合修訂；取代孤立的 Scene 5 回憶段落。
-- `mba-organizational-debrief.md`：結局後 MBA 案例分析、理論映射、organizational state 與期末報告規劃的正式內容／實作需求；已由 Claude 整合為 `mba-debrief.json` ＋ `src/domain/mba.ts`（見下方「MBA Organizational Debrief」一節）。
+- `mba-organizational-debrief.md`：結局後 MBA 案例分析、理論映射、organizational state 與期末報告規劃的正式內容／實作需求；已由 Claude 整合為 `mba-debrief.json` ＋ `src/domain/mba.ts`（見下方「MBA Organizational Debrief」一節）。**課程定位是組織行為（Organizational Behavior，OB），不是 HR；往後 Review 與 Playthrough 必須依該文件的「課程定位與 Review 門檻」驗收。**
+- `ob-playthrough-review-20260926.md`：依「組織行為，不是 HR」重新實玩四個結局與最後評估頁的審查紀錄；包含通過項、教學閉環缺口及下一輪驗收標準。
 - `mba-debrief.json`：上述內容的結構化資料——十五個主要選項對六個維度的加減分與路徑證據、stakeholder matrix、五個決策點的理論映射、四個結局的策略／stakeholder 結果／非預期後果／理論重點／替代方案，以及 Debrief 畫面的文案與區塊標題。`manifest.json` 的 `mba` 欄位指向它。
 - `sora-cutscenes.json`：過場的內容提示與連戲規則（由 GPT 維護，已同步官方手繪插畫方向，檔名保留相容）；新版逐鏡起始影格、Runway 動作與交付狀態見 `cutscene-storyboard-v2.md`。原 Sora provider／model／固定時長與 READY 為待 Claude 整理的歷史工具契約，不能代表新版素材已交付。`cutscenes.json` 保存影片格式與缺檔策略；實際接線由 `cutscene-cues.json` 維護。02／04 新版分鏡尚需 Claude 處理播放時序，不能僅靠替換 MP4 上線。
 
@@ -131,6 +132,9 @@
 ```
 
 ## MBA Organizational Debrief（結局後可選的案例分析）
+
+> 課程定位：組織行為（Organizational Behavior，OB），不是人力資源管理（HR）。HR、裁撤與文件程序是案例情境；評估核心是權力與依賴、組織公平、心理安全、員工 voice、心理契約、信任、情緒勞動及管理者行為造成的組織後果。完整 Review 門檻見 `mba-organizational-debrief.md` 第零節。
+
 四個結局畫面都有「查看案例分析」按鈕（沒有對應內容時自動不顯示）。內容資料是 `mba-debrief.json`（見上方「property 資料夾」一節），計算在 `src/domain/mba.ts` 的 `computeDebrief()`：
 
 - 只吃五個主要選擇的 ID（`engine.decisionPoints.map(d => d.choiceId)`，本來就已排除感情線微選擇）與結局場景 ID，不讀存檔以外的任何東西，因此同一條路徑每次算出來的內容完全相同。
