@@ -94,11 +94,21 @@
     "Psychological Safety": { "label": "心理安全", "explanation": "心理安全不在予安的語氣，而在雨澄能不能放心提問、說不或不回答，不必擔心推薦、文件和後續資源受影響。" }
   },
   "choiceTheories": {
-    "choice1": ["Informational Justice", "Psychological Contract", "Uncertainty Management"],
-    "choice2": ["Informational Justice", "Interpersonal Justice", "Attribution Theory", "Impression Management"],
-    "choice3": ["Procedural Justice", "Employee Voice", "Locus of Control", "Ethical Leadership"],
-    "choice4": ["Procedural Justice", "Power-Dependence", "Equity Theory", "Agency Problem"],
-    "choice5": ["Social Exchange", "Leader–Member Exchange", "Emotional Labor", "Power-Dependence", "Ethical Leadership"]
+    "invite-clear": ["Informational Justice", "Uncertainty Management"],
+    "invite-vague": ["Uncertainty Management", "Informational Justice"],
+    "invite-goodnews": ["Psychological Contract", "Informational Justice", "Impression Management"],
+    "notice-direct": ["Informational Justice", "Interpersonal Justice", "Attribution Theory"],
+    "notice-euphemism": ["Impression Management", "Informational Justice", "Attribution Theory"],
+    "notice-performance": ["Attribution Theory", "Interpersonal Justice", "Psychological Safety"],
+    "answer-admit": ["Locus of Control", "Employee Voice", "Procedural Justice", "Ethical Leadership"],
+    "answer-deflect": ["Emotional Labor", "Impression Management", "Interpersonal Justice"],
+    "answer-bargain": ["Employee Voice", "Power-Dependence", "Ethical Leadership", "Procedural Justice"],
+    "doc-protect": ["Procedural Justice", "Employee Voice", "Locus of Control"],
+    "doc-pressure": ["Procedural Justice", "Power-Dependence", "Psychological Safety"],
+    "doc-private": ["Power-Dependence", "Social Exchange", "Equity Theory", "Agency Problem"],
+    "keep-advocate": ["Ethical Leadership", "Social Exchange", "Leader–Member Exchange"],
+    "keep-credit": ["Social Exchange", "Leader–Member Exchange", "Emotional Labor"],
+    "keep-confess": ["Power-Dependence", "Social Exchange", "Ethical Leadership", "Psychological Safety"]
   },
   "endings": {
     "ending-true-finale": {

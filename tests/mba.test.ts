@@ -51,7 +51,8 @@ describe('MBA Organizational Debrief：計算層', () => {
       expect(result!.dimensions).toHaveLength(6);
       expect(result!.choiceTexts).toHaveLength(5);
       expect(result!.causalChains.length).toBeGreaterThanOrEqual(1);
-      expect(result!.theories.length).toBeGreaterThanOrEqual(3);
+      expect(result!.theories).toHaveLength(3);
+      expect(result!.overallConsequence).toBe(content.mba.endings[endingId]!.unintendedConsequence);
       expect(result!.stakeholders.map((s) => s.key)).toEqual(['lin-yucheng', 'zhou-yuan', 'zeng-yalin', 'company']);
     }
   });
@@ -93,17 +94,28 @@ describe('MBA Organizational Debrief：計算層', () => {
     // doc-protect 與 keep-advocate 在 management_credibility 都是 +1；較晚的 keep-advocate 應勝出。
     const result = computeDebrief(content, 'ending-true-finale', PATHS['ending-true-finale']!)!;
     const credibility = result.dimensions.find((d) => d.key === 'management_credibility')!;
-    expect(credibility.evidence).toBe('提供事實與資源但不索取感謝或聯絡');
+    expect(credibility.evidence).toBe('說明自己做過什麼，也把推薦和資源留下，沒有要求雨澄回報。');
   });
 
-  it('複製摘要不包含內部數值（±數字或原始 C/I/F/A/S/P 欄位名）', () => {
+  it('複製摘要不包含內部數值（±數字或原始 C/I/F/A/S/P 欄位名），並使用正式新標題', () => {
     const content = loadContent();
     const result = computeDebrief(content, 'ending-true-finale', PATHS['ending-true-finale']!)!;
     const summary = formatDebriefSummary(result);
     expect(summary).not.toMatch(/[+-]\d/);
     for (const key of ['"C"', '"I"', '"F"', '"A"', '"S"', '"P"']) expect(summary).not.toContain(key);
-    expect(summary).toContain('管理路徑');
+    expect(summary).toContain('《最後一次一對一》案例紀錄｜');
+    expect(summary).toContain('本次選擇');
     expect(summary).toContain('組織狀態');
+    expect(summary).toContain('各方結果');
+    expect(summary).toContain('相關的組織行為概念');
+    expect(summary).toContain('對應證據：');
+    expect(summary).toContain('其他可行做法');
+    expect(summary).not.toContain('管理路徑');
+    expect(summary).not.toContain('替代策略');
+    expect(summary).not.toContain('改善：');
+    expect(summary).not.toContain('代價：');
+    // 仍保留五個原始選擇，供使用者做課程反思。
+    for (const text of result.choiceTexts) expect(summary).toContain(text);
   });
 
   it('找不到結局內容時回傳 undefined，不拋例外', () => {
@@ -117,7 +129,7 @@ describe('MBA Organizational Debrief：計算層', () => {
     const result = computeDebrief(content, 'ending-soft-knife', PATHS['ending-soft-knife']!)!;
     const credibility = result.dimensions.find((d) => d.key === 'management_credibility')!;
     expect(credibility.level).toBe('低');
-    expect(credibility.evidence).toBe('把曾經爭取轉成員工應回報的情感帳');
+    expect(credibility.evidence).toBe('把自己曾經爭取的事說成一筆雨澄應該記得的人情。');
   });
 
   it('證據句方向規則：淨零且正負皆有的維度，畫面並列正負兩項證據', () => {
@@ -126,9 +138,10 @@ describe('MBA Organizational Debrief：計算層', () => {
     const majorChoiceIds = ['invite-clear', 'notice-performance', 'answer-deflect', 'doc-protect', 'keep-credit'];
     const result = computeDebrief(content, 'ending-soft-knife', majorChoiceIds)!;
     const info = result.dimensions.find((d) => d.key === 'information_quality')!;
-    expect(info.evidence).toContain('正向行為被另一個選擇抵銷');
-    expect(info.evidence).toContain('事前說明會議性質、HR 在場與準備方式'); // invite-clear：最強正向
-    expect(info.evidence).toContain('把結構性裁撤錯誤歸因到個人表現'); // notice-performance：最強負向
+    expect(info.evidence).toContain('兩個選擇互相抵銷');
+    expect(info.evidence).toContain('會議前先說明要談職務調整，也說雅琳會在場，雨澄至少知道該準備什麼'); // invite-clear：最強正向
+    expect(info.evidence).toContain('明明是職位裁撤，卻先談雨澄的表現，讓她替組織決策背原因'); // notice-performance：最強負向
+    expect(info.evidence).not.toContain('正向行為被另一個選擇抵銷'); // 舊版報表式措辭已撤回
   });
 
   it('END 04 封頂維度的證據必須引用 doc-private／keep-confess，不得引用 keep-advocate 等正向選擇', () => {
@@ -139,7 +152,7 @@ describe('MBA Organizational Debrief：計算層', () => {
       const dimension = result.dimensions.find((d) => d.key === key)!;
       expect(['脆弱', '低'], key).toContain(dimension.level);
       // doc-private 與 keep-confess 皆出現於此路徑，較晚的 keep-confess 應勝出，即使加總數字已經落在「低」。
-      expect(dimension.evidence, key).toBe('在資源依賴尚未解除時要求私人回應');
+      expect(dimension.evidence, key).toBe('推薦、文件和作品核准還沒結束，就要求雨澄回應主管的私人感情。');
     }
   });
 
@@ -152,30 +165,82 @@ describe('MBA Organizational Debrief：計算層', () => {
     const result = computeDebrief(content, 'ending-over-line', majorChoiceIds)!;
     const agency = result.dimensions.find((d) => d.key === 'employee_agency')!;
     expect(agency.level).toBe('脆弱');
-    expect(agency.evidence).toBe('以行政效率要求當場完成收訖');
+    expect(agency.evidence).toBe('用「別漏流程」催她當場簽收，行政方便壓過了審閱空間。');
   });
 
-  it('每個結局都有兩套替代策略，各自都有非空的改善與代價', () => {
+  it('每個結局都有兩套替代策略，各自是一段完整文字（不拆成改善／代價）', () => {
     const content = loadContent();
     for (const [endingId, mainChoices] of Object.entries(PATHS)) {
       const result = computeDebrief(content, endingId, mainChoices)!;
       expect(result.alternatives, endingId).toHaveLength(2);
       for (const alternative of result.alternatives) {
-        expect(alternative.improvement.length, endingId).toBeGreaterThan(0);
-        expect(alternative.cost.length, endingId).toBeGreaterThan(0);
+        expect(alternative.text.length, endingId).toBeGreaterThan(0);
       }
     }
   });
 
-  it('理論鏡頭的每一項都附白話解釋與本路徑的證據句，不是只有英文名詞', () => {
+  it('理論鏡頭固定顯示三個，每一項都附白話解釋與本路徑的證據句，不是只有英文名詞', () => {
     const content = loadContent();
     const result = computeDebrief(content, 'ending-true-finale', PATHS['ending-true-finale']!)!;
-    expect(result.theories.length).toBeGreaterThanOrEqual(3);
+    expect(result.theories).toHaveLength(3);
     for (const theory of result.theories) {
       expect(theory.label.length, theory.name).toBeGreaterThan(0);
       expect(theory.explanation.length, theory.name).toBeGreaterThan(0);
       expect(theory.pathEvidence.length, theory.name).toBeGreaterThan(0);
     }
+  });
+
+  it('理論固定三個，且來自實際選項而非題號整包帶入：doc-pressure 不得帶出 Equity Theory', () => {
+    const content = loadContent();
+    const result = computeDebrief(content, 'ending-soft-knife', PATHS['ending-soft-knife']!)!;
+    expect(result.theories).toHaveLength(3);
+    expect(result.theories.some((t) => t.name === 'Equity Theory')).toBe(false);
+  });
+
+  it('三個理論在有三個以上不同來源可用時，不讓同一個選項包辦全部三個', () => {
+    const content = loadContent();
+    for (const [endingId, mainChoices] of Object.entries(PATHS)) {
+      const result = computeDebrief(content, endingId, mainChoices)!;
+      const evidenceSet = new Set(result.theories.map((t) => t.pathEvidence));
+      expect(evidenceSet.size, endingId).toBeGreaterThan(1);
+    }
+  });
+
+  it('每個理論的證據必須來自真正帶入該理論的選項，不是共用同一決策點的泛用證據', () => {
+    const content = loadContent();
+    const choices = PATHS['ending-over-line']!;
+    const result = computeDebrief(content, 'ending-over-line', choices)!;
+    for (const theory of result.theories) {
+      // 同一理論可能出現在多個選項的清單裡；只要求證據等於其中某一個真正帶得出它的選項的證據，
+      // 不是任意題號（choice1…choice5）的泛用證據。
+      const validEvidence = choices
+        .filter((id) => (content.mba.choiceTheories[id] ?? []).includes(theory.name))
+        .map((id) => content.mba.scores[id]!.evidence);
+      expect(validEvidence.length, theory.name).toBeGreaterThan(0);
+      expect(validEvidence, theory.name).toContain(theory.pathEvidence);
+    }
+  });
+
+  it('結局有辨識度較高的理論時優先納入，TRUE END 不強塞固定名單', () => {
+    const content = loadContent();
+    const overLine = computeDebrief(content, 'ending-over-line', PATHS['ending-over-line']!)!;
+    expect(overLine.theories.some((t) => t.name === 'Power-Dependence')).toBe(true);
+
+    const decent = computeDebrief(content, 'ending-decent', PATHS['ending-decent']!)!;
+    expect(decent.theories.some((t) => t.name === 'Social Exchange' || t.name === 'Procedural Justice')).toBe(true);
+  });
+
+  it('關鍵選擇與後果：每項只有選擇／當下／影響三個欄位，結局後果不重複塞進每一項', () => {
+    const content = loadContent();
+    const result = computeDebrief(content, 'ending-true-finale', PATHS['ending-true-finale']!)!;
+    expect(result.causalChains.length).toBeGreaterThanOrEqual(1);
+    for (const step of result.causalChains) {
+      expect(step.choiceText.length).toBeGreaterThan(0);
+      expect(step.immediate.length).toBeGreaterThan(0);
+      expect(step.impact.length).toBeGreaterThan(0);
+      expect(step.immediate).not.toContain(result.overallConsequence);
+    }
+    expect(result.overallConsequence).toBe(content.mba.endings['ending-true-finale']!.unintendedConsequence);
   });
 
   it('利害關係人的「微光互動／決策層」結果是逐結局撰寫的具體結果，不是整體管理策略摘要', () => {

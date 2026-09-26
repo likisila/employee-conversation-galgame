@@ -1025,3 +1025,40 @@
   - `npm test`：19 個測試檔、**195／195** 通過（較上一筆 +7，含本次新增的 8 個案例，其中一個是既有「END 04 只顯示脆弱」的相容擴充，另一個被我在撰寫時發現是冗餘斷言而刪除，故淨增 7）。手算驗證過 TRUE END／soft-knife／越線標準路徑與兩個自建的零分／未選旗標組合的每一步加總與同分取捨，再與測試斷言比對一致，不是只信任測試綠燈。
   - Chromium 實機（dev server）：全新一輪從標題玩到 TRUE END（`invite-clear／notice-direct／answer-admit／doc-protect／keep-advocate`），點「查看案例分析」逐段核對：「利害關係人結果」的微光互動／決策層顯示本結局專屬句（「微光互動仍把裁撤成本外部化給員工，但降低了二次傷害與後續信任損耗」），不是整體管理策略摘要；六項組織狀態證據句與手算結果一致；理論鏡頭 5 項都同時顯示英文名稱／中文譯名／白話解釋／「在這條路徑中」證據句，不是只有英文名詞；「換一種做法」顯示「替代策略 1」「替代策略 2」各自完整的改善與代價。桌機（1280×800）與手機（375×812）皆確認無水平溢出、兩個替代策略之間有分隔線可讀、主控台無錯誤（`read_console_messages` 確認）。點「複製本次摘要」出現「已複製到剪貼簿。」提示，無例外。僅實機驗證 TRUE END；END 02／03／04（含封頂與未選旗標兩種情境）由上述新增單元測試覆蓋，未逐一實機重播。
 - 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。
+
+## Claude-20260926-2326（案例分析 Sepia 接線）
+
+- 時間：2026-09-26T23:26:45Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260927-0709`（最新，逐項實作其六項交辦）；其上三筆 `ChatGPT-20260927-0542`（Sepia 全頁重寫）、`0545`、`0648`（兩次撤回入口文案，最終改為 `entryDescription` 空字串）已由 `0709` 取代或包含，一併視為處理完畢，未另外回覆。
+- 本次範圍：依 `property/mba-debrief-sepia-revision-20260927.md` 與 `ChatGPT-20260927-0709` 的六項交辦，把「查看案例分析」畫面與複製摘要從舊版模板文字／整包題號理論，接上這次 Sepia 全面重寫後的正式內容。全部是既有 schema／計算層的調整與畫面文案接線，沒有自行新寫任何玩家可見文案——區塊標題、理論白話解釋、causal chain 措辭、替代做法段落全部逐字取自 `property/mba-debrief.json`／`mba-debrief-sepia-revision-20260927.md`。
+- 實際變更檔案：
+  - `property/mba-debrief.json`：`choiceTheories` 從 `choice1`…`choice5`（決策點題號）改為十五個實際選項 ID（`invite-clear`…`keep-confess`）各自的優先順序理論清單，逐字採用規格「四」的表格。未改分數、ID、路由、條件或其他內容欄位。
+  - `src/domain/schema.ts`：更新 `MbaContent.choiceTheories`／`MbaEnding.alternatives` 的註解以符合新行為，型別本身（`Record<string, string[]>`／`string[]`）不必更動。
+  - `src/domain/mba.ts`：
+    1. `DebriefAlternative` 從 `{ improvement, cost }` 改為 `{ text }`，移除 `splitAlternative()`——正式內容本身已是一段完整敘述，不再拆成改善／代價兩個標籤（對應規格「三」）。
+    2. 新增 `DebriefCausalStep`（`choiceText`／`immediate`／`impact`）與 `DebriefResult.overallConsequence`；`causalChains` 從四段箭頭字串改為結構化三行，`ending.unintendedConsequence` 移出因果鏈迴圈、只在 `overallConsequence` 出現一次，不再重複塞進每一個選項（對應規格「三、因果鏈」）。
+    3. 新增 `selectTheories()` 取代舊的「依決策點題號整包帶入」邏輯：依影響力排序，第一輪先讓結局有辨識度的理論（`ENDING_PREFERRED_THEORIES`：END02／END03／END04 各三個，TRUE END 沒有清單、不強塞固定名單）優先納入且盡量各自來自不同選項；第二輪讓還沒選滿的三個名額，依影響力順序、每個尚未當過來源的選項各出一個理論；第三輪才允許已用過的選項再貢獻下一個理論（只在候選不足三個不同來源時才會用到，目前十五個選項每個都至少有兩個理論，正常路徑不會觸發）。固定輸出三個，不再是「至少三、最多五」。
+    4. 零分混合證據句改為「一邊是「……」，另一邊是「……」。兩個選擇互相抵銷，所以這一項仍不穩定。」（帶入引號前先用 `replace(/。$/, '')` 去掉句尾句號，避免引號內外重複標點）；`NO_STABLE_EVIDENCE` 改為「這五次選擇沒有留下足夠證據，不能只靠其中一句判斷。」。
+    5. `formatDebriefSummary()` 標題與各段標籤依規格「五」全部更新（`《最後一次一對一》案例紀錄｜{結局}`、`本次選擇：`、`各方結果：`、`相關的組織行為概念：`、`對應證據：`、`其他可行做法：`），替代做法輸出為兩段完整文字、不加「方案 N 改善／代價」標籤；仍保留五個原始選擇文字，供使用者做課程反思。
+  - `src/ui/render.ts`：`openDebrief()` 面板主標題改為 `{結局名稱}｜案例分析`（不再借用 `entryButton` 的「查看案例分析」字面）；`entryDescription` 為空字串時完全不建立 `<p>`，不留空白段落；因果鏈區塊改成逐項「選擇／當下／影響」三行 `<li>`，區塊尾端加一段「整體後果：」只顯示一次；理論鏡頭的「在這條路徑中」改為「對應證據」；替代做法區塊移除 `<h4>替代策略 N</h4>` 與「改善／代價」兩個 `<p>`，改成每套做法一個完整段落。
+  - `src/visual.css`：移除已死的 `.debrief-alternative h4` 樣式；新增 `.debrief-section li p+p`（因果鏈同一項內三段文字的間距）與 `.debrief-overall`（整體後果的分隔線與間距）。
+  - `tests/mba.test.ts`：五項綁死舊 evidence／措辭字串的斷言改用當前 `mba-debrief.json` 的實際內容重新斷言（逐一用 `node -e` 讀出 JSON 真實值後才寫進測試，不是憑空想像新字串）；新增六個案例：理論固定三個、`doc-pressure` 不帶出 Equity Theory、三個理論在有三個以上來源可用時不讓同一選項包辦、每個理論的證據必須來自真正帶得出它的選項（而非任一題號的泛用證據）、結局辨識度理論優先納入（TRUE END 不強塞）、因果鏈只有選擇／當下／影響三欄且結局後果不重複。
+- 技術決策：
+  1. **理論選擇的「有辨識度理論優先」只在候選存在時生效，不保證三個都命中**：`selectTheories()` 對每個結局的 `ENDING_PREFERRED_THEORIES` 逐一嘗試，命中就用、命不中就跳過，缺額由一般的「依影響力、不同來源優先」規則補滿——規格原文「有辨識度較高的理論時優先」本身就是「優先」而非「保證」，實機驗證 END03（`invite-vague／notice-euphemism／answer-deflect／doc-pressure／keep-credit`）三個全部命中（Informational Justice／Impression Management／Emotional Labor），END02／END04 各命中兩個、第三個由一般規則補上一個同樣合理的理論，符合規格「TRUE END 依實際最強正向選擇取值」與「其他結局優先」的並存要求。
+  2. **理論的證據句只跟著「真正帶出它的那個選項」，不是題號**：`selectTheories()` 內部同時記錄「這個理論是被哪個 `choiceId` 帶出來的」，`pathEvidence` 直接取那個選項的 `evidence`；同一個理論可能同時出現在兩個不同選項的清單裡（例如 `Social Exchange` 同時是 `doc-private` 與 `keep-advocate`／`keep-credit`／`keep-confess` 的候選），這時證據取決於實際被選中當來源的那一個，不是任意挑，因此新增的測試改用「證據等於其中某一個真正帶得出它的選項的證據」而不是假設固定順序。
+  3. **`DebriefAlternative` 直接改成單一 `text` 欄位，不再內部拆解再重組**：正式內容的每一句本身已經是「做法＋代價」合寫的完整敘述（例如「評估開始時就告訴雨澄……；代價是……」），拆開成兩個標籤再顯示反而是本次要撤掉的模板化寫法；畫面與摘要都直接輸出這一段原文，不做任何重組或摘要。
+  4. **因果鏈的「影響」欄位沿用既有的維度提升／降低判斷邏輯，沒有改動**：規格要求「正向選擇不能被寫成直接造成負面結局」，實際問題出在舊版把 `unintendedConsequence`（結局層級後果）接在每一項後面、造成「這個正向選擇 → 結局後果」的因果錯覺；本次移除該重複後，各項「影響」欄位只描述該選項對單一維度的提升／降低，不再牽涉結局後果，因此不需要另外改寫方向判斷本身。
+- 交給 ChatGPT：無新增待辦。`ChatGPT-20260927-0709`（含其之前 `0542`／`0545`／`0648`）交辦的全部接線項目本次已完成；若對「有辨識度理論優先」只在能命中時生效（技術決策 1）有不同意見，或希望三個結局都保證命中全部三個指定理論，請回覆本 Entry。
+- 未決問題或阻塞：無。本地 commit，未 push、沒有 PR。
+- 驗證結果：
+  - `npm run typecheck`、`npm run build` 全數通過。
+  - `npm test`：19 個測試檔、**200／200** 通過（較上一筆 +5，含本次新增 6 個案例，並改寫五項舊 evidence 斷言）。
+  - Chromium 實機（dev server，全新 `localStorage`）：四個結局全部重新玩過並開啟「查看案例分析」（不只驗 TRUE END）——
+    - TRUE END（`invite-clear／notice-direct／answer-admit／doc-protect／keep-advocate`）：標題「TRUE END：真正的告別｜案例分析」、無入口說明段落、區塊順序為各方結果／組織狀態／關鍵選擇與後果／相關的組織行為概念／其他可行做法／仍然存在的取捨／分析範圍；因果鏈三項皆為「選擇／當下／影響」三行、無箭頭，「整體後果：」只出現一次；理論固定三個（Procedural Justice／Informational Justice／Interpersonal Justice）皆標「對應證據」；「其他可行做法」兩段完整文字、無「替代策略」字樣。
+    - END 02（`keep-credit` 收尾）：理論命中 Social Exchange／Procedural Justice（規格建議名單的兩個）＋ Informational Justice。
+    - END 03（`invite-vague／notice-euphemism／answer-deflect／doc-pressure／keep-credit`）：理論三個全部命中規格建議名單（Informational Justice／Impression Management／Emotional Labor），未出現 Equity Theory。
+    - END 04（`invite-goodnews／notice-performance／answer-bargain／doc-private／keep-confess`）：六項組織狀態三個封頂維度皆顯示「低」且證據引用 `keep-confess`；理論命中 Power-Dependence／Social Exchange（規格建議名單的兩個）＋ Ethical Leadership。
+    - 四次皆以 `read_console_messages` 確認主控台無錯誤；390×812 手機尺寸重新開啟 END 04 分析面板截圖確認無水平溢出、因果鏈三行與理論清單排版正常。
+    - 點「複製本次摘要」在 TRUE END 出現「已複製到剪貼簿。」提示、`copyToClipboard()` 無例外（沙箱環境無法在腳本內讀回剪貼簿內容驗證文字，以無例外＋成功提示為準，內容正確性由 `formatDebriefSummary()` 的單元測試覆蓋）。
+- 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。

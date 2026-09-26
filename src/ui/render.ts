@@ -780,11 +780,12 @@ function openDebrief(app: HTMLElement, engine: StoryEngine, content: LoadedConte
       `<li><strong>${escapeHtml(stakeholder.name)}</strong>：${escapeHtml(stakeholder.outcome)}</li>`).join('')}</ul>`),
     section('state', '這次形成的組織狀態', `<div class="debrief-state-layout"><div class="debrief-state-chart">${renderDebriefRadar(result.dimensions)}</div><ul class="debrief-state">${result.dimensions.map((dimension) =>
       `<li><strong>${escapeHtml(dimension.label)}：${escapeHtml(dimension.level)}</strong> — ${escapeHtml(dimension.evidence)}</li>`).join('')}</ul></div>`),
-    section('causalChains', '三條因果鏈', `<ul>${result.causalChains.map((chain) => `<li>${escapeHtml(chain)}</li>`).join('')}</ul>`),
-    section('theories', '理論鏡頭', `<ul>${result.theories.map((theory) =>
-      `<li><strong>${escapeHtml(theory.name)}／${escapeHtml(theory.label)}</strong>：${escapeHtml(theory.explanation)}<br />在這條路徑中：${escapeHtml(theory.pathEvidence)}</li>`).join('')}</ul>`),
-    section('alternative', '換一種做法', result.alternatives.map((alternative, index) =>
-      `<div class="debrief-alternative"><h4>替代策略 ${index + 1}</h4><p>改善：${escapeHtml(alternative.improvement)}</p><p>代價：${escapeHtml(alternative.cost)}</p></div>`).join('')),
+    section('causalChains', '關鍵選擇與後果', `<ul>${result.causalChains.map((step) =>
+      `<li><p>選擇：「${escapeHtml(step.choiceText)}」</p><p>當下：${escapeHtml(step.immediate)}</p><p>影響：${escapeHtml(step.impact)}</p></li>`).join('')}</ul><p class="debrief-overall"><strong>整體後果：</strong>${escapeHtml(result.overallConsequence)}</p>`),
+    section('theories', '相關的組織行為概念', `<ul>${result.theories.map((theory) =>
+      `<li><strong>${escapeHtml(theory.name)}／${escapeHtml(theory.label)}</strong>：${escapeHtml(theory.explanation)}<br />對應證據：${escapeHtml(theory.pathEvidence)}</li>`).join('')}</ul>`),
+    section('alternative', '其他可行做法', result.alternatives.map((alternative) =>
+      `<div class="debrief-alternative"><p>${escapeHtml(alternative.text)}</p></div>`).join('')),
     section('tradeoffs', '沒有單一最佳答案的地方', `<p>${escapeHtml(result.tradeoffsText)}</p>`),
     section('limitations', '案例限制', `<ul>${result.limitations.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`),
   ].join('');
@@ -794,10 +795,13 @@ function openDebrief(app: HTMLElement, engine: StoryEngine, content: LoadedConte
   overlay.setAttribute('role', 'dialog');
   overlay.setAttribute('aria-modal', 'true');
   overlay.setAttribute('aria-label', copy.entryButton);
+  const description = copy.entryDescription.trim()
+    ? `<p class="debrief-description">${escapeHtml(copy.entryDescription)}</p>`
+    : '';
   overlay.innerHTML = `
     <div class="debrief-panel">
-      <h2>${escapeHtml(result.endingTitle)} — ${escapeHtml(copy.entryButton)}</h2>
-      <p class="debrief-description">${escapeHtml(copy.entryDescription)}</p>
+      <h2>${escapeHtml(result.endingTitle)}｜案例分析</h2>
+      ${description}
       ${body}
       <div class="debrief-actions">
         <button type="button" class="secondary-action" id="debrief-copy">${escapeHtml(copy.copyButton)}</button>

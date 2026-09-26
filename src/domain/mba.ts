@@ -50,8 +50,17 @@ export interface DebriefStakeholder {
 }
 
 export interface DebriefAlternative {
-  improvement: string;
-  cost: string;
+  /** 一段完整的做法敘述（做法＋代價合寫成一段），畫面與摘要都不拆成改善／代價兩個標籤。 */
+  text: string;
+}
+
+export interface DebriefCausalStep {
+  /** 玩家當時選的那句選項原文。 */
+  choiceText: string;
+  /** 當下反應：這個選項的路徑證據句。 */
+  immediate: string;
+  /** 影響：這個選項對哪個維度造成的提升／降低。 */
+  impact: string;
 }
 
 export interface DebriefTheory {
@@ -72,7 +81,11 @@ export interface DebriefResult {
   dimensions: DebriefDimension[];
   /** 依雨澄、予安、雅琳、微光互動的順序。 */
   stakeholders: DebriefStakeholder[];
-  causalChains: string[];
+  /** 影響最大的三個決策點，各自組成「選擇／當下／影響」三行。 */
+  causalChains: DebriefCausalStep[];
+  /** 結局層級的後果，只顯示一次，不重複塞進每一個因果鏈項目。 */
+  overallConsequence: string;
+  /** 固定三個，依實際選項而非題號挑選。 */
   theories: DebriefTheory[];
   /** 固定兩套替代策略（見 property/mba-organizational-debrief.md「五」）。 */
   alternatives: DebriefAlternative[];
@@ -102,14 +115,7 @@ function dominantDimension(mba: MbaContent, row: MbaScoreRow): { label: string; 
   return best;
 }
 
-/** 正式內容用「；改善是……，代價是……」或舊式「；代價是……」，兩種分隔都支援。 */
-function splitAlternative(raw: string): DebriefAlternative {
-  const costMarker = raw.includes('，代價是') ? '，代價是' : '；代價是';
-  const [improvement, cost] = raw.split(costMarker);
-  return { improvement: (improvement ?? raw).trim(), cost: (cost ?? '').replace(/。$/, '').trim() };
-}
-
-const NO_STABLE_EVIDENCE = '這條路徑未建立足以穩定此維度的行為證據';
+const NO_STABLE_EVIDENCE = '這五次選擇沒有留下足夠證據，不能只靠其中一句判斷。';
 
 /** 造成 END 04 越線的兩個旗標選項；封頂維度的證據只能引用這兩者，兩者皆出現時取較晚的 `keep-confess`。 */
 const OVER_LINE_FLAG_CHOICES = ['doc-private', 'keep-confess'];
@@ -160,10 +166,83 @@ function resolveDimensionEvidence(rows: readonly DimensionRow[], level: DebriefL
   if (sum === 0 && positives.length > 0 && negatives.length > 0) {
     const bestPositive = pickDirectional(rows, 'positive')!;
     const bestNegative = pickDirectional(rows, 'negative')!;
-    return `正向行為被另一個選擇抵銷：${bestPositive.evidence}；但${bestNegative.evidence}`;
+    const positiveQuote = bestPositive.evidence.replace(/。$/, '');
+    const negativeQuote = bestNegative.evidence.replace(/。$/, '');
+    return `一邊是「${positiveQuote}」，另一邊是「${negativeQuote}」。兩個選擇互相抵銷，所以這一項仍不穩定。`;
   }
   const chosen = pickDirectional(rows, 'negative');
   return chosen ? chosen.evidence : NO_STABLE_EVIDENCE;
+}
+
+interface MagnitudePoint {
+  point: string;
+  choiceId: string | undefined;
+  row: MbaScoreRow | undefined;
+  magnitude: number;
+}
+
+/**
+ * 結局有辨識度較高的理論時優先納入（見 property/mba-debrief-sepia-revision-20260927.md「四」第 3 點）；
+ * TRUE END 沒有清單，依實際三個最強正向選擇取值，不硬塞固定名單。
+ */
+const ENDING_PREFERRED_THEORIES: Record<string, readonly string[]> = {
+  'ending-decent': ['Social Exchange', 'Procedural Justice', 'Leader–Member Exchange'],
+  'ending-soft-knife': ['Informational Justice', 'Impression Management', 'Emotional Labor'],
+  'ending-over-line': ['Power-Dependence', 'Social Exchange', 'Agency Problem'],
+};
+
+/**
+ * 理論鏡頭固定顯示三個，依「property/mba-debrief-sepia-revision-20260927.md」四之 1–4：
+ * 1. 依本路徑影響最大的選項排序。
+ * 2. 每個選項先取表中第一個尚未出現的理論；能從三個不同選項各取一個時，不讓同一選項包辦三個。
+ * 3. 結局有辨識度較高的理論時優先（TRUE END 除外）。
+ * 4. 證據必須引用真正帶入該理論的那個選項，不共用同一決策點的泛用證據。
+ */
+function selectTheories(mba: MbaContent, endingId: string, byMagnitudeDesc: readonly MagnitudePoint[]): DebriefTheory[] {
+  const candidatesFor = (choiceId: string): readonly string[] => mba.choiceTheories[choiceId] ?? [];
+  const toTheory = (name: string, row: MbaScoreRow): DebriefTheory => {
+    const text = mba.theories[name];
+    return { name, label: text?.label ?? name, explanation: text?.explanation ?? '', pathEvidence: row.evidence };
+  };
+
+  const usedSources = new Set<string>();
+  const usedTheories = new Set<string>();
+  const selected: DebriefTheory[] = [];
+
+  const preferred = ENDING_PREFERRED_THEORIES[endingId] ?? [];
+  for (const name of preferred) {
+    if (selected.length >= 3) break;
+    const point = byMagnitudeDesc.find(
+      (p) => p.choiceId && p.row && !usedSources.has(p.choiceId) && candidatesFor(p.choiceId).includes(name),
+    );
+    if (!point || !point.choiceId || !point.row) continue;
+    selected.push(toTheory(name, point.row));
+    usedSources.add(point.choiceId);
+    usedTheories.add(name);
+  }
+
+  // 優先讓三個理論各自來自不同的選項。
+  for (const point of byMagnitudeDesc) {
+    if (selected.length >= 3) break;
+    if (!point.choiceId || !point.row || usedSources.has(point.choiceId)) continue;
+    const name = candidatesFor(point.choiceId).find((candidate) => !usedTheories.has(candidate));
+    if (!name) continue;
+    selected.push(toTheory(name, point.row));
+    usedSources.add(point.choiceId);
+    usedTheories.add(name);
+  }
+
+  // 少數選項理論庫存不足以覆蓋三個不同來源時，允許已用過的選項再貢獻下一個理論。
+  for (const point of byMagnitudeDesc) {
+    if (selected.length >= 3) break;
+    if (!point.choiceId || !point.row) continue;
+    const name = candidatesFor(point.choiceId).find((candidate) => !usedTheories.has(candidate));
+    if (!name) continue;
+    selected.push(toTheory(name, point.row));
+    usedTheories.add(name);
+  }
+
+  return selected;
 }
 
 /**
@@ -213,30 +292,17 @@ export function computeDebrief(content: LoadedContent, endingId: string, majorCh
   });
   const byMagnitudeDesc = [...perPoint].sort((a, b) => b.magnitude - a.magnitude);
 
-  // 三條因果鏈：取影響最大的三個決策點，各自組成「選擇 → 當場反應 → 組織機制 → 延遲後果」。
-  const causalChains = byMagnitudeDesc.slice(0, 3).map(({ choiceId, row }) => {
-    if (!choiceId || !row) return '';
+  // 三個關鍵選擇：取影響最大的三個決策點，各自組成「選擇／當下／影響」三行。結局層級的
+  // 後果不重複塞進每一項，只在 overallConsequence 顯示一次（見 property/mba-debrief-sepia-revision-20260927.md「三、因果鏈」）。
+  const causalChains: DebriefCausalStep[] = byMagnitudeDesc.slice(0, 3).flatMap(({ choiceId, row }) => {
+    if (!choiceId || !row) return [];
     const dominant = dominantDimension(mba, row);
     const direction = dominant && dominant.value < 0 ? '降低' : '提升';
-    const mechanism = dominant ? `${dominant.label}${direction}` : '';
-    return `${findChoiceText(content, choiceId)} → ${row.evidence} → ${mechanism} → ${ending.unintendedConsequence}`;
-  }).filter((chain) => chain.length > 0);
+    const impact = dominant ? `${dominant.label}${direction}` : '';
+    return [{ choiceText: findChoiceText(content, choiceId), immediate: row.evidence, impact }];
+  });
 
-  // 理論鏡頭：依影響最大的決策點依序納入整組理論，累積到至少兩個決策點、三個理論後停止，
-  // 最後再截到最多五個——不是固定挑某幾個名詞，也不是整頁列出五個決策點的全部理論。
-  // 每個理論的「在這條路徑中」證據，取自它第一次被納入時所屬的那個決策點的路徑證據句。
-  const theories: DebriefTheory[] = [];
-  let pointsUsed = 0;
-  for (const { point, row } of byMagnitudeDesc) {
-    if (pointsUsed >= 2 && theories.length >= 3) break;
-    if (theories.length >= 5) break;
-    for (const name of mba.choiceTheories[point] ?? []) {
-      if (theories.some((theory) => theory.name === name)) continue;
-      const text = mba.theories[name];
-      theories.push({ name, label: text?.label ?? name, explanation: text?.explanation ?? '', pathEvidence: row?.evidence ?? '' });
-    }
-    pointsUsed += 1;
-  }
+  const theories = selectTheories(mba, endingId, byMagnitudeDesc);
 
   return {
     endingId,
@@ -245,8 +311,9 @@ export function computeDebrief(content: LoadedContent, endingId: string, majorCh
     dimensions,
     stakeholders,
     causalChains,
-    theories: theories.slice(0, 5),
-    alternatives: ending.alternatives.map(splitAlternative),
+    overallConsequence: ending.unintendedConsequence,
+    theories,
+    alternatives: ending.alternatives.map((text) => ({ text })),
     tradeoffsText: mba.copy.tradeoffsText,
     limitations: mba.copy.limitations,
   };
@@ -258,26 +325,26 @@ export function computeDebrief(content: LoadedContent, endingId: string, majorCh
  */
 export function formatDebriefSummary(result: DebriefResult): string {
   const lines: string[] = [];
-  lines.push(`《最後一次一對一》案例摘要 — ${result.endingTitle}`);
+  lines.push(`《最後一次一對一》案例紀錄｜${result.endingTitle}`);
   lines.push('');
-  lines.push('管理路徑：');
+  lines.push('本次選擇：');
   result.choiceTexts.forEach((text, index) => lines.push(`${index + 1}. ${text}`));
   lines.push('');
   lines.push('組織狀態：');
   for (const dimension of result.dimensions) lines.push(`${dimension.label}：${dimension.level}——${dimension.evidence}`);
   lines.push('');
-  lines.push('利害關係人結果：');
+  lines.push('各方結果：');
   for (const stakeholder of result.stakeholders) lines.push(`${stakeholder.name}：${stakeholder.outcome}`);
   lines.push('');
-  lines.push('理論鏡頭：');
+  lines.push('相關的組織行為概念：');
   for (const theory of result.theories) {
-    lines.push(`${theory.name}／${theory.label}：${theory.explanation}在這條路徑中：${theory.pathEvidence}`);
+    lines.push(`${theory.name}／${theory.label}：${theory.explanation}對應證據：${theory.pathEvidence}`);
   }
   lines.push('');
-  lines.push('換一種做法：');
+  lines.push('其他可行做法：');
   result.alternatives.forEach((alternative, index) => {
-    lines.push(`方案 ${index + 1} 改善：${alternative.improvement}`);
-    lines.push(`方案 ${index + 1} 代價：${alternative.cost}`);
+    if (index > 0) lines.push('');
+    lines.push(alternative.text);
   });
   return lines.join('\n');
 }

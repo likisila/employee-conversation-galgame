@@ -172,8 +172,9 @@
 .debrief-radar-dot{fill:var(--teal)}
 .debrief-radar-label{fill:var(--paper-dim,rgba(240,240,240,.75));font-size:12px}
 .debrief-alternative+.debrief-alternative{margin-top:.7rem;padding-top:.7rem;border-top:1px dashed rgba(255,255,255,.14)}
-.debrief-alternative h4{margin:0 0 .3rem;color:var(--teal);font-size:.78rem;font-weight:700;letter-spacing:.06em}
 .debrief-section li strong{color:var(--teal)}
+.debrief-section li p+p{margin-top:.3rem}
+.debrief-overall{margin:.6rem 0 0;padding-top:.6rem;border-top:1px dashed rgba(255,255,255,.14)}
 .debrief-actions{display:flex;flex-wrap:wrap;gap:.6rem}
 .debrief-actions .secondary-action{flex:1;min-width:9rem}
 .debrief-copied{margin:0;color:var(--teal);font-size:.82rem}

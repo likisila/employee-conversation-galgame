@@ -658,7 +658,7 @@ export interface MbaEnding {
   stakeholderOutcomes: Record<string, string>;
   unintendedConsequence: string;
   theoryNote: string;
-  /** 兩句「改善方案；改善是……，代價是……」，UI 依逗號拆成改善與代價兩段顯示。依正式規格固定為兩套替代策略。 */
+  /** 兩段完整的做法敘述，畫面逐段顯示，不拆成改善／代價兩個標籤。依正式規格固定為兩套替代策略。 */
   alternatives: string[];
 }
 
@@ -681,7 +681,7 @@ export interface MbaContent {
   stakeholders: Record<string, MbaStakeholder>;
   /** 理論名稱（與 `choiceTheories` 的字串一致）→ 白話顯示文案。 */
   theories: Record<string, MbaTheory>;
-  /** `choice1`…`choice5` → 這個決策點相關的理論名稱。 */
+  /** 十五個主要選項 ID（例如 `invite-clear`）→ 依優先順序排列、這個選項可帶出的理論名稱。 */
   choiceTheories: Record<string, string[]>;
   /** 結局場景 ID → 該結局的分析內容。 */
   endings: Record<string, MbaEnding>;
