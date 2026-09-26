@@ -940,3 +940,22 @@
   1. `ChatGPT-20260926-0607` 交給 Claude 的「把 04-A 加回 `property/cutscene-cues.json`」尚未處理（見上方「已讀對方紀錄」），需另外排入後續工作。
   2. 新的 `deploy:cf` 路徑尚未實機跑過完整部署（需要使用者先建立 Cloudflare Token 才能測試），目前只驗證了「缺環境變數時會正確報錯並停止」，未驗證有真實憑證時能成功部署。
 - 驗證結果：`node scripts/deploy-cloudflare.mjs`（未設任何環境變數）正確輸出缺少的三個變數名稱並以 exit code 1 結束，未呼叫 wrangler。`npm install -D wrangler` 成功、`package.json`／`package-lock.json`（已在 `.gitignore`，未納入版控）更新一致。本次未修改任何 runtime 程式、schema、場景或測試，未跑 `npm run typecheck`／`npm test`／`npm run build`（本次未觸及 `src/`／`property/` 內容）。
+
+## Claude-20260926-2132
+
+- 時間：2026-09-26T13:32:50Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260926-0525`／`0555`／`0607`；另讀到同一 repo 有另一個 Claude session 留下的 `Claude-20260926-0633`（落實三份 ChatGPT 規格：對話分拍、感情線 setup/payoff、MBA Debrief）與 `Claude-20260926-0641`（新增 `npm run deploy:cf` 的 Cloudflare 直接部署工具，同時明確記錄「04-A 加回 storyboard」尚未處理）。本次的兩項工作與這兩筆不衝突，其中一項正好是接手 `Claude-20260926-0641` 留下的未決事項。
+- 本次範圍：
+  1. 使用者回報 s2-invite 的草稿打字／刪除特效（`kind: "thought"` 帶 `drafts`）演完後，還會停在一頁靜態複述文字上等玩家再點一次才能繼續，要求把這頁拿掉、只留打字／刪除的動畫本身。
+  2. `ChatGPT-20260926-0607` 已修正 `04-A`（看錶手腕姿勢）並通過驗收，交辦 Claude 把它加回 `boundary-question` 的分鏡輪替；`Claude-20260926-0641` 記錄了這項待辦但尚未處理，本次接手完成。
+- 已定案事項：
+  1. `src/ui/render.ts` 的 `startTyping()` 新增 `onSettled` 參數，在特效完全結束（含被 `finish()` 直接跳到結尾）時呼叫一次。呼叫端（`render()`）在 `onSettled` 裡判斷：`plan.send`（訊息）維持原樣，停在送出後的畫面等玩家自己點下一句；非訊息（旁白／內心）的草稿演完後直接呼叫既有的 `advance()`，不再停下來等第二次點擊。動畫本身（`runTyping`／`buildFrames`／逐字打出＋刪除的節奏、`caret-blink` 游標閃爍 CSS）完全沒有改動，只在原本「打完顯示靜態複述文字、等玩家點下一句」的地方多接一步「直接前進」。
+  2. 為了讓 `render()` 裡的 `advance` 閉包能被 `startTyping` 的完成回呼呼叫，把 `shownAt`／`advance` 的宣告從 `startTyping` 呼叫之後搬到之前；`advance()` 本身邏輯完全不變（還在打字時先把這句打完、轉場卡防連點、最後一句轉選項頁、否則 `engine.advance()`），只是搬動宣告順序讓它能被提早引用。
+  3. 目前全專案只有兩處非訊息＋`drafts`：`s2-invite.json`（「游標閃了六次…」）與 `ending-over-line.json`（「我在私訊框打出…又逐字刪掉。」），兩處都受益於這個修正；`kind: "message"`（私訊送出）完全不受影響，送出後仍停在那句等玩家點下一句。
+  4. 玩家在動畫途中點擊：既有的 `advance()` 先呼叫 `activeTyping.finish()` 立即演完，`finish()` 內部同步觸發 `onDone` → `onSettled`，非訊息的情況會在同一次點擊裡接著呼叫一次 `advance()`——等於「點一下＝演完＋前進」，比原本「點一下演完、再點一下前進」少一次點擊，符合使用者要的「這頁被拿掉」。回上一句到這裡仍然看得到靜態複述文字（`typedLines` 已標記，不會重播動畫也不會再次自動前進），玩家刻意回頭複習時不受影響。
+  5. `property/cutscene-cues.json` 的 `boundary-question` storyboard 補回 `04-A`（置於 `04-B`、`04-C` 之前，沿用原 2 秒），與 ChatGPT 驗收的新版 `public/assets/cutscenes/storyboard/04-A.webp`（32988 bytes，手腕與另一手的解剖關係已修正）一致。
+- 交給 ChatGPT：無新增。`00-B`／`03-B` 與 `01_meeting_invitation.mp4`／`02_layoff_notification.mp4` 重製仍是既有待辦，本次未變動。
+- 未決問題或阻塞：無。本地 commit，未 push、沒有 PR。
+- 驗證結果：`npm run typecheck`、`npm test`（19 檔 188／188，含另一個 session 新增的 `narrativeIntegration20260926.test.ts`／`mba.test.ts`，本次改動未影響任何既有斷言）、`npm run build` 全數通過。Chromium 實機（dev server，清空 `localStorage` 全新一輪）：從標題重播到 s2-invite「游標閃了六次…」——直接觀察到打字／刪除動畫完整播放（`data-typing="true"`、`.line-live` 逐字填入、`is-composing` 游標閃爍），動畫結束後**不需要額外點擊**就自動接到下一句「只剩十幾分鐘…」；用「回到上一句」退回去仍能看到該句的靜態文字（正常，供刻意回顧），且能再點一次前進。主控台無錯誤。
+- 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。

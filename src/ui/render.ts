@@ -317,8 +317,13 @@ function renderLine(line: Line, content: LoadedContent, progress: string, typing
 /**
  * 把打字特效接到剛畫好的台詞上：文字寫進 `.line-live`（高度由旁邊的 `.line-sizer` 撐著，
  * 所以打字時對話框不會一行一行變高），打完拿掉 `is-composing`，訊息再加一次 `is-sent` 的送出動作。
+ *
+ * `onSettled` 在特效完全結束後呼叫一次（含被 `finish()` 直接跳到結尾的情況）：
+ * 訊息（`plan.send`）維持原樣，停在送出後的畫面等玩家自己點下一句；旁白／內心的草稿
+ * （`!plan.send`）只是把剛剛已經演過的動作複述成靜態文字，不需要再讓玩家多點一次才能
+ * 跳過這一句重複的內容，因此呼叫端會在這裡自動前進。
  */
-function startTyping(app: HTMLElement, plan: TypingPlan, typingKey: string): void {
+function startTyping(app: HTMLElement, plan: TypingPlan, typingKey: string, onSettled: () => void): void {
   const screen = app.querySelector<HTMLElement>('.game-screen');
   const article = app.querySelector<HTMLElement>('.dialogue .line');
   const live = app.querySelector<HTMLElement>('.dialogue .line-live');
@@ -337,6 +342,7 @@ function startTyping(app: HTMLElement, plan: TypingPlan, typingKey: string): voi
       screen.dataset.typing = 'false';
       typedLines.add(typingKey);
       activeTyping = undefined;
+      onSettled();
     },
   });
 }
@@ -487,8 +493,6 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   // 播報用的 live region 一開始就拿到整句：螢幕閱讀器不必等打字演完。
   announce(atChoiceStep ? choicePrompt : line ? `${nameOf(line, content)}${line.text}` : scene.title ?? '');
 
-  if (typing) startTyping(app, typing, typingKey);
-
   const shownAt = performance.now();
   const advance = (): void => {
     // 還在打字：先把這一句打完，不前進。
@@ -515,6 +519,15 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     render(app, engine, content, hooks);
     hooks.onAdvance?.();
   };
+
+  if (typing) {
+    startTyping(app, typing, typingKey, () => {
+      // 訊息送出後維持原樣，停在這句等玩家自己往下點；旁白／內心的草稿演完就是把剛剛
+      // 已經演過的動作複述成靜態文字，不必再讓玩家多點一次才能跳過這句重複內容。
+      if (typing.send) return;
+      advance();
+    });
+  }
 
   const goBack = (): void => {
     if (!canGoBack) return;
