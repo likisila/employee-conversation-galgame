@@ -1062,3 +1062,22 @@
     - 四次皆以 `read_console_messages` 確認主控台無錯誤；390×812 手機尺寸重新開啟 END 04 分析面板截圖確認無水平溢出、因果鏈三行與理論清單排版正常。
     - 點「複製本次摘要」在 TRUE END 出現「已複製到剪貼簿。」提示、`copyToClipboard()` 無例外（沙箱環境無法在腳本內讀回剪貼簿內容驗證文字，以無例外＋成功提示為準，內容正確性由 `formatDebriefSummary()` 的單元測試覆蓋）。
 - 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。
+
+## Claude-20260927-0000
+
+- 時間：2026-09-27T00:00:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260927-0709`（已由 `Claude-20260926-2326` 逐項處理完畢，無新內容待回覆；本筆未觸及案例分析內容或程式）
+- 本次範圍：使用者要求「setup everything so you can deploy to cloudflare automatically」。既有的 Wrangler 直接部署工具（`scripts/deploy-cloudflare.mjs`、`npm run deploy:cf`、`docs/CLOUDFLARE_DEPLOY.md`，見 `8c3afe7`）先前只有程式與說明，從未完成憑證設定；本次帶使用者完成一次性設定，並記錄使用者「兩種方式都留著」的決定。這是部署工具與文件工作，屬 Claude 職責，未涉及文案或視覺。
+- 實際變更檔案：
+  - `docs/CLOUDFLARE_DEPLOY.md`：新增「Status」段落，記錄本機三個環境變數已於 2026-09-27 設定完成（`CLOUDFLARE_PAGES_PROJECT=sparkling-glitter-6ce0`），並說明 `wrangler whoami` 因 token 只有 Pages:Edit 權限而回報帳號查詢失敗屬預期、不影響實際 `wrangler pages deploy`。
+  - `README.md`：新增「部署（Cloudflare Pages）」一節，並列手動 zip 與直接部署兩條路徑，說明兩者互不影響、都可回滾，且 Claude 不會未經明確要求就執行會上線的部署。
+  - `C:\Users\reneo\Desktop\cloudflare-pages-upload\HOW-TO-UPDATE.md`（專案目錄外，不在此 repo）：更新為「直接部署已設定完成」，並在「Easiest: ask Claude」加入直接部署的請求範例；明示使用者選擇兩種方式並行，手動 zip 流程不會被取代。
+  - `docs/ai-handoff/CLAUDE.md`：本 Entry。
+- 已定案事項：
+  1. 憑證設定由使用者在自己的終端機以 `setx` 完成（Cloudflare API Token 僅 Account → Cloudflare Pages → Edit 權限、Account ID、Pages 專案名稱），Claude 未經手令牌本身，也未要求使用者把 token 貼進對話。
+  2. 使用者確認「keep both」：手動 zip（`cloudflare-pages-upload/`）與 Wrangler 直接部署（`npm run deploy:cf`）並行，既有「每次影響出貨檔案就重建 zip」的持久規則不變，直接部署是額外可用的選項，需使用者或當次對話明確要求才執行（因為會建立新的線上部署，屬公開內容變更）。
+  3. 本次未實際執行 `npm run deploy:cf` 對線上站台部署——使用者表示不需要，只要求把設定與變更記錄清楚；因此三個環境變數是否能成功打出真正的 Cloudflare 部署，仍未經一次端到端驗證，只驗證到 `CLOUDFLARE_ACCOUNT_ID`／`CLOUDFLARE_PAGES_PROJECT`／`CLOUDFLARE_API_TOKEN` 三者在目前 shell 環境可見。
+- 交給 ChatGPT：無新增待辦。本次純部署工具文件，不涉及文案、素材或 UI 視覺。
+- 未決問題或阻塞：真正的 `wrangler pages deploy` 尚未實機跑過一次成功案例（見上「已定案事項 3」）；下次有出貨變更要直接部署時，第一次執行請留意是否有非預期錯誤（例如 token 權限不足以外的問題），並在交接紀錄補上結果。
+- 驗證結果：`npx wrangler whoami` 顯示 not authenticated → 設定 env vars 後顯示帳號查詢失敗但屬預期（token 權限限縮）；三個環境變數在目前 shell 皆讀到非空值，`CLOUDFLARE_PAGES_PROJECT` 讀到 `sparkling-glitter-6ce0`。未跑 `npm run typecheck`／`npm test`／`npm run build`——本次只改動 Markdown 文件（`README.md`、`docs/CLOUDFLARE_DEPLOY.md`、repo 外的 `HOW-TO-UPDATE.md`），未動程式、schema、測試或建置設定；`git diff --check` 通過。依持久記憶規則，純文件變更不需重建 `cloudflare-pages-upload/last-one-on-one-site.zip`。

@@ -61,6 +61,15 @@ npm run build
 
 因為專案站服務在 `/<repo>/` 子路徑，workflow 以 `--base=/<repo>/` build；`property/images.json` 內的 `/assets/...` 邏輯路徑會在載入時透過 `import.meta.env.BASE_URL` 解析成正確 URL（見 `src/data/assetPath.ts`），資料本身不需修改。
 
+## 部署（Cloudflare Pages）
+
+正式上線的網址在 Cloudflare Pages（`sparkling-glitter-6ce0.pages.dev`），採 Direct Upload，沒有接 Git 整合，因此 push 到 GitHub 不會影響它。兩種更新方式並行：
+
+- **手動 zip**：`cloudflare-pages-upload/HOW-TO-UPDATE.md`（在專案目錄外，`C:\Users\reneo\Desktop\cloudflare-pages-upload\`）。Claude 建置後把 `dist/` 打包成 `last-one-on-one-site.zip`，使用者到 Cloudflare 後台的 Deployments 頁面拖入部署。
+- **直接部署**：`docs/CLOUDFLARE_DEPLOY.md`。已於 2026-09-27 設定完成，本機環境變數 `CLOUDFLARE_API_TOKEN`／`CLOUDFLARE_ACCOUNT_ID`／`CLOUDFLARE_PAGES_PROJECT` 已就位，`npm run build && npm run deploy:cf` 會用 Wrangler 直接把 `dist/` 上傳成新的部署，略過 zip 與後台點擊。
+
+兩者都會建立新的 Cloudflare 部署、保留舊版本可回滾；用哪一種由使用者決定，Claude 不會未經明確要求就執行會上線的部署。
+
 ## 過場影片
 
 `property/sora-cutscenes.json`（ChatGPT 維護）是影片內容的唯一來源；`property/cutscene-cues.json`（Claude 維護）把它的敘事層 `trigger` 對到引擎場景 ID，決定哪一段影片掛在哪個場景之前。兩份的檔名與 trigger 是否一致由 `tests/cutscenes.test.ts` 把關。

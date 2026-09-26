@@ -2,7 +2,22 @@
 
 This is the automated alternative to the manual zip-and-drag-in-dashboard flow
 described in `cloudflare-pages-upload/HOW-TO-UPDATE.md`. Nothing here changes
-that manual flow — use whichever you prefer.
+that manual flow — use whichever you prefer; the user has chosen to keep both
+(2026-09-27).
+
+## Status
+
+Configured and working on this machine as of 2026-09-27. `CLOUDFLARE_API_TOKEN`,
+`CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_PAGES_PROJECT` (`sparkling-glitter-6ce0`)
+are set as permanent user environment variables (via `setx`, per the one-time
+setup below), so `npm run deploy:cf` works without any further login step.
+
+Known harmless quirk: `wrangler whoami` fails to auto-list the account
+(`Failed to automatically retrieve account IDs for the logged in user`)
+because the API token is scoped to **Account → Cloudflare Pages → Edit** only,
+which doesn't include account-listing permission. This does not affect
+`wrangler pages deploy` — it reads `CLOUDFLARE_ACCOUNT_ID` directly and never
+calls the account-listing endpoint. Ignore that error from `whoami`.
 
 ## One-time setup
 
