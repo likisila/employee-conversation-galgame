@@ -439,3 +439,32 @@
 - 交給 Claude 的明確行動：renderer 遇到空的 `entryDescription` 時不要建立該 `<p>`；完整移除入口說明區塊，不留空白，也不得在程式內補預設引導句。其餘接線仍依 `ChatGPT-20260927-0542`。
 - 未決問題或阻塞：內容與正式文件已完成；畫面目前仍由 renderer 無條件建立入口段落，需 Claude 完成上述小幅 UX 接線後才算實機完整移除。
 - 驗證結果：`property/mba-debrief.json` 可正常解析；`property`、`src`、`tests` 搜尋確認被撤回的完整入口句已不存在，只有 Sepia 診斷文件保留縮寫反例；`git diff --check` 通過。本次未改分數、理論、路由或 schema，因此不重跑 typecheck／build；既有五項舊 evidence 測試狀態不變。
+
+## ChatGPT-20260927-0709
+
+- 時間：2026-09-26T23:09:15Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄（最新仍為 `Claude-20260926-1450`）。
+- 本次範圍：使用者指出不能只修被點名的入口句，必須把「查看案例分析」整頁當成同一個文本重新 playthrough 與 Sepia 審查。正常走到四個結局並逐一開啟分析頁；檢查入口、區塊標題、各方結果、六項狀態、三條因果鏈、理論、替代做法、取捨、限制與複製摘要。
+- 實際變更檔案：
+  - `property/mba-debrief.json`：七個畫面標題改成中性 case memo 欄名；重寫十七個理論說明、共同取捨、分析範圍與八個可行做法；入口仍為空字串。未改分數、ID、路由、條件或 schema。
+  - `property/mba-debrief-sepia-revision-20260927.md`：補入全頁缺陷清單，撤回「套回你剛才的選擇」「做法一／二」「它能改變／要付出的代價」等仍有講師／模板感的前版方案；定稿新的關鍵選擇、理論證據、替代做法與複製摘要格式。
+  - `property/mba-organizational-debrief.md`：刪除重複且已過時的十七理論逐字表，明定玩家文案只以 JSON 為準；更新七個區塊與關鍵選擇格式。
+  - `property/ob-playthrough-review-20260926.md`：新增 2026-09-27 四結局全頁重跑紀錄、實測路徑、問題與待接線項目。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 本輪實測路徑：TRUE END `invite-clear`／`notice-direct`／`answer-admit`／`doc-protect`／`keep-advocate`；END 02 `invite-clear`／`notice-euphemism`／`answer-deflect`／`doc-protect`／`keep-advocate`；END 03 `invite-clear`／`notice-euphemism`／`answer-bargain`／`doc-protect`／`keep-advocate`；END 04 `invite-clear`／`notice-direct`／`answer-admit`／`doc-protect`／`keep-confess`。
+- 已定案事項：
+  1. 分析頁採 case memo，不採分析者與玩家對話。正式區塊為「各方結果／組織狀態／關鍵選擇與後果／相關的組織行為概念／其他可行做法／仍然存在的取捨／分析範圍」。
+  2. 理論說明從本案角色與權力處境開始；英文理論名只作課程索引。固定三個理論，每個只接真正對應的選項證據，標籤為「對應證據」。
+  3. 三個關鍵選擇各自只寫「選擇／當下／影響」。`ending.unintendedConsequence` 是結局層級資料，只顯示一次；不得再把同一句負面後果接到正向選擇後面。
+  4. 兩個可行做法各是一個完整段落，不顯示「替代策略 N／改善／代價」的成對模板。
+  5. 共同取捨必須明示為案例邊界，不假裝是依玩家路徑生成；分析範圍合併為兩點，不為湊三點拆句。
+- 交給 Claude 的明確行動：
+  1. 不渲染空的 `entryDescription`，不留空白區塊。
+  2. 依修訂文件把主標題、零分證據、理論證據標籤與複製摘要改成中性 case memo 文案。
+  3. 把 `choiceTheories` 改為十五個 choice ID 映射並固定顯示三個；TRUE END／END 02 的 `doc-protect` 不得帶出 Equity Theory。
+  4. 重做關鍵選擇呈現：移除箭頭，結局整體後果只出現一次；正向選擇不得被寫成造成 END 03／END 04 的原因。
+  5. 兩個替代做法以完整段落呈現，不顯示編號小標及「改善／代價」標籤。
+  6. 更新五個綁死舊 evidence 的測試，並補理論配對、固定三理論、整體後果只一次、正向選擇不錯誤歸因、替代做法無模板標籤的測試；完成後用本 Entry 的四條路徑重跑桌機與 390×812。
+- 未決問題或阻塞：內容端全頁重寫已完成；現行 runtime 仍有舊的箭頭因果鏈、五理論整包映射、「在這條路徑中」與「替代策略／改善／代價」硬編碼。Claude 接線前不能宣稱最後評估頁完成。
+- 驗證結果：JSON 解析、`git diff --check`、typecheck、production build 通過。測試 190／195 通過；五項失敗仍全是 `tests/mba.test.ts` 綁死重寫前 evidence 逐字內容，無新增失敗。Chromium 實機重跑四結局；內容修改後再載入 END 03，確認新標題、十七理論新文案、取捨與兩點分析範圍已進入 runtime，並確認其餘結構性問題仍待 Claude 接線。
