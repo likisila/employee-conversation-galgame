@@ -781,8 +781,10 @@ function openDebrief(app: HTMLElement, engine: StoryEngine, content: LoadedConte
     section('state', '這次形成的組織狀態', `<div class="debrief-state-layout"><div class="debrief-state-chart">${renderDebriefRadar(result.dimensions)}</div><ul class="debrief-state">${result.dimensions.map((dimension) =>
       `<li><strong>${escapeHtml(dimension.label)}：${escapeHtml(dimension.level)}</strong> — ${escapeHtml(dimension.evidence)}</li>`).join('')}</ul></div>`),
     section('causalChains', '三條因果鏈', `<ul>${result.causalChains.map((chain) => `<li>${escapeHtml(chain)}</li>`).join('')}</ul>`),
-    section('theories', '理論鏡頭', `<p>${escapeHtml(result.theories.join('、'))}</p>`),
-    section('alternative', '換一種做法', `<p>改善：${escapeHtml(result.alternative.improvement)}</p><p>代價：${escapeHtml(result.alternative.cost)}</p>`),
+    section('theories', '理論鏡頭', `<ul>${result.theories.map((theory) =>
+      `<li><strong>${escapeHtml(theory.name)}／${escapeHtml(theory.label)}</strong>：${escapeHtml(theory.explanation)}<br />在這條路徑中：${escapeHtml(theory.pathEvidence)}</li>`).join('')}</ul>`),
+    section('alternative', '換一種做法', result.alternatives.map((alternative, index) =>
+      `<div class="debrief-alternative"><h4>替代策略 ${index + 1}</h4><p>改善：${escapeHtml(alternative.improvement)}</p><p>代價：${escapeHtml(alternative.cost)}</p></div>`).join('')),
     section('tradeoffs', '沒有單一最佳答案的地方', `<p>${escapeHtml(result.tradeoffsText)}</p>`),
     section('limitations', '案例限制', `<ul>${result.limitations.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`),
   ].join('');

@@ -54,6 +54,16 @@ export interface DebriefAlternative {
   cost: string;
 }
 
+export interface DebriefTheory {
+  /** 內容資料裡的理論鍵名，例如 `Informational Justice`（英文，供測試與去重比對）。 */
+  name: string;
+  /** 中文譯名，例如「資訊公平」。 */
+  label: string;
+  explanation: string;
+  /** 「在這條路徑中」引用的那個決策點的路徑證據。 */
+  pathEvidence: string;
+}
+
 export interface DebriefResult {
   endingId: string;
   endingTitle: string;
@@ -63,8 +73,9 @@ export interface DebriefResult {
   /** 依雨澄、予安、雅琳、微光互動的順序。 */
   stakeholders: DebriefStakeholder[];
   causalChains: string[];
-  theories: string[];
-  alternative: DebriefAlternative;
+  theories: DebriefTheory[];
+  /** 固定兩套替代策略（見 property/mba-organizational-debrief.md「五」）。 */
+  alternatives: DebriefAlternative[];
   tradeoffsText: string;
   limitations: string[];
 }
@@ -91,9 +102,68 @@ function dominantDimension(mba: MbaContent, row: MbaScoreRow): { label: string; 
   return best;
 }
 
+/** 正式內容用「；改善是……，代價是……」或舊式「；代價是……」，兩種分隔都支援。 */
 function splitAlternative(raw: string): DebriefAlternative {
-  const [improvement, cost] = raw.split('；代價是');
-  return { improvement: (improvement ?? raw).trim(), cost: (cost ?? '').trim() };
+  const costMarker = raw.includes('，代價是') ? '，代價是' : '；代價是';
+  const [improvement, cost] = raw.split(costMarker);
+  return { improvement: (improvement ?? raw).trim(), cost: (cost ?? '').replace(/。$/, '').trim() };
+}
+
+const NO_STABLE_EVIDENCE = '這條路徑未建立足以穩定此維度的行為證據';
+
+/** 造成 END 04 越線的兩個旗標選項；封頂維度的證據只能引用這兩者，兩者皆出現時取較晚的 `keep-confess`。 */
+const OVER_LINE_FLAG_CHOICES = ['doc-private', 'keep-confess'];
+
+interface DimensionRow {
+  choiceId: string;
+  value: number;
+  evidence: string;
+}
+
+/** 依方向（正／負）挑影響最大的一筆；同分時取較晚（陣列中較後面）的選擇，呈現 delayed consequence。 */
+function pickDirectional(rows: readonly DimensionRow[], direction: 'positive' | 'negative'): DimensionRow | undefined {
+  let best: DimensionRow | undefined;
+  for (const row of rows) {
+    if (direction === 'positive' ? row.value <= 0 : row.value >= 0) continue;
+    if (!best || Math.abs(row.value) >= Math.abs(best.value)) best = row;
+  }
+  return best;
+}
+
+/**
+ * 依「證據句方向規則」（property/mba-organizational-debrief.md「二、證據句方向規則」）決定一個維度
+ * 顯示的等級與對應證據文字：
+ * 1. 高／中只取正向證據、脆弱／低只取負向證據，同分取較晚的選擇。
+ * 2. END 04 的三個封頂維度（不論這次加總數字原本是否已經落在脆弱／低，只要是這三個維度且結局是
+ *    越線）一律優先引用造成越線的 `doc-private`／`keep-confess`（較晚者優先），不得引用
+ *    `keep-advocate` 等正向選擇——但越線也可能單純由 boundary 累計觸發、未選這兩項，此時仍要有
+ *    負向證據可用，因此在兩者皆不存在時退回一般的負向證據挑選，而不是顯示「查無證據」。
+ * 3. 分數為零且正負皆有：不得用單一正向句解釋「脆弱」，並列一正一負兩項證據。
+ * 4. 該方向完全沒有非零選項時，顯示「查無穩定證據」，不借用不相關選項。
+ */
+function resolveDimensionEvidence(rows: readonly DimensionRow[], level: DebriefLevel, sum: number, isOverLineSpecialDimension: boolean): string {
+  if (isOverLineSpecialDimension) {
+    const flagRows = rows.filter((row) => OVER_LINE_FLAG_CHOICES.includes(row.choiceId));
+    // rows 依 choice1…choice5 順序排列，OVER_LINE_FLAG_CHOICES 內較晚出現的（keep-confess）自然排在陣列後面。
+    const chosen = flagRows[flagRows.length - 1];
+    if (chosen) return chosen.evidence;
+    // 越線由 boundary 累計觸發、未選 doc-private／keep-confess：退回一般負向證據，仍不得引用正向選擇。
+    const fallback = pickDirectional(rows, 'negative');
+    return fallback ? fallback.evidence : NO_STABLE_EVIDENCE;
+  }
+  if (level === '高' || level === '中') {
+    const chosen = pickDirectional(rows, 'positive');
+    return chosen ? chosen.evidence : NO_STABLE_EVIDENCE;
+  }
+  const positives = rows.filter((row) => row.value > 0);
+  const negatives = rows.filter((row) => row.value < 0);
+  if (sum === 0 && positives.length > 0 && negatives.length > 0) {
+    const bestPositive = pickDirectional(rows, 'positive')!;
+    const bestNegative = pickDirectional(rows, 'negative')!;
+    return `正向行為被另一個選擇抵銷：${bestPositive.evidence}；但${bestNegative.evidence}`;
+  }
+  const chosen = pickDirectional(rows, 'negative');
+  return chosen ? chosen.evidence : NO_STABLE_EVIDENCE;
 }
 
 /**
@@ -107,26 +177,19 @@ export function computeDebrief(content: LoadedContent, endingId: string, majorCh
   if (!ending) return undefined;
 
   const dimensions: DebriefDimension[] = Object.entries(mba.dimensions).map(([key, dim]) => {
+    const rows: DimensionRow[] = [];
     let sum = 0;
-    let bestChoiceId: string | undefined;
-    let bestAbs = -1;
     for (const choiceId of majorChoiceIds) {
       const row = mba.scores[choiceId];
       if (!row) continue;
       const value = row[dim.scoreKey];
       sum += value;
-      const abs = Math.abs(value);
-      // >= 而非 >：同分時取較晚（陣列中較後面）的選擇，呈現 delayed consequence。
-      if (abs >= bestAbs) {
-        bestAbs = abs;
-        bestChoiceId = choiceId;
-      }
+      rows.push({ choiceId, value, evidence: row.evidence });
     }
     let level = levelForSum(sum);
-    if (endingId === 'ending-over-line' && CLAMPED_TO_FRAGILE_ON_OVER_LINE.has(key) && LEVEL_RANK[level] > LEVEL_RANK['脆弱']) {
-      level = '脆弱';
-    }
-    const evidence = bestChoiceId ? mba.scores[bestChoiceId]!.evidence : '';
+    const isOverLineSpecialDimension = endingId === 'ending-over-line' && CLAMPED_TO_FRAGILE_ON_OVER_LINE.has(key);
+    if (isOverLineSpecialDimension && LEVEL_RANK[level] > LEVEL_RANK['脆弱']) level = '脆弱';
+    const evidence = resolveDimensionEvidence(rows, level, sum, isOverLineSpecialDimension);
     return { key, label: dim.label, level, evidence };
   });
 
@@ -134,8 +197,8 @@ export function computeDebrief(content: LoadedContent, endingId: string, majorCh
     { key: 'lin-yucheng', outcome: ending.stakeholderOutcomes['lin-yucheng'] ?? '' },
     { key: 'zhou-yuan', outcome: ending.stakeholderOutcomes['zhou-yuan'] ?? '' },
     { key: 'zeng-yalin', outcome: ending.stakeholderOutcomes['zeng-yalin'] ?? '' },
-    // 微光互動沒有逐結局撰寫的結果句；管理策略本身就是公司／決策層這一段的視角，直接沿用。
-    { key: 'company', outcome: ending.strategy },
+    // 微光互動現在有逐結局撰寫的具體結果句（見 mba-debrief.json），不再借用整體管理策略摘要。
+    { key: 'company', outcome: ending.stakeholderOutcomes['company'] ?? ending.strategy },
   ];
   const stakeholders: DebriefStakeholder[] = stakeholderOrder.map(({ key, outcome }) => ({
     key,
@@ -161,13 +224,16 @@ export function computeDebrief(content: LoadedContent, endingId: string, majorCh
 
   // 理論鏡頭：依影響最大的決策點依序納入整組理論，累積到至少兩個決策點、三個理論後停止，
   // 最後再截到最多五個——不是固定挑某幾個名詞，也不是整頁列出五個決策點的全部理論。
-  const theories: string[] = [];
+  // 每個理論的「在這條路徑中」證據，取自它第一次被納入時所屬的那個決策點的路徑證據句。
+  const theories: DebriefTheory[] = [];
   let pointsUsed = 0;
-  for (const { point } of byMagnitudeDesc) {
+  for (const { point, row } of byMagnitudeDesc) {
     if (pointsUsed >= 2 && theories.length >= 3) break;
     if (theories.length >= 5) break;
-    for (const theory of mba.choiceTheories[point] ?? []) {
-      if (!theories.includes(theory)) theories.push(theory);
+    for (const name of mba.choiceTheories[point] ?? []) {
+      if (theories.some((theory) => theory.name === name)) continue;
+      const text = mba.theories[name];
+      theories.push({ name, label: text?.label ?? name, explanation: text?.explanation ?? '', pathEvidence: row?.evidence ?? '' });
     }
     pointsUsed += 1;
   }
@@ -180,7 +246,7 @@ export function computeDebrief(content: LoadedContent, endingId: string, majorCh
     stakeholders,
     causalChains,
     theories: theories.slice(0, 5),
-    alternative: splitAlternative(ending.alternative),
+    alternatives: ending.alternatives.map(splitAlternative),
     tradeoffsText: mba.copy.tradeoffsText,
     limitations: mba.copy.limitations,
   };
@@ -204,10 +270,14 @@ export function formatDebriefSummary(result: DebriefResult): string {
   for (const stakeholder of result.stakeholders) lines.push(`${stakeholder.name}：${stakeholder.outcome}`);
   lines.push('');
   lines.push('理論鏡頭：');
-  lines.push(result.theories.join('、'));
+  for (const theory of result.theories) {
+    lines.push(`${theory.name}／${theory.label}：${theory.explanation}在這條路徑中：${theory.pathEvidence}`);
+  }
   lines.push('');
   lines.push('換一種做法：');
-  lines.push(`改善：${result.alternative.improvement}`);
-  lines.push(`代價：${result.alternative.cost}`);
+  result.alternatives.forEach((alternative, index) => {
+    lines.push(`方案 ${index + 1} 改善：${alternative.improvement}`);
+    lines.push(`方案 ${index + 1} 代價：${alternative.cost}`);
+  });
   return lines.join('\n');
 }

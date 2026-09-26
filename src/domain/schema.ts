@@ -643,15 +643,23 @@ export interface MbaStakeholder {
   risk: string;
 }
 
+/** 理論鏡頭的白話顯示文案（見 property/mba-organizational-debrief.md「四之一」）。 */
+export interface MbaTheory {
+  /** 中文譯名，例如「資訊公平」。 */
+  label: string;
+  /** 白話解釋，畫面上接在理論名稱後面，不可只顯示英文名詞。 */
+  explanation: string;
+}
+
 export interface MbaEnding {
-  /** 這個結局的管理策略摘要（也當作「微光互動」這個 stakeholder 的結果句）。 */
+  /** 這個結局的管理策略摘要。 */
   strategy: string;
-  /** 角色 ID → 這個結局下的一段結果描述（雨澄／予安／雅琳）。 */
+  /** 角色 ID → 這個結局下的一段結果描述（雨澄／予安／雅琳／微光互動各自的具體結果，非整體策略摘要）。 */
   stakeholderOutcomes: Record<string, string>;
   unintendedConsequence: string;
   theoryNote: string;
-  /** 一句「改善方案；代價是……」，UI 依「；代價是」拆成改善與犧牲兩段顯示。 */
-  alternative: string;
+  /** 兩句「改善方案；改善是……，代價是……」，UI 依逗號拆成改善與代價兩段顯示。依正式規格固定為兩套替代策略。 */
+  alternatives: string[];
 }
 
 export interface MbaCopy {
@@ -671,6 +679,8 @@ export interface MbaContent {
   dimensions: Record<string, MbaDimension>;
   scores: Record<string, MbaScoreRow>;
   stakeholders: Record<string, MbaStakeholder>;
+  /** 理論名稱（與 `choiceTheories` 的字串一致）→ 白話顯示文案。 */
+  theories: Record<string, MbaTheory>;
   /** `choice1`…`choice5` → 這個決策點相關的理論名稱。 */
   choiceTheories: Record<string, string[]>;
   /** 結局場景 ID → 該結局的分析內容。 */
@@ -704,13 +714,21 @@ function parseMbaEnding(raw: unknown, label: string): MbaEnding {
     if (typeof value !== 'string') throw new Error(`${label}.stakeholderOutcomes.${id} 必須是字串`);
     stakeholderOutcomes[id] = value;
   }
+  if (!Array.isArray(raw.alternatives) || raw.alternatives.length === 0 || !raw.alternatives.every((item) => typeof item === 'string')) {
+    throw new Error(`${label}.alternatives 必須是至少一項的字串陣列`);
+  }
   return {
     strategy: stringField(raw, 'strategy'),
     stakeholderOutcomes,
     unintendedConsequence: stringField(raw, 'unintendedConsequence'),
     theoryNote: stringField(raw, 'theoryNote'),
-    alternative: stringField(raw, 'alternative'),
+    alternatives: raw.alternatives,
   };
+}
+
+function parseMbaTheory(raw: unknown, label: string): MbaTheory {
+  if (!isRecord(raw)) throw new Error(`${label} 格式錯誤`);
+  return { label: stringField(raw, 'label'), explanation: stringField(raw, 'explanation') };
 }
 
 export function parseMbaContent(raw: unknown): MbaContent {
@@ -751,9 +769,13 @@ export function parseMbaContent(raw: unknown): MbaContent {
   const stakeholders: Record<string, MbaStakeholder> = {};
   for (const [id, entry] of Object.entries(stakeholdersSource)) stakeholders[id] = parseMbaStakeholder(entry, `mba.stakeholders.${id}`);
 
-  const theoriesSource = isRecord(value.choiceTheories) ? value.choiceTheories : {};
+  const theoriesTextSource = isRecord(value.theories) ? value.theories : {};
+  const theories: Record<string, MbaTheory> = {};
+  for (const [id, entry] of Object.entries(theoriesTextSource)) theories[id] = parseMbaTheory(entry, `mba.theories.${id}`);
+
+  const choiceTheoriesSource = isRecord(value.choiceTheories) ? value.choiceTheories : {};
   const choiceTheories: Record<string, string[]> = {};
-  for (const [id, entry] of Object.entries(theoriesSource)) {
+  for (const [id, entry] of Object.entries(choiceTheoriesSource)) {
     if (!Array.isArray(entry) || !entry.every((item) => typeof item === 'string')) throw new Error(`mba.choiceTheories.${id} 必須是字串陣列`);
     choiceTheories[id] = entry;
   }
@@ -762,5 +784,5 @@ export function parseMbaContent(raw: unknown): MbaContent {
   const endings: Record<string, MbaEnding> = {};
   for (const [id, entry] of Object.entries(endingsSource)) endings[id] = parseMbaEnding(entry, `mba.endings.${id}`);
 
-  return { copy, dimensions, scores, stakeholders, choiceTheories, endings };
+  return { copy, dimensions, scores, stakeholders, theories, choiceTheories, endings };
 }

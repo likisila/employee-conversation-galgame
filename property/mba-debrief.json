@@ -74,12 +74,31 @@
       "risk": "把成本外部化給員工與中階主管，造成信任、留任與聲譽損失"
     }
   },
+  "theories": {
+    "Informational Justice": { "label": "資訊公平", "explanation": "人是否及時得到足以理解、準備與行動的真實資訊。說得委婉不一定更公平；若資訊被延後或包裝，員工就得自行承擔不確定性。" },
+    "Interpersonal Justice": { "label": "人際公平", "explanation": "不利決策發生時，對方是否仍被當成能提問、能拒絕、值得被誠實對待的人。溫和語氣不能抵銷隱瞞或施壓。" },
+    "Procedural Justice": { "label": "程序公平", "explanation": "人是否有一致的規則、提問窗口、審閱時間與留下異議的空間。程序公平不能取消失業，但能限制權力再增加一次傷害。" },
+    "Psychological Contract": { "label": "心理契約", "explanation": "員工從承諾、慣例與主管訊息形成的非書面期待。當公司讓人相信下季仍有位置，之後的裁撤不只失去工作，也構成期待被背離。" },
+    "Uncertainty Management": { "label": "不確定性管理", "explanation": "資訊不足時，人會用細節推測風險。模糊邀請把焦慮與猜測成本轉給資訊較少的一方。" },
+    "Attribution Theory": { "label": "歸因理論", "explanation": "人會追問結果是由個人能力、情境還是組織決策造成。把結構性裁撤說成績效問題，會讓員工把組織選擇誤認為自己的失敗。" },
+    "Impression Management": { "label": "印象管理", "explanation": "管理者可能用話術維持「我是好主管」的形象。當修飾自己的形象比提供可行資訊更重要，情緒成本就會轉給員工。" },
+    "Employee Voice": { "label": "員工發聲", "explanation": "Voice 不只等於推翻決定，也包括提問、拒簽、留下異議與選擇後續窗口。假裝仍可轉圜，不是真正的參與。" },
+    "Locus of Control": { "label": "控制感", "explanation": "人需要知道哪些事情已經決定、哪些仍能選擇。清楚劃分兩者，能在不可逆結果中保留部分主體性。" },
+    "Ethical Leadership": { "label": "倫理領導", "explanation": "主管是否誠實使用權力、承擔自己的角色，並避免用資源或關係交換員工的配合、感謝與情緒回應。" },
+    "Power-Dependence": { "label": "權力與依賴", "explanation": "當推薦、作品核准、文件或收入仍掌握在主管手上，看似自願的接受、沉默或私人回應都帶有退出成本。" },
+    "Equity Theory": { "label": "公平理論", "explanation": "人會比較投入、回報與他人的待遇。私人補償看似補回不公平，卻可能新增一筆無法清楚拒絕的情感債務。" },
+    "Agency Problem": { "label": "代理問題", "explanation": "主管代表組織執行決策，也可能想維護自己的關係與形象。當私人目的混入正式程序，組織責任會變得不清楚。" },
+    "Social Exchange": { "label": "社會交換", "explanation": "幫助、資源與關係容易產生回報期待。權力差距越大，「我為你做過什麼」越可能被體驗為必須回報的帳。" },
+    "Leader–Member Exchange": { "label": "主管—部屬交換", "explanation": "主管與特定部屬的信任和支持可能帶來資源，也可能讓正式決策被解讀為私人承諾或特殊債務。關係品質不能取代一致程序。" },
+    "Emotional Labor": { "label": "情緒勞動", "explanation": "人為了讓互動順利而管理、壓抑或表演情緒。當員工失去工作還要安撫主管，情緒勞動就被轉嫁給權力較低者。" },
+    "Psychological Safety": { "label": "心理安全", "explanation": "人能否提出問題、不同意或沉默，而不用擔心失去資源、遭受報復或必須先照顧主管的感受。" }
+  },
   "choiceTheories": {
     "choice1": ["Informational Justice", "Psychological Contract", "Uncertainty Management"],
-    "choice2": ["Informational／Interpersonal Justice", "Attribution Theory", "Impression Management"],
+    "choice2": ["Informational Justice", "Interpersonal Justice", "Attribution Theory", "Impression Management"],
     "choice3": ["Procedural Justice", "Employee Voice", "Locus of Control", "Ethical Leadership"],
     "choice4": ["Procedural Justice", "Power-Dependence", "Equity Theory", "Agency Problem"],
-    "choice5": ["Social Exchange", "Leader–Member Exchange", "Emotional Labor", "Power and Dependence", "Ethical Leadership"]
+    "choice5": ["Social Exchange", "Leader–Member Exchange", "Emotional Labor", "Power-Dependence", "Ethical Leadership"]
   },
   "endings": {
     "ending-true-finale": {
@@ -87,44 +106,60 @@
       "stakeholderOutcomes": {
         "lin-yucheng": "雨澄保有文件與聯絡主導權",
         "zhou-yuan": "予安承擔但沒有被赦免",
-        "zeng-yalin": "雅琳的程序介入有效"
+        "zeng-yalin": "雅琳的程序介入有效",
+        "company": "微光互動仍把裁撤成本外部化給員工，但降低了二次傷害與後續信任損耗"
       },
       "unintendedConsequence": "清楚與克制仍不能消除失業、延遲告知或關係受損。",
       "theoryNote": "程序公平不能補償不利結果，但能降低二次傷害；當提問、文件、推薦與作品核准不再受主管控制，私人關係才有重新協商的條件。",
-      "alternative": "更早建立裁撤評估期的資訊邊界與工作安排；代價是機密、組織波動與錯誤預警風險。"
+      "alternatives": [
+        "更早建立裁撤評估期的資訊邊界與工作安排；改善是減少錯誤期待與心理契約破裂，代價是機密、組織波動與錯誤預警風險。",
+        "把「說明決策」與「文件／權利窗口」分由主管和雅琳承擔；改善是降低角色衝突與員工同時回應兩種權力的負擔，代價是談話可能顯得分段、冷淡，協調時間也更長。"
+      ]
     },
     "ending-decent": {
       "strategy": "程序大致完整，資訊或關係修復不足；員工只保留正式合作。",
       "stakeholderOutcomes": {
         "lin-yucheng": "雨澄安全離開並取得推薦",
         "zhou-yuan": "予安沒有獲得私人關係",
-        "zeng-yalin": "雅琳成為後續窗口"
+        "zeng-yalin": "雅琳成為後續窗口",
+        "company": "微光互動完成正式程序，卻留下 compliance 而非 trust，未能修復員工認同"
       },
       "unintendedConsequence": "正確程序可能讓管理者誤以為關係也已修復。",
       "theoryNote": "Compliance 不等於 trust；員工配合程序可能只是降低退出成本，不代表接受主管的情感帳或恢復組織認同。",
-      "alternative": "後續只做一次、由員工主導的正式確認；代價是主管必須接受沉默也是答案。"
+      "alternatives": [
+        "後續只做一次、由員工主導的正式確認；改善是讓沉默、拒絕與停止聯絡都成為可行選項，代價是主管必須接受沉默也是答案。",
+        "把推薦、作品核准與其他資源寫成不附帶私人回應的清單，交由雅琳轉交；改善是切斷資源與感謝之間的交換暗示，代價是主管失去親自說明善意的機會，流程也較制式。"
+      ]
     },
     "ending-soft-knife": {
       "strategy": "高度使用善意與道歉，但資訊、責任或界線不夠清楚。",
       "stakeholderOutcomes": {
-        "lin-yucheng": "雨澄改走 HR 窗口",
+        "lin-yucheng": "雨澄改走雅琳的正式窗口",
         "zhou-yuan": "予安仍想用更多文字修復",
-        "zeng-yalin": "雅琳必須阻止非必要私訊"
+        "zeng-yalin": "雅琳必須阻止非必要私訊",
+        "company": "微光互動把說明與情緒處理成本轉給雨澄及程序窗口，延長了原本可以結束的事件"
       },
       "unintendedConsequence": "越想降低衝突，越延長員工處理含糊資訊與主管情緒的時間。",
       "theoryNote": "Interpersonal warmth 不能取代 informational justice；當主管用善意迴避主詞，員工除了處理失業，還要判讀含糊資訊並安撫主管，情緒勞動因此向下轉移。",
-      "alternative": "使用「事實—可選事項—下一步」三段式說明；代價是談話會顯得較冷，也更早暴露不可逆性。"
+      "alternatives": [
+        "使用「事實—可選事項—下一步」三段式說明；改善是讓員工先掌握可行動資訊，代價是談話會顯得較冷，也更早暴露不可逆性。",
+        "明確說完決策後暫停，由雨澄選擇當場提問、稍後書面提問或改由雅琳接手；改善是把 voice 與節奏還給員工，代價是流程時間較難預測，主管也無法在同一場談話中取得情緒收束。"
+      ]
     },
     "ending-over-line": {
       "strategy": "私人補償或情感揭露侵入正式程序，使退出成本與回應壓力升高。",
       "stakeholderOutcomes": {
         "lin-yucheng": "雨澄終止直接聯絡",
         "zeng-yalin": "雅琳接管並留下正式紀錄",
-        "zhou-yuan": "予安失去程序與私人關係的主導權"
+        "zhou-yuan": "予安失去程序與私人關係的主導權",
+        "company": "微光互動必須承擔主管個人化處理造成的治理、信任與聲譽風險"
       },
       "unintendedConsequence": "原本想證明關心的行為，使所有善意都被權力關係污染。",
       "theoryNote": "Social exchange 在高權力差距下可能成為隱性債務；只要推薦、文件或收入仍受主管影響，私人金錢與告白就提高拒絕成本，個人善意不能凌駕制度責任。",
-      "alternative": "正式資源交由制度處理，私人情感等依賴關係結束後再由對方決定是否重啟；代價是不保證仍有表達機會。"
+      "alternatives": [
+        "正式資源交由制度處理，私人情感等依賴關係結束後再由對方決定是否重啟；改善是降低交換壓力與退出成本，代價是不保證仍有表達機會。",
+        "主管立即承認自己把私人需要帶進程序、停止直接聯絡，並把剩餘決定全部交給雅琳；改善是阻止越線繼續擴大並留下可追責的界線，代價是主管不能要求被理解、原諒或當場修復關係。"
+      ]
     }
   }
 }
