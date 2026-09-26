@@ -356,3 +356,31 @@
   - 實機完成 TRUE END、END 02、END 03、END 04，逐一開啟「查看案例分析」並核對六項組織狀態、三條因果鏈、理論鏡頭、替代做法、trade-off 與案例限制。
   - 390×812 實測 END 03：body 390／390、分析面板 375／375，無水平溢出；「複製本次摘要」「返回結局」兩鍵各 148／148，文字完整。瀏覽器 console 無 error／warning。
   - `npm.cmd run typecheck` 通過；`npm.cmd test` 19 檔 188／188、`npm.cmd run build` 通過（測試與建置初次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功）。`git diff --check` 於提交前執行。
+
+## ChatGPT-20260926-2231
+
+- 時間：2026-09-26T14:31:42Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260926-1422`（最新）。其 Debrief 資訊架構、雷達圖及響應式排版已讀；本次不修改 Claude-owned `src/ui/render.ts`／`src/visual.css`，工作樹中的該兩檔既有變更不納入 ChatGPT 提交。
+- 本次範圍：回應使用者指出「應由 ChatGPT 先修正內容，Claude 才能實作」。補齊上一筆 Review 找到但尚未定稿的內容缺口，撤回「讓 Claude 自行補內容」的錯誤順序。
+- 實際變更檔案：
+  - `property/mba-organizational-debrief.md`：新增證據句方向規則、17 個 OB 理論的正式白話顯示文案、路徑理論優先順序、四結局的公司 stakeholder 後果，以及每結局兩套完整替代策略（改善＋代價）；同步擴充 Claude 實作與測試需求。
+  - `property/mba-debrief.json`：在既有 schema 內更新四結局 `theoryNote` 純內容，使其明確說出行為、OB 機制與組織後果；未改 schema、ID、分數、條件或路由。
+  - `property/ob-playthrough-review-20260926.md`：標示原第三節是修正前 runtime 實測，內容缺口已定稿，等待 Claude 接線後重驗。
+  - `property/README.md`：標明上述四類內容以 `mba-organizational-debrief.md` 為唯一正式定稿。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 證據必須與等級同方向；`高／中` 只取正向貢獻，`脆弱／低` 只取負向貢獻。零分混合路徑並列一正一負，不能用單一正向句解釋脆弱。
+  2. END 04 的 agency／psychological safety／process integrity 封頂必須引用 `doc-private` 或 `keep-confess`；不得引用 `keep-advocate`。
+  3. 理論鏡頭正式文案已齊，不可只顯示英文名詞；每項需呈現理論名稱、白話解釋與本路徑證據。
+  4. TRUE END、END 02、END 03、END 04 均已有兩套替代策略，每套都明列改善與代價；Claude 不需也不得自行補寫文案。
+  5. 四個結局的微光互動／決策層結果已定稿，不再以整體 management strategy 冒充公司 stakeholder outcome。
+- 修正上一筆 `ChatGPT-20260926-2225` 的交接：其中「若 Claude 採陣列方案需先交回內容需求」已結案；第二套替代策略與所有正式內容現在已由 ChatGPT 提供。Claude 可直接設計 schema／資料映射並實作。
+- 交給 Claude 的明確行動：
+  1. 依新的證據方向規則調整 `computeDebrief()`，並補零分混合與 END 04 封頂測試。
+  2. 為理論白話文案與「本路徑中」證據設計內容結構及畫面呈現；將四結局現有 `theoryNote` 納入可見分析，不再只列英文名詞。
+  3. 將 `alternative` 調整為可承載兩套策略的資料結構，逐項顯示改善與代價；四結局正式文字已在權威規格定稿。
+  4. 補上微光互動／決策層的 path-specific outcome；不得沿用 `strategy` 當作 stakeholder 結果。
+  5. 完成後重跑四結局與 390×812 行動版，依 `property/ob-playthrough-review-20260926.md` 第四節驗收並回覆本 Entry。
+- 未決問題或阻塞：內容端無缺漏；後續只剩 Claude-owned schema、計算、UX、測試與接線。Claude 回覆前不可宣稱新版最後評估頁已完成。
+- 驗證結果：`property/mba-debrief.json` 可由 PowerShell `ConvertFrom-Json` 正常解析；內容檔 `git diff --check` 通過；`npm.cmd run typecheck`、`npm.cmd test`（19 檔 188／188）、`npm.cmd run build` 全數通過（測試與建置初次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功）。既有未提交 `src/ui/render.ts`、`src/visual.css` 與 `.claude/` 不屬本次變更，未修改、未納入提交。

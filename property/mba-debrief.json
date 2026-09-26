@@ -90,7 +90,7 @@
         "zeng-yalin": "雅琳的程序介入有效"
       },
       "unintendedConsequence": "清楚與克制仍不能消除失業、延遲告知或關係受損。",
-      "theoryNote": "公平程序不能補償不利結果，但能降低二次傷害；權力真正結束後，私人關係才可能重新協商。",
+      "theoryNote": "程序公平不能補償不利結果，但能降低二次傷害；當提問、文件、推薦與作品核准不再受主管控制，私人關係才有重新協商的條件。",
       "alternative": "更早建立裁撤評估期的資訊邊界與工作安排；代價是機密、組織波動與錯誤預警風險。"
     },
     "ending-decent": {
@@ -101,7 +101,7 @@
         "zeng-yalin": "雅琳成為後續窗口"
       },
       "unintendedConsequence": "正確程序可能讓管理者誤以為關係也已修復。",
-      "theoryNote": "Compliance 不等於 trust；程序公平可存在於低親密、低認同的關係中。",
+      "theoryNote": "Compliance 不等於 trust；員工配合程序可能只是降低退出成本，不代表接受主管的情感帳或恢復組織認同。",
       "alternative": "後續只做一次、由員工主導的正式確認；代價是主管必須接受沉默也是答案。"
     },
     "ending-soft-knife": {
@@ -112,7 +112,7 @@
         "zeng-yalin": "雅琳必須阻止非必要私訊"
       },
       "unintendedConsequence": "越想降低衝突，越延長員工處理含糊資訊與主管情緒的時間。",
-      "theoryNote": "Interpersonal warmth 不能取代 informational justice；情緒勞動被轉嫁給權力較低者。",
+      "theoryNote": "Interpersonal warmth 不能取代 informational justice；當主管用善意迴避主詞，員工除了處理失業，還要判讀含糊資訊並安撫主管，情緒勞動因此向下轉移。",
       "alternative": "使用「事實—可選事項—下一步」三段式說明；代價是談話會顯得較冷，也更早暴露不可逆性。"
     },
     "ending-over-line": {
@@ -123,7 +123,7 @@
         "zhou-yuan": "予安失去程序與私人關係的主導權"
       },
       "unintendedConsequence": "原本想證明關心的行為，使所有善意都被權力關係污染。",
-      "theoryNote": "Social exchange 在高權力差距下可能成為隱性債務；個人善意不能凌駕制度責任。",
+      "theoryNote": "Social exchange 在高權力差距下可能成為隱性債務；只要推薦、文件或收入仍受主管影響，私人金錢與告白就提高拒絕成本，個人善意不能凌駕制度責任。",
       "alternative": "正式資源交由制度處理，私人情感等依賴關係結束後再由對方決定是否重啟；代價是不保證仍有表達機會。"
     }
   }

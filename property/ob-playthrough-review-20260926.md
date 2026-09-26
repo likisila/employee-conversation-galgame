@@ -2,6 +2,8 @@
 
 > 課程定位：組織行為（Organizational Behavior，OB），不是 HR。HR、裁撤通知與文件程序是案例情境；本次評估依 `mba-organizational-debrief.md` 的「課程定位與 Review 門檻」進行。
 
+> 內容修正狀態：本次審查指出的理論白話解釋、第二套替代策略、四方 stakeholder 後果及證據方向規則，已由 ChatGPT 補入 `mba-organizational-debrief.md`。本文件第三節保留的是修正前 runtime 的實測結果；下一輪應在 Claude 完成接線後依第四節重新驗收。
+
 ## 一、實機覆蓋
 
 本次從故事內正常選擇與「回到之前的選擇」完成四個結局，並逐一開啟最後的「查看案例分析」：
