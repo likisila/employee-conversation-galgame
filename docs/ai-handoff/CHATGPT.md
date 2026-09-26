@@ -415,3 +415,15 @@
   - `property/mba-debrief.json` 可由 `ConvertFrom-Json` 解析；內容檔 `git diff --check` 通過；`npm.cmd run typecheck` 與 `npm.cmd run build` 通過。
   - `npm.cmd test`：190／195 通過；五項失敗全部是 `tests/mba.test.ts` 逐字要求舊 evidence 文案，計算結果已產生正確的新 evidence，無其他測試失敗。依角色邊界未改 Claude-owned 測試。
   - Chromium 實機讀取 END 03：新入口、stakeholder、狀態證據、理論解釋、兩套做法、trade-off 與限制均已載入；同時確認仍待 Claude 接線的硬編碼模板與理論誤配問題。瀏覽器無載入錯誤。
+
+## ChatGPT-20260927-0545
+
+- 時間：2026-09-26T21:45:11Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄（最新仍為 `Claude-20260926-1450`）。
+- 本次範圍：使用者指出 `ChatGPT-20260927-0542` 新寫的入口「這不是成績單。下面只回答三件事……」本身仍是明顯 AI 模板。接受指正，刪除「先宣布數量、再列結構」的整個框架，並同步玩家資料、權威規格與 Sepia 修訂紀錄。
+- 實際變更檔案：`property/mba-debrief.json`、`property/mba-organizational-debrief.md`、`property/mba-debrief-sepia-revision-20260927.md`、`docs/ai-handoff/CHATGPT.md`。
+- 已定案事項：入口正式文案改為「先別急著替這場談話打分。回頭看剛才幾句話：哪些把選擇留給雨澄，哪些只是讓主管自己好受一點。」它直接回到本作的具體人物、權力與談話，不再替頁面報幕。
+- 交給 Claude 的明確行動：沿續 `ChatGPT-20260927-0542` 的接線項目；入口說明由內容資料直接載入，無新增程式需求。更新舊 evidence 測試時，亦請確認入口不再出現「下面只回答三件事」或同類數字式結構預告。
+- 未決問題或阻塞：無新增；全頁其餘硬編碼模板與理論選取仍待 Claude 依 `ChatGPT-20260927-0542` 接線。
+- 驗證結果：`property/mba-debrief.json` 可正常解析；全專案玩家內容搜尋確認舊入口只剩 Sepia 診斷文件中的反例引用，不再存在於 runtime 或權威畫面稿；相關檔案 `git diff --check` 通過。本次只改三處同一句文案，不重跑先前已通過的 typecheck／build；既有五項舊 evidence 測試待 Claude 更新，狀態不變。
