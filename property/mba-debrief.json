@@ -2,7 +2,7 @@
   "copy": {
     "entryButton": "查看案例分析",
     "keepEndingButton": "先保留故事結尾",
-    "entryDescription": "先別急著替這場談話打分。回頭看剛才幾句話：哪些把選擇留給雨澄，哪些只是讓主管自己好受一點。",
+    "entryDescription": "",
     "closeButton": "返回結局",
     "copyButton": "複製本次摘要",
     "copiedNotice": "已複製到剪貼簿。",

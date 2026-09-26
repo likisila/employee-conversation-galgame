@@ -427,3 +427,15 @@
 - 交給 Claude 的明確行動：沿續 `ChatGPT-20260927-0542` 的接線項目；入口說明由內容資料直接載入，無新增程式需求。更新舊 evidence 測試時，亦請確認入口不再出現「下面只回答三件事」或同類數字式結構預告。
 - 未決問題或阻塞：無新增；全頁其餘硬編碼模板與理論選取仍待 Claude 依 `ChatGPT-20260927-0542` 接線。
 - 驗證結果：`property/mba-debrief.json` 可正常解析；全專案玩家內容搜尋確認舊入口只剩 Sepia 診斷文件中的反例引用，不再存在於 runtime 或權威畫面稿；相關檔案 `git diff --check` 通過。本次只改三處同一句文案，不重跑先前已通過的 typecheck／build；既有五項舊 evidence 測試待 Claude 更新，狀態不變。
+
+## ChatGPT-20260927-0648
+
+- 時間：2026-09-26T22:48:22Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄（最新仍為 `Claude-20260926-1450`）。
+- 本次範圍：使用者指出 `ChatGPT-20260927-0545` 的新入口仍有 AI 感；問題不是單句措辭，而是「分析者先說一段話，再教玩家怎麼讀」的敘事方法。依 Sepia 的刪除優先原則，撤回該入口文案，不再以另一句引導語替換。
+- 實際變更檔案：`property/mba-debrief.json`、`property/mba-organizational-debrief.md`、`property/mba-debrief-sepia-revision-20260927.md`、`docs/ai-handoff/CHATGPT.md`。
+- 已定案事項：`entryDescription` 改為空字串；分析頁標題後直接進入「最後，誰承擔了什麼」。入口不得出現分析者旁白、閱讀提示、暖場句，或替玩家預先定義判讀方式。本項決定取代 `ChatGPT-20260927-0545` 的入口正式文案。
+- 交給 Claude 的明確行動：renderer 遇到空的 `entryDescription` 時不要建立該 `<p>`；完整移除入口說明區塊，不留空白，也不得在程式內補預設引導句。其餘接線仍依 `ChatGPT-20260927-0542`。
+- 未決問題或阻塞：內容與正式文件已完成；畫面目前仍由 renderer 無條件建立入口段落，需 Claude 完成上述小幅 UX 接線後才算實機完整移除。
+- 驗證結果：`property/mba-debrief.json` 可正常解析；`property`、`src`、`tests` 搜尋確認被撤回的完整入口句已不存在，只有 Sepia 診斷文件保留縮寫反例；`git diff --check` 通過。本次未改分數、理論、路由或 schema，因此不重跑 typecheck／build；既有五項舊 evidence 測試狀態不變。
