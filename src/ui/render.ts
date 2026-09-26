@@ -732,11 +732,12 @@ function renderDebriefRadar(dimensions: readonly DebriefDimension[]): string {
   };
   const size = 200;
   // 標籤用 text-anchor start/end 錨定在軸線端點，字串本身會往錨點外側延伸；
-  // padding 留出這段延伸的空間，避免最長的四、五字標籤在 SVG 視埠邊緣被裁掉。
-  const padding = 34;
+  // padding 留出這段延伸的空間，避免最長的四、五字標籤在 SVG 視埠邊緣被裁掉
+  // （字級加大後，最長的五字標籤需要的延伸空間也跟著變大，padding 一併調高）。
+  const padding = 52;
   const viewBoxSize = size + padding * 2;
   const center = size / 2 + padding;
-  const maxRadius = size / 2 - 30;
+  const maxRadius = size / 2 - 22;
   const count = dimensions.length;
   const angleFor = (index: number): number => (Math.PI * 2 * index) / count - Math.PI / 2;
   const pointFor = (index: number, ratio: number): [number, number] => {
@@ -751,7 +752,7 @@ function renderDebriefRadar(dimensions: readonly DebriefDimension[]): string {
   }).join('');
   const dataPoints = dimensions.map((dimension, index) => pointFor(index, levelValue(dimension.level) / 3));
   const dataPolygon = `<polygon points="${dataPoints.map(([x, y]) => `${x},${y}`).join(' ')}" class="debrief-radar-shape" />`;
-  const dataDots = dataPoints.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.6" class="debrief-radar-dot" />`).join('');
+  const dataDots = dataPoints.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.2" class="debrief-radar-dot" />`).join('');
   const labels = dimensions.map((dimension, index) => {
     const [x, y] = pointFor(index, 1.28);
     const cos = Math.cos(angleFor(index));
