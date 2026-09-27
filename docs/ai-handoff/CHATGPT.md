@@ -707,3 +707,16 @@
 - 交給 Claude 的明確行動：無；等待使用者查看原 Runway task viewer。
 - 未決問題或阻塞：等待使用者 QC 與明確下一步。
 - 驗證結果：start frame SHA-256 `84cef29d78184ddd10fbbeaddb71f86cdd4b10767aa28accd8325f8563dacf61`、1,988,433 bytes；task accepted；未修改 runtime 或影像，未追蹤 `.claude/` 未納入。
+
+## ChatGPT-20260927-2147
+
+- 時間：2026-09-27T13:47:23Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者在 00-B 後明確要求生成 00-C，並再次要求在其確認前不得重試。
+- 本次範圍：只用 `keyframes/current/00-C.png` 提交一個 2.5 秒、16:9、720p、無音訊的單一連續鏡頭；唯一變化是焦點沿既有視線由失焦的藍色文件夾前景移到遠處工作的女性，人物位置、距離與辦公室地理不變。
+- 實際變更檔案：`property/runway-generation-log.md` 新增 00-C candidate 01；`docs/ai-handoff/CHATGPT.md` 新增本 Entry。
+- 生成結果：Runway 接受唯一 task `9ca8cf3c-b63e-4cd9-a155-d19d96f243dd`；提交時背景生成中，扣除 24 credits，餘額 523。沒有 retry／regenerate／variation。
+- 已定案事項：QC 完全由使用者執行。任何 Agent 在使用者明確確認前，不得再次提交 00-C、建立變體、下載升格、接線或部署。本候選是完整 00 段的第三鏡，不是單獨的正式 cutscene。
+- 交給 Claude 的明確行動：無；等待使用者查看原 Runway task viewer。
+- 未決問題或阻塞：等待使用者 QC 與明確下一步。
+- 驗證結果：start frame SHA-256 `20841c56298839283b5f2cb4d13c3593179f3137d4b65fdf060fe51e18f8188e`、2,002,478 bytes；task accepted；未修改 runtime 或影像，未追蹤 `.claude/` 未納入。

@@ -72,3 +72,27 @@ This log records submitted candidates. A submitted or completed task is not an a
 - Required end state: the blue paper folder rests fully flat on the desk, both hands have released it, and the original office composition remains stable.
 - Rejection gates for user reference: folder becomes a tablet/screen/book; paper thickness disappears; hands or identity drift; extra objects or people appear; camera cuts or pushes; any new plot beat.
 - Output URL/local file: available through the original Runway task viewer; not downloaded or promoted while awaiting user QC.
+
+## 00-C candidate 01
+
+- Submitted: `2026-09-27T13:47:23Z`
+- Status: `PENDING USER QC`
+- Task ID: `9ca8cf3c-b63e-4cd9-a155-d19d96f243dd`
+- Shot: `00-C`
+- Candidate: `01`
+- Start frame: `public/assets/cutscenes/keyframes/current/00-C.png`
+- Start-frame SHA-256: `20841c56298839283b5f2cb4d13c3593179f3137d4b65fdf060fe51e18f8188e`
+- Start-frame bytes: `2,002,478`
+- Model: `gen-4.5`
+- Duration: `2.5s`
+- Ratio: `16:9`
+- Resolution: `720p`
+- Generated audio: `false`
+- Credits charged: `24`
+- Credits remaining after submission: `523`
+- Prompt: `Single continuous shot in the exact same illustrated rainy-night office and composition as the start frame. The seated brown-haired man remains still and looks toward the dark-haired woman working at her keyboard in the distance. Focus travels gently along his existing eyeline from the soft out-of-focus blue edge of the paper folder in the foreground to the distant working woman, then holds. Their positions, identities, physical distance, and the office geography remain unchanged. No one looks back, speaks, stands, approaches, touches the folder, receives a notification, enters or leaves; no readable text, new object, camera cut, location change, time jump, or additional plot action appears.`
+- Submission count: exactly one generation task for this candidate. Do not retry, regenerate or create a variation until the user personally checks and explicitly confirms next action.
+- QC status: reserved for the user. ChatGPT must not auto-approve or auto-reject this candidate.
+- Required end state: focus rests on the distant working woman while the seated man, both characters' positions, their distance, and the office composition remain unchanged.
+- Rejection gates for user reference: either character moves into a new action; the woman looks back; the man stands or approaches; the foreground folder becomes clear or changes form; identity/geography drift; camera cut; any new plot beat.
+- Output URL/local file: available through the original Runway task viewer; not downloaded or promoted while awaiting user QC.
