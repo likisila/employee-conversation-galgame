@@ -756,3 +756,19 @@
 - 交給 Claude 的明確行動：無。未來若建立生成 manifest 或 API runner，必須原樣保留 v2.1 的 camera timing／magnitude，不得壓縮回 `slow camera movement` 等模糊字樣。
 - 未決問題或阻塞：現有 00-A／B／C 與合併候選由舊 prompt 生成，仍等待使用者 QC。只有使用者明確要求時才依 v2.1 重生；本次 feedback 本身不構成 retry 授權。
 - 驗證結果：v2.1 與 storyboard 都各列出完整 7 鏡；所有時間段加總符合各鏡 2.0／2.5／3.0 秒；舊 `lateral drift`、`restrained side-follow`、`travels gently`、`moves briefly` 模糊攝影描述已從現行 prompts 移除；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260927-2301
+
+- 時間：2026-09-27T15:01:30Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本輪使用 `screenwriting:sw-scene-craft`，依使用者需求新增可在其他 AI image-to-video 工具使用的關鍵影格延伸 Prompt；沒有呼叫任何生成工具。
+- 本次範圍：建立平台中立 first-frame-to-video 模板，讓 `keyframes/current/` 圖片被當作精確第 0 幀延續，而非由工具重新畫、重新選角或自行加戲；重用 v2.1 的逐鏡 action／camera／end-state 契約。
+- 實際變更檔案：
+  - `property/keyframe-video-extension-prompt-v1.md`（新增）：完整通用 Prompt、字數受限短版、獨立 negative prompt、跨工具設定原則、motion brush 注意事項、7 鏡 current path／duration／規格來源對照與使用前檢查。
+  - `property/runway-video-spec-v2-review.md`：新增跨工具入口，要求其他工具先套 first-frame lock，再填本文件逐鏡 camera contract。
+  - `property/README.md`：新增文件索引。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：跨工具生成仍是一張 keyframe 對應一個 single continuous shot。Prompt 不依賴角色姓名；圖片本身是人物、服裝、道具、空間、光線與畫風的 factual source of truth。工具若強制較長 duration，只能延長 hold，不得新增第二動作、第二 camera move 或新情節。
+- 交給 Claude 的明確行動：無。若未來把 Prompt 暴露到 UI 或其他 runner，必須保留 `FIRST-FRAME LOCK`、`ONE ALLOWED ACTION`、`CAMERA CONTRACT`、`END STATE` 四區，不得只傳動作句。
+- 未決問題或阻塞：無。這是使用者可自行貼到其他工具的文字資產，不構成任何鏡頭的生成授權。
+- 驗證結果：7 個 current PNG 路徑全部存在；完整模板含 first-frame lock／單一動作／量化 camera／末態，另有短版與 negative prompt；文件互鏈成立；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。

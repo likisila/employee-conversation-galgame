@@ -4,6 +4,8 @@
 
 所有起始圖只從穩定路徑 `public/assets/cutscenes/keyframes/current/` 取用；不得直接從 `runway-v2/`、`runway-v3/`、`v4-review/` 或退役索引選圖。同鏡號視覺替換沿用相同檔名，只有鏡號、時點、鏡序、片長契約或劇情設計變更才需要修改整合。
 
+需要在 Runway 以外的 image-to-video 工具使用同一鏡頭時，先套用 [`keyframe-video-extension-prompt-v1.md`](keyframe-video-extension-prompt-v1.md) 的 first-frame lock 通用 Prompt，再填入本文件對應鏡號的 action／camera／end state；不得由其他工具自行重新設計鏡頭。
+
 ## 製作單位
 
 - 一個正式 MP4 對應一個 runtime cue 與一個戲劇目的。
