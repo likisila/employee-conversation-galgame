@@ -582,3 +582,18 @@
 - 交給 Claude 的明確行動：未來 API manifest 必須原樣使用本製作包的 visual descriptors，不把角色 ID／姓名插回 prompt。角色 ID 只可作 provenance metadata。
 - 未決問題或阻塞：與上一筆相同；00-B pilot 等待靜態核准與 Runway 接入，07–09 維持 creative hold。
 - 驗證結果：以 `rg` 確認 Runway 製作包的 prompts 已無三名角色英文姓名或簡稱；`git diff --check` 通過。本次只有文件，不執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-1924
+
+- 時間：2026-09-27T11:24:52Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者要求直接以既有製作包生成一支影片，不重跑審查或其他素材；本次只送出 00-B candidate 01，未生成任何其他鏡頭。
+- 本次範圍：透過已連線的 Runway connector，使用既有 `00-B-v3.png` 與定稿 visual-subject prompt 提交 2 秒、16:9、720p、無音訊的 image-to-video pilot。
+- 實際變更檔案：
+  - `property/runway-generation-log.md`（新增）：保存 task ID、start-frame hash、完整 prompt、model、duration、ratio、resolution、credits 與 QC gates。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 生成結果：Runway 已接受 task `74646b65-3dbe-4349-9be8-94ff0dcb9d14`，提交時狀態 `PENDING`；扣除 24 credits，餘額 595。只建立一個 task，沒有重送。
+- 已定案事項：本候選尚未因「成功提交」而視為內容通過。完成後必須依 `property/runway-video-shot-pack-v1.md` 的 00-B end state 與 rejection gates 做人工 QC；通過前不得改名或接成 `00_final_documents.mp4`。
+- 交給 Claude 的明確行動：目前不需接線或下載；等待 Runway viewer 完成與使用者／ChatGPT QC。若候選通過，再依 task ID 下載並保存正式候選檔及更新 provenance。
+- 未決問題或阻塞：影片仍在背景生成；輸出 URL／本地檔案與 QC 結果尚未取得。
+- 驗證結果：connector 已確認 authenticated；start frame SHA-256 `84cef29d78184ddd10fbbeaddb71f86cdd4b10767aa28accd8325f8563dacf61`、1,988,433 bytes；task accepted。未修改 runtime 或 code，不執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
