@@ -568,3 +568,17 @@
 - 交給 Claude 的明確行動：目前不要讓 runner 接收 07–09。若使用者批准 Runway 接入，manifest 應只先放行 00-B pilot，之後才是 00／02／04／06；必須保存 start-frame hash、完整 prompt、model、duration、task ID、候選序號與 QC 結果。07–09 的 cue 不需立即刪除，但正式 MP4 缺失時維持既有 fallback。
 - 未決問題或阻塞：使用者尚未核准靜態影格與 Runway 付費試跑；07–09 是否保留為有意視覺回看尚待使用者看完舊片後決定。Runway API／runner 仍未實作。
 - 驗證結果：`sora-cutscenes.json` 可正常解析；狀態為 6 `BLOCKED`、1 `TODO`、2 `DEPRECATED`，無 `READY`；本輪可放行 10 鏡所列 start-frame 路徑全部存在；`git diff --check` 通過。本次只有文件／內容清單，不執行程式測試。工作樹未追蹤 `.claude/`、`.wrangler/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-1751
+
+- 時間：2026-09-27T09:51:36Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本次只修正 ChatGPT-owned Runway prompt 內容，不修改 runtime、cue、schema 或 runner。
+- 本次範圍：使用者正確指出 Runway 不知道專案角色姓名。全面移除 18 鏡 Runway prompt 內的 Lin Yucheng／Zeng Yalin／Zhou Yuan 名稱，改用起始圖可直接辨識的位置、外觀與道具描述。
+- 實際變更檔案：
+  - `property/runway-video-shot-pack-v1.md`：新增「prompt 不使用角色姓名」規則；10 鏡可放行 prompts 與 8 鏡暫停草案全部改為視覺指稱。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：角色身份由核准的 image-to-video start frame 鎖定；prompt 只稱呼 `the standing light-haired woman holding the blue folder`、`the seated brown-haired man`、`the dark-haired woman at the keyboard` 等畫面內可定位主體，不期待模型理解專案人名。
+- 交給 Claude 的明確行動：未來 API manifest 必須原樣使用本製作包的 visual descriptors，不把角色 ID／姓名插回 prompt。角色 ID 只可作 provenance metadata。
+- 未決問題或阻塞：與上一筆相同；00-B pilot 等待靜態核准與 Runway 接入，07–09 維持 creative hold。
+- 驗證結果：以 `rg` 確認 Runway 製作包的 prompts 已無三名角色英文姓名或簡稱；`git diff --check` 通過。本次只有文件，不執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
