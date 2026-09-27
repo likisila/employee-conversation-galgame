@@ -772,3 +772,18 @@
 - 交給 Claude 的明確行動：無。若未來把 Prompt 暴露到 UI 或其他 runner，必須保留 `FIRST-FRAME LOCK`、`ONE ALLOWED ACTION`、`CAMERA CONTRACT`、`END STATE` 四區，不得只傳動作句。
 - 未決問題或阻塞：無。這是使用者可自行貼到其他工具的文字資產，不構成任何鏡頭的生成授權。
 - 驗證結果：7 個 current PNG 路徑全部存在；完整模板含 first-frame lock／單一動作／量化 camera／末態，另有短版與 negative prompt；文件互鏈成立；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260927-2319
+
+- 時間：2026-09-27T15:19:13Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者指出上一筆交付仍是需要自行替換欄位的模板，不符合「每鏡直接複製貼上」。本輪使用 `wait-what` 重新交付，不呼叫生成工具。
+- 本次範圍：把 `keyframe-video-extension-prompt-v1.md` 從 placeholder 模板重寫成逐鏡完成稿；使用者不需填 duration、subject、action、camera 或 end state，也不需把多段文件自行合併。
+- 實際變更檔案：
+  - `property/keyframe-video-extension-prompt-v1.md`：升為 v1.1；00-A、00-B、00-C、04-B、04-C、06-B、06-C 各自列出指定 current PNG、片長、完整 Main prompt 與專屬 Negative prompt。每段均含精確第 0 幀鎖定、人物／場景／道具保持、唯一動作、量化 camera timecode、末態與該鏡特定漂移禁令。
+  - `property/runway-video-spec-v2-review.md`、`property/README.md`：改寫索引，明確說明零 placeholder、可直接複製，不再要求使用者套模板。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry；本 Entry 取代上一筆「由使用者填寫通用模板」的交付形式。
+- 已定案事項：對外部 image-to-video 工具的使用單位是「一鏡一組完整 Main＋Negative prompt」。不得再交付空白模板要求使用者自行填寫或跨文件拼接。角色仍以畫面內外觀／位置／道具指認，不使用姓名期待模型理解。
+- 交給 Claude 的明確行動：無。若未來做 UI 複製按鈕，直接以 shot ID 對應本文件的完整 Main／Negative block，不要求玩家輸入變數。
+- 未決問題或阻塞：無；本次只修正文字交付格式，不生成、不重試。
+- 驗證結果：7 個 shot heading、7 個 Main prompt、7 個 Negative prompt；可編輯 placeholder 為 0；所有指定 current PNG 先前已確認存在；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。
