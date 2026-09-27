@@ -1111,3 +1111,36 @@
   - Chromium 實機（dev server，全新 `localStorage`）：從標題玩到 s1-final-cut 前，確認 00 cue 以分鏡輪播播出（00-A 與新的 `00-B-v3` 交叉淡化，畫面正確顯示雅琳手托紙本資料夾、非平板），可用右下角「跳過」跳過；選 `invite-clear` 分支進入 s3-meeting，逐句前進到「我看著那句「五點見」，沒有再回。」再點一次，確認 cue 正確攔截並播放 02 的分鏡（`02-A`／`02-C`），播完後接回「17:00，月球會議室……」那一句；讀存檔快照確認 `watchedCutscenes` 已寫入 `final-documents`／`layoff-notification`，`lineIndex` 落在正確位置，「回到上一句」逐句回溯行為與播放前一致。04（choices 型）與四個結局（line 型，含 09 的草稿自動前進交互）由新增的單元測試（`走完任一條路`模擬三種觸發時機、v3 掛點對齊表）覆蓋，未逐一實機重播四個結局；建議下次有真正 MP4 或使用者要求時再實機驗一輪。
   - 建置後 `dist/assets/cutscenes/keyframes` 不存在（`find dist -path '*keyframes*'` 無結果），`dist` 總大小 5.2MB，`dist/assets/cutscenes/storyboard/` 有 25 張交付 WebP，確認 12 張新原始 PNG（23.1MB）未誤入網站成品。
 - 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。
+
+## Claude-20260927-1333（v4 分鏡範圍遷移）
+
+- 時間：2026-09-27T13:33:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260927-2121`（最新，逐項實作其交辦）；一併處理沿續的 `ChatGPT-20260927-2101`／`2108`／`2115`（v4 審查稿定案、關鍵影格 0 張需重畫、`v4-review/active/` 中繼路徑）。使用者已在對話中明確核准 v4 審查稿（00／04／06 共 3 段／7 鏡／約 18 秒）與 `keyframes/current/` 穩定路徑契約，本次據此執行 ChatGPT 交辦的一次性遷移。
+- 本次範圍：把 `cutscene-cues.json`、storyboard optimizer、交付 manifest 與測試從 v2／v3（7 段／18 鏡，來源分散在 `runway-v2`／`runway-v3`）改指向 ChatGPT 建好的 `keyframes/current/`（v4 審查定案的 7 張現役影格），並退役 02、07、08、09 四段 cue。
+- 實際變更檔案：
+  - `property/cutscene-cues.json`：cues 從 7 筆縮成 3 筆（`final-documents`／`boundary-question`／`ending-true`），移除 `layoff-notification`／`ending-dignified`／`ending-soft-knife`／`ending-boundary-crossed`。`final-documents` 的 storyboard 鏡頭 `00-B-v3` 改回 `00-B`（對齊 `keyframes/current/` 的裸鏡號命名，同一張圖），三段的秒數依 `cutscene-storyboard-v4-review.md` 的內部節拍表更新：00 段 2／2.5／2.5 秒、04 段 2.5／2.5 秒、06 段拿掉已退役的 06-A（L14 已演過第三杯水），只剩 06-B／06-C 各 3 秒。
+  - `scripts/optimize-storyboard.mjs`：來源從 `sourceDirs: [runway-v2, runway-v3]`（兩批、依目錄名加前綴）改成單一 `sourceDir: keyframes/current`（裸檔名），並改寫檔頭註解說明現在只讀穩定現役路徑，同鏡號換圖不需要再動這支腳本。
+  - `public/assets/cutscenes/storyboard/`：執行 `npm run assets:storyboard` 重新產生 7 張交付 WebP（00-A／00-B／00-C／04-B／04-C／06-B／06-C，12.8MB→688KB）；手動刪除 18 張已退役來源對應的舊交付檔（`00-B-v3`／01／02／03／04-A／06-A／07／08／09），不再讓已退役的 placeholder 混在交付目錄裡誤導。
+  - `README.md`：「## 過場影片」的 `anchor.type` 範例改指 `cutscene-storyboard-v4-review.md`，`line` 範例從已退役的「02 進月球會議室」換成「06 三週時間橋」；新增一段說明 v4 正式清單縮為 3 段、01／02／03／07／08／09 全數退役，四個結局只有 TRUE END 掛過場。
+  - `tests/cutscenes.test.ts`：
+    1. 「四個結局各自掛一段互斥的影片」改為「只有 TRUE END 掛過場，其餘三個結局沒有影片」，斷言 `s9-doorway` 四個結局場景中只有 `ending-true` 對得到 cue。
+    2. 「走完任一條路」（固定取第一個選項的煙霧測試）的結局過場斷言從「恰好一次」放寬為「0 或 1 次」——因為現在只剩一段結局過場，固定路徑不保證走到 TRUE END；改為斷言一定會經過的 `final-documents`（s1，全路徑共通）與 `boundary-question`（s7 匯流點）。
+    3. 新增「依 TRUE END 標準路徑」測試：用 `invite-clear／notice-direct／answer-admit／doc-protect／keep-advocate` 五個主要選擇（比對到就採用，否則取當下第一個選項，讓感情線微選擇照常隨機分支）精確走一輪，斷言三段 cue 依序、各恰好觸發一次，且最終停在 `ending-true-finale`。
+    4. 「退役的 01／03 不再有 cue」擴充為「01／02／03／07／08／09」，新增 `s3-meeting`／`ending-decent`／`ending-soft-knife`／`ending-over-line` 四個場景的斷言。
+    5. 「v3 的場景中段／結局 cue 對齊…」改名為「v4 審查定案的 3 段 cue 對齊…」，移除三個已退役結局的掛點斷言，改為先斷言 `cues` 陣列恰好是 `['final-documents', 'boundary-question', 'ending-true']`。
+    6. 「分鏡 placeholder」的清單斷言從 7 段改為 3 段；「交付檔與分鏡原圖同步」的來源路徑從 `keyframes/<record.source>`（含 `runway-v2/`／`runway-v3/` 前綴）改成 `keyframes/current/<record.source>`（裸檔名）。
+    7. 「已看過的過場影片」兩個案例的範例 id 從已退役的 `layoff-notification` 換成仍存在的 `final-documents`（機制本身只是任意字串追蹤，不驗證 cue 是否存在，純粹避免測試範例引用一個已經不存在的 cue，造成閱讀時的誤導）。
+- 已定案事項：
+  1. `keyframes/current/` 是現在唯一的分鏡影格來源；`optimize-storyboard.mjs` 不再讀 `runway-v2`／`runway-v3`，ChatGPT 之後同鏡號換圖只需覆寫 `current/<shot-id>.png` 並重跑 `npm run assets:storyboard`，不需要再要求 Claude 改路徑——這正是 ChatGPT 在 `keyframes/current/README.md` 定的穩定契約，本次據此把 optimizer 接上。
+  2. 06 段拿掉 06-A：v4 審查稿明確標註「06-A 收第三杯水（L14 已演過）而退出」，`keyframes/current/` 本來就只有 7 張（不含 06-A），`cutscene-cues.json` 的 storyboard 陣列先前仍留著 06-A 是 v3 遺留，這次一併修正對齊。
+  3. 「走完任一條路」測試不再要求「一定會遇到一次結局過場」——這是測試對範圍縮減後的事實的如實反映，不是放寬對正確性的要求；真正驗證「TRUE END 一定會播 06」的是新增的標準路徑測試，且是用真實的五個主要選擇 ID 走過，不是取巧放寬過的斷言。
+  4. 未觸碰 `property/cutscene-storyboard-v3.md`、`property/sora-cutscenes.json`、`property/runway-*.md`、`public/assets/cutscenes/keyframes/*/README.md`／`REVIEW.md` 等 ChatGPT 維護的創作與素材說明文件——這些 ChatGPT 已在其交接紀錄中自行同步或標記為歷史版，不屬本次 Claude 的技術遷移範圍。
+- 交給 ChatGPT：無新增待辦。使用者已核准的 v4 範圍與 `keyframes/current/` 遷移本次已完成；後續只剩「使用者對 `runway-video-spec-v2-review.md` 核准後才能送 Runway 生成正式 00／04／06 MP4」，那是既有事項，不需要 Claude 再做任何事就能接上（正式 MP4 到位後只需換檔，不需要再改 cue 或程式路徑）。
+- 未決問題或阻塞：無。正式 MP4 仍是 0／3（`public/assets/cutscenes/` 目前沒有任何 mp4，三段 cue 全部由分鏡 placeholder 頂替），這是既有、非本次造成的狀態。
+- 驗證結果：
+  - `npm run typecheck`、`npm run build` 全數通過。
+  - `npm test`：19 個測試檔、**206／206** 通過（較上一筆 +1：新增「依 TRUE END 標準路徑」案例，同時移除或合併若干已隨範圍縮減而不再需要的舊斷言，淨增 1）。
+  - Chromium 實機（dev server，全新 `localStorage`）：從標題／內容提醒點到 `s1-final-cut` 前，00 cue 以分鏡輪播正確播出（畫面顯示 `keyframes/current/00-B.png`：雅琳手托紙本資料夾、非平板，與 v4 審查稿一致），播完正確接上「五點以前」轉場卡；讀 `localStorage` 存檔快照確認 `watchedCutscenes` 只有 `["final-documents"]`、`sceneId` 正確落在 `s1-final-cut`。主控台無錯誤（`read_console_messages` 確認）。04（choices 型）與 06（line 型，TRUE END coda）由新增的「依 TRUE END 標準路徑」單元測試覆蓋（該測試直接呼叫 `StoryEngine` 並比對 `render.ts` 同一套 anchorType 攔截邏輯，非取巧模擬），未逐一在瀏覽器重播完整結局；02／07／08／09 已確認 `content.cutsceneCues` 不再有對應項目。
+  - `find dist -path '*keyframes*'` 無結果；`dist/assets/cutscenes/storyboard/` 只有本次的 7 張 WebP＋manifest；`dist` 總大小 3.5MB（較 v3 時期縮小，因交付檔從 25 張減到 7 張）。
+- 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。

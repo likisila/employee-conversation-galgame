@@ -4,9 +4,10 @@
  * 轉成 1280×720 的 WebP，放在 `public/assets/cutscenes/storyboard/`。
  *
  * 用途：正式 MP4 還沒生成的過場，先以分鏡影格輪播當 placeholder（見 `src/ui/cutscene.ts`）。
- * 來源分兩批：`runway-v2`（v2 分鏡，仍有 6 張沿用中）與 `runway-v3`（v3 新增／重繪的 12 張）；
- * 兩批合計原始 PNG 直接出貨會把 Cloudflare Pages 的上傳 zip 撐過 25 MB；
- * 原始檔所在的 `keyframes/` 已列在 `vite.config.ts` 的 SOURCE_ONLY_PUBLIC_DIRS，不隨遊戲出貨。
+ * 來源只讀 `keyframes/current/`（唯一穩定現役路徑，見該目錄的 README）；同鏡號換圖直接覆寫
+ * 相同檔名即可重新產生交付檔，不需要改這支腳本或任何 cue／manifest 路徑。
+ * 原始 PNG 直接出貨會把 Cloudflare Pages 的上傳 zip 撐過上限；`keyframes/` 已列在
+ * `vite.config.ts` 的 SOURCE_ONLY_PUBLIC_DIRS，不隨遊戲出貨。
  *
  * 1672×941 與 16:9 只差不到一個像素，以置中 cover 縮到 1280×720 即為過場影片的正式畫幅；
  * 原始 PNG 不修改、不覆寫。
@@ -22,10 +23,7 @@ import { runWebpDelivery } from './lib/webpDelivery.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 await runWebpDelivery({
-  sourceDirs: [
-    path.join(root, 'public/assets/cutscenes/keyframes/runway-v2'),
-    path.join(root, 'public/assets/cutscenes/keyframes/runway-v3'),
-  ],
+  sourceDir: path.join(root, 'public/assets/cutscenes/keyframes/current'),
   outputDir: path.join(root, 'public/assets/cutscenes/storyboard'),
   options: { resize: { width: 1280, height: 720, fit: 'cover' }, quality: 84, effort: 6 },
   command: 'npm run assets:storyboard',

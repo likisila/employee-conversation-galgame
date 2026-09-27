@@ -74,11 +74,13 @@ npm run build
 
 `property/sora-cutscenes.json`（ChatGPT 維護）是影片內容的唯一來源；`property/cutscene-cues.json`（Claude 維護）把它的敘事層 `trigger` 對到引擎場景 ID 與實際播放時機。兩份的檔名與 trigger 是否一致由 `tests/cutscenes.test.ts` 把關。
 
-播放時機（`cutscene-cues.json` 的 `anchor.type`）分三種，見 `property/cutscene-storyboard-v3.md`：
+播放時機（`cutscene-cues.json` 的 `anchor.type`）分三種，見 `property/cutscene-storyboard-v4-review.md`：
 
 - `scene`：進場景前播放（例如 00 五點以前）。
-- `line`：這場中途接到指定文字的那一句之前播放（例如 02 進月球會議室、四個結局的時間橋／coda）。以文字比對而非行號，因為分支條件會讓不同路徑的可見行號不同。
+- `line`：這場中途接到指定文字的那一句之前播放（例如 06 三週時間橋，接在 TRUE END 「離開記得關燈」之後、揭露訊息內容之前）。以文字比對而非行號，因為分支條件會讓不同路徑的可見行號不同。
 - `choices`：這場的台詞讀完、選項出現之前播放（例如 04 問題之後、Choice 5 之前）。
+
+依 v4 審查定案，正式清單縮為 3 段（00 五點以前、04 問題之後、06 三週），01／02／03／07／08／09 全數退役——文字已完整演出同一個戲劇動作，影片只會提前或重播；因此四個結局裡只有 TRUE END 掛過場（06），其餘三個結局沒有影片。
 
 先確認影片載得到才蓋上畫面，接著全螢幕播放，播完自動接回原本該顯示的內容。影片缺檔、解碼失敗或載入逾時都直接跳過（`property/cutscenes.json` 的 `skip-video-and-enter-canonical-scene`），不會有黑畫面；有分鏡影格時先輪播分鏡當 placeholder，兩者都沒有才直接跳過。
 

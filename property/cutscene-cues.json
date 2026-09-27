@@ -5,24 +5,12 @@
   "cues": [
     { "id": "final-documents", "file": "00_final_documents.mp4", "trigger": "before:final-version", "scene": "s1-final-cut",
       "anchor": { "type": "scene" },
-      "storyboard": [{ "shot": "00-A", "seconds": 2 }, { "shot": "00-B-v3", "seconds": 2 }, { "shot": "00-C", "seconds": 2 }] },
-    { "id": "layoff-notification", "file": "02_layoff_notification.mp4", "trigger": "before:notification", "scene": "s3-meeting",
-      "anchor": { "type": "line", "matchText": "17:00，月球會議室。關上門，外面的談話聲就聽不見了。" },
-      "storyboard": [{ "shot": "02-A", "seconds": 2 }, { "shot": "02-C", "seconds": 2 }] },
+      "storyboard": [{ "shot": "00-A", "seconds": 2 }, { "shot": "00-B", "seconds": 2.5 }, { "shot": "00-C", "seconds": 2.5 }] },
     { "id": "boundary-question", "file": "04_boundary_question.mp4", "trigger": "before:boundary-question", "scene": "s7-recommend-converge",
       "anchor": { "type": "choices" },
-      "storyboard": [{ "shot": "04-B", "seconds": 2 }, { "shot": "04-C", "seconds": 2 }] },
+      "storyboard": [{ "shot": "04-B", "seconds": 2.5 }, { "shot": "04-C", "seconds": 2.5 }] },
     { "id": "ending-true", "file": "06_ending_true.mp4", "trigger": "on-enter:ending-true", "scene": "ending-true",
       "anchor": { "type": "line", "matchText": "三週後的晚上，我在家收到雨澄的訊息。" },
-      "storyboard": [{ "shot": "06-A", "seconds": 2 }, { "shot": "06-B", "seconds": 2 }, { "shot": "06-C", "seconds": 3 }] },
-    { "id": "ending-dignified", "file": "07_ending_dignified.mp4", "trigger": "on-enter:ending-dignified", "scene": "ending-decent",
-      "anchor": { "type": "line", "matchText": "END 02：體面的句點" },
-      "storyboard": [{ "shot": "07-A", "seconds": 3 }, { "shot": "07-B", "seconds": 3 }] },
-    { "id": "ending-soft-knife", "file": "08_ending_soft_knife.mp4", "trigger": "on-enter:ending-soft-knife", "scene": "ending-soft-knife",
-      "anchor": { "type": "line", "matchText": "END 03：柔軟的刀" },
-      "storyboard": [{ "shot": "08-A", "seconds": 2 }, { "shot": "08-B", "seconds": 2 }, { "shot": "08-C", "seconds": 3 }] },
-    { "id": "ending-boundary-crossed", "file": "09_ending_boundary_crossed.mp4", "trigger": "on-enter:ending-boundary-crossed", "scene": "ending-over-line",
-      "anchor": { "type": "line", "matchText": "END 04：越線" },
-      "storyboard": [{ "shot": "09-A", "seconds": 2 }, { "shot": "09-B", "seconds": 2 }, { "shot": "09-C", "seconds": 2 }] }
+      "storyboard": [{ "shot": "06-B", "seconds": 3 }, { "shot": "06-C", "seconds": 3 }] }
   ]
 }
