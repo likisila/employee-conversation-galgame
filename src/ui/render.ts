@@ -353,12 +353,13 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   activeTyping?.cancel();
   activeTyping = undefined;
 
-  // 進入掛有過場影片的場景時，先播影片再進場景。已看過（含跳過）的不重播；
+  // 進入掛有「進場景前」過場影片的場景時，先播影片再進場景。已看過（含跳過）的不重播；
   // 缺檔或載入失敗由播放器自行跳過，直接進入正式場景。
   // 這一段刻意放在所有轉場記錄（lastSceneId 等）之前：播完後重新 render 時，
   // 這個場景仍然算「剛進場」，轉場卡與立繪淡入照常播放。
+  // `line`／`choices` 兩種場景中段的播放時機在下面的 `advance` 裡處理，不在這裡攔截。
   const cue = content.cutsceneCues.get(scene.id);
-  if (cue && lastSceneId !== scene.id && !engine.hasWatchedCutscene(cue.id)) {
+  if (cue && cue.anchorType === 'scene' && lastSceneId !== scene.id && !engine.hasWatchedCutscene(cue.id)) {
     playCutscene(app, cue, content.ui, () => {
       engine.markCutsceneWatched(cue.id);
       // 影片看過就記進存檔，重新載入不會再看一次。
@@ -511,8 +512,30 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     // 最後一句之後的下一步是翻到選項頁。引擎不動（仍停在最後一句），
     // 所以不用存檔——重新載入會回到那一句，再點一下就是選項頁。
     if (availableChoices.length > 0 && !atChoiceStep) {
+      // `choices` 型過場：問完問題、選項出現之前播放（例如 04 問題之後）。
+      if (cue && cue.anchorType === 'choices' && !engine.hasWatchedCutscene(cue.id)) {
+        playCutscene(app, cue, content.ui, () => {
+          engine.markCutsceneWatched(cue.id);
+          hooks.onAdvance?.();
+          choiceStepSceneId = scene.id;
+          render(app, engine, content, hooks);
+        });
+        return;
+      }
       choiceStepSceneId = scene.id;
       render(app, engine, content, hooks);
+      return;
+    }
+    // `line` 型過場：接到 anchorText 那一句之前播放。以文字比對而非行號，
+    // 因為分支條件會讓不同路徑的可見行號不同（見 property/cutscene-storyboard-v3.md）。
+    const nextLine = !atLast ? visibleLines[lineIndex + 1] : undefined;
+    if (cue && cue.anchorType === 'line' && nextLine?.text === cue.anchorText && !engine.hasWatchedCutscene(cue.id)) {
+      playCutscene(app, cue, content.ui, () => {
+        engine.markCutsceneWatched(cue.id);
+        if (!engine.advance()) return;
+        render(app, engine, content, hooks);
+        hooks.onAdvance?.();
+      });
       return;
     }
     if (!engine.advance()) return;

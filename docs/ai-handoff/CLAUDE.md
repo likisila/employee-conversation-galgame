@@ -1081,3 +1081,33 @@
 - 交給 ChatGPT：無新增待辦。本次純部署工具文件，不涉及文案、素材或 UI 視覺。
 - 未決問題或阻塞：真正的 `wrangler pages deploy` 尚未實機跑過一次成功案例（見上「已定案事項 3」）；下次有出貨變更要直接部署時，第一次執行請留意是否有非預期錯誤（例如 token 權限不足以外的問題），並在交接紀錄補上結果。
 - 驗證結果：`npx wrangler whoami` 顯示 not authenticated → 設定 env vars 後顯示帳號查詢失敗但屬預期（token 權限限縮）；三個環境變數在目前 shell 皆讀到非空值，`CLOUDFLARE_PAGES_PROJECT` 讀到 `sparkling-glitter-6ce0`。未跑 `npm run typecheck`／`npm test`／`npm run build`——本次只改動 Markdown 文件（`README.md`、`docs/CLOUDFLARE_DEPLOY.md`、repo 外的 `HOW-TO-UPDATE.md`），未動程式、schema、測試或建置設定；`git diff --check` 通過。依持久記憶規則，純文件變更不需重建 `cloudflare-pages-upload/last-one-on-one-site.zip`。
+
+## Claude-20260927-0515
+
+- 時間：2026-09-27T05:15:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260927-1241`（最新，逐項實作其交辦；一併處理沿續的 `ChatGPT-20260927-1214`）。
+- 本次範圍：依 `property/cutscene-storyboard-v3.md` 完成 mid-scene／coda cue 接線——00-B-v3 與 06–09 的 12 張新關鍵影格已由 ChatGPT 生成，本次把播放時機從「進場景前」擴充為三種，並用新時機接線 02、04、06、07、08、09，退役 01、03。
+- 實際變更檔案：
+  - `src/domain/schema.ts`：`CutsceneCue` 新增 `anchorType`（`'scene' | 'line' | 'choices'`）與 `anchorText`；新增 `parseCutsceneAnchor()`，`anchor` 沒寫時預設 `scene`（原有行為），`type: 'line'` 要求非空 `matchText`。
+  - `src/ui/render.ts`：場景最上方的「進場景前」攔截只在 `anchorType === 'scene'` 時生效；`advance()` 內新增兩處攔截——選項頁揭露前（`anchorType: 'choices'`）與接到 `anchorText` 那一句之前（`anchorType: 'line'`，比對 `visibleLines[lineIndex + 1].text`，不比對行號）。兩處都在 `playCutscene` 播完的回呼裡才真的推進引擎並存檔，維持「已看過不重播」與既有存讀檔行為不變。
+  - `src/data/contentLoader.ts`：載入時新增兩項資料完整性檢查——`anchorType: 'line'` 的 `anchorText` 必須在該場景的台詞中找得到、`anchorType: 'choices'` 的場景必須有選項；錯字或內容改版讓錨點失效會在載入時就擋下來，不留到玩家實機才發現某段影片再也不會播。
+  - `property/cutscene-cues.json`：`final-documents` 維持 `scene`（s1-final-cut，00-B 已改用 `00-B-v3`）；`layoff-notification` 改掛 `s3-meeting`＋`line`（錨點「17:00，月球會議室。關上門，外面的談話聲就聽不見了。」，取代原本誤掛在 s4-notice 前）；`boundary-question` 改掛 `s7-recommend-converge`＋`choices`（取代原本誤掛在 s7-not-in-file 前）；`ending-true`／`ending-dignified`／`ending-soft-knife`／`ending-boundary-crossed` 四個結局改掛 `line`（錨點分別是「三週後的晚上，我在家收到雨澄的訊息。」「END 02：體面的句點」「END 03：柔軟的刀」「END 04：越線」），取代原本的 on-enter；`meeting-invitation`（01）與 `rights-packet`（03）整筆移除，不再有 cue。七段的 storyboard 依 v3 分鏡表更新鏡號（00 段含新的 `00-B-v3`；06–09 段全部改用新生成的 v3 鏡頭）。
+  - `scripts/lib/webpDelivery.mjs`：`runWebpDelivery` 改支援 `sourceDirs`（多個來源目錄）；給多個目錄時 manifest 的 `source` 記成 `<目錄名>/<檔名>` 以區分批次，只有一個目錄（`optimize-sprites.mjs` 沿用的舊呼叫方式）時維持原本的純檔名格式，不影響既有立繪交付檔與 `tests/spriteDelivery.test.ts`。
+  - `scripts/optimize-storyboard.mjs`：改傳 `sourceDirs: [runway-v2, runway-v3]`，一次涵蓋兩批分鏡來源。
+  - `public/assets/cutscenes/storyboard/*.webp`（新增 12 張：`00-B-v3`、`06-A/B/C`、`07-A/B`、`08-A/B/C`、`09-A/B/C`）與 `manifest.json`：執行 `npm run assets:storyboard` 重新產生，25 張交付檔合計 2.3MB（來源 45.2MB）。
+  - `tests/cutscenes.test.ts`：分鏡 placeholder 清單改為 7 段（`final-documents`／`layoff-notification`／`boundary-question`／四個結局），移除已退役的 `meeting-invitation`；manifest 同步測試改讀 `keyframes/<record.source>`（新格式）；「走完任一條路」測試改成依 `anchorType` 模擬三種真實觸發時機（不再是「進場景就算看過」），新增退役驗證（`s2-invite`／`s6-receipt` 不再有 cue）、v3 掛點對齊表（七段的 scene／anchorType／anchorText 逐一斷言）與 `parseCutsceneCues` 的 anchor 解析測試（預設值、`line` 必要 `matchText`、未知 `type`、`anchor` 非物件）。
+  - `README.md`：「## 過場影片」補上三種 `anchor.type` 的說明與觸發時機，取代舊版只描述「進場景前」的敘述；實作參考行加上 `src/ui/render.ts`。
+- 已定案事項：
+  1. 錨點一律用文字比對（`anchorText` 對照 parsed 後的 `Line.text`），不用行號——`s3-meeting` 與 `ending-over-line` 都有依分支條件顯示／隱藏的台詞，同一句在不同路徑下的可見行號不同，行號式錨點會在某些分支上失準或永遠不觸發；文字比對則天然適應分支差異（已在 dev server 上以 `invite-clear` 分支實測，確認 cue 在「17:00，月球會議室」前正確觸發、`layoff-notification` 寫進存檔的 `watchedCutscenes`）。
+  2. `boundary-question` 的 `choices` 觸發點刻意放在「揭露選項」那一步，而不是「讀到最後一句」那一步——這場景的「讀完最後一句」與「揭露選項」是兩次獨立點擊（既有的對話框／選項頁分頁機制），選在後者才符合分鏡表「Choice 5 出現之前」的要求；也因此「回到決策點」跳回這個決策點時，會先顯示最後一句、玩家再點一次才揭露選項並觸發 cue，行為與正常初次遊玩一致，不會漏播。
+  3. `webpDelivery.mjs` 的 `source` 欄位格式改變只影響「給多個目錄」的呼叫（分鏡影格）；立繪交付檔（`optimize-sprites.mjs`，單一目錄）維持舊格式，因此沒有動 `tests/spriteDelivery.test.ts`。
+  4. 09（`ending-boundary-crossed`）的錨點是「END 04：越線」這句本身（而非它前面那句帶 `drafts` 的草稿刪除演出）——因為草稿演出完成後會透過既有的「非訊息草稿演完自動前進」機制呼叫同一個 `advance()`，兩者共用同一段攔截邏輯，正好符合分鏡表「草稿刪除演出完成後」播放的要求，不需要另外處理草稿動畫的完成回呼。
+- 交給 ChatGPT：無新增待辦。00–09 的關鍵影格與掛點需求已全部接線完成；`sora-cutscenes.json` 的圖生影片仍待使用者對 `runway-v3/REVIEW.md` 完成靜態核准後才開始，那之前沒有 Claude 這邊的阻塞。
+- 未決問題或阻塞：正式 MP4 仍是 0／7（`public/assets/cutscenes/` 目前沒有任何 mp4 檔案，dev server 對這些路徑的請求會被 Vite 的 SPA fallback 回應 200 但內容是 `index.html`，`<video>` 解碼失敗後立刻退回分鏡，不是等滿 6 秒逾時），因此線上／dev 環境目前看到的都是分鏡 placeholder，不是真正的過場影片；等 ChatGPT 提供正式 MP4 後不需要再改 cue 資料，換檔即生效。
+- 驗證結果：
+  - `npm run typecheck`、`npm run build` 全數通過。
+  - `npm test`：19 個測試檔、**205／205** 通過（較上一筆 +5：新增退役驗證、v3 掛點對齊表與三個 anchor 解析案例，並重寫「走完任一條路」與「分鏡 placeholder」兩項既有測試以符合新架構）。
+  - Chromium 實機（dev server，全新 `localStorage`）：從標題玩到 s1-final-cut 前，確認 00 cue 以分鏡輪播播出（00-A 與新的 `00-B-v3` 交叉淡化，畫面正確顯示雅琳手托紙本資料夾、非平板），可用右下角「跳過」跳過；選 `invite-clear` 分支進入 s3-meeting，逐句前進到「我看著那句「五點見」，沒有再回。」再點一次，確認 cue 正確攔截並播放 02 的分鏡（`02-A`／`02-C`），播完後接回「17:00，月球會議室……」那一句；讀存檔快照確認 `watchedCutscenes` 已寫入 `final-documents`／`layoff-notification`，`lineIndex` 落在正確位置，「回到上一句」逐句回溯行為與播放前一致。04（choices 型）與四個結局（line 型，含 09 的草稿自動前進交互）由新增的單元測試（`走完任一條路`模擬三種觸發時機、v3 掛點對齊表）覆蓋，未逐一實機重播四個結局；建議下次有真正 MP4 或使用者要求時再實機驗一輪。
+  - 建置後 `dist/assets/cutscenes/keyframes` 不存在（`find dist -path '*keyframes*'` 無結果），`dist` 總大小 5.2MB，`dist/assets/cutscenes/storyboard/` 有 25 張交付 WebP，確認 12 張新原始 PNG（23.1MB）未誤入網站成品。
+- 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。

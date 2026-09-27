@@ -23,19 +23,31 @@ async function loadManifest(file) {
 
 /**
  * @param {object} job
- * @param {string} job.sourceDir  原始 PNG 目錄
+ * @param {string} [job.sourceDir]   原始 PNG 目錄（單一目錄；與 sourceDirs 二擇一）
+ * @param {string[]} [job.sourceDirs] 原始 PNG 目錄列表。給多個目錄時（例如分鏡影格分成
+ *   `runway-v2`／`runway-v3` 兩批交付），manifest 的 `source` 會記成 `<目錄名稱>/<檔名>`
+ *   以區分來源；只有一個目錄時沿用舊格式（純檔名），現有交付檔與測試不受影響。
  * @param {string} job.outputDir  交付 WebP 目錄
  * @param {object} job.options    寫進 manifest 的編碼設定；`resize` 會交給 sharp.resize，其餘交給 sharp.webp
  * @param {string} job.command    過期時提示執行的指令
  * @param {boolean} checkOnly     只檢查、不寫檔，過期時以非 0 結束
  */
-export async function runWebpDelivery({ sourceDir, outputDir, options, command }, checkOnly) {
+export async function runWebpDelivery({ sourceDir, sourceDirs, outputDir, options, command }, checkOnly) {
+  const dirs = sourceDirs ?? [sourceDir];
+  const multiSource = dirs.length > 1;
   const manifestPath = path.join(outputDir, 'manifest.json');
-  const sources = (await readdir(sourceDir)).filter((name) => name.endsWith('.png')).sort();
   const manifest = await loadManifest(manifestPath);
   const next = { encoder: 'webp', options, files: {} };
   const stale = [];
   const { resize, ...webpOptions } = options;
+
+  const entries = [];
+  for (const dir of dirs) {
+    const label = path.basename(dir);
+    const names = (await readdir(dir)).filter((name) => name.endsWith('.png')).sort();
+    for (const name of names) entries.push({ dir, name, sourceRef: multiSource ? `${label}/${name}` : name });
+  }
+  entries.sort((a, b) => a.sourceRef.localeCompare(b.sourceRef));
 
   let sharp;
   const encode = async (buffer) => {
@@ -51,12 +63,14 @@ export async function runWebpDelivery({ sourceDir, outputDir, options, command }
     return image.webp(webpOptions).toBuffer();
   };
 
-  for (const name of sources) {
-    const source = await readFile(path.join(sourceDir, name));
+  for (const { dir, name, sourceRef } of entries) {
+    const source = await readFile(path.join(dir, name));
     const hash = sha256(source);
     const output = `${path.basename(name, '.png')}.webp`;
+    if (next.files[output]) throw new Error(`交付檔名稱重複：${output}（${sourceRef} 與既有來源撞名）`);
     const recorded = manifest.files?.[output];
-    const current = recorded?.sourceSha256 === hash
+    const current = recorded?.source === sourceRef
+      && recorded?.sourceSha256 === hash
       && JSON.stringify(manifest.options) === JSON.stringify(options)
       && (await readFile(path.join(outputDir, output)).then(() => true, () => false));
 
@@ -71,8 +85,8 @@ export async function runWebpDelivery({ sourceDir, outputDir, options, command }
     const encoded = await encode(source);
     await mkdir(outputDir, { recursive: true });
     await writeFile(path.join(outputDir, output), encoded);
-    next.files[output] = { source: name, sourceSha256: hash, bytes: encoded.length, sourceBytes: source.length };
-    console.log(`${name} ${(source.length / 1024).toFixed(0)}KB → ${output} ${(encoded.length / 1024).toFixed(0)}KB`);
+    next.files[output] = { source: sourceRef, sourceSha256: hash, bytes: encoded.length, sourceBytes: source.length };
+    console.log(`${sourceRef} ${(source.length / 1024).toFixed(0)}KB → ${output} ${(encoded.length / 1024).toFixed(0)}KB`);
   }
 
   if (checkOnly) {
@@ -80,7 +94,7 @@ export async function runWebpDelivery({ sourceDir, outputDir, options, command }
       console.error(`交付檔過期或缺少：${stale.join('、')}\n請執行 ${command}`);
       process.exit(1);
     }
-    console.log(`交付檔皆為最新（${sources.length} 張）`);
+    console.log(`交付檔皆為最新（${entries.length} 張）`);
     return;
   }
 
@@ -88,5 +102,5 @@ export async function runWebpDelivery({ sourceDir, outputDir, options, command }
   await writeFile(manifestPath, `${JSON.stringify(next, null, 2)}\n`);
   const before = Object.values(next.files).reduce((sum, file) => sum + file.sourceBytes, 0);
   const after = Object.values(next.files).reduce((sum, file) => sum + file.bytes, 0);
-  console.log(`完成：${sources.length} 張，${(before / 1024 / 1024).toFixed(1)}MB → ${(after / 1024).toFixed(0)}KB`);
+  console.log(`完成：${entries.length} 張，${(before / 1024 / 1024).toFixed(1)}MB → ${(after / 1024).toFixed(0)}KB`);
 }

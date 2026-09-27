@@ -68,26 +68,56 @@ describe('過場影片的資料契約', () => {
     expect(new Set(files).size).toBe(4);
   });
 
-  it('走完任一條路，共通主線的每段影片最多只會遇到一次', () => {
+  it('走完任一條路，每段影片最多只會遇到一次，且依 anchorType 在正確的時機觸發', () => {
+    // 模擬 render.ts 的三種觸發時機：'scene' 在進場景前（原本行為）、'line' 在接到
+    // anchorText 那一句之前、'choices' 在這場的選項出現之前——不是「進場景就算看過」。
     const engine = new StoryEngine(content);
     const encountered: string[] = [];
-    for (let guard = 0; guard < 500; guard += 1) {
+    const trigger = (cue: ReturnType<typeof content.cutsceneCues.get>): void => {
+      if (!cue || engine.hasWatchedCutscene(cue.id)) return;
+      encountered.push(cue.id);
+      engine.markCutsceneWatched(cue.id);
+    };
+    for (let guard = 0; guard < 2000; guard += 1) {
       const cue = content.cutsceneCues.get(engine.currentScene.id);
-      if (cue && !engine.hasWatchedCutscene(cue.id)) {
-        encountered.push(cue.id);
-        engine.markCutsceneWatched(cue.id);
-      }
+      if (cue?.anchorType === 'scene') trigger(cue);
       const choices = engine.availableChoices;
       if (engine.atLastLine && choices.length > 0) {
+        if (cue?.anchorType === 'choices') trigger(cue);
         engine.choose(choices[0]!.id);
         continue;
+      }
+      if (cue?.anchorType === 'line') {
+        const nextLine = engine.visibleLines[engine.currentLineIndex + 1];
+        if (nextLine?.text === cue.anchorText) trigger(cue);
       }
       if (!engine.advance()) break;
     }
     expect(new Set(encountered).size).toBe(encountered.length);
-    // 一條路會經過共通主線的五段，加上抵達的那一個結局。
+    expect(encountered).toContain('final-documents');
     expect(encountered).toContain('layoff-notification');
+    expect(encountered).toContain('boundary-question');
     expect(encountered.filter((id) => id.startsWith('ending-'))).toHaveLength(1);
+  });
+
+  it('退役的 01／03 不再有 cue：s2-invite 與 s6-receipt 不掛任何影片', () => {
+    expect(content.cutsceneCues.get('s2-invite')).toBeUndefined();
+    expect(content.cutsceneCues.get('s6-receipt')).toBeUndefined();
+  });
+
+  it('v3 的場景中段／結局 cue 對齊 property/cutscene-storyboard-v3.md 的精確掛點', () => {
+    const byId = new Map(cues.map((c) => [c.id, c]));
+    expect(byId.get('final-documents')).toMatchObject({ scene: 's1-final-cut', anchorType: 'scene' });
+    expect(byId.get('layoff-notification')).toMatchObject({
+      scene: 's3-meeting', anchorType: 'line', anchorText: '17:00，月球會議室。關上門，外面的談話聲就聽不見了。',
+    });
+    expect(byId.get('boundary-question')).toMatchObject({ scene: 's7-recommend-converge', anchorType: 'choices' });
+    expect(byId.get('ending-true')).toMatchObject({
+      scene: 'ending-true', anchorType: 'line', anchorText: '三週後的晚上，我在家收到雨澄的訊息。',
+    });
+    expect(byId.get('ending-dignified')).toMatchObject({ scene: 'ending-decent', anchorType: 'line', anchorText: 'END 02：體面的句點' });
+    expect(byId.get('ending-soft-knife')).toMatchObject({ scene: 'ending-soft-knife', anchorType: 'line', anchorText: 'END 03：柔軟的刀' });
+    expect(byId.get('ending-boundary-crossed')).toMatchObject({ scene: 'ending-over-line', anchorType: 'line', anchorText: 'END 04：越線' });
   });
 });
 
@@ -112,6 +142,29 @@ describe('parseCutsceneCues', () => {
   it('cues 不是陣列或缺欄位時丟出錯誤', () => {
     expect(() => parseCutsceneCues({})).toThrow(/必須是陣列/);
     expect(() => parseCutsceneCues({ cues: [{ id: 'a' }] })).toThrow();
+  });
+
+  it('anchor 沒寫時預設為 scene（進場景前，原有行為）', () => {
+    const [parsed] = parseCutsceneCues({ cues: [cue] });
+    expect(parsed!.anchorType).toBe('scene');
+    expect(parsed!.anchorText).toBeUndefined();
+  });
+
+  it('anchor.type 為 line 時要求非空的 matchText，choices／scene 不需要', () => {
+    const [line] = parseCutsceneCues({ cues: [{ ...cue, anchor: { type: 'line', matchText: '接到這一句' } }] });
+    expect(line!.anchorType).toBe('line');
+    expect(line!.anchorText).toBe('接到這一句');
+
+    const [choices] = parseCutsceneCues({ cues: [{ ...cue, anchor: { type: 'choices' } }] });
+    expect(choices!.anchorType).toBe('choices');
+
+    expect(() => parseCutsceneCues({ cues: [{ ...cue, anchor: { type: 'line' } }] })).toThrow(/matchText/);
+    expect(() => parseCutsceneCues({ cues: [{ ...cue, anchor: { type: 'line', matchText: '' } }] })).toThrow(/matchText/);
+  });
+
+  it('anchor.type 不是已知值，或 anchor 不是物件時丟出錯誤', () => {
+    expect(() => parseCutsceneCues({ cues: [{ ...cue, anchor: { type: 'on-enter' } }] })).toThrow(/type 必須是/);
+    expect(() => parseCutsceneCues({ cues: [{ ...cue, anchor: 'scene' }] })).toThrow(/格式錯誤/);
   });
 });
 
@@ -177,10 +230,11 @@ describe('分鏡 placeholder', () => {
   const content = loadContent();
   const storyboards = [...content.cutsceneCues.values()].filter((cue) => cue.storyboard);
 
-  it('共通主線目前有分鏡可以頂替缺檔影片的段落（rights-packet 因分鏡圖有缺陷仍拿掉；final-documents／meeting-invitation／layoff-notification 的正式影片因人物是改版前的舊設定已下架，改用分鏡頂替，見 docs/ai-handoff/CLAUDE.md Claude-20260925-2240）', () => {
-    expect(storyboards.map((cue) => cue.id)).toEqual(
-      ['final-documents', 'meeting-invitation', 'layoff-notification', 'boundary-question'],
-    );
+  it('v3 正式製作清單（7 段）全部先用分鏡頂替缺檔的正式影片（0／7 已生成，見 property/cutscene-storyboard-v3.md）', () => {
+    expect(storyboards.map((cue) => cue.id)).toEqual([
+      'final-documents', 'layoff-notification', 'boundary-question',
+      'ending-true', 'ending-dignified', 'ending-soft-knife', 'ending-boundary-crossed',
+    ]);
   });
 
   it('每一格都指向已產生的交付檔，且鏡號屬於該段（00-A 只能在 00 段）', () => {
@@ -202,7 +256,8 @@ describe('分鏡 placeholder', () => {
     const entries = Object.entries(manifest.files);
     expect(entries.length).toBeGreaterThan(0);
     for (const [output, record] of entries) {
-      const source = readFileSync(path.join(root, 'public/assets/cutscenes/keyframes/runway-v2', record.source));
+      // record.source 是 `<runway-v2|runway-v3>/<檔名>`：分鏡影格分兩批交付（見 optimize-storyboard.mjs）。
+      const source = readFileSync(path.join(root, 'public/assets/cutscenes/keyframes', record.source));
       expect(createHash('sha256').update(source).digest('hex'), `${record.source} 換過了，請執行 npm run assets:storyboard`)
         .toBe(record.sourceSha256);
       expect(statSync(path.join(root, 'public/assets/cutscenes/storyboard', output)).size).toBe(record.bytes);

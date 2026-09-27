@@ -72,13 +72,19 @@ npm run build
 
 ## 過場影片
 
-`property/sora-cutscenes.json`（ChatGPT 維護）是影片內容的唯一來源；`property/cutscene-cues.json`（Claude 維護）把它的敘事層 `trigger` 對到引擎場景 ID，決定哪一段影片掛在哪個場景之前。兩份的檔名與 trigger 是否一致由 `tests/cutscenes.test.ts` 把關。
+`property/sora-cutscenes.json`（ChatGPT 維護）是影片內容的唯一來源；`property/cutscene-cues.json`（Claude 維護）把它的敘事層 `trigger` 對到引擎場景 ID 與實際播放時機。兩份的檔名與 trigger 是否一致由 `tests/cutscenes.test.ts` 把關。
 
-進入掛有影片的場景時，先確認影片載得到才蓋上畫面，接著全螢幕播放，播完自動進入該場景。影片缺檔、解碼失敗或載入逾時都直接進入場景（`property/cutscenes.json` 的 `skip-video-and-enter-canonical-scene`），不會有黑畫面，也不回退到任何替代影片。
+播放時機（`cutscene-cues.json` 的 `anchor.type`）分三種，見 `property/cutscene-storyboard-v3.md`：
+
+- `scene`：進場景前播放（例如 00 五點以前）。
+- `line`：這場中途接到指定文字的那一句之前播放（例如 02 進月球會議室、四個結局的時間橋／coda）。以文字比對而非行號，因為分支條件會讓不同路徑的可見行號不同。
+- `choices`：這場的台詞讀完、選項出現之前播放（例如 04 問題之後、Choice 5 之前）。
+
+先確認影片載得到才蓋上畫面，接著全螢幕播放，播完自動接回原本該顯示的內容。影片缺檔、解碼失敗或載入逾時都直接跳過（`property/cutscenes.json` 的 `skip-video-and-enter-canonical-scene`），不會有黑畫面；有分鏡影格時先輪播分鏡當 placeholder，兩者都沒有才直接跳過。
 
 播放中可用畫面點擊、Enter／空白鍵、Esc 或右下角的「跳過」按鈕跳過；旁邊的按鈕可切換靜音，偏好記在瀏覽器。已播完或跳過的影片不會重播，這個狀態跟著存檔走，重新載入不會再看一次；「重新開始」則清空，重玩時影片會再播。
 
-實作：`src/ui/cutscene.ts`（播放器）、`src/data/contentLoader.ts`（載入與驗證）、`StoryEngine` 的 `hasWatchedCutscene`／`markCutsceneWatched`。
+實作：`src/ui/cutscene.ts`（播放器）、`src/ui/render.ts`（依 `anchor.type` 判斷何時攔截 `advance()` 播放）、`src/data/contentLoader.ts`（載入、驗證與 `anchorText` 對得上場景台詞的檢查）、`StoryEngine` 的 `hasWatchedCutscene`／`markCutsceneWatched`。
 
 ## 存檔 / 讀檔
 

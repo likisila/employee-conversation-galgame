@@ -83,6 +83,15 @@ export function loadContent(): LoadedContent {
   // 影片掛在不存在的場景上永遠不會播，屬於資料錯誤，載入時就擋下來。
   for (const cue of cutsceneCues.values()) {
     if (!scenes.has(cue.scene)) throw new Error(`過場影片 ${cue.id} 掛在不存在的場景 ${cue.scene}`);
+    const scene = scenes.get(cue.scene)!;
+    // anchorText 錯字或行被改寫會讓 mid-scene cue 永遠等不到觸發點，載入時就擋下來，
+    // 不要留到玩家實機才發現某段影片再也不會播。
+    if (cue.anchorType === 'line' && !scene.lines.some((line) => line.text === cue.anchorText)) {
+      throw new Error(`過場影片 ${cue.id} 的 anchorText 在場景 ${cue.scene} 找不到對應的台詞`);
+    }
+    if (cue.anchorType === 'choices' && scene.choices.length === 0) {
+      throw new Error(`過場影片 ${cue.id} 的 anchorType 是 choices，但場景 ${cue.scene} 沒有選項`);
+    }
   }
 
   for (const scene of scenes.values()) {

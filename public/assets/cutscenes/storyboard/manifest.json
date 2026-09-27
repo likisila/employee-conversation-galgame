@@ -11,82 +11,154 @@
   },
   "files": {
     "00-A.webp": {
-      "source": "00-A.png",
+      "source": "runway-v2/00-A.png",
       "sourceSha256": "6377f9670be8fd8dc50ed8c8c2193d0cd3a4550cc90551fa01b12146780e31e5",
       "bytes": 119292,
       "sourceBytes": 2004434
     },
     "00-B.webp": {
-      "source": "00-B.png",
+      "source": "runway-v2/00-B.png",
       "sourceSha256": "14453be6f7babb84eb7d63872024299b0fdef051075c3f57b2179206661468f7",
       "bytes": 120994,
       "sourceBytes": 2075828
     },
     "00-C.webp": {
-      "source": "00-C.png",
+      "source": "runway-v2/00-C.png",
       "sourceSha256": "20841c56298839283b5f2cb4d13c3593179f3137d4b65fdf060fe51e18f8188e",
       "bytes": 116790,
       "sourceBytes": 2002478
     },
     "01-A.webp": {
-      "source": "01-A.png",
+      "source": "runway-v2/01-A.png",
       "sourceSha256": "fcadc62981fd55e49d0925e7661008f3aa5579ed5198eea36c57f58feaef952d",
       "bytes": 69900,
       "sourceBytes": 1620304
     },
     "01-B.webp": {
-      "source": "01-B.png",
+      "source": "runway-v2/01-B.png",
       "sourceSha256": "c8df356843644e79731d8c67f38f0fc5b3e84380813a8594a31c67b6c79f8759",
       "bytes": 105984,
       "sourceBytes": 2031185
     },
     "02-A.webp": {
-      "source": "02-A.png",
+      "source": "runway-v2/02-A.png",
       "sourceSha256": "2c87e33864b52d708ef03d5a6badae086eb122c774272ee9b1c4cf6a41a6abd7",
       "bytes": 76920,
       "sourceBytes": 1784674
     },
     "02-B.webp": {
-      "source": "02-B.png",
+      "source": "runway-v2/02-B.png",
       "sourceSha256": "816357570da0efa16e2d0086c684b5a1056bcca72daf49c8072dc3bf12b624f3",
       "bytes": 75158,
       "sourceBytes": 1882425
     },
     "02-C.webp": {
-      "source": "02-C.png",
+      "source": "runway-v2/02-C.png",
       "sourceSha256": "05224e88c2e25b00698e5d1749a638d7b81e016f11aa7fdccfc27384b4197458",
       "bytes": 93052,
       "sourceBytes": 1886163
     },
     "03-A.webp": {
-      "source": "03-A.png",
+      "source": "runway-v2/03-A.png",
       "sourceSha256": "70ce29ec727744242f35ba57c920453994e83da3538673028f48294dfc9fa50b",
       "bytes": 86958,
       "sourceBytes": 1843816
     },
     "03-B.webp": {
-      "source": "03-B.png",
+      "source": "runway-v2/03-B.png",
       "sourceSha256": "e848e84b386c455961c83c21d3e5a8ae093ce7604a053b3b85f2545173aca611",
       "bytes": 82946,
       "sourceBytes": 1893316
     },
     "04-A.webp": {
-      "source": "04-A.png",
+      "source": "runway-v2/04-A.png",
       "sourceSha256": "e8ded6a5e95518523a7a54c30cc83ea7aa8e5a15ada3eda8a39429e9767dcc82",
       "bytes": 32988,
       "sourceBytes": 1471509
     },
     "04-B.webp": {
-      "source": "04-B.png",
+      "source": "runway-v2/04-B.png",
       "sourceSha256": "0e28bd2ba585fdf40af353dfaafe0d3d602f57c60142fc4c161bfb17e0bc2356",
       "bytes": 68916,
       "sourceBytes": 1767624
     },
     "04-C.webp": {
-      "source": "04-C.png",
+      "source": "runway-v2/04-C.png",
       "sourceSha256": "d08c7081ef335d9916adea7e34e5bef1a2d854a91787af5fc3e7634f5b88d7ff",
       "bytes": 94754,
       "sourceBytes": 1926455
+    },
+    "00-B-v3.webp": {
+      "source": "runway-v3/00-B-v3.png",
+      "sourceSha256": "84cef29d78184ddd10fbbeaddb71f86cdd4b10767aa28accd8325f8563dacf61",
+      "bytes": 117482,
+      "sourceBytes": 1988433
+    },
+    "06-A.webp": {
+      "source": "runway-v3/06-A.png",
+      "sourceSha256": "5260b663389263b22d002a2001d025bb05c4c8974b8e6edd0f2b8941bfde0568",
+      "bytes": 104250,
+      "sourceBytes": 2022979
+    },
+    "06-B.webp": {
+      "source": "runway-v3/06-B.png",
+      "sourceSha256": "4fbcd1f910351ce8561743c7ddce4c15d43f3c19cc1ee2aaa7f5df773b79a03c",
+      "bytes": 102588,
+      "sourceBytes": 1990244
+    },
+    "06-C.webp": {
+      "source": "runway-v3/06-C.png",
+      "sourceSha256": "b069cbd25a8051013d1a48b9f8743f8fd00e961e3188c1c572ba648a8c93284d",
+      "bytes": 85032,
+      "sourceBytes": 1793576
+    },
+    "07-A.webp": {
+      "source": "runway-v3/07-A.png",
+      "sourceSha256": "51fe8dc85bfeea3c673f035ec864c6242273977be653df9648484e12cc9213df",
+      "bytes": 112986,
+      "sourceBytes": 1968327
+    },
+    "07-B.webp": {
+      "source": "runway-v3/07-B.png",
+      "sourceSha256": "644836fbaf2c41147da32d2fe06e1a53607b31ed7144fb9ac0e55d679b3d4076",
+      "bytes": 100178,
+      "sourceBytes": 1900546
+    },
+    "08-A.webp": {
+      "source": "runway-v3/08-A.png",
+      "sourceSha256": "b89ebaad742795717b390d588cd52924583811360ebccb4ad69596ade8469b7f",
+      "bytes": 100984,
+      "sourceBytes": 1914492
+    },
+    "08-B.webp": {
+      "source": "runway-v3/08-B.png",
+      "sourceSha256": "6d52ca3a204e026a4bd1f82726db9427fe1379c4b4a7e93295a1b99c2c50ce84",
+      "bytes": 108226,
+      "sourceBytes": 1942421
+    },
+    "08-C.webp": {
+      "source": "runway-v3/08-C.png",
+      "sourceSha256": "37ed0f778063c4a651220c2eebf18a0f674736e06187b690a168325cf2153d65",
+      "bytes": 108776,
+      "sourceBytes": 1963343
+    },
+    "09-A.webp": {
+      "source": "runway-v3/09-A.png",
+      "sourceSha256": "03eb975b7b8d873110b66b4b380ac6ebe93a877c626dc1bba511373b5c4f21a1",
+      "bytes": 106290,
+      "sourceBytes": 1994570
+    },
+    "09-B.webp": {
+      "source": "runway-v3/09-B.png",
+      "sourceSha256": "44add588a2bb85bfb6673770d804d452b2187323d85f6f6db3d3d92e85592e29",
+      "bytes": 76046,
+      "sourceBytes": 1793193
+    },
+    "09-C.webp": {
+      "source": "runway-v3/09-C.png",
+      "sourceSha256": "c87ce4bbae3544be9ad1721211c0e7d1415181040a7f9247c301406753400c4e",
+      "bytes": 95758,
+      "sourceBytes": 1925336
     }
   }
 }

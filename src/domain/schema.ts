@@ -410,16 +410,29 @@ export interface CutsceneSettings {
   missingAssetBehavior: 'skip-video-and-enter-canonical-scene';
 }
 
-/** 一段過場影片掛在哪個引擎場景之前。 */
+/**
+ * 一段過場影片在 `scene` 內的播放時機：
+ * - `scene`：進場景前播放（原有行為，用於場景前的轉場，例如 00）。
+ * - `line`：播完接到 `anchorText` 那一句——播放時機是「讀完前一句、正要顯示這一句」之前，
+ *   因此以目標行的文字比對，不依賴行號（分支條件會讓不同路徑的可見行號不同）。
+ * - `choices`：這一場的台詞已讀完、正要翻到選項頁之前播放（用於「問完問題、選項出現前」）。
+ */
+export type CutsceneAnchorType = 'scene' | 'line' | 'choices';
+
+/** 一段過場影片掛在哪個引擎場景、什麼時機播放。 */
 export interface CutsceneCue {
   /** 對應 `property/sora-cutscenes.json` 的 item id。 */
   id: string;
   /** MP4 檔名，需與 sora manifest 的 `file` 一致（由測試把關）。 */
   file: string;
-  /** sora manifest 的敘事層 trigger，原樣保留供對照與測試。 */
+  /** sora manifest 的敘事層 trigger，原樣保留供對照與測試；技術播放時機以 anchorType 為準。 */
   trigger: string;
-  /** 進入這個引擎場景前播放。 */
+  /** 播放時機所在的引擎場景。 */
   scene: string;
+  /** 播放時機，見 `CutsceneAnchorType`。沒寫時視為 `scene`（進場景前）。 */
+  anchorType: CutsceneAnchorType;
+  /** `anchorType: 'line'` 專用：目標行解析後的 `Line.text`（不含 kind 前綴）。 */
+  anchorText?: string;
   /** 解析後的影片 URL。 */
   src: string;
   /**
@@ -471,8 +484,28 @@ export function parseCutsceneCues(raw: unknown): CutsceneCue[] {
     const storyboard = item.storyboard === undefined
       ? undefined
       : parseStoryboard(item.storyboard, storyboardDirectory, `cutscene-cues ${id}.storyboard`);
-    return { id, file, scene, trigger: stringField(item, 'trigger'), src: `${directory}/${file}`, storyboard };
+    const { anchorType, anchorText } = parseCutsceneAnchor(item.anchor, `cutscene-cues ${id}.anchor`);
+    return { id, file, scene, trigger: stringField(item, 'trigger'), anchorType, anchorText, src: `${directory}/${file}`, storyboard };
   });
+}
+
+const CUTSCENE_ANCHOR_TYPES: readonly CutsceneAnchorType[] = ['scene', 'line', 'choices'];
+
+/** `anchor` 沒寫時視為 `{ type: 'scene' }`（進場景前，原有行為）。 */
+function parseCutsceneAnchor(raw: unknown, label: string): { anchorType: CutsceneAnchorType; anchorText?: string } {
+  if (raw === undefined) return { anchorType: 'scene' };
+  if (!isRecord(raw)) throw new Error(`${label} 格式錯誤`);
+  const type = raw.type;
+  if (typeof type !== 'string' || !CUTSCENE_ANCHOR_TYPES.includes(type as CutsceneAnchorType)) {
+    throw new Error(`${label}.type 必須是 ${CUTSCENE_ANCHOR_TYPES.join(' / ')} 之一`);
+  }
+  if (type === 'line') {
+    if (typeof raw.matchText !== 'string' || raw.matchText.length === 0) {
+      throw new Error(`${label}.matchText 是 'line' 類型的必要欄位（非空字串）`);
+    }
+    return { anchorType: 'line', anchorText: raw.matchText };
+  }
+  return { anchorType: type as CutsceneAnchorType };
 }
 
 function parseStoryboard(raw: unknown, directory: string, label: string): StoryboardFrame[] {
