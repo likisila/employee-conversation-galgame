@@ -2,6 +2,8 @@
 
 狀態：**PENDING USER QC**。這是 00-A → 00-B → 00-C 的本地硬切候選，不是已核准的正式 `00_final_documents.mp4`，不得放入 runtime 或取代隔離區舊片。
 
+> 本候選的三支來源早於 `property/runway-video-spec-v2-review.md` v2.1 的量化攝影機契約。使用者已指出原 prompts 未充分寫明移動／zoom 速度；本檔保留作比較，不代表通過新版攝影機驗收，也不因此自動重跑。
+
 ## 來源與順序
 
 | 順序 | 檔案 | Runway task | 實際長度 | SHA-256 |

@@ -737,3 +737,22 @@
 - 交給 Claude 的明確行動：無；等待使用者親自 QC。使用者明確核准前，不接線、不部署、不重新剪輯。
 - 未決問題或阻塞：三個請求長度為 2／2.5／2.5 秒，但實際三個 Runway artifact 都是 2.04 秒，因此合併為 6.13 秒而非草案約 7 秒。是否接受此節奏由使用者判斷，不由 Agent自行延長。
 - 驗證結果：三支來源及合併檔 SHA-256 已記錄；合併容器可解析，輸出 147 frames、1280×720、24fps、H.264、無音訊；`git diff --check` 待提交前執行。未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260927-2256
+
+- 時間：2026-09-27T14:56:42Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本輪使用 `screenwriting:sw-scene-craft` 修正使用者指出的共通缺口：prompt 沒有明確交代攝影機如何移動、zoom 與速度。
+- 本次範圍：只修文件，不呼叫 Runway、不重新生成、不修改影片或 runtime。把全部現役 7 鏡的攝影行為改成可執行、可驗收的時間化契約。
+- 實際變更檔案：
+  - `property/runway-video-spec-v2-review.md`：升為 v2.1；新增攝影機運動契約、7 鏡時間表，並重寫全部 7 個 prompts，逐鏡列出起始 hold、運動／rack focus 類型、起訖秒數、方向、幅度、速度、ease、停止點、結尾 hold 與 zoom 是否為 0。
+  - `property/cutscene-storyboard-v4-review.md`：三個段落的內部節拍表新增攝影機／焦點欄，與 v2.1 逐鏡一致。
+  - `property/README.md`：補上 v2.1 攝影機規格索引。
+  - `property/runway-generation-log.md`：記錄使用者 feedback 與「既有 00 候選早於 v2.1、不得自動重跑」。
+  - `coordination/pending-review/cutscenes/00-v4-candidate-01/README.md`：明確標註現有合併候選不代表通過新版 camera contract。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：`gentle`／`slow`／`restrained`／`brief` 不再可單獨當攝影規格；每鏡必須量化。rack focus 不是 zoom。除非逐鏡明寫 optical zoom，預設禁止 zoom；短推近定義為 physical dolly-in。刻意靜止也必須明寫 `locked camera` 與 pan／tilt／dolly／zoom 全為 0。
+- 7 鏡攝影決議：00-A 右橫移 3%；00-B 隨文件向下 4%；00-C 鎖鏡只做前景到遠景 rack focus；04-B 全程鎖鏡；04-C 鎖鏡做男性→手→男性雙向 rack focus；06-B 全程鎖定 wide 並保留至少 0.60s 黑場；06-C 手機亮後 physical dolly-in、手機尺寸最多增加 3%。
+- 交給 Claude 的明確行動：無。未來若建立生成 manifest 或 API runner，必須原樣保留 v2.1 的 camera timing／magnitude，不得壓縮回 `slow camera movement` 等模糊字樣。
+- 未決問題或阻塞：現有 00-A／B／C 與合併候選由舊 prompt 生成，仍等待使用者 QC。只有使用者明確要求時才依 v2.1 重生；本次 feedback 本身不構成 retry 授權。
+- 驗證結果：v2.1 與 storyboard 都各列出完整 7 鏡；所有時間段加總符合各鏡 2.0／2.5／3.0 秒；舊 `lateral drift`、`restrained side-follow`、`travels gently`、`moves briefly` 模糊攝影描述已從現行 prompts 移除；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。

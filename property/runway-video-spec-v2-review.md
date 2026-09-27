@@ -1,4 +1,4 @@
-# Runway 影片製作規格 v2 — 使用者審查稿
+# Runway 影片製作規格 v2.1 — 使用者審查稿
 
 狀態：**停止生成。** 本規格只把 `cutscene-storyboard-v4-review.md` 轉成可驗收的影片製作約束；使用者核准前不得提交新 task。
 
@@ -35,41 +35,67 @@
 
 正式 prompt 使用以下順序：
 
-`Single continuous shot. [以位置／外觀／道具指認主體]. [唯一動作]. [唯一允許的固定鏡位、短橫移或焦點轉移]. [末態的正面描述] and the composition holds steadily.`
+`Single continuous shot. [以位置／外觀／道具指認主體]. [起始停留]. [唯一動作]. [攝影機或焦點的種類、起訖時間、方向、幅度、速度與緩動]. [結尾停留與末態].`
 
-Prompt 不使用角色姓名、角色 ID、劇情背景說明、否定式禁止清單或下一鏡內容。模型只需要知道這一鏡能看見什麼、什麼在動、停在哪裡。
+Prompt 不使用角色姓名、角色 ID、劇情背景說明或下一鏡內容。模型只需要知道這一鏡能看見什麼、什麼在動、攝影機如何動、停在哪裡。必要的防漂移限制只寫與本鏡直接相反的誤動作，不堆疊無關禁止清單。
+
+## 攝影機運動契約
+
+每一鏡都必須逐項寫明；「gentle」「slow」「restrained」「brief」只能作質感修飾，不能代替數值：
+
+1. **運動種類**：locked camera、lateral dolly、tilt、pan、dolly-in/out、optical zoom 或 rack focus，只能選一個主要攝影行為。rack focus 不算 zoom。
+2. **起始停留**：明寫 0 秒到幾秒完全鎖定，讓起始影格可辨識。
+3. **運動窗**：明寫從幾秒開始、到幾秒停止；不得讓模型自行決定整段持續移動。
+4. **方向與幅度**：空間移動以畫面寬／高百分比或角度表示；zoom 以主體在畫面中的尺寸變化表示；focus 需寫起點與終點平面。
+5. **速度與緩動**：constant speed、ease-in/ease-out 或 ease-out，並寫出緩動所占時間。
+6. **結尾停留**：運動停止後至少保留 0.5 秒；不得在最後一格仍移動。
+7. **零運動也要寫**：若戲劇功能需要靜止，明寫 `locked camera for the entire shot; zero pan, tilt, dolly or zoom`，不能省略攝影機欄位。
+
+若實際生成片長與請求不同，依全片比例縮放上述時間點；不得為填滿或補足時間新增第二個攝影動作。除非逐鏡規格明寫 `optical zoom`，全案預設禁止 zoom；短推近一律指 physical dolly-in。
+
+## 7 鏡攝影機時間表
+
+| 鏡 | 起始停留 | 攝影機／焦點運動 | 速度與幅度 | 結尾停留 |
+| --- | --- | --- | --- | --- |
+| 00-A 2.0s | 0.00–0.30s locked | 0.30–1.45s lateral dolly right，沿桌緣平移 | 前後各 0.15s ease；總位移約畫面寬 3%；無 zoom | 1.45–2.00s locked |
+| 00-B 2.5s | 0.00–0.30s locked | 0.30–1.70s camera tracks downward with the folder | 前後各 0.20s ease；總位移約畫面高 4%；無 push-in／zoom | 1.70–2.50s locked |
+| 00-C 2.5s | 0.00–0.35s locked，焦點在前景藍邊 | 0.35–1.55s rack focus 到遠處工作的女性 | 前後各 0.20s ease；攝影機位置與焦距不變，無 zoom | 1.55–2.50s focus locked |
+| 04-B 2.5s | 0.00–2.50s | locked camera for entire shot | 0% pan／tilt／dolly／zoom；只允許人物呼吸與極輕抬下巴 | 全鏡皆為 hold |
+| 04-C 2.5s | 0.00–0.35s locked，焦點在沉默男性 | 0.35–0.80s rack focus 到平板上的靜止雙手；0.80–1.15s hold；1.15–1.65s rack focus 回男性 | 兩次焦點轉移均 ease-in/out；攝影機位置與焦距不變，無 zoom | 1.65–2.50s focus locked |
+| 06-B 3.0s | 0.00–3.00s | locked wide composition for entire shot | 0% pan／tilt／dolly／zoom；讓離場與關燈在固定空間內完成 | 關燈後黑畫面至少 hold 0.60s |
+| 06-C 3.0s | 0.00–0.45s locked | 0.80–2.15s physical dolly-in toward the phone | 前 0.20s ease-in、後 0.30s ease-out；手機寬度最多增加約 3%；無 optical zoom | 2.15–3.00s locked |
 
 ## 7 鏡 prompt 草案
 
-這些 prompt 只供審查，不可送 connector。
+以下為 v2.1 審查稿；使用者逐鏡授權前不可送 connector。2026-09-27 已生成的 00-A／B／C 候選早於本攝影機契約，保留供比較，但不能反向當作本表已驗收。
 
 ### 00-A — 2.0 秒
 
-`Single continuous shot. The dark-haired woman at the keyboard continues working quietly while rain reflections move softly across the office. A very short lateral drift follows the desk edge. Her attention remains fixed on the screen and the composition holds steadily.`
+`Single continuous shot. The dark-haired woman at the keyboard continues working quietly while rain reflections move softly across the office. Hold the camera completely locked from 0.00 to 0.30 seconds. From 0.30 to 1.45 seconds, perform one lateral dolly right parallel to the desk edge, moving only about three percent of the frame width, with a 0.15-second ease-in and 0.15-second ease-out. Stop all camera movement at 1.45 seconds and hold the final composition through 2.00 seconds. Her attention remains fixed on the screen. No pan, tilt, push-in or zoom.`
 
 ### 00-B — 2.5 秒
 
-`Single continuous shot. The standing light-haired woman slowly lowers the wide blue paper folder with both hands until it rests flat on the desk, then releases it. A restrained side-follow tracks only the short downward movement. The folder and both released hands hold steadily.`
+`Single continuous shot. The standing light-haired woman slowly lowers the wide blue paper folder with both hands until it rests flat on the desk, then releases it. Hold the camera completely locked from 0.00 to 0.30 seconds. From 0.30 to 1.70 seconds, track downward with the folder by only four percent of the frame height, using a 0.20-second ease-in and 0.20-second ease-out. Stop when the folder reaches the desk; do not push toward it or zoom. Hold the folder flat and both released hands steady from 1.70 through 2.50 seconds.`
 
 ### 00-C — 2.5 秒
 
-`Single continuous shot. The seated brown-haired man looks toward the dark-haired woman working in the distance. Focus travels gently along his eyeline from the soft blue edge of the folder to the distant woman. Their physical distance holds steadily.`
+`Single continuous shot. The seated brown-haired man remains still and looks toward the dark-haired woman working in the distance. Keep the camera position, framing and focal length completely locked for the entire shot. Hold focus on the soft blue folder edge in the foreground from 0.00 to 0.35 seconds. From 0.35 to 1.55 seconds, perform one smooth rack focus along his eyeline to the distant working woman, with a 0.20-second ease at both ends. Hold focus on her from 1.55 through 2.50 seconds. No pan, tilt, dolly or zoom; their physical distance never changes.`
 
 ### 04-B — 2.5 秒
 
-`Single continuous shot. The dark-haired woman in the shoulder-up close shot holds the gaze of the person seated opposite her after finishing her question. She takes one subtle breath and raises her chin by a fraction. Her gaze holds steadily toward the same off-screen position.`
+`Single continuous shot. The dark-haired woman in the shoulder-up close shot holds the gaze of the person seated opposite her after finishing her question. The camera remains completely locked from 0.00 through 2.50 seconds: zero pan, tilt, dolly or zoom. She takes one subtle breath and raises her chin by a fraction between 0.55 and 1.35 seconds, then becomes still. Her gaze holds toward the same off-screen position through the final frame.`
 
 ### 04-C — 2.5 秒
 
-`Single continuous shot. The seated brown-haired man remains silent. Focus moves briefly to the light-haired woman's hands resting motionless on the tablet keyboard, then returns to the seated man. Both visible adults remain still and the final focus holds steadily.`
+`Single continuous shot. The seated brown-haired man remains silent while the light-haired woman's hands rest motionless on the tablet keyboard. Keep camera position, framing and focal length locked throughout. Hold focus on the seated man from 0.00 to 0.35 seconds; rack focus to the still hands from 0.35 to 0.80 seconds with ease-in and ease-out; hold there until 1.15 seconds; rack focus back to the man from 1.15 to 1.65 seconds; then hold through 2.50 seconds. No pan, tilt, dolly or zoom. Both adults remain still.`
 
 ### 06-B — 3.0 秒
 
-`Single continuous shot. The light-haired woman at the meeting-room doorway steps out and switches off the room light. The brown-haired man remains seated. The room settles into clean darkness and the black frame holds steadily.`
+`Single continuous shot. The light-haired woman at the meeting-room doorway steps out and switches off the room light while the brown-haired man remains seated. Use one locked wide composition from 0.00 through 3.00 seconds: zero pan, tilt, dolly or zoom. Her exit and the switch-off occur within the fixed geography. Complete the light change by 2.40 seconds and hold a clean black frame without camera movement for at least the final 0.60 seconds.`
 
 ### 06-C — 3.0 秒
 
-`Single continuous shot in the quiet home interior at night. The dark phone screen lights with one small unreadable notification. The nearby hand stops before touching it. The illuminated phone and suspended hand hold steadily.`
+`Single continuous shot in the quiet home interior at night. Hold the camera locked from 0.00 to 0.45 seconds. The dark phone screen lights with one small unreadable notification and the nearby hand stops before touching it. From 0.80 to 2.15 seconds, make one physical dolly-in toward the phone so its width increases by no more than three percent, using a 0.20-second ease-in and a 0.30-second ease-out. Stop completely at 2.15 seconds and hold the illuminated phone and suspended hand through 3.00 seconds. No optical zoom, pan or tilt.`
 
 ## 剪輯規格
 

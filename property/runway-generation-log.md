@@ -108,3 +108,11 @@ This log records submitted candidates. A submitted or completed task is not an a
 - SHA-256: `f16c2b662e5bb3d72a7c0d1ff6456e3849e8653c61706a7ecc7e88da444d5d8c`
 - Runway calls during combination: none. The three completed browser results were exported and combined locally.
 - QC status: reserved for the user. Do not rename, deploy, re-edit or regenerate before explicit user confirmation.
+
+## Camera-spec correction after 00 candidate 01
+
+- Recorded: `2026-09-27`
+- User finding: the 00 prompts did not precisely state camera movement or zoom speed.
+- Resolution: `property/runway-video-spec-v2-review.md` v2.1 now specifies, for all seven active shots, the start hold, camera/focus operation, exact movement window, direction, magnitude, easing, end hold, and whether zoom is zero.
+- Status of existing 00-A/B/C and combined candidate: retained unchanged for user comparison; they predate v2.1 and must not be treated as camera-contract-compliant merely because generation completed.
+- Generation action: none. Do not regenerate any shot without a new explicit user request.
