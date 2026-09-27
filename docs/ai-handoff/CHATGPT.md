@@ -720,3 +720,20 @@
 - 交給 Claude 的明確行動：無；等待使用者查看原 Runway task viewer。
 - 未決問題或阻塞：等待使用者 QC 與明確下一步。
 - 驗證結果：start frame SHA-256 `20841c56298839283b5f2cb4d13c3593179f3137d4b65fdf060fe51e18f8188e`、2,002,478 bytes；task accepted；未修改 runtime 或影像，未追蹤 `.claude/` 未納入。
+
+## ChatGPT-20260927-2207
+
+- 時間：2026-09-27T14:07:11Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者要求把已完成的 00-A／B／C 合併，並明確禁止 Runway calls。
+- 本次範圍：從三個現有完成影片分頁匯出原始 MP4，在本機依 A → B → C 以硬切串接；沒有生成、重試、變體、轉場、補幀、畫面修改或 Runway call。
+- 實際變更檔案：
+  - `coordination/pending-review/cutscenes/00-v4-candidate-01/00-A.mp4`、`00-B.mp4`、`00-C.mp4`：三支原始來源。
+  - 同資料夾 `concat.txt`、`README.md`、`00-v4-candidate-01.mp4`：固定順序、來源／hash／技術規格與合併候選。
+  - `property/runway-generation-log.md`：新增 combined candidate 01 provenance。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 合併結果：`00-v4-candidate-01.mp4` 為 6.13 秒／147 frames／1280×720／24fps／H.264 High／yuv420p／無音訊；以 stream copy 保留三段編碼並直接硬切，SHA-256 `f16c2b662e5bb3d72a7c0d1ff6456e3849e8653c61706a7ecc7e88da444d5d8c`。
+- 已定案事項：本檔只在 pending-review，是完整 00 的候選，不是正式 `00_final_documents.mp4`。不得覆寫隔離區同名舊片或移入 `public/assets/cutscenes/`。
+- 交給 Claude 的明確行動：無；等待使用者親自 QC。使用者明確核准前，不接線、不部署、不重新剪輯。
+- 未決問題或阻塞：三個請求長度為 2／2.5／2.5 秒，但實際三個 Runway artifact 都是 2.04 秒，因此合併為 6.13 秒而非草案約 7 秒。是否接受此節奏由使用者判斷，不由 Agent自行延長。
+- 驗證結果：三支來源及合併檔 SHA-256 已記錄；合併容器可解析，輸出 147 frames、1280×720、24fps、H.264、無音訊；`git diff --check` 待提交前執行。未追蹤 `.claude/` 未修改、未納入。

@@ -96,3 +96,15 @@ This log records submitted candidates. A submitted or completed task is not an a
 - Required end state: focus rests on the distant working woman while the seated man, both characters' positions, their distance, and the office composition remain unchanged.
 - Rejection gates for user reference: either character moves into a new action; the woman looks back; the man stands or approaches; the foreground folder becomes clear or changes form; identity/geography drift; camera cut; any new plot beat.
 - Output URL/local file: available through the original Runway task viewer; not downloaded or promoted while awaiting user QC.
+
+## 00 combined candidate 01
+
+- Combined: `2026-09-27T14:07:11Z`
+- Status: `PENDING USER QC`
+- Sources, in order: 00-A task `95681111-cc58-41aa-b906-00536f26a050`; 00-B task `a4ab6894-051c-4c1f-9a24-6fa36dccc70e`; 00-C task `9ca8cf3c-b63e-4cd9-a155-d19d96f243dd`.
+- Local candidate: `coordination/pending-review/cutscenes/00-v4-candidate-01/00-v4-candidate-01.mp4`
+- Edit: A → B → C hard cuts only; no transition, interpolation, visual change or re-encode.
+- Actual output: `6.13s`, 147 frames, 1280×720, 24fps, H.264 High, yuv420p, no audio.
+- SHA-256: `f16c2b662e5bb3d72a7c0d1ff6456e3849e8653c61706a7ecc7e88da444d5d8c`
+- Runway calls during combination: none. The three completed browser results were exported and combined locally.
+- QC status: reserved for the user. Do not rename, deploy, re-edit or regenerate before explicit user confirmation.
