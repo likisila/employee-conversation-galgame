@@ -48,3 +48,27 @@ This log records submitted candidates. A submitted or completed task is not an a
 - Required end state: the same woman remains focused on the screen in the same office composition; only quiet work, rain reflections and a restrained lateral drift have occurred.
 - Rejection gates for user reference: character identity or anatomy drift; looking up; a person, document, notification or new object appears; location/time changes; readable text; dialogue; camera jump; any new plot beat.
 - Output URL/local file: available through the original Runway task viewer; not downloaded or promoted while awaiting user QC.
+
+## 00-B candidate 02
+
+- Submitted: `2026-09-27T13:42:20Z`
+- Status: `PENDING USER QC`
+- Task ID: `a4ab6894-051c-4c1f-9a24-6fa36dccc70e`
+- Shot: `00-B`
+- Candidate: `02`
+- Start frame: `public/assets/cutscenes/keyframes/current/00-B.png`
+- Start-frame SHA-256: `84cef29d78184ddd10fbbeaddb71f86cdd4b10767aa28accd8325f8563dacf61`
+- Start-frame bytes: `1,988,433`
+- Model: `gen-4.5`
+- Duration: `2.5s`
+- Ratio: `16:9`
+- Resolution: `720p`
+- Generated audio: `false`
+- Credits charged: `24`
+- Credits remaining after submission: `547`
+- Prompt: `Single continuous shot in the exact same illustrated rainy-night office and composition as the start frame. The standing light-haired woman slowly lowers the wide blue paper folder with both hands until it rests fully flat on the desk, then releases it. A restrained side-follow tracks only this short downward movement, then stops. The folder remains visibly thick with a cover, spine, and paper pages, and both released hands hold steadily above the desk. No tablet, screen, glowing device, readable text, extra object, new person, dialogue, location change, time jump, camera cut, or additional plot action appears.`
+- Submission count: exactly one generation task for this candidate. Do not retry, regenerate or create a variation until the user personally checks and explicitly confirms next action.
+- QC status: reserved for the user. ChatGPT must not auto-approve or auto-reject this candidate.
+- Required end state: the blue paper folder rests fully flat on the desk, both hands have released it, and the original office composition remains stable.
+- Rejection gates for user reference: folder becomes a tablet/screen/book; paper thickness disappears; hands or identity drift; extra objects or people appear; camera cuts or pushes; any new plot beat.
+- Output URL/local file: available through the original Runway task viewer; not downloaded or promoted while awaiting user QC.
