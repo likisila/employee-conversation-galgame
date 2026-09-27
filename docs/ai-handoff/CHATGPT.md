@@ -659,3 +659,23 @@
 - 交給 Claude 的明確行動：使用者核准 v4 後，把 `cutscene-cues.json`、storyboard optimizer、`public/assets/cutscenes/storyboard/manifest.json`、schema 註解與測試改指 v4 active 路徑，退役 02／07／08／09 cue。完成且測試通過後，通知 ChatGPT，才能刪除舊來源中的 7 張重複 PNG；目前不可刪。
 - 未決問題或阻塞：v4 尚待使用者核准；因此 active 目前是 review copies，舊來源仍需保留。root README 與 runtime manifest 仍寫 v2／v3，屬 Claude-owned 遷移項目。
 - 驗證結果：v4 active 共 7 張、退役索引 18 列、manifest 0 `READY`；7 個 active 副本 SHA-256 全部逐一與原始來源相同；`sora-cutscenes.json` 可解析；`git diff --check` 通過。未執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-2121
+
+- 時間：2026-09-27T13:21:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本次依使用者校正資產架構：應有一個永遠代表最新完整集合的穩定資料夾，各版各保留一份快照；同鏡號換圖不應每次要求 Claude 改路徑。
+- 本次範圍：建立 `keyframes/current/<shot-id>.png` 穩定契約，將 v4 的 7 張最新候選以逐位元相同副本放入 current，並把 ChatGPT-owned 分鏡、Runway 規格、影格 audit、內容 manifest 與各版本說明統一改指 current。沒有生成、重畫、刪除或搬走任何影像，也沒有修改 Claude-owned runtime／cue／schema／optimizer／測試。
+- 實際變更檔案：
+  - `public/assets/cutscenes/keyframes/current/README.md`、`manifest.json`、`00-A.png`、`00-B.png`、`00-C.png`、`04-B.png`、`04-C.png`、`06-B.png`、`06-C.png`（新增）：最新完整集合、穩定命名、來源快照與 SHA-256。
+  - `property/cutscene-keyframes-v4-audit.md`、`cutscene-storyboard-v4-review.md`、`runway-video-spec-v2-review.md`、`property/README.md`、`property/sora-cutscenes.json`、`public/assets/cutscenes/README.md`：所有現役創作來源統一改指 `keyframes/current/`。
+  - `keyframes/runway-v2/README.md`、`REVIEW.md`、`runway-v3/README.md`、`REVIEW.md`、`v4-review/README.md`、`v4-review/retired/README.md`：明確標為歷史／版本快照並指回 current。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry；本 Entry 取代上一筆把 `v4-review/active/` 當穩定現役路徑的架構決定。
+- 已定案事項：
+  1. 唯一最新完整路徑為 `public/assets/cutscenes/keyframes/current/<shot-id>.png`；runtime 與工具完成一次遷移後不得綁版本資料夾。
+  2. 同一 shot 的純視覺替換：先保存舊圖到新版本快照，再覆寫相同 current 檔名並更新 hash；不改 cue、shot ID、manifest key 或程式路徑。
+  3. `runway-v2/`、`runway-v3/`、`v4-review/` 保留各版一份，視為不可變快照，不供 runtime 選圖。
+  4. 只有新增／刪除／改名鏡號、改播放時點、改段落鏡序、改 duration contract，或劇情／角色／場景設計改變時，才需要 Claude 修改整合。
+- 交給 Claude 的明確行動：在使用者核准 v4 slate／stable-path contract 後做一次性遷移：讓 `property/cutscene-cues.json`、storyboard optimizer、`public/assets/cutscenes/storyboard/manifest.json`、schema 註解、測試與 root README 只從 `keyframes/current/<shot-id>.png` 取得仍現役的 7 鏡，並退役舊 02／07／08／09 等來源。遷移完成後，日常同鏡號換圖不得再要求改任何路徑；只需執行既有資產處理／驗證流程。
+- 未決問題或阻塞：v4 的 3 段／7 鏡仍待使用者審查；現行 storyboard manifest 仍列出 v2／v3 共 25 個來源，因此舊來源現在不可刪。這是一次性技術遷移，不是每次換圖都要重做的工作。
+- 驗證結果：current 有且只有 7 張 PNG；7 張 SHA-256 全部符合 `current/manifest.json` 並與 `v4-review/active/` 快照逐位元相同；`sora-cutscenes.json` 與 current manifest 可解析；現役創作文件已無 `v4-review/active` 殘留；`git diff --check` 通過。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。

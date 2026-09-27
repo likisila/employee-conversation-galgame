@@ -1,8 +1,8 @@
-# v4 關鍵影格審查入口
+# v4 關鍵影格審查快照
 
-狀態：**停止生成，等待使用者審查。** 這是目前唯一用來檢查 v4 分鏡的關鍵影格入口。
+狀態：**版本快照，停止生成。** 最新完整集合與未來穩定替換路徑已改為 [`../current/`](../current/)；本資料夾只保存 v4 審查當下的圖片與退役判定。
 
-- [`active/`](active/)：v4 暫留 00、04、06 的 7 張現役候選；所有生成與審查一律從這裡選圖。
+- [`active/`](active/)：建立 v4 審查稿時的 7 張快照，不供未來 runtime 綁定。
 - [`retired/README.md`](retired/README.md)：18 張退役／被取代影格的逐檔狀態、原路徑與原因。
 - `runway-v2/`、`runway-v3/`：舊路徑相容來源池，不再代表影格狀態。暫時保留是因現行 runtime storyboard manifest 尚指向它們。
 
@@ -18,7 +18,7 @@
 | `active/06-B.png` | 06 | `runway-v3/06-B.png` | ACTIVE REVIEW |
 | `active/06-C.png` | 06 | `runway-v3/06-C.png` | ACTIVE REVIEW |
 
-這 7 張是逐位元相同的相容副本，不是重生成或重畫。使用者核准 v4、Claude 更新 runtime／optimizer／manifest 路徑後，才可刪除舊來源中的重複檔。
+這 7 張是逐位元相同的版本快照，不是重生成或重畫。未來同鏡修圖只替換 `../current/<shot-id>.png`；本快照保持不變。
 
 ## 預覽
 

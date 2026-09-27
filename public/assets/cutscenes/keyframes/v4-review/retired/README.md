@@ -1,10 +1,10 @@
 # v4 退役關鍵影格索引
 
-這些影格不屬於 v4 現役 7 鏡。原 PNG 暫時保留在舊來源路徑，供歷史比對及現行 runtime fallback 相容；**不得因檔案仍存在就送生成、加入新剪輯或視為待完成。**
+這些影格不屬於 v4 現役 7 鏡。最新完整集合固定在 [`../../current/`](../../current/)；原 PNG 暫時保留在舊來源路徑，供歷史比對及現行 runtime fallback 相容；**不得因檔案仍存在就送生成、加入新剪輯或視為待完成。**
 
 | 影格 | 原路徑 | 狀態 | 原因 |
 | --- | --- | --- | --- |
-| 00-B old | `runway-v2/00-B.png` | SUPERSEDED | 藍色物件像平板；已由現役 `v4-review/active/00-B.png` 取代 |
+| 00-B old | `runway-v2/00-B.png` | SUPERSEDED | 藍色物件像平板；已由現役 `current/00-B.png` 取代 |
 | 01-A | `runway-v2/01-A.png` | RETIRED | 邀請打字／刪除已由 runtime 演出 |
 | 01-B | `runway-v2/01-B.png` | RETIRED | 發送行為必須留給 Choice 1 |
 | 02-A | `runway-v2/02-A.png` | RETIRED v4 | cue 後 L16–L23 已完整敘述入室與會議室空間 |

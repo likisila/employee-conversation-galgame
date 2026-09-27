@@ -1,6 +1,6 @@
 # Runway v2 起始關鍵影格（歷史素材池）
 
-> **LEGACY SOURCE POOL。** 這個資料夾名稱不再代表現役狀態。v4 現役影格已集中到 [`../v4-review/active/`](../v4-review/active/)；退役逐檔標註見 [`../v4-review/retired/README.md`](../v4-review/retired/README.md)。現有 PNG 暫留只為 runtime／manifest 相容與歷史比對。
+> **LEGACY SOURCE POOL。** 這個資料夾名稱不再代表現役狀態。最新完整集合與穩定路徑是 [`../current/`](../current/)；退役逐檔標註見 [`../v4-review/retired/README.md`](../v4-review/retired/README.md)。現有 PNG 暫留只為 runtime／manifest 相容與歷史比對。
 
 2026-09-27：13 張舊影格已依目前劇情重新審查。v3 正式清單為 **6 張沿用、1 張重繪、6 張退出正式剪輯**；另需 11 張全新結局影格。退出素材保留作歷史比對，不代表全部有視覺瑕疵。
 

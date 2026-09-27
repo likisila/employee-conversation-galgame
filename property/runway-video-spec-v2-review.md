@@ -2,7 +2,7 @@
 
 狀態：**停止生成。** 本規格只把 `cutscene-storyboard-v4-review.md` 轉成可驗收的影片製作約束；使用者核准前不得提交新 task。
 
-所有起始圖只從 `public/assets/cutscenes/keyframes/v4-review/active/` 取用；不得直接從 `runway-v2/`、`runway-v3/` 或退役索引選圖。
+所有起始圖只從穩定路徑 `public/assets/cutscenes/keyframes/current/` 取用；不得直接從 `runway-v2/`、`runway-v3/`、`v4-review/` 或退役索引選圖。同鏡號視覺替換沿用相同檔名，只有鏡號、時點、鏡序、片長契約或劇情設計變更才需要修改整合。
 
 ## 製作單位
 
