@@ -679,3 +679,18 @@
 - 交給 Claude 的明確行動：在使用者核准 v4 slate／stable-path contract 後做一次性遷移：讓 `property/cutscene-cues.json`、storyboard optimizer、`public/assets/cutscenes/storyboard/manifest.json`、schema 註解、測試與 root README 只從 `keyframes/current/<shot-id>.png` 取得仍現役的 7 鏡，並退役舊 02／07／08／09 等來源。遷移完成後，日常同鏡號換圖不得再要求改任何路徑；只需執行既有資產處理／驗證流程。
 - 未決問題或阻塞：v4 的 3 段／7 鏡仍待使用者審查；現行 storyboard manifest 仍列出 v2／v3 共 25 個來源，因此舊來源現在不可刪。這是一次性技術遷移，不是每次換圖都要重做的工作。
 - 驗證結果：current 有且只有 7 張 PNG；7 張 SHA-256 全部符合 `current/manifest.json` 並與 `v4-review/active/` 快照逐位元相同；`sora-cutscenes.json` 與 current manifest 可解析；現役創作文件已無 `v4-review/active` 殘留；`git diff --check` 通過。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-2139
+
+- 時間：2026-09-27T13:39:57Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者明確要求 Runway 生成第一支結果、禁止重試，並表示將親自檢查；本次只提交 v4 製作順序中的第一個單鏡生成單位 00-A。
+- 本次範圍：用穩定來源 `keyframes/current/00-A.png` 建立一個 2 秒、16:9、720p、無音訊的單一連續鏡頭候選；提示詞只允許安靜工作、雨影與極短橫移，不允許人物進出、文件、通知、抬頭、換場、時間跳躍或新劇情。
+- 實際變更檔案：
+  - `property/runway-generation-log.md`：新增 00-A candidate 01 的 task ID、start-frame hash、完整 prompt、參數、credits、禁止重試與使用者自行 QC 狀態。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 生成結果：Runway 接受唯一 generation task `95681111-cc58-41aa-b906-00536f26a050`，提交時為背景生成中；扣除 24 credits，餘額 571。正式 generation tool 只呼叫一次，沒有 retry／regenerate／variation。
+- 已定案事項：這是 00-A 單鏡候選，不得被命名或部署為完整 `00_final_documents.mp4`；完整 00 仍需未來核准的 00-A／B／C 候選剪輯。QC 完全保留給使用者，不由 Agent 自動判定。
+- 交給 Claude 的明確行動：無。不要下載、接線、部署、重送或自動建立變體；等待使用者親自檢查原 task viewer 並給出決定。
+- 未決問題或阻塞：等待使用者 QC。除非使用者明確要求，任何 Agent 都不得再送 00-A 或用相同參數重試。
+- 驗證結果：Runway authenticated；start frame SHA-256 `6377f9670be8fd8dc50ed8c8c2193d0cd3a4550cc90551fa01b12146780e31e5`、2,004,434 bytes；task accepted。前置 upload 參數驗證沒有建立 task 或扣生成額度。未修改 runtime 或其他影像，未追蹤 `.claude/` 未納入。

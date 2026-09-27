@@ -24,3 +24,27 @@ This log records submitted candidates. A submitted or completed task is not an a
 - Required end state: the paper folder rests fully flat on the desk and both hands have released it.
 - Rejection gates: folder becomes a tablet or book; paper thickness disappears; face, hair, clothing or hands drift; fingers merge; new desk objects appear; camera pushes in or composition jumps.
 - Output URL/local file: intentionally not promoted or downloaded during the specification rewrite.
+
+## 00-A candidate 01
+
+- Submitted: `2026-09-27T13:39:57Z`
+- Status: `PENDING USER QC`
+- Task ID: `95681111-cc58-41aa-b906-00536f26a050`
+- Shot: `00-A`
+- Candidate: `01`
+- Start frame: `public/assets/cutscenes/keyframes/current/00-A.png`
+- Start-frame SHA-256: `6377f9670be8fd8dc50ed8c8c2193d0cd3a4550cc90551fa01b12146780e31e5`
+- Start-frame bytes: `2,004,434`
+- Model: `gen-4.5`
+- Duration: `2s`
+- Ratio: `16:9`
+- Resolution: `720p`
+- Generated audio: `false`
+- Credits charged: `24`
+- Credits remaining after submission: `571`
+- Prompt: `Single continuous shot in the exact same illustrated rainy-night office and composition as the start frame. The dark-haired woman at the keyboard continues working quietly, with only subtle natural typing motion, while soft rain reflections move gently across the office surfaces. A very short restrained lateral camera drift follows the desk edge, then the composition holds steadily. Her attention remains fixed on the screen throughout. No one enters or leaves, no document or notification appears, she does not look up, and no new action, event, location, time jump, dialogue, text, or plot development occurs.`
+- Submission count: exactly one generation task. A prior upload-parameter validation returned before task creation and charged no generation credits; it was not a generation attempt. Do not retry, regenerate or create a variation unless the user explicitly requests it after personally checking this result.
+- QC status: reserved for the user. ChatGPT must not auto-approve or auto-reject this candidate.
+- Required end state: the same woman remains focused on the screen in the same office composition; only quiet work, rain reflections and a restrained lateral drift have occurred.
+- Rejection gates for user reference: character identity or anatomy drift; looking up; a person, document, notification or new object appears; location/time changes; readable text; dialogue; camera jump; any new plot beat.
+- Output URL/local file: available through the original Runway task viewer; not downloaded or promoted while awaiting user QC.
