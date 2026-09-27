@@ -525,3 +525,24 @@
   3. 保持原生圖不裁切；由 Claude 做 runtime 所需 WebP／尺寸優化與 1280×720 影片交付處理。正式影片仍為 0／7。
 - 未決問題或阻塞：等待使用者對 `runway-v3/REVIEW.md` 做最終靜態核准；若有退件由 ChatGPT 單張重做。Claude 的 cue／fallback 接線不需等待影格生成，但正式圖生影片仍須在靜態核准後進行。
 - 驗證結果：12 張均為 1672×941 PNG、無 alpha channel、非透明滿版；逐張目視初檢完成。`sora-cutscenes.json` 可正常解析；`git diff --check`、`npm.cmd run typecheck`、`npm.cmd test`（19 檔 200／200）、`npm.cmd run build` 全數通過。建置後 `dist/assets/cutscenes/keyframes/runway-v3` 不存在，23,197,460 bytes 的創作原圖未誤入網站成品。工作樹既有未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-1523
+
+- 時間：2026-09-27T07:23:13Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本次是唯讀整合準備度審查與官方 API 研究；未修改 Claude-owned runtime、schema、cue、測試或生成腳本。
+- 本次範圍：檢查現有 7 段／18 鏡素材是否已有足夠資訊可接 Runway，並判斷能否在無角色或場景錯配下生成。逐項核對 v3 分鏡、實際 cue、legacy Sora manifest、18 張起始影格、Runway 官方 API／模型／輸入輸出／提示／價格文件與本機工具狀態。
+- 實際變更檔案：
+  - `docs/research/runway-video-integration-audit-20260927.md`（新增）：Runway 接入準備度、官方 API 需求、素材相容性、風險、缺口、成本與安全試跑方案。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 審查結論：目前資訊足以做「人工監督的 1–2 鏡 proof of concept」，不足以宣稱或執行「無人監督且零角色／場景錯配」的 18 鏡量產。現有角色／道具 bible、逐鏡起訖狀態、18 張 start frame 與已接好的 7 個 runtime cue 是強基礎；但 Runway 本身不保證一致性，必須把它當成逐鏡生成後由 QC／重試把關的流程。
+- 主要缺口與風險：
+  1. 使用者尚未完成 18 張靜態影格的正式核准；`09-C.png` 新出現周啟文面前的筆電，與 09-A／09-B 及「no new objects」規則不完全一致，需明確核准或重做。
+  2. 專案沒有 `@runwayml/sdk`、Runway runner、18 鏡機器可讀 manifest、任務輪詢／下載／provenance，也沒有 `RUNWAYML_API_SECRET`；現有 `generate_sora_cutscenes.mjs` 與 `sora-cutscenes.json` 明確是 legacy Sora，不能直接當 Runway 接口。
+  3. 現有提示模板大量使用負面限制；Runway 官方建議以正向、單一動作與鏡頭描述為主，需為 18 鏡改寫 provider-specific motion prompts，並把限制移到驗收規則。
+  4. API 只交付逐鏡影片；本機未安裝 ffmpeg，且環境音／音訊流程未定，尚無法自動拼成 7 段正式 MP4。
+  5. `property/cutscene-cues.json` 已完成 7 段接線，但 `property/cutscene-storyboard-v3.md` 與 `public/assets/cutscenes/README.md` 仍寫 cue migration pending；這個雙重真相會誤導自動化，實作前應同步。
+- 建議下一步：先由使用者核准或退回 18 張靜態影格，特別確認 09-C；再以 `00-B-v3` 做單鏡 Runway pilot，保存輸入、prompt、task ID、model、seed／參數與輸出，依角色、服裝、道具、場景、動作、末態逐欄驗收。通過後才擴到第二鏡及全套，不先批量燒 credits。
+- 交給 Claude 的明確行動：本輪只審查，沒有要求立即改 code。若使用者批准接入，請依研究報告實作 Runway SDK／secret 檢查、18 鏡 manifest、上傳／輪詢／立即下載、provenance、QC 狀態與拼接流程；不得復用 legacy Sora runner，也不得把模型輸出視為自動通過。
+- 未決問題或阻塞：使用者靜態核准、09-C 道具決議、Runway 帳號／credits／secret、Runway 專用 prompt manifest、QC／重試政策、拼接與音訊流程。正式影片仍為 0／7。
+- 驗證結果：18 張 PNG 均為 1672×941、單張約 1.47–2.02 MB，符合目前 Runway image-to-video 支援的 1280:720 方向與 data URI 實務大小限制；依 2026-09-27 官方文件確認 Node SDK、API secret、模型、2–10 秒 duration、輸入／輸出保存限制與 credits。`git diff --check` 通過；本次僅文件，未執行程式測試。工作樹既有未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
