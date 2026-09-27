@@ -55,11 +55,11 @@ Prompt 不使用角色姓名、角色 ID、劇情背景說明、否定式禁止�
 
 ### 04-B — 2.5 秒
 
-`Single continuous shot. The dark-haired woman seated across the table holds the other person's gaze after finishing her question. She takes one subtle breath and raises her chin by a fraction. Her lowered hands and dark wristwatch remain still as her gaze holds steadily.`
+`Single continuous shot. The dark-haired woman in the shoulder-up close shot holds the gaze of the person seated opposite her after finishing her question. She takes one subtle breath and raises her chin by a fraction. Her gaze holds steadily toward the same off-screen position.`
 
 ### 04-C — 2.5 秒
 
-`Single continuous shot. The seated brown-haired man remains silent. Focus moves briefly to the light-haired woman's hands paused above the tablet, then returns to the seated man. All three adults remain still and the final focus holds steadily.`
+`Single continuous shot. The seated brown-haired man remains silent. Focus moves briefly to the light-haired woman's hands resting motionless on the tablet keyboard, then returns to the seated man. Both visible adults remain still and the final focus holds steadily.`
 
 ### 06-B — 3.0 秒
 
@@ -108,7 +108,7 @@ Prompt 不使用角色姓名、角色 ID、劇情背景說明、否定式禁止�
 
 ## 核准後才做的事
 
-1. 逐張重看 7 張候選 start frames 是否真能作本版第一幀。
+1. 7 張候選 start frames 已依本版逐張重看，不需新增；判定見 `cutscene-keyframes-v4-audit.md`。
 2. 只生成 00-A、00-B、00-C 的低成本候選並先剪成完整 00；不再用單鏡代表整段。
 3. 使用者驗收完整 00 的播放時機、節奏與內容後，才製作 04 與 06。
 4. 02、07、08、09 不保留「也許之後順便做」的生成狀態；若未來重啟，必須先提出全新的戲劇功能。

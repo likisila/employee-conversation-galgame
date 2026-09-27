@@ -24,6 +24,7 @@
 - `mba-debrief.json`：上述內容的結構化資料——十五個主要選項對六個維度的加減分與路徑證據、stakeholder matrix、五個決策點的理論映射、四個結局的策略／stakeholder 結果／非預期後果／理論重點／替代方案，以及 Debrief 畫面的文案與區塊標題。`manifest.json` 的 `mba` 欄位指向它。
 - `cutscene-storyboard-v4-review.md`：停止生成後的使用者審查稿；從實際 cue 前後文本重新判斷播放段落，暫縮為 00、04、06 共 3 段／7 鏡／約 18 秒。核准前不改 runtime cue。
 - `runway-video-spec-v2-review.md`：v4 的 Runway 製作與驗收規格；明確區分播放段落、鏡頭與生成任務，禁止用單鏡代表整段。
+- `cutscene-keyframes-v4-audit.md`：v4 暫留 7 鏡的逐張第一幀檢查；目前不需新增或重畫關鍵影格，並記錄 04-B／04-C 的 prompt 修正。
 - `cutscene-storyboard-v3.md`、`runway-video-shot-pack-v1.md`：已停止使用的歷史版，不得再送生成。`cutscene-storyboard-v2.md` 僅供更早期比對。
 - `sora-cutscenes.json`：保留既有影片 ID／檔名／trigger 相容的機器可讀內容清單。所有項目目前為 `TODO`、`BLOCKED` 或 `DEPRECATED`，沒有任何 `READY`／`LOCKED`；舊的一鍵 Sora 腳本不得用來生成 v3。`cutscenes.json` 保存正式手繪視覺小說電影的格式與缺檔策略；實際接線仍由 Claude-owned `cutscene-cues.json` 維護。
 
