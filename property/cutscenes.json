@@ -1,7 +1,7 @@
 {
   "version": 2,
   "storyId": "last-one-on-one",
-  "presentation": "live-action-micro-film",
+  "presentation": "hand-drawn-visual-novel-cinematic",
   "format": {
     "width": 1280,
     "height": 720,
@@ -13,4 +13,3 @@
   "source": "sora-cutscenes.json",
   "missingAssetBehavior": "skip-video-and-enter-canonical-scene"
 }
-

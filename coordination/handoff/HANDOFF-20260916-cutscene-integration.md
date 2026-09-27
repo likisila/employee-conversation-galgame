@@ -1,6 +1,6 @@
 # HANDOFF-20260916-cutscene-integration
 
-> 2026-09-19 內容更新：以下真人／Sora 規格是原整合版本的歷史紀錄；新版已改為官方手繪插畫、imagegen 起始影格與 Runway 圖生影片，見 [分鏡 v2](../../property/cutscene-storyboard-v2.md)。本文件 DONE 僅指 2026-09-17 播放器整合，不表示 v2 圖片、影片或 02／04 掛載時序已完成。原 Result 保留不改。
+> 2026-09-27 內容更新：以下真人／Sora 規格是原整合版本的歷史紀錄；目前正式創作規格是 [分鏡 v3](../../property/cutscene-storyboard-v3.md)。v3 採官方手繪插畫、核准關鍵影格與逐鏡圖生影片，並把清單重整為 7 段／18 鏡；01、03 退役，02、04 與四結局需要新的 mid-scene／coda 掛點。本文件 DONE 僅指 2026-09-17 舊播放器整合，不表示 v3 已接線或影片已完成。原 Result 保留不改。
 
 owner: Claude
 requested_by: GPT

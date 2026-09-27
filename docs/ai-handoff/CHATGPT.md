@@ -468,3 +468,33 @@
   6. 更新五個綁死舊 evidence 的測試，並補理論配對、固定三理論、整體後果只一次、正向選擇不錯誤歸因、替代做法無模板標籤的測試；完成後用本 Entry 的四條路徑重跑桌機與 390×812。
 - 未決問題或阻塞：內容端全頁重寫已完成；現行 runtime 仍有舊的箭頭因果鏈、五理論整包映射、「在這條路徑中」與「替代策略／改善／代價」硬編碼。Claude 接線前不能宣稱最後評估頁完成。
 - 驗證結果：JSON 解析、`git diff --check`、typecheck、production build 通過。測試 190／195 通過；五項失敗仍全是 `tests/mba.test.ts` 綁死重寫前 evidence 逐字內容，無新增失敗。Chromium 實機重跑四結局；內容修改後再載入 END 03，確認新標題、十七理論新文案、取捨與兩點分析範圍已進入 runtime，並確認其餘結構性問題仍待 Claude 接線。
+
+## ChatGPT-20260927-1214
+
+- 時間：2026-09-27T04:14:14Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0000`（最新）。已依角色邊界完整閱讀交接與目前 runtime 劇情；本次不修改 Claude-owned 播放器、schema、`cutscene-cues.json`、測試或 root README。
+- 本次範圍：使用者指定 `screenwriting:sw-scene-craft`，要求重新審查關鍵影格內容、插入時機與分鏡，並依目前劇情重產影片製作文件。逐張目視檢查既有 13 張 PNG，逐段對照 `property/scenes/*.json` 的最新 setup-payoff、雅琳弧線、推薦信回收及四結局，重建創作與交付規格。
+- 實際變更檔案：
+  - `property/cutscene-storyboard-v3.md`（新增）：目前唯一有效的 7 段／18 鏡／約 40 秒分鏡、精確插入錨點、每鏡起訖狀態、提示詞組裝、製作流程與否決條件。
+  - `property/sora-cutscenes.json`：升為 v3 內容清單；保留既有 ID／檔名／trigger 作技術遷移相容，改寫 canonical sources、角色／道具連續性、七段正式提示與驗收規則；所有項目改為 `BLOCKED`、`TODO` 或 `DEPRECATED`，無 `READY`／`LOCKED`，防止舊 Sora 腳本誤生成。
+  - `property/cutscenes.json`：presentation 改為 `hand-drawn-visual-novel-cinematic`；未改缺檔策略。
+  - `property/cutscene-storyboard-v2.md`：標記為歷史版並指向 v3。
+  - `property/README.md`、`public/assets/cutscenes/README.md`、`public/assets/cutscenes/keyframes/runway-v2/README.md`：同步權威文件、數量、狀態與製作順序。
+  - `public/assets/cutscenes/keyframes/runway-v2/REVIEW.md`：加入 13 張既有關鍵影格的 v3 逐張決議。
+  - `coordination/pending-review/cutscenes/README.md`：明定隔離舊片只供比對，不能因同名直接復用。
+  - `coordination/handoff/HANDOFF-20260916-cutscene-integration.md`：在歷史技術交接頂端標記 v3 已取代舊創作規格。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 正式清單為 00、02、04、06、07、08、09，共 7 段／18 鏡／約 40 秒。01 邀請與 runtime 打字／Choice 1 重複，03 文件與 s6 CG／雅琳承認沉默代價重複，兩段正式退役。
+  2. 既有 13 張影格中，沿用 00-A、00-C、02-A、02-C、04-B、04-C；00-B 因藍色物件像平板必須重畫；01-A/B、02-B、03-A/B、04-A 退出正式剪輯。退出不表示畫面必然有瑕疵。
+  3. 精確掛點：00 在 s1 L01 前；02 在 s3 L15 後／L16 前；04 在 `s7-recommend-converge` L08 後／Choice 5 前；06 在 `ending-true` L17 後／L18 前；07／08／09 分別放在各結局最後敘事與標題卡之間。
+  4. 四結局影片全部改為時間橋或 coda，不再 on-enter 預演結局。TRUE END 只演三週時間橋，不先揭露咖啡邀約；END 03 關視窗但不刪稿；END 04 刪未送草稿但不重演現金／告白等分支原因。
+  5. 正式影片目前 0／7。00-B 與 11 張新結局影格尚未生成；需先完成掛點方案與靜態影格核准，再逐鏡圖生影片，不能把舊 MP4 或退出 PNG 當成完成品。
+- 交給 Claude 的明確行動：
+  1. 依 v3 實作 mid-scene／coda cue：02、04、06、07、08、09 的精確錨點如上；不得只沿用 manifest 內為遷移保留的舊 trigger 字串。
+  2. 退役 01、03，移除其 runtime cue 或 storyboard fallback；更新 `tests/cutscenes.test.ts` 等仍假設九段／五段共通主線／on-enter 結局的測試。
+  3. 00、02、04 的 runtime storyboard 只保留 v3 沿用影格；00-B 重繪核准前不得重新加入。
+  4. 更新 root README 與技術交接中的舊段數、舊掛點及部署說明；完成後回覆本 Entry，讓 ChatGPT 再依鎖定 cue 產生 00-B 與 11 張新影格。
+- 未決問題或阻塞：內容、分鏡、提示與素材判定已完成；正式生成暫停在 Claude-owned cue 接線之前，避免在插入時機未鎖時浪費生成。工作樹既有未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+- 驗證結果：`sora-cutscenes.json`、`cutscenes.json` 均可由 `ConvertFrom-Json` 解析；清單 9 項中 7 項 active、0 項 `READY`／`LOCKED`；`git diff --check` 通過；`npm.cmd run typecheck` 通過；`npm.cmd test` 19 檔 200／200；`npm.cmd run build` 通過。測試與建置首次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功。本次未修改 runtime，建置內容不變，不需重建站點 ZIP。
