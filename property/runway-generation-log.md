@@ -116,3 +116,25 @@ This log records submitted candidates. A submitted or completed task is not an a
 - Resolution: `property/runway-video-spec-v2-review.md` v2.1 now specifies, for all seven active shots, the start hold, camera/focus operation, exact movement window, direction, magnitude, easing, end hold, and whether zoom is zero.
 - Status of existing 00-A/B/C and combined candidate: retained unchanged for user comparison; they predate v2.1 and must not be treated as camera-contract-compliant merely because generation completed.
 - Generation action: none. Do not regenerate any shot without a new explicit user request.
+
+## Story revision after 00 candidate 01
+
+- Recorded: `2026-09-28`
+- User correction: 00-A must show Zeng Ya-lin placing the blue folder on Zhou Yu-an's desk; 00-B must show an empty-handed Zeng Ya-lin and Lin Yu-cheng passing each other in the office aisle.
+- Superseded assets: 00-A candidate 01, 00-B candidates 01 and 02, and `coordination/pending-review/cutscenes/00-v4-candidate-01/00-v4-candidate-01.mp4` are `SUPERSEDED BY STORY REVISION`. They are historical records only and cannot be deployed, re-edited into the revised sequence, or used as revised-shot references.
+- 00-C candidate 01 remains available only for the user's personal review; it is not automatically approved.
+- Keyframe action: replace `current/00-A.png` and `current/00-B.png` under the same stable paths after approval. No new shot ID or runtime path is required.
+- Generation action: none. No retry, variation, or new submission is authorized by this revision.
+
+## 00 user-provided approved master
+
+- Accepted: `2026-09-28`
+- User instruction: `Use this as 00`.
+- Source supplied by user: `C:\Users\reneo\Downloads\Use all three uploaded images as visual references.mp4`
+- Official local asset: `public/assets/cutscenes/00_final_documents.mp4`
+- Duration: `10s` from Windows media metadata.
+- Size: `4,683,597 bytes`
+- SHA-256: `e8bc40964dd634e6fb02d22d4e028a0ee5bcdba56928455881b4f367af69de9a`
+- Cue: existing `final-documents` / `before:final-version`; no runtime code or cue edit required.
+- Review basis: direct user approval. ChatGPT did not re-analyze the video content or perform frame-by-frame inspection.
+- Generation action: none. This asset supersedes the 00-A/B/C regeneration plan and must not be automatically retried or reconstructed.

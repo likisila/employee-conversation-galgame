@@ -1,7 +1,12 @@
 {
-  "version": 1,
-  "status": "REVIEW",
+  "version": 3,
+  "status": "00_MASTER_APPROVED_04_06_REVIEW",
   "contract": "stable-current-paths",
+  "approved00Master": {
+    "file": "../../00_final_documents.mp4",
+    "durationSeconds": 10,
+    "sha256": "e8bc40964dd634e6fb02d22d4e028a0ee5bcdba56928455881b4f367af69de9a"
+  },
   "replacementPolicy": "Replace the PNG at the same shot-id path after approval. Do not change runtime paths for image-only revisions.",
   "storyboard": "property/cutscene-storyboard-v4-review.md",
   "retiredIndex": "../v4-review/retired/README.md",
@@ -9,42 +14,53 @@
     {
       "shot": "00-A",
       "file": "00-A.png",
+      "status": "REFERENCE_ONLY_SUPERSEDED_BY_APPROVED_MASTER",
+      "replacementReason": "Missing Zeng Ya-lin placing the blue paper folder on Zhou Yu-an's desk while Lin Yu-cheng works in the deep background.",
+      "hashState": "REFERENCE_ONLY",
       "sha256": "6377f9670be8fd8dc50ed8c8c2193d0cd3a4550cc90551fa01b12146780e31e5",
       "snapshotSource": "../runway-v2/00-A.png"
     },
     {
       "shot": "00-B",
       "file": "00-B.png",
+      "status": "REFERENCE_ONLY_SUPERSEDED_BY_APPROVED_MASTER",
+      "replacementReason": "Must show empty-handed Zeng Ya-lin and Lin Yu-cheng approaching from opposite directions immediately before they pass in the office aisle.",
+      "hashState": "REFERENCE_ONLY",
       "sha256": "84cef29d78184ddd10fbbeaddb71f86cdd4b10767aa28accd8325f8563dacf61",
       "snapshotSource": "../runway-v3/00-B-v3.png"
     },
     {
       "shot": "00-C",
       "file": "00-C.png",
+      "status": "REFERENCE_ONLY_SUPERSEDED_BY_APPROVED_MASTER",
       "sha256": "20841c56298839283b5f2cb4d13c3593179f3137d4b65fdf060fe51e18f8188e",
       "snapshotSource": "../runway-v2/00-C.png"
     },
     {
       "shot": "04-B",
       "file": "04-B.png",
+      "status": "CURRENT_REVIEW",
       "sha256": "0e28bd2ba585fdf40af353dfaafe0d3d602f57c60142fc4c161bfb17e0bc2356",
       "snapshotSource": "../runway-v2/04-B.png"
     },
     {
       "shot": "04-C",
       "file": "04-C.png",
+      "status": "CURRENT_REVIEW",
       "sha256": "d08c7081ef335d9916adea7e34e5bef1a2d854a91787af5fc3e7634f5b88d7ff",
       "snapshotSource": "../runway-v2/04-C.png"
     },
     {
       "shot": "06-B",
       "file": "06-B.png",
+      "status": "CURRENT_REVIEW",
       "sha256": "4fbcd1f910351ce8561743c7ddce4c15d43f3c19cc1ee2aaa7f5df773b79a03c",
       "snapshotSource": "../runway-v3/06-B.png"
     },
     {
       "shot": "06-C",
       "file": "06-C.png",
+      "status": "CURRENT_REVIEW",
       "sha256": "b069cbd25a8051013d1a48b9f8743f8fd00e961e3188c1c572ba648a8c93284d",
       "snapshotSource": "../runway-v3/06-C.png"
     }

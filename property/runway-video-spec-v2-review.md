@@ -1,10 +1,10 @@
-# Runway 影片製作規格 v2.1 — 使用者審查稿
+# Runway 影片製作規格 v2.2 — 04／06 審查稿；00 歷史規格
 
-狀態：**停止生成。** 本規格只把 `cutscene-storyboard-v4-review.md` 轉成可驗收的影片製作約束；使用者核准前不得提交新 task。
+狀態：**00 已採用使用者提供的正式成片，不得重跑；04、06 停止生成。** 本文件的 00-A／B／C 內容只保留為歷史與未來明確重製時的參考。
 
 所有起始圖只從穩定路徑 `public/assets/cutscenes/keyframes/current/` 取用；不得直接從 `runway-v2/`、`runway-v3/`、`v4-review/` 或退役索引選圖。同鏡號視覺替換沿用相同檔名，只有鏡號、時點、鏡序、片長契約或劇情設計變更才需要修改整合。
 
-需要在 Runway 以外的 image-to-video 工具使用同一鏡頭時，直接到 [`keyframe-video-extension-prompt-v1.md`](keyframe-video-extension-prompt-v1.md) 複製對應鏡號的完整 Main prompt 與 Negative prompt；7 鏡都已填妥 first-frame lock、action、camera timecode 與 end state，不需要使用者替換 placeholder 或合併模板。不得由其他工具自行重新設計鏡頭。
+需要在 Runway 以外的 image-to-video 工具製作尚未核准的 04、06 時，可到 [`keyframe-video-extension-prompt-v1.md`](keyframe-video-extension-prompt-v1.md) 複製對應鏡號的完整 Main prompt 與 Negative prompt。00 已定稿，不得因本文件仍保留 prompt 而重新生成。
 
 ## 製作單位
 
@@ -27,7 +27,7 @@
 
 | 段 | 進片前最後內容 | 出片後第一內容 | 影片必須補的缺口 | 段尾要求 |
 | --- | --- | --- | --- | --- |
-| 00 | content warning | s1 L01「16:40……」 | 文件已抵達而雨澄不知情 | 留在予安與雨澄的距離；不顯示通知 |
+| 00 | content warning | s1 L01「16:40……」 | 雅琳把文件交到予安桌上，與雨澄擦身離開，而雨澄仍不知情 | 留在予安與雨澄的距離；不顯示通知 |
 | 04 | s7 L08「她等著我回答」 | Choice 5 | 把一句沉默變成玩家承擔的壓力 | 所有人仍未回答；Choice 可立即出現 |
 | 06 | ending-true L17「離開記得關燈」 | L18「三週後……」 | 結束公司時空並建立三週時間切 | 手機剛亮、尚未觸碰；文字負責揭露來源 |
 
@@ -59,8 +59,8 @@ Prompt 不使用角色姓名、角色 ID、劇情背景說明或下一鏡內容�
 
 | 鏡 | 起始停留 | 攝影機／焦點運動 | 速度與幅度 | 結尾停留 |
 | --- | --- | --- | --- | --- |
-| 00-A 2.0s | 0.00–0.30s locked | 0.30–1.45s lateral dolly right，沿桌緣平移 | 前後各 0.15s ease；總位移約畫面寬 3%；無 zoom | 1.45–2.00s locked |
-| 00-B 2.5s | 0.00–0.30s locked | 0.30–1.70s camera tracks downward with the folder | 前後各 0.20s ease；總位移約畫面高 4%；無 push-in／zoom | 1.70–2.50s locked |
+| 00-A 2.5s | 0.00–2.50s | locked camera for entire shot | 0% pan／tilt／dolly／zoom；文件夾在固定空間內垂直下降 | 1.70–2.50s locked end state |
+| 00-B 2.0s | 0.00–2.00s | locked medium-wide for entire shot | 0% pan／tilt／dolly／zoom；兩人以相反方向穿越固定走道構圖 | 1.45–2.00s locked separation |
 | 00-C 2.5s | 0.00–0.35s locked，焦點在前景藍邊 | 0.35–1.55s rack focus 到遠處工作的女性 | 前後各 0.20s ease；攝影機位置與焦距不變，無 zoom | 1.55–2.50s focus locked |
 | 04-B 2.5s | 0.00–2.50s | locked camera for entire shot | 0% pan／tilt／dolly／zoom；只允許人物呼吸與極輕抬下巴 | 全鏡皆為 hold |
 | 04-C 2.5s | 0.00–0.35s locked，焦點在沉默男性 | 0.35–0.80s rack focus 到平板上的靜止雙手；0.80–1.15s hold；1.15–1.65s rack focus 回男性 | 兩次焦點轉移均 ease-in/out；攝影機位置與焦距不變，無 zoom | 1.65–2.50s focus locked |
@@ -69,15 +69,15 @@ Prompt 不使用角色姓名、角色 ID、劇情背景說明或下一鏡內容�
 
 ## 7 鏡 prompt 草案
 
-以下為 v2.1 審查稿；使用者逐鏡授權前不可送 connector。2026-09-27 已生成的 00-A／B／C 候選早於本攝影機契約，保留供比較，但不能反向當作本表已驗收。
+以下為 v2.2 審查稿；使用者逐鏡授權前不可送 connector。00-A、00-B 的 direct prompts 已按新版動作寫好，但必須等同名關鍵影格替換並核准後才能使用；2026-09-27 的 00-A／B 影片已因劇情修正失效，不能作新版比較基準。00-C 仍只保留供使用者審查。
 
-### 00-A — 2.0 秒
+### 00-A — 2.5 秒
 
-`Single continuous shot. The dark-haired woman at the keyboard continues working quietly while rain reflections move softly across the office. Hold the camera completely locked from 0.00 to 0.30 seconds. From 0.30 to 1.45 seconds, perform one lateral dolly right parallel to the desk edge, moving only about three percent of the frame width, with a 0.15-second ease-in and 0.15-second ease-out. Stop all camera movement at 1.45 seconds and hold the final composition through 2.00 seconds. Her attention remains fixed on the screen. No pan, tilt, push-in or zoom.`
+`Single continuous shot. At the near side of the seated brown-haired man's desk, the standing light-haired woman holds a closed wide blue paper folder horizontal and parallel to the desktop, only five to eight centimeters above it; the dark-haired woman remains working in deep background. Use a completely locked camera from 0.00 through 2.50 seconds with zero pan, tilt, dolly or zoom. Hold the exact starting state through 0.30 seconds. From 0.30 to 1.70 seconds, the light-haired woman lowers the closed folder straight down without rotation until it rests fully flat on the desk, then releases it. The distant working woman does not turn. Hold the folder, released hands, desk geography and background woman completely still from 1.70 through 2.50 seconds.`
 
-### 00-B — 2.5 秒
+### 00-B — 2.0 秒
 
-`Single continuous shot. The standing light-haired woman slowly lowers the wide blue paper folder with both hands until it rests flat on the desk, then releases it. Hold the camera completely locked from 0.00 to 0.30 seconds. From 0.30 to 1.70 seconds, track downward with the folder by only four percent of the frame height, using a 0.20-second ease-in and 0.20-second ease-out. Stop when the folder reaches the desk; do not push toward it or zoom. Hold the folder flat and both released hands steady from 1.70 through 2.50 seconds.`
+`Single continuous shot in the same rainy-night open office aisle. The empty-handed light-haired woman has just left the desk area and walks in one direction while the dark-haired woman approaches from the opposite direction; they are about to pass shoulder to shoulder. Use a locked medium-wide camera from 0.00 through 2.00 seconds with zero pan, tilt, dolly, rack focus or zoom. Hold the starting positions through 0.25 seconds. From 0.25 to 1.45 seconds, both women continue at the same restrained natural walking speed and pass each other once without stopping, touching, turning, speaking or making eye contact. From 1.45 through 2.00 seconds, the light-haired woman continues out of frame while the dark-haired woman continues toward the work area. Preserve their identities, office geography and opposite travel directions.`
 
 ### 00-C — 2.5 秒
 
@@ -101,7 +101,7 @@ Prompt 不使用角色姓名、角色 ID、劇情背景說明或下一鏡內容�
 
 ## 剪輯規格
 
-- 00：00-A 硬切 00-B；00-B 依藍色文件夾／視線方向匹配切 00-C。不得使用轉場特效。
+- 00：00-A 依雅琳離場方向硬切 00-B；00-B 依雨澄前進方向與空間軸線硬切 00-C。不得使用轉場特效。
 - 04：04-B 視線反打到 04-C。兩鏡之間不插環境 establishing shot，不延長成另一場戲。
 - 06：06-B 燈滅後保留短黑場，再直接切 06-C 手機仍暗的第一幀；手機亮起後接 runtime L18。
 - 環境聲後製：00 雨聲與鍵盤；04 冷氣停下後的房間底噪；06 門、開關與家中夜間底噪。無可理解人聲、旁白、配樂或模型生成對白。
@@ -111,7 +111,7 @@ Prompt 不使用角色姓名、角色 ID、劇情背景說明或下一鏡內容�
 
 ### 00
 
-- 看完只知道文件已到、雨澄不知情、予安看見兩者距離。
+- 看完只知道雅琳已把文件交到予安桌上、她與雨澄擦身離開、雨澄仍不知情、予安看見這個距離。
 - 不知道裁撤細節、不知道邀請內容、不進會議室。
 - 片尾能直接接「16:40。我還在看雨澄剛交的設計稿」。
 
@@ -138,7 +138,6 @@ Prompt 不使用角色姓名、角色 ID、劇情背景說明或下一鏡內容�
 
 ## 核准後才做的事
 
-1. 7 張候選 start frames 已依本版逐張重看，不需新增；判定見 `cutscene-keyframes-v4-audit.md`。
-2. 只生成 00-A、00-B、00-C 的低成本候選並先剪成完整 00；不再用單鏡代表整段。
-3. 使用者驗收完整 00 的播放時機、節奏與內容後，才製作 04 與 06。
-4. 02、07、08、09 不保留「也許之後順便做」的生成狀態；若未來重啟，必須先提出全新的戲劇功能。
+1. 不重製、重跑、重剪或替換已核准的 00，除非使用者另行明確要求。
+2. 04、06 維持停止生成，等待使用者逐段核准。
+3. 02、07、08、09 不保留「也許之後順便做」的生成狀態；若未來重啟，必須先提出全新的戲劇功能。

@@ -1,6 +1,6 @@
 # 00 v4 combined candidate 01
 
-狀態：**PENDING USER QC**。這是 00-A → 00-B → 00-C 的本地硬切候選，不是已核准的正式 `00_final_documents.mp4`，不得放入 runtime 或取代隔離區舊片。
+狀態：**SUPERSEDED BY STORY REVISION**。2026-09-28 使用者把 00-A 改為雅琳在予安桌上放資料夾、00-B 改為空手雅琳與雨澄擦身而過；本候選的 00-A／B 已不符合分鏡。整支檔案只保留作歷史紀錄，不得部署、重剪或挪作新版素材。
 
 > 本候選的三支來源早於 `property/runway-video-spec-v2-review.md` v2.1 的量化攝影機契約。使用者已指出原 prompts 未充分寫明移動／zoom 速度；本檔保留作比較，不代表通過新版攝影機驗收，也不因此自動重跑。
 

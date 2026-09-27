@@ -787,3 +787,21 @@
 - 交給 Claude 的明確行動：無。若未來做 UI 複製按鈕，直接以 shot ID 對應本文件的完整 Main／Negative block，不要求玩家輸入變數。
 - 未決問題或阻塞：無；本次只修正文字交付格式，不生成、不重試。
 - 驗證結果：7 個 shot heading、7 個 Main prompt、7 個 Negative prompt；可編輯 placeholder 為 0；所有指定 current PNG 先前已確認存在；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260928-0747
+
+- 時間：2026-09-27T23:47:32Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本輪先使用 `screenwriting:sw-scene-craft` 把 00 修正為「雅琳把資料夾放在予安桌上」與「空手雅琳和雨澄擦身而過」，其後使用者直接提供一支 10 秒 MP4 並明確指示 `Use this as 00`；成片選擇取代前述待重製方案。
+- 本次範圍：不讀取或逐格分析影片內容、不呼叫 Runway、不重跑任何生成。把使用者提供檔案複製為正式 `public/assets/cutscenes/00_final_documents.mp4`，沿用已存在的 `final-documents`／`before:final-version` cue；同步把 00-A／B／C 關鍵影格與 prompts 降為未來重製參考，04、06 繼續停止生成。
+- 實際變更檔案：
+  - `public/assets/cutscenes/00_final_documents.mp4`（新增）：使用者核准的正式 00；10 秒、4,683,597 bytes、SHA-256 `e8bc40964dd634e6fb02d22d4e028a0ee5bcdba56928455881b4f367af69de9a`。
+  - `property/cutscene-storyboard-v4-review.md`、`runway-video-spec-v2-review.md`、`keyframe-video-extension-prompt-v1.md`、`cutscene-keyframes-v4-audit.md`：記錄 00 已定稿，舊三鏡方案只供歷史／未來明確重製使用；04、06 不變。
+  - `property/runway-generation-log.md`、`property/sora-cutscenes.json`、`property/README.md`、`public/assets/cutscenes/README.md`：記錄核准來源、正式路徑、hash、cue 與禁止自動重跑。
+  - `public/assets/cutscenes/keyframes/current/README.md`、`manifest.json`：00-A／B／C 改為 `REFERENCE_ONLY_SUPERSEDED_BY_APPROVED_MASTER`；04、06 維持 review。
+  - `coordination/pending-review/cutscenes/00-v4-candidate-01/README.md`：舊三段合併候選標成 `SUPERSEDED BY STORY REVISION`，不得部署。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：正式 00 是使用者提供的單一連續成片，不再要求新增或替換 00 keyframe，也不得由任何 Agent 自動重製、重剪、重跑或以舊 A／B／C 候選取代。現有 cue 檔名已吻合，因此不修改 Claude-owned runtime／schema／tests。
+- 交給 Claude 的明確行動：無立即程式修改。之後接手時保留 `property/cutscene-cues.json` 的既有 `00_final_documents.mp4` cue；不要把 storyboard fallback 當成正式 00，也不要因 00-A／B 的歷史備註重新要求生成。
+- 未決問題或阻塞：04、06 仍待使用者審查／授權；本次沒有批准它們生成。影片解析工具未安裝，因此技術長度取自 Windows 媒體 metadata；內容正確性直接依使用者核准，不由 Agent 再驗片。
+- 驗證結果：正式檔與 production build 複本 SHA-256 完全一致；`property/sora-cutscenes.json` 與 current manifest 均可解析；Vitest 19 files／206 tests 全通過；TypeScript＋Vite production build 通過；`git diff --check` 通過。測試前 pnpm 曾因 sandbox network 限制嘗試移動本地依賴，已完整移回原位置並刪除它建立的 `.pnpm-store/`；未追蹤 `.claude/` 未修改、未納入。

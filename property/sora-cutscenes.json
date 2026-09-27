@@ -15,7 +15,7 @@
     "property/cutscene-storyboard-v4-review.md",
     "property/cutscene-keyframes-v4-audit.md"
   ],
-  "styleBible": "STOP GENERATION. This legacy compatibility file is not a runnable production manifest. The user-review authority is property/cutscene-storyboard-v4-review.md; its seven latest start frames use stable shot-id paths in public/assets/cutscenes/keyframes/current/, while runway-v2/, runway-v3/ and v4-review/ are version snapshots and every non-current keyframe is indexed as retired or superseded in v4-review/retired/README.md. Same-shot image replacements keep the same filename and do not require cue or runtime path changes. Official hand-drawn visual-novel cinematic illustration matching the canonical character PNGs; full-bleed 16:9, integrated illustrated people and environments, restrained adult acting, stable anatomy, short lateral tracks, eyeline reverse shots and rack focus. No live action, photorealistic actors, 3D, pasted sprites, dialogue boxes, HUD, subtitles, readable text, split screens or watermarks. Environmental sound only; no intelligible speech, voice-over or music. This file keeps legacy ids, filenames and trigger strings only so the current technical cue contract can be migrated safely. No item is READY or LOCKED.",
+  "styleBible": "STOP GENERATION. This legacy compatibility file is not a runnable production manifest. The user-approved 00 master is public/assets/cutscenes/00_final_documents.mp4 and must not be regenerated. The remaining 04 and 06 review frames use stable shot-id paths in public/assets/cutscenes/keyframes/current/; runway-v2/, runway-v3/ and v4-review/ are version snapshots. Official hand-drawn visual-novel cinematic illustration matching the canonical character PNGs; full-bleed 16:9, integrated illustrated people and environments, restrained adult acting, stable anatomy, short lateral tracks, eyeline reverse shots and rack focus. No live action, photorealistic actors, 3D, pasted sprites, dialogue boxes, HUD, subtitles, readable text, split screens or watermarks. Environmental sound only; no intelligible speech, voice-over or music. This file keeps legacy ids, filenames and trigger strings only; do not submit any generation task from it.",
   "continuityBible": "Taipei, 2026. The main event runs from 16:40 to 17:20 on one rainy workday. The company has already eliminated Lin Yu-cheng's position after losing its largest client; this is not performance action and cannot be reversed in the meeting. Zhou Yu-an remains Lin's manager during the notification and must not seek forgiveness, romance, physical intimacy or emotional reassurance. HR partner Zeng Ya-lin represents the company, previously benefited from silence in a similar meeting, and now refuses to let silence be recorded as consent. Only the true ending reaches three weeks later, after every employment, equipment, portfolio and recommendation process has ended and Lin initiates private contact.",
   "characterBible": {
     "zhou-yuan": "Zhou Yu-an, 31, exact identity from public/assets/characters/full-body/zhou-yuan-neutral.png: short brown hair, charcoal jacket, blue-gray shirt. Badge face-down in the meeting. Never operates the HR tablet and never sits beside Lin.",
@@ -40,7 +40,7 @@
       "id": "final-documents",
       "kind": "transition",
       "owner": "GPT",
-      "status": "BLOCKED",
+      "status": "APPROVED_LOCAL_ASSET",
       "canonicalScenes": ["property/scenes/s1-final-cut.json"],
       "file": "00_final_documents.mp4",
       "trigger": "before:final-version",
@@ -48,8 +48,8 @@
       "props": ["rights-packet"],
       "time": "Day 1, 16:40",
       "location": "weiguang-office",
-      "requiredContinuity": "Audience revelation before s1 L01: Lin is still working and unaware; Zeng places the blue rights folder on Zhou's desk; Zhou looks toward Lin but does not approach. Existing 00-A and 00-C are reusable. The corrected paper-folder start frame is public/assets/cutscenes/keyframes/runway-v3/00-B-v3.png; never use the retired tablet-like 00-B.",
-      "prompt": "Three shots, 2 seconds each. 00-A: Lin works at her screen, unaware. 00-B: Zeng starts with a thick, wide blue paper folder one palm above Zhou's desk and lowers it flat; no tablet in her hands. 00-C: Zhou looks from the folder toward distant Lin; rack focus preserves their distance. End before any invitation, notification or approach."
+      "requiredContinuity": "User-approved local master. Use public/assets/cutscenes/00_final_documents.mp4 at the existing before:final-version cue. Do not regenerate from the historical 00-A/B/C keyframes.",
+      "prompt": "APPROVED ASSET — NO GENERATION. The 10-second user-provided master is the authoritative 00 video."
     },
     {
       "id": "meeting-invitation",
@@ -180,13 +180,13 @@
     "STOP: do not submit any generation task until the user approves property/cutscene-storyboard-v4-review.md and property/runway-video-spec-v2-review.md.",
     "Use property/cutscene-storyboard-v3.md as the authority for active segments, shot count and narrative insertion anchors.",
     "Do not generate or deploy deprecated segments 01 and 03.",
-    "00-B must visibly be a paper folder with thickness, not a tablet or blue slab.",
+    "00 is approved as public/assets/cutscenes/00_final_documents.mp4; do not regenerate, replace or reconstruct it from keyframes.",
     "02 uses 02-A and 02-C only and plays between s3 L15 and L16; 04 uses 04-B and 04-C only and plays after the boundary question before Choice 5.",
     "Ending videos are mid-scene bridges or codas, never on-enter spoilers.",
     "07, 08 and 09 are creative holds because their current coda actions repeat the immediately preceding canonical narration; do not generate them without an explicit resolution.",
     "Current light-haired, light-greige Zeng identity is mandatory; no retired dark-haired design.",
     "No readable text, UI overlays, subtitles, text cards, pasted sprites, morphing anatomy or extra props.",
     "TRUE END does not reveal the cafe before Lin's messages; END 03 closes but does not delete the draft; END 04 deletes but never sends and never reenacts the branch-specific violation.",
-    "No item is READY. Keyframes, exact cue migration and final MP4 content must each be approved separately."
+    "Only 00 is an approved local asset. All remaining final MP4 content must be approved separately."
   ]
 }

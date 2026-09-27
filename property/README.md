@@ -22,12 +22,12 @@
 - `ob-playthrough-review-20260926.md`：依「組織行為，不是 HR」重新實玩四個結局與最後評估頁的審查紀錄；包含通過項、教學閉環缺口及下一輪驗收標準。
 - `mba-debrief-sepia-revision-20260927.md`：`查看案例分析` 的 Sepia 完整文案修訂、語氣原則與 Claude 接線規格；玩家可見文字以 `mba-debrief.json` 為準，程式內硬編碼字串依此文件替換。
 - `mba-debrief.json`：上述內容的結構化資料——十五個主要選項對六個維度的加減分與路徑證據、stakeholder matrix、五個決策點的理論映射、四個結局的策略／stakeholder 結果／非預期後果／理論重點／替代方案，以及 Debrief 畫面的文案與區塊標題。`manifest.json` 的 `mba` 欄位指向它。
-- `cutscene-storyboard-v4-review.md`：停止生成後的使用者審查稿；從實際 cue 前後文本重新判斷播放段落，暫縮為 00、04、06 共 3 段／7 鏡／約 18 秒。核准前不改 runtime cue。
+- `cutscene-storyboard-v4-review.md`：00 已採用使用者提供並核准的 10 秒單一連續成片；04、06 仍為待審方案。正式 00 位於 `public/assets/cutscenes/00_final_documents.mp4`，既有 cue 不需修改。
 - `runway-video-spec-v2-review.md`：v4 的 Runway 製作與驗收規格；明確區分播放段落、鏡頭與生成任務，禁止用單鏡代表整段。v2.1 已為全部 7 鏡逐一量化起始／結尾 hold、攝影機或 rack focus 類型、起訖時間、方向、幅度、速度與緩動；鎖鏡也必須明寫 0 移動。
-- `keyframe-video-extension-prompt-v1.md`：平台中立的關鍵影格延伸影片 Prompt；00-A／B／C、04-B／C、06-B／C 各自都有零 placeholder、可直接複製的完整 Main prompt 與 Negative prompt，並附指定 current keyframe、片長與跨工具設定。
-- `cutscene-keyframes-v4-audit.md`：v4 暫留 7 鏡的逐張第一幀檢查；目前不需新增或重畫關鍵影格，並記錄 04-B／04-C 的 prompt 修正。最新完整集合固定在 `public/assets/cutscenes/keyframes/current/`；版本快照與退役索引保留於 `v4-review/`。
+- `keyframe-video-extension-prompt-v1.md`：平台中立的關鍵影格延伸影片 Prompt；04-B／C、06-B／C 仍為可用的直接貼上稿。00-A／B／C 已被核准的單一連續成片取代，只保留作未來明確要求重製時的歷史參考。
+- `cutscene-keyframes-v4-audit.md`：00-A／B 的替換需求僅在未來重製 00 時適用；本次正式 00 不依賴三張關鍵影格。04、06 的 4 張現有影格仍可沿用。
 - `cutscene-storyboard-v3.md`、`runway-video-shot-pack-v1.md`：已停止使用的歷史版，不得再送生成。`cutscene-storyboard-v2.md` 僅供更早期比對。
-- `sora-cutscenes.json`：保留既有影片 ID／檔名／trigger 相容的機器可讀內容清單。所有項目目前為 `TODO`、`BLOCKED` 或 `DEPRECATED`，沒有任何 `READY`／`LOCKED`；舊的一鍵 Sora 腳本不得用來生成 v3。`cutscenes.json` 保存正式手繪視覺小說電影的格式與缺檔策略；實際接線仍由 Claude-owned `cutscene-cues.json` 維護。
+- `sora-cutscenes.json`：保留既有影片 ID／檔名／trigger 相容的機器可讀內容清單。00 已標記為本地核准資產；其他項目仍為 `BLOCKED` 或 `DEPRECATED`，舊的一鍵 Sora 腳本不得使用。`cutscenes.json` 保存格式與缺檔策略；實際接線仍由 Claude-owned `cutscene-cues.json` 維護。
 
 ## 目前作品：《最後一次一對一》
 

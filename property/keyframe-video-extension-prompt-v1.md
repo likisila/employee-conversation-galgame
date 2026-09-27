@@ -2,48 +2,52 @@
 
 本文件提供 7 個完整、平台中立的 image-to-video Prompt。**不需要替換任何文字。** 找到鏡號，上傳指定的 `current` PNG，設定列出的片長與 16:9，然後直接複製 Main prompt。工具有獨立 Negative prompt 欄位時，再複製同鏡的 Negative prompt。
 
+00 已由使用者提供並核准的 10 秒單一連續成片取代。`00-A`、`00-B`、`00-C` 以下內容只保留為未來明確要求重製時的歷史參考，**不得用來重跑目前的 00**。04、06 的 4 鏡仍可供審查。
+
 共同設定：image-to-video／first-frame 模式、16:9、reference adherence 高、stylization 低或中低、auto camera／auto cut／auto extend／dialogue／lip sync／字幕／生成音訊關閉。每次只生成一鏡。
 
 ## 00-A
 
 - 上傳：`public/assets/cutscenes/keyframes/current/00-A.png`
-- 片長：2.0 秒
-
-### Main prompt
-
-```text
-Use the uploaded image as the exact first frame at time 0 and extend it forward into one single continuous 2.0-second illustrated shot. Do not recreate, reinterpret, restage, or transition into the starting image. Preserve the exact dark-haired woman at the keyboard, her face, hairstyle, age, clothing, body proportions, hands, seated pose, workstation, screen position, furniture, office geography, rainy-night lighting, color palette, line work, painted texture, depth, framing, 16:9 composition, and every visible object from the supplied image.
-
-The dark-haired woman continues working quietly at the keyboard with restrained natural finger movement while soft rain reflections move across the office surfaces. She keeps her attention fixed on the screen and does not look up. Hold the camera completely locked from 0.00 to 0.30 seconds. From 0.30 to 1.45 seconds, perform exactly one lateral physical dolly to the right, parallel to the desk edge, moving only about three percent of the frame width, with a 0.15-second ease-in and a 0.15-second ease-out. Stop all camera movement at 1.45 seconds and hold the final framing completely still through 2.00 seconds. No pan, tilt, push-in, pull-back, optical zoom, focus change, cut, or automatic reframing.
-
-End with the same woman still focused on the same screen in the same office composition. Keep every other person and object stationary. The final frame must be stable and usable for a hard cut. No new event or plot development occurs.
-```
-
-### Negative prompt
-
-```text
-cut, transition, scene change, time jump, second action, woman looking up, woman turning around, notification, document appearing, new person, duplicate person, new object, missing object, object ownership change, identity drift, face drift, hairstyle change, costume change, body proportion change, anatomy error, deformed hands, extra fingers, fused fingers, readable text, subtitles, captions, logo, watermark, HUD, dialogue, speaking, lip movement, camera shake, handheld motion, auto reframing, pan, tilt, push-in, pull-back, optical zoom, snap zoom, focus breathing, style change, live action, photorealism, 3D render
-```
-
-## 00-B
-
-- 上傳：`public/assets/cutscenes/keyframes/current/00-B.png`
+- 狀態：**BLOCKED — REPLACE KEYFRAME FIRST**
 - 片長：2.5 秒
 
 ### Main prompt
 
 ```text
-Use the uploaded image as the exact first frame at time 0 and extend it forward into one single continuous 2.5-second illustrated shot. Do not recreate, reinterpret, restage, or transition into the starting image. Preserve the exact standing light-haired woman, her face, shoulder-length cool light gray-brown hair, clothing, body proportions, both hands, the wide blue paper folder she is holding, the folder's visible cover, spine and paper-page thickness, the desk, furniture, rainy-night office geography, lighting, color palette, line work, painted texture, depth, framing, 16:9 composition, and every visible object from the supplied image.
+Use the uploaded image as the exact first frame at time 0 and extend it forward into one single continuous 2.5-second illustrated shot. Do not recreate, reinterpret, restage, or transition into the starting image. Preserve the exact light-haired woman standing beside Zhou Yu-an's desk, the closed wide blue paper folder held horizontally five to eight centimetres above his desktop, Zhou Yu-an's established desk position, the dark-haired woman working in the deep background, all three identities, faces, hairstyles, clothing, body proportions, office geography, furniture, rainy-night lighting, color palette, line work, painted texture, depth, framing, 16:9 composition, and every visible object from the supplied image.
 
-The standing light-haired woman slowly lowers the wide blue paper folder with both hands until it rests fully flat on the desk, then releases it. This is the only action. Hold the camera completely locked from 0.00 to 0.30 seconds. From 0.30 to 1.70 seconds, track downward with the folder by only four percent of the frame height, using a 0.20-second ease-in and a 0.20-second ease-out. Stop when the folder reaches the desk. Do not push toward the folder and do not zoom. From 1.70 through 2.50 seconds, hold the camera, folder, and both released hands completely steady.
+The light-haired woman lowers the closed blue paper folder straight down onto Zhou Yu-an's desk and releases it. This is the only foreground action. The folder remains parallel to the desktop, keeps its cover, spine, and visible paper thickness, and never opens or rotates. The dark-haired woman continues working in the deep background without looking up, and Zhou Yu-an does not reach for the folder. Keep the camera position, framing, and lens completely locked from 0.00 through 2.50 seconds with zero pan, tilt, dolly, optical zoom, focus pull, camera shake, or automatic reframing. Begin the downward movement at 0.30 seconds, complete the placement and release by 1.70 seconds, and hold the final state completely still through 2.50 seconds.
 
-End with the blue paper folder fully flat on the desk, visibly retaining its cover, spine, and paper thickness, while both hands have released it. The final frame must be stable and usable for a hard cut. No one opens the folder and no new event occurs.
+End with the folder lying fully flat on Zhou Yu-an's desk, the light-haired woman's hands released, and the dark-haired woman still unaware in the deep background. The final frame must be stable and usable for a hard cut to the office aisle.
 ```
 
 ### Negative prompt
 
 ```text
-cut, transition, scene change, time jump, second action, opening the folder, lifting the folder again, tablet, screen, glowing device, book replacing the paper folder, thin flat digital object, disappearing paper thickness, readable text, new person, duplicate person, new object, missing object, object ownership change, identity drift, face drift, hairstyle change, costume change, body proportion change, anatomy error, deformed hands, extra fingers, fused fingers, prop morphing, subtitles, captions, logo, watermark, HUD, dialogue, speaking, lip movement, camera shake, handheld motion, auto reframing, push-in, pull-back, optical zoom, snap zoom, style change, live action, photorealism, 3D render
+cut, transition, scene change, time jump, second action, folder placed on the wrong desk, folder opening, folder rotating, folder lifted again, tablet, screen, glowing device, disappearing paper thickness, dark-haired woman looking up, dark-haired woman turning around, Zhou Yu-an reaching for the folder, light-haired woman walking away before the cut, new person, duplicate person, missing person, new object, missing object, identity drift, face drift, hairstyle change, costume change, body proportion change, anatomy error, deformed hands, extra fingers, fused fingers, readable text, subtitles, captions, logo, watermark, HUD, dialogue, speaking, lip movement, camera shake, handheld motion, auto reframing, pan, tilt, dolly, push-in, pull-back, optical zoom, snap zoom, rack focus, style change, live action, photorealism, 3D render
+```
+
+## 00-B
+
+- 上傳：`public/assets/cutscenes/keyframes/current/00-B.png`
+- 狀態：**BLOCKED — REPLACE KEYFRAME FIRST**
+- 片長：2.0 秒
+
+### Main prompt
+
+```text
+Use the uploaded image as the exact first frame at time 0 and extend it forward into one single continuous 2.0-second illustrated shot. Do not recreate, reinterpret, restage, or transition into the starting image. Preserve the exact empty-handed light-haired woman and dark-haired woman approaching each other from opposite directions in the same office aisle, both identities, faces, hairstyles, clothing, body proportions, walking directions, their initial separation, office geography, furniture, rainy-night lighting, color palette, line work, painted texture, depth, locked medium-wide framing, 16:9 composition, and every visible object from the supplied image. Neither woman carries the blue folder.
+
+Both women continue at a restrained natural walking pace and pass each other exactly once. They do not slow down, stop, touch, speak, acknowledge each other, or make eye contact. The light-haired woman continues away from Zhou Yu-an's desk and exits along her established direction; the dark-haired woman continues toward the work area. Keep the camera position, framing, and lens completely locked from 0.00 through 2.00 seconds with zero pan, tilt, dolly, optical zoom, focus pull, camera shake, or automatic reframing. Begin visible walking by 0.25 seconds, let their shoulder lines cross at approximately 1.20 seconds, and hold the clean separation from 1.45 through 2.00 seconds.
+
+End after the single pass-by, with the women moving apart in their original directions and no exchange between them. The final frame must be stable and usable for a hard cut to Zhou Yu-an's eyeline shot.
+```
+
+### Negative prompt
+
+```text
+cut, transition, scene change, time jump, second action, blue folder in either woman's hands, any carried document, stopping, slowing to converse, collision, touching, turning toward each other, eye contact, greeting, nodding, speaking, lip movement, swapped walking directions, walking together, following, new person, duplicate person, missing person, new object, missing object, identity drift, face drift, hairstyle change, costume change, body proportion change, anatomy error, deformed hands, extra fingers, fused fingers, readable text, subtitles, captions, logo, watermark, HUD, camera shake, handheld motion, auto reframing, pan, tilt, dolly, push-in, pull-back, optical zoom, snap zoom, rack focus, style change, live action, photorealism, 3D render
 ```
 
 ## 00-C
