@@ -6,13 +6,13 @@
 
 | 鏡 | 現有影格 | 判定 | 對照 v4 起點 | 使用限制 |
 | --- | --- | --- | --- | --- |
-| 00-A | `public/assets/cutscenes/keyframes/runway-v2/00-A.png` | 可用 | 雨澄在雨夜辦公區工作，雙手已在鍵盤，尚未察覺文件 | 動畫只保留工作與雨影；不可抬頭或收到通知 |
-| 00-B | `public/assets/cutscenes/keyframes/runway-v3/00-B-v3.png` | 可用 | 雅琳雙手托住有封面、書脊與紙頁厚度的藍色文件夾，尚未落桌 | 正面視線不是戲劇動作；動畫只追文件夾下降與鬆手 |
-| 00-C | `public/assets/cutscenes/keyframes/runway-v2/00-C.png` | 可用 | 予安已看向遠處工作的雨澄；兩人距離清楚 | 前景文件夾只需作失焦形狀；不可要求模型重新畫清晰文件夾 |
-| 04-B | `public/assets/cutscenes/keyframes/runway-v2/04-B.png` | 可用 | 雨澄肩上近景，問題已問完，目光朝畫外對面 | 手與手錶不在畫面內；prompt 不得要求它們動或顯示錶面狀態 |
-| 04-C | `public/assets/cutscenes/keyframes/runway-v2/04-C.png` | 可用 | 予安沉默，雅琳與平板在同一景深；三杯水成立 | 雅琳雙手已放在鍵盤上；只描述保持靜止，不寫「懸在上方」或再次落手 |
-| 06-B | `public/assets/cutscenes/keyframes/runway-v3/06-B.png` | 可用 | 雅琳在門口、手指已放在開關上，燈尚亮；予安仍坐著 | 動作從按下開關與離場開始；不再收第三杯水，不讓予安起身 |
-| 06-C | `public/assets/cutscenes/keyframes/runway-v3/06-C.png` | 可用 | 三週後家中，手機全暗，予安的手離手機有距離 | 只讓手機亮與手停住；不顯示訊息內容，不拿起手機 |
+| 00-A | `public/assets/cutscenes/keyframes/v4-review/active/00-A.png` | 可用 | 雨澄在雨夜辦公區工作，雙手已在鍵盤，尚未察覺文件 | 動畫只保留工作與雨影；不可抬頭或收到通知 |
+| 00-B | `public/assets/cutscenes/keyframes/v4-review/active/00-B.png` | 可用 | 雅琳雙手托住有封面、書脊與紙頁厚度的藍色文件夾，尚未落桌 | 正面視線不是戲劇動作；動畫只追文件夾下降與鬆手 |
+| 00-C | `public/assets/cutscenes/keyframes/v4-review/active/00-C.png` | 可用 | 予安已看向遠處工作的雨澄；兩人距離清楚 | 前景文件夾只需作失焦形狀；不可要求模型重新畫清晰文件夾 |
+| 04-B | `public/assets/cutscenes/keyframes/v4-review/active/04-B.png` | 可用 | 雨澄肩上近景，問題已問完，目光朝畫外對面 | 手與手錶不在畫面內；prompt 不得要求它們動或顯示錶面狀態 |
+| 04-C | `public/assets/cutscenes/keyframes/v4-review/active/04-C.png` | 可用 | 予安沉默，雅琳與平板在同一景深；三杯水成立 | 雅琳雙手已放在鍵盤上；只描述保持靜止，不寫「懸在上方」或再次落手 |
+| 06-B | `public/assets/cutscenes/keyframes/v4-review/active/06-B.png` | 可用 | 雅琳在門口、手指已放在開關上，燈尚亮；予安仍坐著 | 動作從按下開關與離場開始；不再收第三杯水，不讓予安起身 |
+| 06-C | `public/assets/cutscenes/keyframes/v4-review/active/06-C.png` | 可用 | 三週後家中，手機全暗，予安的手離手機有距離 | 只讓手機亮與手停住；不顯示訊息內容，不拿起手機 |
 
 ## 為什麼不用新增
 

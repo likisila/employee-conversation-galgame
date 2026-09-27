@@ -2,6 +2,8 @@
 
 **目前停止生成。** 待使用者審查的創作方案是 [分鏡表 v4](../../../property/cutscene-storyboard-v4-review.md) 與 [Runway 規格 v2](../../../property/runway-video-spec-v2-review.md)。新稿從實際播放點前後文本重新判斷，只暫留 00、04、06 共 3 段／7 鏡／約 18 秒；核准前不改 runtime cue、不生成、不部署。
 
+v4 的單一影格入口是 [`keyframes/v4-review/`](keyframes/v4-review/)：7 張現役候選集中在 `active/`，18 張退役／被取代影格逐檔列在 `retired/README.md`。舊 `runway-v2/`、`runway-v3/` 暫留只為 runtime 相容，不再用資料夾名稱判斷狀態。
+
 製作順序固定為：核准關鍵影格 → image-to-video → 剪輯／轉檔 → 實機驗收。`property/sora-cutscenes.json` 現在是內容清單與提示詞來源；所有段落均為 `BLOCKED`、`TODO` 或 `DEPRECATED`，沒有任何一段可直接送進舊的一鍵生成流程。
 
 ## 目前素材狀態

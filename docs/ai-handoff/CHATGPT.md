@@ -640,3 +640,22 @@
 - 交給 Claude 的明確行動：無。等待使用者審查 v4；核准前仍不得改 cue、runner 或生成狀態。
 - 未決問題或阻塞：若使用者把 00 改為不切鏡長鏡頭、把 04 改為三人同框、或要求 06 增加中間時間意象，才需要新增對應關鍵影格。
 - 驗證結果：7 個候選檔案全部存在並完成原尺寸目視檢查；`git diff --check` 通過。本次只有 Markdown，不執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-2115
+
+- 時間：2026-09-27T13:15:53Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本次整理 ChatGPT-owned 關鍵影格與狀態文件；為避免破壞 Claude-owned runtime fallback／optimizer／manifest，沒有搬走或刪除舊來源 PNG，也沒有修改 cue 或程式。
+- 本次範圍：解決 v2／v3 影格散落及退役狀態不清。建立 v4 單一審查入口、集中 7 張現役相容副本、統一 00-B 檔名，並逐檔標記其餘 18 張退役／被取代原因。
+- 實際變更檔案：
+  - `public/assets/cutscenes/keyframes/v4-review/active/*.png`（新增 7 張）：00-A/B/C、04-B/C、06-B/C 的逐位元相同相容副本；00-B 從舊 `00-B-v3.png` 統一為 `00-B.png`。
+  - `public/assets/cutscenes/keyframes/v4-review/README.md`（新增）：唯一審查入口、來源映射、狀態與 7 張預覽。
+  - `public/assets/cutscenes/keyframes/v4-review/retired/README.md`（新增）：18 張逐檔 `RETIRED`／`SUPERSEDED` 索引與原因。
+  - `runway-v2/README.md`、`REVIEW.md`、`runway-v3/README.md`、`REVIEW.md`：加上 legacy source pool／歷史審查警示並指向 v4。
+  - `property/cutscene-keyframes-v4-audit.md`、`cutscene-storyboard-v4-review.md`、`runway-video-spec-v2-review.md`、`property/README.md`、`public/assets/cutscenes/README.md`：改用 v4 單一入口並說明舊路徑相容性。
+  - `property/sora-cutscenes.json`：canonical sources 改指 v4 review／audit，styleBible 明確停止生成並指向 active／retired；legacy items、檔名與 trigger 仍保留供遷移。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：現役狀態只看 `keyframes/v4-review/active/`；退役狀態只看 `keyframes/v4-review/retired/README.md`。不得再從 `runway-v2/`／`runway-v3/` 資料夾名稱推斷現役。
+- 交給 Claude 的明確行動：使用者核准 v4 後，把 `cutscene-cues.json`、storyboard optimizer、`public/assets/cutscenes/storyboard/manifest.json`、schema 註解與測試改指 v4 active 路徑，退役 02／07／08／09 cue。完成且測試通過後，通知 ChatGPT，才能刪除舊來源中的 7 張重複 PNG；目前不可刪。
+- 未決問題或阻塞：v4 尚待使用者核准；因此 active 目前是 review copies，舊來源仍需保留。root README 與 runtime manifest 仍寫 v2／v3，屬 Claude-owned 遷移項目。
+- 驗證結果：v4 active 共 7 張、退役索引 18 列、manifest 0 `READY`；7 個 active 副本 SHA-256 全部逐一與原始來源相同；`sora-cutscenes.json` 可解析；`git diff --check` 通過。未執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。

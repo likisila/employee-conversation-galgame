@@ -2,6 +2,8 @@
 
 狀態：**停止生成。** 本規格只把 `cutscene-storyboard-v4-review.md` 轉成可驗收的影片製作約束；使用者核准前不得提交新 task。
 
+所有起始圖只從 `public/assets/cutscenes/keyframes/v4-review/active/` 取用；不得直接從 `runway-v2/`、`runway-v3/` 或退役索引選圖。
+
 ## 製作單位
 
 - 一個正式 MP4 對應一個 runtime cue 與一個戲劇目的。

@@ -102,7 +102,7 @@ v3 把「每張起始影格的動作」直接當成「玩家此刻應看的影�
 ## 退役影格處置
 
 - 02-A、02-C、06-A、07-A/B、08-A/B/C、09-A/B/C 不刪檔，保留為歷史與重新設計參考；不再因已存在而推導出影片需求。
-- 00-A/B/C、04-B/C、06-B/C 已於 2026-09-27 依本版起點逐張重看，7 張都可作第一幀，**不需要新增關鍵影格**。逐張判定見 [`cutscene-keyframes-v4-audit.md`](cutscene-keyframes-v4-audit.md)。
+- 00-A/B/C、04-B/C、06-B/C 已於 2026-09-27 依本版起點逐張重看，7 張都可作第一幀，**不需要新增關鍵影格**。現役審查副本已集中到 `public/assets/cutscenes/keyframes/v4-review/active/`；逐張判定見 [`cutscene-keyframes-v4-audit.md`](cutscene-keyframes-v4-audit.md)，其餘 18 張的退役標註見 [`v4-review/retired/README.md`](../public/assets/cutscenes/keyframes/v4-review/retired/README.md)。
 - 已送出的 00-B candidate 01 只測到中間鏡頭動作，不能當作 `00_final_documents.mp4`。即使動作品質通過，也只能成為完整 00 剪輯中的 00-B 候選。
 
 ## 使用者審查項目
