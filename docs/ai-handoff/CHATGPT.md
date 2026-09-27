@@ -802,6 +802,6 @@
   - `coordination/pending-review/cutscenes/00-v4-candidate-01/README.md`：舊三段合併候選標成 `SUPERSEDED BY STORY REVISION`，不得部署。
   - `docs/ai-handoff/CHATGPT.md`：本 Entry。
 - 已定案事項：正式 00 是使用者提供的單一連續成片，不再要求新增或替換 00 keyframe，也不得由任何 Agent 自動重製、重剪、重跑或以舊 A／B／C 候選取代。現有 cue 檔名已吻合，因此不修改 Claude-owned runtime／schema／tests。
-- 交給 Claude 的明確行動：無立即程式修改。之後接手時保留 `property/cutscene-cues.json` 的既有 `00_final_documents.mp4` cue；不要把 storyboard fallback 當成正式 00，也不要因 00-A／B 的歷史備註重新要求生成。
-- 未決問題或阻塞：04、06 仍待使用者審查／授權；本次沒有批准它們生成。影片解析工具未安裝，因此技術長度取自 Windows 媒體 metadata；內容正確性直接依使用者核准，不由 Agent 再驗片。
+- 交給 Claude 的明確行動：使用者要求完成實際部署。依 `AI_ROLE_BOUNDARIES.md`，建置／CI/CD／部署為 Claude 專屬責任；請在此 commit 上重新執行 production build，使用已設定的 `npm run deploy:cf`／Wrangler 將 `dist/` 部署到 `sparkling-glitter-6ce0.pages.dev`，再驗證線上 `/assets/cutscenes/00_final_documents.mp4` 可讀且 hash／大小符合正式檔。保留 `property/cutscene-cues.json` 既有 cue，不修改 runtime，不把 storyboard fallback 當成正式 00，也不重新生成影片。
+- 未決問題或阻塞：正式 00 的內容與本地整合已完成，但 Cloudflare 上線必須由 Claude 執行，尚未部署。04、06 仍待使用者審查／授權；本次沒有批准它們生成。影片解析工具未安裝，因此技術長度取自 Windows 媒體 metadata；內容正確性直接依使用者核准，不由 Agent 再驗片。
 - 驗證結果：正式檔與 production build 複本 SHA-256 完全一致；`property/sora-cutscenes.json` 與 current manifest 均可解析；Vitest 19 files／206 tests 全通過；TypeScript＋Vite production build 通過；`git diff --check` 通過。測試前 pnpm 曾因 sandbox network 限制嘗試移動本地依賴，已完整移回原位置並刪除它建立的 `.pnpm-store/`；未追蹤 `.claude/` 未修改、未納入。
