@@ -47,7 +47,7 @@
       "props": ["rights-packet"],
       "time": "Day 1, 16:40",
       "location": "weiguang-office",
-      "requiredContinuity": "Audience revelation before s1 L01: Lin is still working and unaware; Zeng places the blue rights folder on Zhou's desk; Zhou looks toward Lin but does not approach. Existing 00-A and 00-C are reusable. 00-B must be redrawn because the blue object reads as a tablet. Do not generate the final video before the replacement 00-B is approved.",
+      "requiredContinuity": "Audience revelation before s1 L01: Lin is still working and unaware; Zeng places the blue rights folder on Zhou's desk; Zhou looks toward Lin but does not approach. Existing 00-A and 00-C are reusable. The corrected paper-folder start frame is public/assets/cutscenes/keyframes/runway-v3/00-B-v3.png; never use the retired tablet-like 00-B.",
       "prompt": "Three shots, 2 seconds each. 00-A: Lin works at her screen, unaware. 00-B: Zeng starts with a thick, wide blue paper folder one palm above Zhou's desk and lowers it flat; no tablet in her hands. 00-C: Zhou looks from the folder toward distant Lin; rack focus preserves their distance. End before any invitation, notification or approach."
     },
     {

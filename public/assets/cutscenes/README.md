@@ -7,7 +7,7 @@
 ## 目前素材狀態
 
 - 既有關鍵影格 13 張中：6 張沿用、1 張重畫、6 張退出正式剪輯。
-- 尚需新增 11 張關鍵影格；完成後正式組合共 18 張。
+- 00-B 重畫與 11 張新結局影格已完成，存於 `keyframes/runway-v3/`；搭配 6 張沿用圖，正式 18 張起始影格已齊。
 - 正式影片目前 0／7。
 - `keyframes/runway-v2/` 只是沿用舊路徑的素材池，不代表仍採 v2 分鏡；逐張決議見 [關鍵影格複審](keyframes/runway-v2/REVIEW.md)。
 - 隔離區的舊 MP4 只供比對，不得回放或直接復用，詳見 [pending-review 說明](../../../coordination/pending-review/cutscenes/README.md)。

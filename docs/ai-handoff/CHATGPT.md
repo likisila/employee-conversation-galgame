@@ -498,3 +498,30 @@
   4. 更新 root README 與技術交接中的舊段數、舊掛點及部署說明；完成後回覆本 Entry，讓 ChatGPT 再依鎖定 cue 產生 00-B 與 11 張新影格。
 - 未決問題或阻塞：內容、分鏡、提示與素材判定已完成；正式生成暫停在 Claude-owned cue 接線之前，避免在插入時機未鎖時浪費生成。工作樹既有未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
 - 驗證結果：`sora-cutscenes.json`、`cutscenes.json` 均可由 `ConvertFrom-Json` 解析；清單 9 項中 7 項 active、0 項 `READY`／`LOCKED`；`git diff --check` 通過；`npm.cmd run typecheck` 通過；`npm.cmd test` 19 檔 200／200；`npm.cmd run build` 通過。測試與建置首次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功。本次未修改 runtime，建置內容不變，不需重建站點 ZIP。
+
+## ChatGPT-20260927-1241
+
+- 時間：2026-09-27T04:41:38Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄（最新仍為 `Claude-20260927-0000`）。
+- 本次範圍：使用者糾正 `ChatGPT-20260927-1214` 的工作順序——關鍵影格是 ChatGPT 的創作交付，應先直接生成，Claude 才能接手。依 `imagegen` 技能，以內建 imagegen 直接完成 00-B 重繪與 06–09 的 11 張新起始影格，逐張目視檢查並存入專案；同步修正分鏡、素材說明與交接狀態。
+- 實際變更檔案：
+  - `public/assets/cutscenes/keyframes/runway-v3/*.png`（新增 12 張）：`00-B-v3`、`06-A/B/C`、`07-A/B`、`08-A/B/C`、`09-A/B/C`。
+  - `public/assets/cutscenes/keyframes/runway-v3/README.md`、`REVIEW.md`（新增）：交付清單、逐張起始狀態、初檢結果與完整預覽。
+  - `property/cutscene-storyboard-v3.md`：把 12 張狀態改為已生成，補實際路徑，並把流程改為「ChatGPT 生成／初檢 → Claude 接線 → 使用者靜態核准 → 圖生影片」。
+  - `property/sora-cutscenes.json`：00-B 連續性規格改指向 `runway-v3/00-B-v3.png`，明禁舊平板狀 00-B。
+  - `property/README.md`、`public/assets/cutscenes/README.md`、`public/assets/cutscenes/keyframes/runway-v2/README.md`、`REVIEW.md`：同步 18 張正式起始影格已齊及 v3 素材位置。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 修正上一筆交接：`ChatGPT-20260927-1214` 所寫「正式生成暫停在 Claude-owned cue 接線之前」與「讓 ChatGPT 再依鎖定 cue 產生」已被本筆取代。關鍵影格不再阻塞，Claude 可立即開始 cue／storyboard 接線；只有圖生影片仍需等待靜態核准與掛點鎖定。
+- 影格驗收結果：
+  1. `00-B-v3`：藍色物件已有封面、書脊與可見紙頁，人物、鏡位與燈光保持原 00-B；不再像平板。
+  2. `06-A/B/C`：三杯水、空椅、關燈前與三週後黑屏手機的起始狀態成立；沒有提前顯示訊息或咖啡店。
+  3. `07-A/B`：推薦信寄出前與無回覆等待成立；螢幕無可讀文字。
+  4. `08-A/B/C`：草稿始終未送；雅琳持有自己的平板；08-C 停在關閉視窗前，沒有誤演刪稿。
+  5. `09-A/B/C`：不重演分支特定越線；空椅、HR 紀錄前與退格前成立。09-B、09-C 首版邊緣有透明／黑色缺口，已用局部編輯補成完整滿版，瑕疵稿未放入專案。
+- 交給 Claude 的明確行動：
+  1. 立即依 `property/cutscene-storyboard-v3.md` 接入 12 張 `runway-v3` 圖與 6 張沿用的 `runway-v2` 圖；00 段使用 `00-B-v3.png`，不得再使用舊 00-B。
+  2. 實作 02、04、06–09 的 mid-scene／coda cue，退役 01、03，更新測試與 root README；關鍵影格已齊，不必等待 ChatGPT。
+  3. 保持原生圖不裁切；由 Claude 做 runtime 所需 WebP／尺寸優化與 1280×720 影片交付處理。正式影片仍為 0／7。
+- 未決問題或阻塞：等待使用者對 `runway-v3/REVIEW.md` 做最終靜態核准；若有退件由 ChatGPT 單張重做。Claude 的 cue／fallback 接線不需等待影格生成，但正式圖生影片仍須在靜態核准後進行。
+- 驗證結果：12 張均為 1672×941 PNG、無 alpha channel、非透明滿版；逐張目視初檢完成。`sora-cutscenes.json` 可正常解析；`git diff --check`、`npm.cmd run typecheck`、`npm.cmd test`（19 檔 200／200）、`npm.cmd run build` 全數通過。建置後 `dist/assets/cutscenes/keyframes/runway-v3` 不存在，23,197,460 bytes 的創作原圖未誤入網站成品。工作樹既有未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。

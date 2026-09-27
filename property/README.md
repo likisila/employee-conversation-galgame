@@ -22,7 +22,7 @@
 - `ob-playthrough-review-20260926.md`：依「組織行為，不是 HR」重新實玩四個結局與最後評估頁的審查紀錄；包含通過項、教學閉環缺口及下一輪驗收標準。
 - `mba-debrief-sepia-revision-20260927.md`：`查看案例分析` 的 Sepia 完整文案修訂、語氣原則與 Claude 接線規格；玩家可見文字以 `mba-debrief.json` 為準，程式內硬編碼字串依此文件替換。
 - `mba-debrief.json`：上述內容的結構化資料——十五個主要選項對六個維度的加減分與路徑證據、stakeholder matrix、五個決策點的理論映射、四個結局的策略／stakeholder 結果／非預期後果／理論重點／替代方案，以及 Debrief 畫面的文案與區塊標題。`manifest.json` 的 `mba` 欄位指向它。
-- `cutscene-storyboard-v3.md`：目前唯一有效的影片分鏡、關鍵影格判定、精確插入錨點、圖生影片提示與驗收流程。v3 依最新 runtime 劇情把製作清單縮為 7 段／18 鏡，退役重複場景節拍的 01、03；`cutscene-storyboard-v2.md` 僅供歷史比對。
+- `cutscene-storyboard-v3.md`：目前唯一有效的影片分鏡、關鍵影格判定、精確插入錨點、圖生影片提示與驗收流程。v3 依最新 runtime 劇情把製作清單縮為 7 段／18 鏡，退役重複場景節拍的 01、03；12 張新影格已存入 `public/assets/cutscenes/keyframes/runway-v3/`，搭配 6 張沿用圖後全套起始影格已齊。`cutscene-storyboard-v2.md` 僅供歷史比對。
 - `sora-cutscenes.json`：保留既有影片 ID／檔名／trigger 相容的機器可讀內容清單。所有項目目前為 `TODO`、`BLOCKED` 或 `DEPRECATED`，沒有任何 `READY`／`LOCKED`；舊的一鍵 Sora 腳本不得用來生成 v3。`cutscenes.json` 保存正式手繪視覺小說電影的格式與缺檔策略；實際接線仍由 Claude-owned `cutscene-cues.json` 維護。
 
 ## 目前作品：《最後一次一對一》
