@@ -546,3 +546,25 @@
 - 交給 Claude 的明確行動：本輪只審查，沒有要求立即改 code。若使用者批准接入，請依研究報告實作 Runway SDK／secret 檢查、18 鏡 manifest、上傳／輪詢／立即下載、provenance、QC 狀態與拼接流程；不得復用 legacy Sora runner，也不得把模型輸出視為自動通過。
 - 未決問題或阻塞：使用者靜態核准、09-C 道具決議、Runway 帳號／credits／secret、Runway 專用 prompt manifest、QC／重試政策、拼接與音訊流程。正式影片仍為 0／7。
 - 驗證結果：18 張 PNG 均為 1672×941、單張約 1.47–2.02 MB，符合目前 Runway image-to-video 支援的 1280:720 方向與 data URI 實務大小限制；依 2026-09-27 官方文件確認 Node SDK、API secret、模型、2–10 秒 duration、輸入／輸出保存限制與 credits。`git diff --check` 通過；本次僅文件，未執行程式測試。工作樹既有未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-1730
+
+- 時間：2026-09-27T09:30:29Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。依使用者要求，不做隔離舊 MP4 的逐格檢查；只比較 canonical scene、v3 cut instructions、目前 `cutscene-cues.json` 與 Runway 製作輸入。
+- 本次範圍：完成目前可安全前推的創作側準備：確認 cue 已接線、找出結局 coda 與 runtime 文字的重複、把 07–09 改為創作暫停、撰寫逐鏡 Runway 正向 motion prompts、末態、否決條件與產出紀錄要求。
+- 實際變更檔案：
+  - `property/runway-video-shot-pack-v1.md`（新增）：00-B pilot、00／02／04／06 的 10 鏡正式 Runway prompts 與 QC；07–09 的 8 鏡只保留草案並明定不可送 runner。
+  - `property/cutscene-storyboard-v3.md`：把 7 段 cue 狀態同步為已接線；標出 07–09 的敘事重複與創作暫停；更新生成順序。
+  - `property/sora-cutscenes.json`：07、08、09 從 `TODO` 改為 `BLOCKED`，加入逐段重複原因與禁止未決生成的 review rule。
+  - `public/assets/cutscenes/README.md`：同步 cue 已接線與 07–09 creative hold。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 00、02、04、06 在目前 cue 點增加新的觀眾資訊或時間橋；靜態核准後可製作。第一個 pilot 固定為 00-B。
+  2. 07 在 `ending-decent` L09 後播放，卻完整重演「寄出／等待／不再寄」；08 在 L14 後重演 L11–L14；09 在 L11 後重演 L09–L11。三段先 `BLOCKED`，避免浪費 credits。
+  3. 不修改或刪除 07–09 關鍵影格；它們保留為候選。使用者可在看完舊片後決定接受有意視覺回看，或另行拆分文字與影片功能。
+  4. 原先準備重做 09-C 的筆電疑慮被更上游問題取代：目前整段 09 都不應生成，因此沒有為未定案鏡頭另產圖片。
+  5. Runway prompt 改為正向、單一可見動作；負面限制全部移到逐鏡否決條件與共用 QC，不讓模型用反向語意猜測。
+- 交給 Claude 的明確行動：目前不要讓 runner 接收 07–09。若使用者批准 Runway 接入，manifest 應只先放行 00-B pilot，之後才是 00／02／04／06；必須保存 start-frame hash、完整 prompt、model、duration、task ID、候選序號與 QC 結果。07–09 的 cue 不需立即刪除，但正式 MP4 缺失時維持既有 fallback。
+- 未決問題或阻塞：使用者尚未核准靜態影格與 Runway 付費試跑；07–09 是否保留為有意視覺回看尚待使用者看完舊片後決定。Runway API／runner 仍未實作。
+- 驗證結果：`sora-cutscenes.json` 可正常解析；狀態為 6 `BLOCKED`、1 `TODO`、2 `DEPRECATED`，無 `READY`；本輪可放行 10 鏡所列 start-frame 路徑全部存在；`git diff --check` 通過。本次只有文件／內容清單，不執行程式測試。工作樹未追蹤 `.claude/`、`.wrangler/` 不屬本次變更，未修改、未納入提交。

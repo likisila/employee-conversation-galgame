@@ -8,7 +8,7 @@
 - **01 邀請退役**：遊戲已用逐字輸入／刪除演出同一動作，影片會重複節拍並搶走 Choice 1 的主動性。
 - **03 文件退役**：Scene 6 已用資料夾 CG、逐頁說明與雅琳「我升職了」完成真正的價值轉折；單拍文件轉向沒有新的戲劇事件。
 - 既有 13 張關鍵影格：**6 張沿用、1 張重繪、6 張退出正式剪輯**。00-B 重繪與 06–09 的 11 張新影格已於 2026-09-27 生成，存於 `public/assets/cutscenes/keyframes/runway-v3/`；v3 所需 18 張起始影格已齊。
-- 00 可維持場景前播放；02、04、06–09 都必須改為場景內精確掛點。關鍵影格已可交給 Claude 接線；正式影片仍須在掛點與靜態核准完成後才生成、部署。
+- 00 維持場景前播放；02、04、06–09 已依精確錨點接線。正式影片仍須在靜態核准完成後才生成、部署；07–09 因與緊接的 runtime 敘述重疊，先列為創作暫停，不送 Runway。
 
 ## 正典與優先序
 
@@ -58,13 +58,13 @@
 
 | 段／檔名 | 精確敘事掛點 | 鏡數／長度 | 播放後接回 | 目前接線狀態 |
 | --- | --- | --- | --- | --- |
-| 00 `00_final_documents.mp4` | `content-warning` 結束後、進入 `s1-final-cut` L01 前 | 3／6s | 「16:40。我還在看雨澄剛交的設計稿……」 | 場景前 cue 可用；新版 00-B 已生成，可接入 storyboard |
-| 02 `02_layoff_notification.mp4` | `s3-meeting` L15「那隻鸚鵡……」之後、L16「17:00，月球會議室」之前 | 2／4s | L16 | **現行誤掛在 s4 前；需 Claude 改為 mid-scene cue** |
-| 04 `04_boundary_question.mp4` | `s7-recommend-converge` L08「冷氣停了。她等著我回答。」之後、Choice 5 出現之前 | 2／4s | Choice 5 | **現行誤掛在 s7 主場景進場前；需 Claude 改掛匯流場景末端** |
-| 06 `06_ending_true.mp4` | `ending-true` L17「離開記得關燈。」之後、L18「三週後的晚上」之前 | 3／7s | L18 | **現行 on-enter 過早；需 mid-scene cue** |
-| 07 `07_ending_dignified.mp4` | `ending-decent` L09「我沒有再寄第二封。」之後、L10 結局標題之前 | 2／6s | L10 | **現行 on-enter 過早；需結局 coda cue** |
-| 08 `08_ending_soft_knife.mp4` | `ending-soft-knife` L14「我把視窗關掉……」之後、L15 結局標題之前 | 3／7s | L15 | **現行 on-enter 過早；需結局 coda cue** |
-| 09 `09_ending_boundary_crossed.mp4` | `ending-over-line` L11 草稿刪除演出完成後、L12 結局標題之前 | 3／6s | L12 | **現行 on-enter 過早；需結局 coda cue** |
+| 00 `00_final_documents.mp4` | `content-warning` 結束後、進入 `s1-final-cut` L01 前 | 3／6s | 「16:40。我還在看雨澄剛交的設計稿……」 | 已接 scene cue；新版 00-B storyboard 已接入 |
+| 02 `02_layoff_notification.mp4` | `s3-meeting` L15「那隻鸚鵡……」之後、L16「17:00，月球會議室」之前 | 2／4s | L16 | 已接 L16 line anchor |
+| 04 `04_boundary_question.mp4` | `s7-recommend-converge` L08「冷氣停了。她等著我回答。」之後、Choice 5 出現之前 | 2／4s | Choice 5 | 已接 choices anchor |
+| 06 `06_ending_true.mp4` | `ending-true` L17「離開記得關燈。」之後、L18「三週後的晚上」之前 | 3／7s | L18 | 已接 L18 line anchor |
+| 07 `07_ending_dignified.mp4` | `ending-decent` L09「我沒有再寄第二封。」之後、L10 結局標題之前 | 2／6s | L10 | 已接 title line anchor；**創作暫停：影片完整重演 L09** |
+| 08 `08_ending_soft_knife.mp4` | `ending-soft-knife` L14「我把視窗關掉……」之後、L15 結局標題之前 | 3／7s | L15 | 已接 title line anchor；**創作暫停：影片完整重演 L11–L14** |
+| 09 `09_ending_boundary_crossed.mp4` | `ending-over-line` L11 草稿刪除演出完成後、L12 結局標題之前 | 3／6s | L12 | 已接 title line anchor；**創作暫停：影片完整重演 L09–L11** |
 
 ### 退役段落
 
@@ -184,9 +184,9 @@
 
 1. **關鍵影格生成（已完成）**：00-B-v3、06-A/B/C、07-A/B、08-A/B/C、09-A/B/C 已由 ChatGPT 直接生成並存入專案。
 2. **靜態驗收（ChatGPT 初檢已完成）**：人物、手部、資料夾厚度、座位、三杯水、平板歸屬、滿版與動作起點已逐張檢查；09-B、09-C 的首版邊緣缺口已修補，不使用瑕疵稿。
-3. **接線**：Claude 依本文件建立 mid-scene／coda cue，並把 12 張 v3 圖與 6 張沿用圖接入正確 storyboard fallback。
+3. **接線（已完成）**：`property/cutscene-cues.json` 已建立 scene／line／choices anchors，並把 12 張 v3 圖與 6 張沿用圖接入 storyboard fallback。
 4. **使用者靜態核准**：以 `runway-v3/REVIEW.md` 為驗收頁；若有退件只重做該張。
-5. **逐鏡圖生影片**：掛點與靜態圖核准後，每鏡只做一個動作；先驗單鏡，再剪輯成段。
+5. **逐鏡圖生影片**：先做 00-B 單鏡試跑；00、02、04、06 可在靜態核准後進入製作。07–09 必須先決定是接受有意回看，或改敘述／影片功能，不得直接批量生成。
 6. **段落驗收**：確認開頭價值、結尾價值、動作因果、剪接方向、無重複節拍。
 7. **技術交付**：1280×720、H.264、24fps、環境聲或無聲；每段建議 2–4MB。編碼與 runtime 整合由 Claude 處理。
 8. **實機驗收**：桌機與 390×812；靜音、跳過、讀檔不重播、回到決策點、缺檔 fallback、手機下載皆需確認。

@@ -8,6 +8,8 @@
 
 - 既有關鍵影格 13 張中：6 張沿用、1 張重畫、6 張退出正式剪輯。
 - 00-B 重畫與 11 張新結局影格已完成，存於 `keyframes/runway-v3/`；搭配 6 張沿用圖，正式 18 張起始影格已齊。
+- `property/cutscene-cues.json` 已完成 7 段 scene／line／choices anchor 接線；分鏡 fallback 已指向 18 張正式起始影格。
+- 07、08、09 雖已接線，但影片動作會完整重演緊接在前的結局敘述，目前列為創作暫停；不因 cue 存在就送生成。
 - 正式影片目前 0／7。
 - `keyframes/runway-v2/` 只是沿用舊路徑的素材池，不代表仍採 v2 分鏡；逐張決議見 [關鍵影格複審](keyframes/runway-v2/REVIEW.md)。
 - 隔離區的舊 MP4 只供比對，不得回放或直接復用，詳見 [pending-review 說明](../../../coordination/pending-review/cutscenes/README.md)。
