@@ -597,3 +597,28 @@
 - 交給 Claude 的明確行動：目前不需接線或下載；等待 Runway viewer 完成與使用者／ChatGPT QC。若候選通過，再依 task ID 下載並保存正式候選檔及更新 provenance。
 - 未決問題或阻塞：影片仍在背景生成；輸出 URL／本地檔案與 QC 結果尚未取得。
 - 驗證結果：connector 已確認 authenticated；start frame SHA-256 `84cef29d78184ddd10fbbeaddb71f86cdd4b10767aa28accd8325f8563dacf61`、1,988,433 bytes；task accepted。未修改 runtime 或 code，不執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-2101
+
+- 時間：2026-09-27T13:01:25Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者要求停止生成、重做分鏡表與影片規格後交其審查。本輪使用 `screenwriting:sw-scene-craft`，只改 ChatGPT-owned 創作文件與 manifest 狀態；未改 runtime cue、scene JSON、播放器、schema 或測試。
+- 本次範圍：以精確 cue 前一句／後一句重新分析每段影片的目的、價值轉折、進出點與重複節拍；分離「播放段落／鏡頭／生成任務」，重算正式 slate、片長、剪輯與 Runway prompts。
+- 實際變更檔案：
+  - `property/cutscene-storyboard-v4-review.md`（新增）：使用者審查稿，暫定 00、04、06 共 3 段／7 鏡／約 18 秒；逐段列播放位置、玩家缺少的影像資訊、價值轉折、內部節拍、段尾接回與禁止內容。
+  - `property/runway-video-spec-v2-review.md`（新增）：片長規則、cue 接合表、7 鏡單一連續鏡頭 prompt 草案、剪輯、段落級驗收與全案否決條件。
+  - `property/cutscene-storyboard-v3.md`、`property/runway-video-shot-pack-v1.md`：標記停止使用並指向審查稿。
+  - `property/sora-cutscenes.json`：唯一 `TODO` 的 06 改為 `BLOCKED`；新增全案停止生成規則。目前 7 `BLOCKED`、2 `DEPRECATED`、0 `READY`。
+  - `property/runway-generation-log.md`：00-B candidate 01 改為 `REJECTED AS STANDALONE CUTSCENE`／`SPEC FAILURE`；可保留作未來完整 00 的中間鏡頭候選，不得部署成正式 00。
+  - `property/README.md`、`public/assets/cutscenes/README.md`：同步審查稿、停止生成與暫定 0／3 正式影片。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 一段正式 MP4 對應一個 runtime cue 與一個戲劇目的；可有多鏡，但不能有第二段情節。每個生成 task 原則上一鏡，完整段落由剪輯控制。
+  2. 00 保留：在 s1 L01 前建立「觀眾知道文件已到、雨澄不知道」的 7 秒冷開場。
+  3. 04 保留：在問題與 Choice 5 之間只延長同一個沉默，5 秒／2 鏡，不新增情節或答案。
+  4. 06 保留：6 秒／2 鏡；只從關燈接到三週後手機亮起。06-A 收第三杯水因 L14 已演過而退出。
+  5. 02 新增退役：cue 後 L16–L23 已立即完整敘述關門、座位、入室、資料夾與反應；影片只會提前或重播。07–09 同理維持退役／不生成。
+  6. 正式審查 slate 暫縮為 3 段、7 鏡、約 18 秒。使用者核准前只是 review draft，不修改現有 7 個 runtime cues。
+- 交給 Claude 的明確行動：現在不要改 cue、runner 或 runtime；等使用者核准 v4。root `README.md` 仍指向 v3，屬 Claude-owned，核准後再依正式決議同步並退役 02、07、08、09 cue／fallback。
+- 未決問題或阻塞：等待使用者審查四項：是否只留 00／04／06；00 冷開場節拍；04 是否值得用影片延長沉默；06 黑場到三週後的接法。核准前不得生成。
+- 驗證結果：`sora-cutscenes.json` 可正常解析，9 項為 7 `BLOCKED`＋2 `DEPRECATED`、0 `READY`；`git diff --check` 通過。本次只有 Markdown／JSON 狀態，未執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。

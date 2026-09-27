@@ -114,7 +114,7 @@
       "id": "ending-true",
       "kind": "transition",
       "owner": "GPT",
-      "status": "TODO",
+      "status": "BLOCKED",
       "canonicalScenes": ["property/scenes/ending-true.json"],
       "branch": "TRUE END: 真正的告別",
       "file": "06_ending_true.mp4",
@@ -176,6 +176,7 @@
     }
   ],
   "postGenerationReview": [
+    "STOP: do not submit any generation task until the user approves property/cutscene-storyboard-v4-review.md and property/runway-video-spec-v2-review.md.",
     "Use property/cutscene-storyboard-v3.md as the authority for active segments, shot count and narrative insertion anchors.",
     "Do not generate or deploy deprecated segments 01 and 03.",
     "00-B must visibly be a paper folder with thickness, not a tablet or blue slab.",

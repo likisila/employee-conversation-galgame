@@ -1,6 +1,6 @@
 # Cutscene videos
 
-目前的創作與交付基準是 [分鏡表 v3](../../../property/cutscene-storyboard-v3.md)。它依 2026-09-27 的 canonical 劇情重新整理為 7 段、18 鏡、約 40 秒，採官方手繪／視覺小說插畫，不採真人或 3D。
+**目前停止生成。** 待使用者審查的創作方案是 [分鏡表 v4](../../../property/cutscene-storyboard-v4-review.md) 與 [Runway 規格 v2](../../../property/runway-video-spec-v2-review.md)。新稿從實際播放點前後文本重新判斷，只暫留 00、04、06 共 3 段／7 鏡／約 18 秒；核准前不改 runtime cue、不生成、不部署。
 
 製作順序固定為：核准關鍵影格 → image-to-video → 剪輯／轉檔 → 實機驗收。`property/sora-cutscenes.json` 現在是內容清單與提示詞來源；所有段落均為 `BLOCKED`、`TODO` 或 `DEPRECATED`，沒有任何一段可直接送進舊的一鍵生成流程。
 
@@ -10,7 +10,7 @@
 - 00-B 重畫與 11 張新結局影格已完成，存於 `keyframes/runway-v3/`；搭配 6 張沿用圖，正式 18 張起始影格已齊。
 - `property/cutscene-cues.json` 已完成 7 段 scene／line／choices anchor 接線；分鏡 fallback 已指向 18 張正式起始影格。
 - 07、08、09 雖已接線，但影片動作會完整重演緊接在前的結局敘述，目前列為創作暫停；不因 cue 存在就送生成。
-- 正式影片目前 0／7。
+- 正式影片目前 0／3；00-B 單鏡試跑不構成正式 00 段，已因規格層級錯誤退件。
 - `keyframes/runway-v2/` 只是沿用舊路徑的素材池，不代表仍採 v2 分鏡；逐張決議見 [關鍵影格複審](keyframes/runway-v2/REVIEW.md)。
 - 隔離區的舊 MP4 只供比對，不得回放或直接復用，詳見 [pending-review 說明](../../../coordination/pending-review/cutscenes/README.md)。
 

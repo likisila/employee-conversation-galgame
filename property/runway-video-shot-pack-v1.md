@@ -1,5 +1,7 @@
 # Runway 圖生影片逐鏡製作包 v1
 
+> **停止使用／歷史版。** 本版以單鏡 pilot 為中心，沒有先把整個播放段落與前後文本接合。不得再送 runner。待使用者審查的新規格見 [`runway-video-spec-v2-review.md`](runway-video-spec-v2-review.md)。
+
 更新：2026-09-27。這是 `cutscene-storyboard-v3.md` 的 Runway 專用執行層，只處理創作輸入與內容驗收，不是 API manifest。Runway runner、secret、task polling、下載、provenance、剪輯與 runtime 整合由 Claude 負責。
 
 ## 目前放行範圍
