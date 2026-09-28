@@ -875,3 +875,25 @@
 - 交給 Claude 的明確行動：使用者已要求落實另外兩則 P1 comment。請依 `property/choice-and-route-revision-20260928.md` 第 93–97 行整合五個主要選擇的玩家文案、choice IDs／effects、結局門檻、MBA、舊存檔遷移與測試；並讓 `doc-private` 在反應結束後直接走專屬程序收尾再進 END 04，永不進入推薦微選擇或 Choice 5。完成後重新枚舉完整路徑並回覆本 Entry、`ChatGPT-20260928-0429` 與 `ChatGPT-20260928-0553`。
 - 未決問題或阻塞：依 `docs/AI_ROLE_BOUNDARIES.md`，effects、conditions、routes、存檔與測試屬 Claude 唯一責任，ChatGPT 不得直接修改，因此三則 comment 中有兩則仍待 Claude 接手，不能宣稱全部完成。Story Skills bundled fallback 可用，修正先前紀錄中「fallback 不存在」的說法；目前專案仍有既有結構錯誤，見驗證結果。未追蹤 `.claude/` 未修改、未納入。
 - 驗證結果：`git diff --check` 通過；bundled Story CLI `links` 通過（0 errors／0 warnings）；`validate` 仍因缺少 `continuity/clues/_index.md` 失敗 1 項；`continuity` 因專案索引未辨識既有 chapter／characters／artifact 失敗 7 項；`doctor` 如實回報上述錯誤。完整 `npm test` 的新一輪執行因權限審核遇到帳戶用量限制而未啟動，沒有繞過；本輪修改前同一 HEAD 已通過 19 檔／206 項測試，本次只修改 Markdown metadata 與交接文件。
+
+## ChatGPT-20260928-1956
+
+- 時間：2026-09-28T19:56:02+08:00
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-1109`（最新）。Claude 已把五個新版主要選擇、effects、結局門檻、189 條路徑與 `doc-private` 立即終止路由整合至 runtime，並明確交回舊語意反應與 MBA 證據兩組內容缺口。
+- 本次範圍：使用 `screenwriting:sw-dialogue`、`screenwriting:sw-scene-craft`、`screenwriting:sw-character-conflict` 與 `revision-continuity`，只修改玩家文字、內容 JSON 與敘事文件；不修改 choice IDs、effects、conditions、routes、schema、程式或測試。
+- 實際變更檔案：
+  - runtime 內容：`property/scenes/s3-meeting.json`、`s4-notice.json`、`s5-when-did-you-know.json`、`s7-not-in-file.json`、`s8-reaction.json`、`ending-over-line.json`。
+  - 教學內容：`property/mba-debrief.json` 的五個 B 選項 evidence 與四組 theory mapping；`property/mba-organizational-debrief.md` 的證據摘要。
+  - 正典與狀態：`docs/narrative/last-one-on-one/chapters/chapter-01.md`、`chapters/_index.md`、`plot/timeline.md`、`scenes/chapter-01-scene-05.md`、`worldbuilding/systems/game-design.md`、`property/choice-and-route-revision-20260928.md`。
+- 已定案事項：
+  1. 五個新版 B 選項不再觸發舊版「含糊／話術／卸責／催簽／索情感債」反應；各分支改為呈現隱私與不確定性、接收節奏、剩餘主體性、文件載體、私人答案時機的真實代價。
+  2. Choice 5 B 保留雨澄對「我已經開口」的反駁，予安承認自己再次代替她決定，再只回答可驗證的工作部分；因此 B 可辯護但不是無摩擦的標準答案。
+  3. `doc-private` 專屬收尾與共通 END 04 不再重複「可以離開／不必簽名／拿起手機」；共通段改由雅琳確認接手，雨澄直接走向門口。
+  4. Choice 1 A 的後續私訊刪除重複的「先把檔案存好」；章節正典、時間線、Scene 5 紀錄與 v0.3 狀態已同步，章節字數重算為 4069。
+- 交給 Claude 的明確行動：
+  1. `property/mba-debrief.json` 內 `invite-vague`、`notice-euphemism`、`answer-deflect`、`doc-pressure`、`keep-credit` 的 C／I／F／A／S／P 仍是舊版負向分數，與新版可辯護行為、runtime 正向 effects 及本次 evidence 相衝突。請依 v0.3 質性定位重新校準五組分數，保持 A／B 都能成立、但代價不同。
+  2. 更新 `tests/mba.test.ts` 兩個仍硬寫舊 evidence 的斷言；測試情境也不應再把新版 `keep-credit`／`doc-pressure` 當負向證據來源。完成後重跑 207 項測試、typecheck 與 build。
+  3. Claude-owned `public/assets/cutscenes/README.md` 仍寫 7 段 cue、18 張影格與「尚待接線」，但 `property/cutscene-cues.json` 現為 3 段／7 張且已接線。請同步該 README；本次遵守角色邊界未修改。
+- 未決問題或阻塞：MBA 分數與測試由 Claude 專屬負責；在其更新前，debrief 可能顯示「低／脆弱」卻引用新版正向 evidence，且 Vitest 會有 2 個舊字串斷言失敗。Story CLI 在 Windows 上仍無法辨識現有 chapter／entity 索引；其誤寫的 registry 與空 clues 索引已當場撤回，未納入本次變更。
+- 驗證結果：修改的 7 個 JSON 全部可解析；`npm run typecheck` 通過；`npm run build` 通過；Vitest 19 檔中 18 檔通過，205／207 tests 通過，唯一 2 個失敗均為 `tests/mba.test.ts` 仍期待舊版 `keep-credit`／`doc-pressure` evidence；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。

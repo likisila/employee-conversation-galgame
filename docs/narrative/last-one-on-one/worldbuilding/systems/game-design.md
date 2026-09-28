@@ -20,7 +20,7 @@ target-runtime: "Ren'Py or equivalent visual-novel engine"
 3. 好感不是核心數值；真正影響結局的是坦誠、程序與界線。
 4. 戀愛伏筆存在，但不允許玩家在仍有主管權力時用工作資源交換親密。
 
-> 整合狀態：v0.3 的主要選擇內容與質性後果已定稿於 `property/choice-and-route-revision-20260928.md`，效果數值、門檻與路由仍待 Claude 整合。整合完成前，runtime 仍是 v0.2 的 A／B／C 權重。
+> 整合狀態：v0.3 的主要選擇、效果、結局門檻與 `doc-private` 立即終止路由已進入 runtime；五個 B 選項的反應與質性分析也已同步。現存 189 條主要路徑包含 TRUE END 22、END 02 29、END 03 57、END 04 81。
 
 ## 內容提醒
 

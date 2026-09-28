@@ -3,15 +3,15 @@
   "title": "三個人的一對一",
   "lines": [
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "收到。需要帶電腦嗎？", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
-    { "speaker": null, "kind": "message", "channel": "私訊", "from": "予安", "text": "不用。先把手邊檔案存好。其他安排，會議裡會說清楚。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
+    { "speaker": null, "kind": "message", "channel": "私訊", "from": "予安", "text": "不用。其他安排，會議裡會說清楚。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "好。五點見。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
     { "speaker": null, "kind": "narration", "text": "我看著那句「五點見」，沒有再回。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
 
-    { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "如果是圓角問題，現在就能吵。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
-    { "speaker": null, "kind": "message", "channel": "私訊", "from": "予安", "text": "雅琳也會在。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
-    { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "喔。那應該不是圓角。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
+    { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "「影響職務安排」是換專案，還是沒有職務？", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
+    { "speaker": null, "kind": "message", "channel": "私訊", "from": "予安", "text": "結果和文件需要當面一起說清楚。妳先把手邊檔案存好。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
+    { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "好。五點見。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
     { "speaker": null, "kind": "narration", "text": "她的狀態從綠色變成「忙碌」。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
-    { "speaker": "zhou-yuan", "kind": "thought", "text": "「忙碌」亮了起來。我還沒告訴她要談什麼。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
+    { "speaker": "zhou-yuan", "kind": "thought", "text": "她沒有再追問。不是因為不需要答案。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
 
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "這麼正式？", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
     { "speaker": null, "kind": "narration", "text": "她回了一張戴墨鏡的慶祝鸚鵡貼圖。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
@@ -28,7 +28,7 @@
     { "speaker": "lin-yucheng", "text": "我把檔案存好了。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
     { "speaker": null, "kind": "narration", "text": "她看見資料夾上的名字，停了一秒才坐下。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
 
-    { "speaker": "lin-yucheng", "text": "兩位一起參加我的一對一。數學看起來不太好。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
+    { "speaker": "lin-yucheng", "text": "所以答案是後者。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "vague" }] },
 
     { "speaker": null, "kind": "narration", "text": "雨澄先看見雅琳，再看見資料夾。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },
     { "speaker": "lin-yucheng", "text": "好消息？", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "goodnews" }] },

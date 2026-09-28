@@ -5,10 +5,10 @@
     { "speaker": null, "kind": "narration", "text": "我說完了。雨澄看著我，沒有低頭看資料夾。我等她開口。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "direct" }] },
     { "speaker": "lin-yucheng", "text": "好。繼續。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "direct" }] },
 
-    { "speaker": null, "kind": "narration", "text": "雨澄低頭看了一眼自己的 T 恤。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "euphemism" }] },
-    { "speaker": "lin-yucheng", "text": "MAKE IT OBVIOUS。你說的是「影響」，文件寫的是「裁撤」。我們先選一個名詞。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "euphemism" }] },
-    { "speaker": "zeng-yalin", "text": "文件上的名詞比較接近事實。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "euphemism" }] },
-    { "speaker": "zhou-yuan", "text": "公司決定裁撤你目前的職位。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "euphemism" }] },
+    { "speaker": null, "kind": "narration", "text": "雨澄的手停在原子筆旁，沒有碰資料夾。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "euphemism" }] },
+    { "speaker": "lin-yucheng", "text": "先聽原因。說完我再決定要不要停。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "euphemism" }] },
+    { "speaker": "zeng-yalin", "text": "可以。妳隨時可以中止，也可以之後再問。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "euphemism" }] },
+    { "speaker": "zhou-yuan", "text": "好。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "euphemism" }] },
 
     { "speaker": "lin-yucheng", "text": "這是績效改善計畫？", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
     { "speaker": "zhou-yuan", "text": "不是，我只是想先把背景——", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },

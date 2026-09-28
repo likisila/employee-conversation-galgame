@@ -11,12 +11,12 @@
     { "speaker": null, "kind": "narration", "text": "她看向窗外。雨水把對面大樓的招牌切成一格一格。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
     { "speaker": "lin-yucheng", "text": "……那就讓我先氣著。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "advocate" }] },
 
-    { "speaker": "lin-yucheng", "text": "所以呢？", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
-    { "speaker": "zhou-yuan", "text": "我只是希望你知道，我不是什麼都沒做。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
-    { "speaker": "lin-yucheng", "text": "我知道你有做事。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
-    { "speaker": "lin-yucheng", "text": "但我今天還得謝謝你嗎？", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
-    { "speaker": "zeng-yalin", "text": "不需要。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
-    { "speaker": null, "kind": "narration", "text": "我把手壓在膝上，沒再講那幾次會議。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
+    { "speaker": "lin-yucheng", "text": "我剛才已經開口了。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
+    { "speaker": "zhou-yuan", "text": "對。是我又替妳決定了什麼時候適合知道。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
+    { "speaker": "lin-yucheng", "text": "那你現在能回答哪一部分？", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
+    { "speaker": "zhou-yuan", "text": "工作部分：我提過替代方案，沒有通過。其他的等程序結束；要不要再問，由妳決定。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
+    { "speaker": "zeng-yalin", "text": "我會把工作部分記進今天的紀錄。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
+    { "speaker": null, "kind": "narration", "text": "雨澄點了一下頭，沒有替我把其他的話接下去。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "credit" }] },
 
     { "speaker": null, "kind": "narration", "text": "雨澄愣住了。她看了雅琳一眼，再看回我。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
     { "speaker": "lin-yucheng", "text": "不。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },

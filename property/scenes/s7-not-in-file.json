@@ -8,12 +8,12 @@
     { "speaker": "zeng-yalin", "text": "直接找我。你也可以帶你信任的人一起確認。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
     { "speaker": null, "kind": "narration", "text": "雨澄把資料夾拉近，翻到印著信箱的那一頁。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
 
-    { "speaker": "zeng-yalin", "text": "我要修正。即使只是收訖，也不必在此刻完成。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": null, "kind": "narration", "text": "雨澄把筆扣上。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": "lin-yucheng", "text": "原來我的第一個離職任務，是幫公司降低漏件率。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": "zhou-yuan", "text": "我不是那個意思。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": "lin-yucheng", "text": "但那是你剛才要求我做的事。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": null, "kind": "narration", "text": "她把資料夾推回桌子中央。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": "zeng-yalin", "text": "我現在寄電子檔。紙本可以帶走，也可以留在這裡。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": null, "kind": "narration", "text": "雨澄看了一眼資料夾，又看向亮起的手機。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": "lin-yucheng", "text": "紙本留下。寄件時間和版本請寫清楚。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": "zhou-yuan", "text": "好。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": "lin-yucheng", "text": "後面有問題，我直接找雅琳。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": null, "kind": "narration", "text": "她把筆放回桌上，沒有碰資料夾。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
 
     { "speaker": null, "kind": "narration", "text": "17:18。雨澄又看了一次錶，把話題拉回文件。" },
     { "speaker": "lin-yucheng", "text": "作品集呢？我做的流程圖、測試摘要，哪些可以用？" },

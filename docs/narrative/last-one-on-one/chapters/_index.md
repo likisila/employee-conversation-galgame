@@ -9,6 +9,6 @@ story: last-one-on-one
 
 | # | Title | POV | Status | Word Count | File |
 |---|-------|-----|--------|------------|------|
-| 1 | 最後一次一對一 | zhou-yuan | revised | 4019 | [chapter-01](chapter-01.md) |
+| 1 | 最後一次一對一 | zhou-yuan | revised | 4069 | [chapter-01](chapter-01.md) |
 
-## Total Word Count: 4019
+## Total Word Count: 4069

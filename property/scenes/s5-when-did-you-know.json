@@ -5,10 +5,10 @@
     { "speaker": null, "kind": "narration", "text": "雨澄看了我幾秒，把手收回膝上。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "admit" }] },
     { "speaker": "lin-yucheng", "text": "好。那我還能決定什麼？", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "admit" }] },
 
-    { "speaker": "lin-yucheng", "text": "我失去收入，你失去今晚的胃口。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
-    { "speaker": null, "kind": "narration", "text": "她把兩根手指分開，比出一小段距離。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
-    { "speaker": "lin-yucheng", "text": "不是同一種不容易。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
-    { "speaker": null, "kind": "narration", "text": "雅琳沒有看我，只在平板上記下一行。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
+    { "speaker": "lin-yucheng", "text": "繼續。原因先說完，文件等一下看。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
+    { "speaker": null, "kind": "narration", "text": "她把資料夾往雅琳的方向推了半寸。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
+    { "speaker": "lin-yucheng", "text": "後面的問題先由雅琳記。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
+    { "speaker": null, "kind": "narration", "text": "雅琳點頭，在平板上另開一頁。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "deflect" }] },
 
     { "speaker": "zeng-yalin", "text": "周主管，這句不在核准資訊裡。沒有保留職位的轉圜方案。", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "bargain" }] },
     { "speaker": "lin-yucheng", "text": "所以根本沒有轉圜，還要我先配合流程？", "conditions": [{ "variable": "choice3", "operator": "eq", "value": "bargain" }] },
