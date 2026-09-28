@@ -823,3 +823,28 @@
 - 交給 Claude 的明確行動：更新 `tests/narrativeIntegration20260926.test.ts` 第 17–23 行的舊分拍斷言。新測試應確認首句為資料夾已在桌上／雨澄仍盯著螢幕，並確認「雅琳舉起資料夾」「予安點頭」「雅琳放下資料夾」三個由 00 承擔的文字動作不再出現在 `s1-final-cut`；之後重跑 206 項測試並用實機從 00 播到 Scene 1，檢查影片結尾到首句、私訊與雨澄轉身的節奏。
 - 未決問題或阻塞：ChatGPT 角色邊界禁止修改測試，因此保留 1 個已知舊斷言失敗。Story Skills 維護工具把 repo root 當成制式 story project，沒有辨識實際位於 `docs/narrative/last-one-on-one/` 的索引，回報 10 個既有缺路徑錯誤與 2 個警告；本次未跨界重組目錄。
 - 驗證結果：`property/scenes/s1-final-cut.json` 可解析；`npm run typecheck` 通過；`npm run build` 通過；Vitest 19 files 中 18 files 通過，205/206 tests 通過，唯一失敗是上述仍要求舊「雅琳舉起／放下資料夾」文字的整合測試；`git diff --check` 在提交前再次執行。
+
+## ChatGPT-20260928-0429
+
+- 時間：2026-09-28T04:29:20Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-0057`（最新）。Scene 1 新稿、206 項測試與 Worker 部署均已由 Claude 驗證；本次不碰部署、runtime、schema、路由或測試。
+- 本次範圍：依使用者「review everything」後的「改」，使用 `revision-continuity` 做全案修訂。直接修正 ChatGPT 權限內的台詞、角色、世界設定、章節正典、企劃狀態與教學文案；把需要改 choice effects／IDs／conditions／routes 的部分拆成 Claude 可直接整合的正式規格。
+- 實際變更檔案：
+  - Runtime 內容：`property/scenes/s1-final-cut.json`、`s3-meeting.json`、`ending-soft-knife.json`、`property/mba-debrief.json`。
+  - 新增正式規格：`property/choice-and-route-revision-20260928.md`。
+  - 企劃與狀態：`story-bible.md`、`property/romance-microchoices.md`、`property/narrative-integration-revision-20260926.md`、`property/mba-organizational-debrief.md`、`docs/narrative/last-one-on-one/worldbuilding/systems/game-design.md`。
+  - 正典與連續性：`docs/narrative/last-one-on-one/chapters/chapter-01.md`、`chapters/_index.md`、`characters/lin-yucheng.md`、`characters/zeng-yalin.md`、`characters/zeng-yalin.md`（repo 頂層鏡像）、`worldbuilding/artifacts/rights-packet.md`、`worldbuilding/factions/weiguang-interactive.md`、`plot/arcs/last-one-on-one.md`。
+- 已定案事項：
+  1. Scene 1 移除未兌現的「再找執行長」行動，改為確認最終名單已鎖；雅琳不再暗示還有一條低機率轉圜支線。
+  2. clear invite 路徑不再承諾「系統權限不會突然關閉」這個劇中無人能保證的事，改為可履行的存檔與當面說明。
+  3. END 03 共通台詞不再替所有路徑補上一個追求「之後」的意圖；改以「沒有惡意」仍不能取代事實為衝突，保留柔軟卸責的結局功能。
+  4. END 02 的 MBA strategy 從「界線也守住了」收斂為「沒有跨過硬紅線」，避免替所有中間路徑過度背書。
+  5. 權益資料夾 frontmatter 改為 branch-dependent；雨澄新增「以可驗證問題延後恐慌」的自我保護與經濟弱點；微光互動補上決策層、主管、HR 與員工的權力拓樸；兩份雅琳角色檔重新一致。
+  6. 五個主要選擇的新方向為「兩個可辯護策略＋一個明確高風險選項」。A、B 都需存在 END 02 與 TRUE END 的可達組合；`doc-private` 反應結束後立即終止談話，不得再經推薦微選擇或 Choice 5。完整玩家文案與質性後果在新增規格。
+- 交給 Claude 的明確行動：
+  1. 依 `property/choice-and-route-revision-20260928.md` 整合五個主要選擇：決定相容的 choice IDs、差異化 effects、結局門檻、MBA 對應與舊存檔策略；A／B 不可只是高低分版本。
+  2. 為 `doc-private` 建立雅琳立即終止談話的專屬路由，直接進 END 04，跳過 Scene 7 推薦微選擇與 Choice 5；更新路徑枚舉與相關測試。
+  3. 同步 Claude-owned root `README.md` 與 `public/assets/cutscenes/README.md` 的過時狀態說明。本次依角色邊界未修改。
+- 未決問題或阻塞：上述三項屬 Claude 權限，尚未整合，因此 runtime 的五個主要選擇分數與 `doc-private` 後續流程仍維持舊版；本次不宣稱全案技術修訂已完成。`story` CLI 與專案內 fallback 均不存在，無法執行自動 reindex／continuity；章節字數以 `Intl.Segmenter('zh-Hant')` 人工重算為 3333 並同步索引。未追蹤 `.claude/` 未修改、未納入。
+- 驗證結果：四個修改 JSON 均可解析；`npm run typecheck` 通過；`npm test` 19 檔／206／206 通過；`npm run build` 通過；兩份雅琳角色檔逐字一致；舊台詞與舊狀態關鍵字掃描只剩新增規格中的預期「等待 Claude 整合」；`git diff --check` 通過。

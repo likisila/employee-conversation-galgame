@@ -3,7 +3,7 @@
   "title": "三個人的一對一",
   "lines": [
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "收到。需要帶電腦嗎？", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
-    { "speaker": null, "kind": "message", "channel": "私訊", "from": "予安", "text": "不用。先把手邊檔案存好就可以。你的系統權限不會在談話中突然關閉。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
+    { "speaker": null, "kind": "message", "channel": "私訊", "from": "予安", "text": "不用。先把手邊檔案存好。其他安排，會議裡會說清楚。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "林雨澄", "text": "好。五點見。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
     { "speaker": null, "kind": "narration", "text": "我看著那句「五點見」，沒有再回。", "conditions": [{ "variable": "choice1", "operator": "eq", "value": "clear" }] },
 

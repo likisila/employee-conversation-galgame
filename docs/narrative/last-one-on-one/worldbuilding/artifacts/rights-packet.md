@@ -1,9 +1,9 @@
 ---
 name: 藍色權益資料夾
 type: document
-status: transferred
-owner: lin-yucheng
-location: moon-meeting-room
+status: branch-dependent
+owner: branch-dependent
+location: branch-dependent
 ---
 
 # 藍色權益資料夾

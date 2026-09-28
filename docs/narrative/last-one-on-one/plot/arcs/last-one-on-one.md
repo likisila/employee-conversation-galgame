@@ -58,6 +58,6 @@ acts:
 | 雨澄 T 恤寫著 MAKE IT OBVIOUS | 她要求把「調整」改稱「裁撤」 | Ch 1 | Ch 1 | paid-off |
 | 予安進門前把識別證翻面 | 雨澄離開時也把識別證翻面 | Ch 1 | Ch 1 | paid-off |
 | 兩人過去各自買咖啡 | TRUE END 首次真正一起喝咖啡 | Ch 1 | Ch 1 epilogue | paid-off |
-| Scene 1 對雨澄設計稿的回應 | Scene 5 由雨澄以同一句話追問沉默 | Ch 1 | Ch 1 | planned-revision |
-| Scene 7 選擇推薦信最先寫哪項能力 | TRUE END 顯示對應推薦信回聲 | Ch 1 | Ch 1 epilogue | planned-revision |
-| 雅琳刪除「立即」 | 她承認過去曾在相似會議中沉默 | Ch 1 | Ch 1 | planned-revision |
+| Scene 1 對雨澄設計稿的回應 | Scene 5 由雨澄以同一句話追問沉默 | Ch 1 | Ch 1 | paid-off |
+| Scene 7 選擇推薦信最先寫哪項能力 | TRUE END 顯示對應推薦信回聲 | Ch 1 | Ch 1 epilogue | paid-off |
+| 雅琳刪除「立即」 | 她承認過去曾在相似會議中沉默 | Ch 1 | Ch 1 | paid-off |
