@@ -176,13 +176,11 @@ describe('MBA Organizational Debrief：計算層', () => {
     expect(byId['notice-performance']?.analysis).toBe('把結構性裁撤引向個人表現，雅琳必須當場更正，雨澄被迫替自己辯護。');
   });
 
-  it('封頂維度即使查無可顯示證據，等級仍固定顯示「明顯受損」（不會因為查無證據就回退成其他等級）', () => {
-    // doc-private 讓 perceived_fairness／employee_agency／psychological_safety／process_integrity
-    // 固定顯示「明顯受損」；但這條路徑（invite-goodnews／notice-performance／answer-bargain／
-    // doc-private）裡，每個維度會依優先序找還沒被別張卡用掉的證據——employee_agency 與
-    // process_integrity 的候選（answer-bargain、doc-private）都已被前面的卡片用掉，因此查無
-    // 證據；perceived_fairness 由 doc-private 本身作證，psychological_safety 由 notice-performance
-    // 作證。四個維度的等級都不受影響，一律是「明顯受損」。
+  it('封頂維度只要有非零證據就一定顯示（不因為證據已被別張卡引用而變成空卡）', () => {
+    // 2026-09-28 依 ChatGPT-20260928-2139 取消跨卡排除：doc-private 讓 perceived_fairness／
+    // employee_agency／psychological_safety／process_integrity 固定顯示「明顯受損」，且每個
+    // 維度都能各自依優先序找到證據，即使同一個選項（doc-private／answer-bargain）因此被不只
+    // 一張卡引用，也不會顯示「查無證據」。
     const content = loadContent();
     const result = computeDebrief(content, 'ending-over-line', PATHS['ending-over-line']!)!;
     const byKey = Object.fromEntries(result.dimensions.map((dimension) => [dimension.key, dimension]));
@@ -192,11 +190,28 @@ describe('MBA Organizational Debrief：計算層', () => {
     expect(byKey['process_integrity']!.level).toBe('明顯受損');
 
     expect(byKey['perceived_fairness']!.entries[0]?.choiceId).toBe('doc-private');
+    expect(byKey['employee_agency']!.entries[0]?.choiceId).toBe('answer-bargain');
     expect(byKey['psychological_safety']!.entries[0]?.choiceId).toBe('notice-performance');
-    expect(byKey['employee_agency']!.entries).toHaveLength(0);
-    expect(byKey['employee_agency']!.note).toBe('本輪沒有足夠的可觀察行動。');
-    expect(byKey['process_integrity']!.entries).toHaveLength(0);
-    expect(byKey['process_integrity']!.note).toBe('本輪沒有足夠的可觀察行動。');
+    expect(byKey['process_integrity']!.entries[0]?.choiceId).toBe('doc-private');
+    for (const key of ['perceived_fairness', 'employee_agency', 'psychological_safety', 'process_integrity']) {
+      expect(byKey[key]!.entries, key).toHaveLength(1);
+    }
+  });
+
+  it('同一個選項可以同時是好幾張卡的證據；目前分析文字是每個選項單一一句，跨卡引用時逐字相同', () => {
+    // 2026-09-28 依 ChatGPT-20260928-2139：允許同一個已選行動同時影響好幾個維度（例如
+    // doc-protect 同時支持感知公平、員工主體性與程序完整），取消跨卡排除。但 ChatGPT 同時要求
+    // 「六張卡不得複製同一句泛用說明……每張卡的分析必須只解釋該維度的影響」——`mba-debrief.json`
+    // 目前每個選項只有一句 `evidence`／`reactionQuote`（不是逐維度各一句），所以同一個選項被
+    // 多張卡引用時，這句話目前確實逐字重複。這是已知的內容缺口（需要 ChatGPT 提供逐維度分析文字
+    // 才能徹底解決），本測試先鎖住「允許同一選項跨卡出現」這個技術行為本身。
+    const content = loadContent();
+    const result = computeDebrief(content, 'ending-true-finale', PATHS['ending-true-finale']!)!;
+    const byKey = Object.fromEntries(result.dimensions.map((dimension) => [dimension.key, dimension]));
+    expect(byKey['perceived_fairness']!.entries[0]?.choiceId).toBe('doc-protect');
+    expect(byKey['employee_agency']!.entries[0]?.choiceId).toBe('doc-protect');
+    expect(byKey['process_integrity']!.entries[0]?.choiceId).toBe('doc-protect');
+    expect(byKey['employee_agency']!.entries[0]?.analysis).toBe(byKey['perceived_fairness']!.entries[0]?.analysis);
   });
 
   it('answer-bargain 的不可抵銷規則不需要越線結局或 doc-private／keep-confess 也會生效', () => {
@@ -296,15 +311,6 @@ describe('MBA Organizational Debrief：計算層', () => {
       const strategy = content.mba.endings[endingId]!.strategy;
       expect(company.outcome, endingId).not.toBe(strategy);
       expect(company.outcome.length, endingId).toBeGreaterThan(0);
-    }
-  });
-
-  it('六張卡不共用同一個選項當證據（見「六、與故事一致性的驗收」第 6 點）', () => {
-    const content = loadContent();
-    for (const [endingId, mainChoices] of Object.entries(PATHS)) {
-      const result = computeDebrief(content, endingId, mainChoices)!;
-      const usedChoiceIds = result.dimensions.flatMap((dimension) => dimension.entries.map((entry) => entry.choiceId));
-      expect(usedChoiceIds, endingId).toEqual([...new Set(usedChoiceIds)]);
     }
   });
 

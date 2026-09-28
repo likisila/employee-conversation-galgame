@@ -188,8 +188,12 @@ const NO_STABLE_EVIDENCE = '本輪沒有足夠的可觀察行動。';
 
 /**
  * 在 `priorityIndices`（`EVIDENCE_PRIORITY` 的其中一組）指定的順序裡，找第一個「玩家真的選了、
- * 這個維度非零、還沒被其他卡片用掉」的選項；找不到就退回「依 Choice1…5 自然順序，找任一個還沒
- * 用過的非零選項」，確保不會因為優先表沒列到某個決策點就誤判成查無證據。
+ * 這個維度非零」的選項；找不到就退回「依 Choice1…5 自然順序找任一個非零選項」，確保不會因為
+ * 優先表沒列到某個決策點就誤判成查無證據。
+ *
+ * 2026-09-28 依 `ChatGPT-20260928-2139` 取消「跨卡不共用同一個選項」的排除：同一個已選行動
+ * 可能同時影響好幾個維度（例如 `keep-advocate` 同時影響管理可信度、員工主體性、心理安全、
+ * 程序完整），因此各維度各自獨立挑證據，不再因為別張卡已經引用過這個選項就跳過它。
  */
 function findEvidenceEntry(
   priorityIndices: readonly number[],
@@ -197,10 +201,9 @@ function findEvidenceEntry(
   scores: Record<string, MbaScoreRow>,
   dimensionKey: keyof Omit<MbaScoreRow, 'evidence' | 'reactionQuote'>,
   direction: 'positive' | 'negative',
-  used: ReadonlySet<string>,
 ): string | undefined {
   const matches = (choiceId: string | undefined): boolean => {
-    if (!choiceId || used.has(choiceId)) return false;
+    if (!choiceId) return false;
     const row = scores[choiceId];
     if (!row) return false;
     const value = row[dimensionKey];
@@ -216,17 +219,13 @@ function findEvidenceEntry(
 /**
  * 組出一張「組織狀態卡」（見「五、最後分析畫面」）：先用該維度非零列的加總換算等級、套用不可抵銷
  * 上限，再依最終等級決定要顯示幾筆證據——穩定建立／部分建立各挑一筆正向、明顯受損挑一筆負向、
- * 證據矛盾同時挑一正一負、未充分建立不挑（沒有非零證據可挑）。挑中的選項會計入 `used`，讓後面
- * 處理的維度不會重複引用同一句（見「六張卡不可共用同一句泛用說明」）。
+ * 證據矛盾同時挑一正一負、未充分建立不挑（sum=0 且沒有任何非零選項，本來就沒有東西可挑）。
+ *
+ * 2026-09-28 依 `ChatGPT-20260928-2139` 取消跨維度的排除：同一個選項現在可以同時是好幾張卡的
+ * 證據（見 `findEvidenceEntry`），只要求「查無足夠的可觀察行動」只在這個維度真的沒有任何非零
+ * 選項時才出現，不再因為證據被別張卡「用掉」而製造假的空卡。
  */
-function buildDimension(
-  content: LoadedContent,
-  mba: MbaContent,
-  key: string,
-  dim: MbaDimension,
-  majorChoiceIds: readonly string[],
-  used: Set<string>,
-): DebriefDimension {
+function buildDimension(content: LoadedContent, mba: MbaContent, key: string, dim: MbaDimension, majorChoiceIds: readonly string[]): DebriefDimension {
   const values = majorChoiceIds
     .map((choiceId) => (choiceId ? mba.scores[choiceId] : undefined))
     .filter((row): row is MbaScoreRow => row !== undefined)
@@ -244,18 +243,17 @@ function buildDimension(
 
   const entries: DebriefEvidenceEntry[] = [];
   if (level === '證據矛盾') {
-    const positiveId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'positive', used);
-    if (positiveId) { entries.push(toEntry(positiveId)); used.add(positiveId); }
-    const negativeId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'negative', used);
-    if (negativeId) { entries.push(toEntry(negativeId)); used.add(negativeId); }
+    const positiveId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'positive');
+    if (positiveId) entries.push(toEntry(positiveId));
+    const negativeId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'negative');
+    if (negativeId) entries.push(toEntry(negativeId));
   } else if (level === '穩定建立' || level === '部分建立') {
-    const positiveId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'positive', used);
-    if (positiveId) { entries.push(toEntry(positiveId)); used.add(positiveId); }
+    const positiveId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'positive');
+    if (positiveId) entries.push(toEntry(positiveId));
   } else if (level === '明顯受損') {
-    const negativeId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'negative', used);
-    if (negativeId) { entries.push(toEntry(negativeId)); used.add(negativeId); }
+    const negativeId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'negative');
+    if (negativeId) entries.push(toEntry(negativeId));
   }
-  // 未充分建立：不挑證據（sum=0 且沒有任何非零選項，本來就沒有東西可挑）。
 
   return { key, label: dim.label, level, entries, note: entries.length === 0 ? NO_STABLE_EVIDENCE : undefined };
 }
@@ -341,11 +339,10 @@ export function computeDebrief(content: LoadedContent, endingId: string, majorCh
   const ending = mba.endings[endingId];
   if (!ending) return undefined;
 
-  // 依 C／I／F／A／S／P 固定順序處理（等同畫面卡片由上到下的順序），讓「已被前一張卡用掉的
-  // 選項」在處理後面的維度時正確被排除，六張卡才不會共用同一句證據。
-  const usedEvidenceChoices = new Set<string>();
+  // 依 C／I／F／A／S／P 固定順序處理（等同畫面卡片由上到下的順序）；每個維度獨立挑自己的證據，
+  // 同一個選項可以同時是好幾張卡的證據（見 `buildDimension`）。
   const dimensions: DebriefDimension[] = Object.entries(mba.dimensions).map(([key, dim]) =>
-    buildDimension(content, mba, key, dim, majorChoiceIds, usedEvidenceChoices),
+    buildDimension(content, mba, key, dim, majorChoiceIds),
   );
 
   const stakeholderOrder: Array<{ key: string; outcome: string }> = [
