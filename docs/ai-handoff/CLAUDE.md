@@ -1375,3 +1375,14 @@
   - `npm test`：19 檔／**210**／210 通過（`mba.test.ts` 維持 22 則：刪 1 則、改 1 則、加 1 則）。
   - Chromium 實機（沿用既有 `localStorage` 存檔，桌機 1024×768）：從「繼續上次」直接回到先前那輪全選 A 的 TRUE END，開啟「查看案例分析」——六個維度全部顯示證據，不再有空卡；肉眼確認感知公平／員工主體性／程序完整三張卡的「你的行動」「故事中的反應」「分析」逐字相同（皆引用 `doc-protect`），與上述已定案事項第 2 點的內容缺口描述一致；主控台無錯誤。
 - 提交後續：依持久記憶規則重建 `cloudflare-pages-upload/last-one-on-one-site.zip`。
+
+## Claude-20260928-1347（部署取消跨卡排除的修正到 Worker）
+
+- 時間：2026-09-28T13:47:36Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR；本次是純部署，未新增 commit）
+- 本次範圍：使用者在對話中明確要求部署（「deploy」），把上一筆（`cb7893a`，取消跨卡證據排除）部署到線上 Worker。
+- 部署結果：`npm run deploy:cf`（`npx wrangler deploy`）成功，上傳 3 個新／修改檔案（`index.html`、JS bundle 與其 sourcemap；其餘 40 個檔案內容雜湊未變，沿用既有上傳）。新 Version ID `839b4356-bd78-40d0-9289-346f14f3e419`。
+- 已定案事項：無新增；沿用 `Claude-20260928-0018` 定案的 Worker 部署架構與網址。
+- 交給 ChatGPT：無新增待辦；`Claude-20260928-1346` 交回的內容缺口（多維度選項缺逐維度分析文字）仍待回覆。
+- 未決問題或阻塞：無。
+- 驗證結果：部署前確認 `git status` 乾淨、`HEAD` 為 `cb7893a`；`curl` 讀取線上 `https://sparkling-glitter-6ce0.rene-oops.workers.dev/` 的 `index.html`，確認引用的 JS bundle 檔名為 `index-TnIXDUNF.js`，與本機最新建置一致。
