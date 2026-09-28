@@ -1218,3 +1218,14 @@
   - `npm test`：19 個測試檔、**206／206** 通過（較上一筆持平，只是把原本失敗的那 1 項改回通過，總數不變）。
   - Chromium 實機（dev server，全新 `localStorage`）：從標題／三張內容提醒卡片點入，正式 `00_final_documents.mp4` 完整播放（不點擊跳過，讓它自然播完 10 秒），畫面顯示雅琳把資料夾放上予安桌面、雨澄在遠處埋首工作，播完自動接上「五點以前」轉場卡，再接上新的第一句「16:40。藍色資料夾已經躺在我桌上。雨澄仍盯著螢幕，像剛才什麼也沒發生。」——與影片動作銜接，沒有重複揭露文件標題的動作；再點一次進入雅琳的私訊「五點，月球。文件照最後版本。」，私訊 UI 正常渲染說話者頭像與頻道標籤。主控台無錯誤（`read_console_messages` 確認）。未逐句播完整場（後續私訊串與雨澄轉身摘耳機的段落，內容本身在這次改動中逐字未變，风险低，未重播）。
 - 提交後續：本次只改測試檔，不影響 `dist/` 輸出內容或遊戲行為本身（`s1-final-cut.json` 的內容變更屬 `ChatGPT-20260928-0833` 那筆 commit，已在本機建置驗證過）；但保險起見已重新 `npm run build` 並重建 `cloudflare-pages-upload/last-one-on-one-site.zip`（7.86MB，因新一輪建置雜湊而重建，內容與上次幾乎相同）。尚未執行 `npm run deploy:cf`；是否要把這批新的 Scene 1 文字也部署到 `sparkling-glitter-6ce0.rene-oops.workers.dev`，等使用者在對話中明確要求。
+
+## Claude-20260928-0057（部署新版 Scene 1 到 Worker）
+
+- 時間：2026-09-28T00:57:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR；本次是純部署，未新增 commit）
+- 本次範圍：使用者在對話中明確要求把上一筆（`d658aae`，接上正式 00 過場的新版 Scene 1）部署到線上 Worker。第一次嘗試被這個 session 的自動權限分類器擋下（標記為「Production Deploy」），如實回報並列出三個選項給使用者；使用者選擇「在設定裡允許」後，同一條指令重新執行即成功，過程中沒有嘗試繞過那次拒絕。
+- 部署結果：`npx wrangler deploy`（經 `npm run deploy:cf`）成功，上傳 3 個新／修改檔案（`index.html`、JS bundle 與其 sourcemap；其餘 40 個檔案內容雜湊未變，沿用既有上傳）。新 Version ID `448cb688-ff2a-48b0-98ec-8632f9675944`。
+- 已定案事項：無新增；沿用 `Claude-20260928-0018` 定案的 Worker 部署架構與網址，本次只是把最新一輪 commit 的建置結果推上去。
+- 交給 ChatGPT：無新增待辦。
+- 未決問題或阻塞：無。
+- 驗證結果：`curl` 讀取線上 `https://sparkling-glitter-6ce0.rene-oops.workers.dev/` 的 `index.html`，確認引用的 JS bundle 檔名為 `index-Dxq_INcC.js`——與本機最新建置（含 `ChatGPT-20260928-0833` 的新版 Scene 1 內容）的 bundle 檔名一致，確認線上版本已更新到位。
