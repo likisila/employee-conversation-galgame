@@ -897,3 +897,22 @@
   3. Claude-owned `public/assets/cutscenes/README.md` 仍寫 7 段 cue、18 張影格與「尚待接線」，但 `property/cutscene-cues.json` 現為 3 段／7 張且已接線。請同步該 README；本次遵守角色邊界未修改。
 - 未決問題或阻塞：MBA 分數與測試由 Claude 專屬負責；在其更新前，debrief 可能顯示「低／脆弱」卻引用新版正向 evidence，且 Vitest 會有 2 個舊字串斷言失敗。Story CLI 在 Windows 上仍無法辨識現有 chapter／entity 索引；其誤寫的 registry 與空 clues 索引已當場撤回，未納入本次變更。
 - 驗證結果：修改的 7 個 JSON 全部可解析；`npm run typecheck` 通過；`npm run build` 通過；Vitest 19 檔中 18 檔通過，205／207 tests 通過，唯一 2 個失敗均為 `tests/mba.test.ts` 仍期待舊版 `keep-credit`／`doc-pressure` evidence；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260928-2021
+
+- 時間：2026-09-28T20:21:30+08:00
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-1214`（最新）。Claude 已完成五個 B 選項的 MBA 分數校準、測試更新與最新 Worker 部署；本次不修改任何分數、schema、renderer、CSS、UX 行為、測試或部署設定。
+- 本次範圍：使用使用者指定的 `to-questionnaire`，並以 `screenwriting:sw-workflow` 路由到 `screenwriting:sw-premise-theme`、`screenwriting:sw-character-conflict`、`screenwriting:sw-scene-craft`，把截圖中的雷達評分問題重做為故事證據問卷。問卷收件人是完成至少一輪的玩家；回收目的是直接決定選項、角色行動、場景轉折、結局後果與案例分析要如何修改，不再為玩家產生高／中／低、總分或人格標籤。
+- 實際變更檔案：
+  - `to-questionnaire-last-one-on-one-story-review.md`（新增）：可直接交付玩家的 discovery questionnaire；題目依故事命題、人物／權力、場景／後果與改稿決策分組，每題要求引用選項、台詞、動作、道具或結局後果，末尾附製作團隊的改稿規則。
+  - `story-bible.md`：更新修改階段的下一步，並在決策日志記錄「抽象雷達評分改為故事證據問卷」。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 現行六個組織狀態可保留為製作團隊整理答案的索引，但不再對玩家構成分數、等級、雷達面積或好壞判決。
+  2. 問卷直接服從本作前提：壞結果無法被說法變好；評估焦點是玩家在權力不對等下做了什麼、誰還能說不、誰承擔代價，以及結局是否由可見行動造成。
+  3. 人物題分開檢查予安的保護／卸責、雨澄的可行動主體性、雅琳的公司代表／程序制止雙重角色；場景題使用前後價值變化、重複節拍與道具意義，不用抽象滿意度。
+  4. 替代做法必須同時指出保護的價值與轉移的代價；宣稱沒有代價的方案不視為完整改稿建議。
+- 交給 Claude 的明確行動：若使用者要把本問卷放進遊戲，請以此文件的玩家題目取代通關後「組織狀態」雷達圖與高／中／脆弱／低式評分呈現；自動帶入本輪結局及四或五個主要選擇，讓玩家回答或複製文字。保留現有故事結局與回到選擇功能；不要把答案重新換算成隱藏總分。輸入、保存、複製、導覽、行動版排版、無障礙與測試均由 Claude 決定與實作。
+- 未決問題或阻塞：本次交付是正式問卷內容與敘事規格，尚未修改 runtime。若要在遊戲中互動填寫，需要 Claude 接手 UX／程式整合；在 Claude 回覆前不能宣稱線上評分頁已被取代。未追蹤 `.claude/` 未修改、未納入。
+- 驗證結果：問卷包含 Purpose／From／To／How used、Context、How to answer、四個主題區、逐題 answer stub、Anything else 與回收後改稿規則；所有題目由最重要的故事命題開始，沒有數值量表；`git diff --check` 通過。本次只有 Markdown 內容與狀態文件，未執行程式測試或建置。
