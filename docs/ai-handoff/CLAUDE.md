@@ -1144,3 +1144,20 @@
   - Chromium 實機（dev server，全新 `localStorage`）：從標題／內容提醒點到 `s1-final-cut` 前，00 cue 以分鏡輪播正確播出（畫面顯示 `keyframes/current/00-B.png`：雅琳手托紙本資料夾、非平板，與 v4 審查稿一致），播完正確接上「五點以前」轉場卡；讀 `localStorage` 存檔快照確認 `watchedCutscenes` 只有 `["final-documents"]`、`sceneId` 正確落在 `s1-final-cut`。主控台無錯誤（`read_console_messages` 確認）。04（choices 型）與 06（line 型，TRUE END coda）由新增的「依 TRUE END 標準路徑」單元測試覆蓋（該測試直接呼叫 `StoryEngine` 並比對 `render.ts` 同一套 anchorType 攔截邏輯，非取巧模擬），未逐一在瀏覽器重播完整結局；02／07／08／09 已確認 `content.cutsceneCues` 不再有對應項目。
   - `find dist -path '*keyframes*'` 無結果；`dist/assets/cutscenes/storyboard/` 只有本次的 7 張 WebP＋manifest；`dist` 總大小 3.5MB（較 v3 時期縮小，因交付檔從 25 張減到 7 張）。
 - 提交後續：本次完成後將依持久記憶要求重建 `cloudflare-pages-upload/last-one-on-one-site.zip`，commit 訊息列出本筆 Entry ID。
+
+## Claude-20260928-0000（確認正式 00 整合，部署待使用者確認）
+
+- 時間：2026-09-28T00:00:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260928-0747`（最新），並回頭確認 `ChatGPT-20260927-2139`／`2142`／`2147`／`2207`／`2256`／`2301`／`2319`——00-A／B／C 三次個別 Runway 生成、合併候選、攝影機規格 v2.1、跨工具 prompt 交付，最終被使用者直接提供的成片取代，均已讀畢，不再需要 Claude 回應（合併候選與三張個別 Runway 產出均標為 superseded／reference-only，非本次整合對象）。
+- 本次範圍：`ChatGPT-20260928-0747` 把使用者核准的正式 10 秒成片存為 `public/assets/cutscenes/00_final_documents.mp4`，並確認既有 `property/cutscene-cues.json` 的 `final-documents` cue 檔名已經吻合，不需要 Claude 改 runtime／schema／cue。本次是驗證這個宣稱是否成立，並處理其交給 Claude 的部署行動。
+- 已確認事項（未修改任何程式，純驗證）：
+  1. `git log` 確認 `public/assets/cutscenes/00_final_documents.mp4` 已在 `74ffe67 assets: adopt approved 00 cutscene` 提交；`sha256sum` 核對本機檔案與 `ChatGPT-20260928-0747` 記錄的 `e8bc409...` 完全一致。
+  2. 在這批提交之上重跑 `npm run typecheck`、`npm test`（19 檔／206／206）、`npm run build` 全數通過，確認我在 `f9f890b` 做的 v4 cue 遷移與這批新提交沒有衝突。
+  3. `npm run build` 後 `dist/assets/cutscenes/00_final_documents.mp4` 的 SHA-256 與正式檔完全一致，確認建置沒有動到影片內容。
+  4. Chromium 實機（dev server，全新 `localStorage`）：從標題玩到 `final-documents` cue，Network 面板確認瀏覽器對 `00_final_documents.mp4` 發出多次 `206 Partial Content`（正常的影片分段緩衝，不是分鏡 placeholder 的 webp 請求），播放／點擊跳過後正確接到「五點以前」轉場卡，`localStorage` 快照 `watchedCutscenes` 正確寫入 `["final-documents"]`、`sceneId` 落在 `s1-final-cut`。主控台無錯誤。這是本專案第一次有正式 MP4（而非分鏡輪播）在瀏覽器裡實際播放。
+  5. 依持久記憶規則重建 `cloudflare-pages-upload/last-one-on-one-site.zip`（本地檔案操作，非上線部署）：7.86MB（因新增約 4.5MB 的正式影片而變大，仍遠低於 25MB 上限）。
+- `ChatGPT-20260928-0747` 交給 Claude 的行動：使用 `npm run deploy:cf` 把這個 commit 的 `dist/` 直接部署到 `sparkling-glitter-6ce0.pages.dev`，並驗證線上影片可讀。**本次沒有執行這一步**——這是會建立新的公開線上部署的動作，依我方的安全規範（發布公開內容需要使用者在對話中明確同意）與使用者先前定下的持久規則（`npm run deploy:cf` 只在使用者當面要求時執行），交接檔裡 ChatGPT 代寫的指示不能視同使用者本人在這個對話中給的同意。已把這個待辦轉達給使用者，等對方明確答覆後才會執行。
+- 交給 ChatGPT：無新增待辦。
+- 未決問題或阻塞：正式 00 的 Cloudflare 直接部署（`npm run deploy:cf`）等待使用者在對話中明確同意；本地 zip 已備妥，使用者也可自行拖進 Cloudflare Dashboard，不一定要用直接部署路徑。04、06 仍是分鏡 placeholder，等待使用者對 Runway／其他工具生成結果的審查與核准，非本次阻塞。
+- 驗證結果：見上方「已確認事項」。未新增或修改任何 commit（本次是唯讀驗證＋重建本地 zip，zip 不受版本控制）。
