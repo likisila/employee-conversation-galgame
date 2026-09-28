@@ -10,21 +10,20 @@
 
 - 既有關鍵影格 13 張中：6 張沿用、1 張重畫、6 張退出正式剪輯。
 - 先前的 00-B 重畫與 11 張結局影格保留在 `keyframes/runway-v3/` 作版本快照；2026-09-28 劇情修正後，舊 00-A／B 不再符合現役分鏡。
-- `property/cutscene-cues.json` 已完成 7 段 scene／line／choices anchor 接線；分鏡 fallback 已指向 18 張正式起始影格。
+- `property/cutscene-cues.json` 目前是 3 段 cue（`final-documents`／`boundary-question`／`ending-true`）的 scene／choices／line anchor，已完成接線；分鏡 fallback 共 7 張正式起始影格（缺 MP4 或無法解碼時輪播，見下方「目前時序」）。
 - 07、08、09 雖已接線，但影片動作會完整重演緊接在前的結局敘述，目前列為創作暫停；不因 cue 存在就送生成。
 - 正式影片目前 1／3：00 已核准；04、06 尚未製作。舊 00-A／B 與其完整合併候選不得部署或挪作新版素材。
 - `keyframes/runway-v2/` 只是沿用舊路徑的素材池，不代表仍採 v2 分鏡；逐張決議見 [關鍵影格複審](keyframes/runway-v2/REVIEW.md)。
 - 隔離區的舊 MP4 只供比對，不得回放或直接復用，詳見 [pending-review 說明](../../../coordination/pending-review/cutscenes/README.md)。
 
-## 重要時序
+## 目前時序
 
-v3 不再把所有影片都放在場景進入前。四段需要新的場內／結尾插入點：
+`property/cutscene-cues.json` 目前接線的三段 cue（技術對應由 Claude 維護，內容仍以 `property/sora-cutscenes.json` 為準）：
 
-- `layoff-notification`：s3 L15 後、L16 前。
-- `boundary-question`：`s7-recommend-converge` L08 後、Choice 5 前。
-- `ending-true`：L17 後、L18 前。
-- 另外三個結局：各自最後一句敘事後、標題卡前。
+- `final-documents`（`00_final_documents.mp4`）：`anchor.type: "scene"`，`s1-final-cut` 進場景前播放。00 已核准並使用這個檔名，不是分鏡 fallback。
+- `boundary-question`（`04_boundary_question.mp4`）：`anchor.type: "choices"`，`s7-recommend-converge` 台詞讀完、Choice 5 選項出現前播放。04 仍缺 MP4，播放時輪播 `04-B`／`04-C` 兩張分鏡。
+- `ending-true`（`06_ending_true.mp4`）：`anchor.type: "line"`，接到 `ending-true` 場景「三週後的晚上，我在家收到雨澄的訊息。」那一句之前播放。06 仍缺 MP4，播放時輪播 `06-B`／`06-C` 兩張分鏡。
 
-這些掛載點尚待 Claude 依 v3 技術交接實作；在完成前不得用舊 cue 位置代替。
+其餘三個結局（`ending-decent`／`ending-soft-knife`／`ending-over-line`）目前沒有掛任何 cue，不在本輪規劃內。
 
 正式 MP4 缺失或未核准時，執行端應略過影片並繼續 canonical scene，不得回退到隔離舊片。

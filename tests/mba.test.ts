@@ -140,22 +140,27 @@ describe('MBA Organizational Debrief：計算層', () => {
 
   it('證據句方向規則：「低」只從負向選項取證據，不會借用正向選項', () => {
     const content = loadContent();
-    // soft-knife 全部選項對 management_credibility 都是 0 或 -1（無正向項），同分取較晚：keep-credit。
-    const result = computeDebrief(content, 'ending-soft-knife', PATHS['ending-soft-knife']!)!;
+    // 2026-09-28 分數重新校準後，五個 B 選項（invite-vague／notice-euphemism／answer-deflect／
+    // doc-pressure／keep-credit）的 management_credibility 都轉為正向或接近零，不再適合示範
+    // 「低」；改用五個 C 選項，management_credibility 全部是 -2（同分），同分取較晚：keep-confess。
+    const majorChoiceIds = ['invite-goodnews', 'notice-performance', 'answer-bargain', 'doc-private', 'keep-confess'];
+    const result = computeDebrief(content, 'ending-soft-knife', majorChoiceIds)!;
     const credibility = result.dimensions.find((d) => d.key === 'management_credibility')!;
     expect(credibility.level).toBe('低');
-    expect(credibility.evidence).toBe('把自己曾經爭取的事說成一筆雨澄應該記得的人情。');
+    expect(credibility.evidence).toBe('推薦、文件和作品核准還沒結束，就要求雨澄回應主管的私人感情。');
   });
 
   it('證據句方向規則：淨零且正負皆有的維度，畫面並列正負兩項證據', () => {
     const content = loadContent();
-    // information_quality（I）：invite-clear +2、notice-performance -2、answer-deflect -1、doc-protect +1、keep-credit 0 → 加總 0，正負皆有。
-    const majorChoiceIds = ['invite-clear', 'notice-performance', 'answer-deflect', 'doc-protect', 'keep-credit'];
+    // 2026-09-28 分數重新校準後，answer-deflect 的 information_quality 已轉為正向，換一組仍會
+    // 淨零的組合：invite-clear +2、notice-performance -2、answer-bargain -2、doc-protect +1、
+    // keep-advocate +1 → 加總 0，正負皆有；兩個負向同分（-2），較晚出現的 answer-bargain 勝出。
+    const majorChoiceIds = ['invite-clear', 'notice-performance', 'answer-bargain', 'doc-protect', 'keep-advocate'];
     const result = computeDebrief(content, 'ending-soft-knife', majorChoiceIds)!;
     const info = result.dimensions.find((d) => d.key === 'information_quality')!;
     expect(info.evidence).toContain('兩個選擇互相抵銷');
     expect(info.evidence).toContain('會議前先說明要談職務調整，也說雅琳會在場，雨澄至少知道該準備什麼'); // invite-clear：最強正向
-    expect(info.evidence).toContain('明明是職位裁撤，卻先談雨澄的表現，讓她替組織決策背原因'); // notice-performance：最強負向
+    expect(info.evidence).toContain('拿不存在的轉圜空間交換雨澄當場配合'); // answer-bargain：最強負向（與 notice-performance 同分，取較晚）
     expect(info.evidence).not.toContain('正向行為被另一個選擇抵銷'); // 舊版報表式措辭已撤回
   });
 
@@ -174,14 +179,16 @@ describe('MBA Organizational Debrief：計算層', () => {
 
   it('END 04 由 boundary 累計觸發、未選 doc-private／keep-confess 時，封頂維度仍退回負向證據而非正向', () => {
     const content = loadContent();
-    // employee_agency：invite-clear +1、notice-direct +1、answer-admit +2、doc-pressure -2、keep-advocate +1 → 加總 3（中），
-    // 但本路徑結局仍傳入 ending-over-line（模擬未選旗標選項也可能因其他機制越線的情境），封頂應強制顯示「脆弱」，
-    // 且因沒有 doc-private／keep-confess，須退回一般負向證據（doc-pressure），不得顯示查無證據或借用正向選項。
-    const majorChoiceIds = ['invite-clear', 'notice-direct', 'answer-admit', 'doc-pressure', 'keep-advocate'];
+    // 2026-09-28 分數重新校準後 doc-pressure 的 employee_agency 已轉為正向，換成仍含一個負向項
+    // 的組合：invite-clear +1、notice-direct +1、answer-bargain -2、doc-protect +2、keep-advocate +1
+    // → 加總 3（中），但本路徑結局仍傳入 ending-over-line（模擬未選旗標選項也可能因其他機制越線
+    // 的情境），封頂應強制顯示「脆弱」，且因沒有 doc-private／keep-confess，須退回一般負向證據
+    // （answer-bargain 是唯一負向項），不得顯示查無證據或借用正向選項。
+    const majorChoiceIds = ['invite-clear', 'notice-direct', 'answer-bargain', 'doc-protect', 'keep-advocate'];
     const result = computeDebrief(content, 'ending-over-line', majorChoiceIds)!;
     const agency = result.dimensions.find((d) => d.key === 'employee_agency')!;
     expect(agency.level).toBe('脆弱');
-    expect(agency.evidence).toBe('用「別漏流程」催她當場簽收，行政方便壓過了審閱空間。');
+    expect(agency.evidence).toBe('拿不存在的轉圜空間交換雨澄當場配合。');
   });
 
   it('每個結局都有兩套替代策略，各自是一段完整文字（不拆成改善／代價）', () => {
