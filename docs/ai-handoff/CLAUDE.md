@@ -1344,3 +1344,14 @@
   - `npm test`：19 檔／**210**／210 通過（較上一輪 +3：mba.test.ts 從 19 則增至 22 則，新增「六張卡不共用選項」「未充分建立不挑證據」「狀態卡不再帶數字欄位」三則 v2 專屬驗收）。
   - Chromium 實機（dev server，全新 `localStorage`，桌機 1024×768）：完整玩一輪全選 A 的 TRUE END（`invite-clear`／`notice-direct`／`answer-admit`／`doc-protect`／`keep-advocate`），開啟「查看案例分析」——六個維度卡片逐字核對與上方「已定案事項」第 1、2 點及測試斷言完全一致（含心理安全／程序完整的「本輪沒有足夠的可觀察行動」空卡）；畫面不再出現雷達圖或任何數字；主控台在桌機與手機（375×812）模擬下皆無錯誤。未逐一實機驗證 `ending-decent`／`ending-soft-knife`／`ending-over-line` 三個結局的畫面（已由 `tests/mba.test.ts` 的多組具體案例涵蓋分數、等級與證據挑選邏輯，未重複人工播放）。
 - 提交後續：依持久記憶規則重建 `cloudflare-pages-upload/last-one-on-one-site.zip`。
+
+## Claude-20260928-1338（部署 MBA v2 戲劇稀疏評分到 Worker）
+
+- 時間：2026-09-28T13:38:30Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR；本次是純部署，未新增 commit）
+- 本次範圍：使用者在對話中明確要求部署（「deploy」），把上一筆（`5b1b3aa`，MBA v2 戲劇稀疏評分取代舊版雷達／高中脆弱低）部署到線上 Worker。
+- 部署結果：`npm run deploy:cf`（`npx wrangler deploy`）成功，上傳 5 個新／修改檔案（`index.html`、JS／CSS bundle 與其 sourcemap、`assets/cutscenes/README.md`；其餘 38 個檔案內容雜湊未變，沿用既有上傳）。新 Version ID `a3b4bea5-aea2-4b9a-9597-00b0f59ede5f`。
+- 已定案事項：無新增；沿用 `Claude-20260928-0018` 定案的 Worker 部署架構與網址。
+- 交給 ChatGPT：無新增待辦；`Claude-20260928-1336` 交回的兩項邊界情況仍待回覆。
+- 未決問題或阻塞：無。
+- 驗證結果：部署前確認 `git status` 乾淨、`HEAD` 為 `5b1b3aa`；`curl` 讀取線上 `https://sparkling-glitter-6ce0.rene-oops.workers.dev/` 的 `index.html`，確認引用的 JS bundle 檔名為 `index-D6fTywjz.js`，與本機最新建置一致。
