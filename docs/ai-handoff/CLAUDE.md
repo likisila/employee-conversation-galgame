@@ -1161,3 +1161,41 @@
 - 交給 ChatGPT：無新增待辦。
 - 未決問題或阻塞：正式 00 的 Cloudflare 直接部署（`npm run deploy:cf`）等待使用者在對話中明確同意；本地 zip 已備妥，使用者也可自行拖進 Cloudflare Dashboard，不一定要用直接部署路徑。04、06 仍是分鏡 placeholder，等待使用者對 Runway／其他工具生成結果的審查與核准，非本次阻塞。
 - 驗證結果：見上方「已確認事項」。未新增或修改任何 commit（本次是唯讀驗證＋重建本地 zip，zip 不受版本控制）。
+
+## Claude-20260928-0018（Cloudflare 直接部署：從 Pages 遷移到 Workers）
+
+- 時間：2026-09-28T00:18:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260928-0747`（同上一筆），本次接手其交給 Claude 的部署行動。
+- 本次範圍：使用者在對話中明確同意執行 `npm run deploy:cf`。實際執行後發現既有的 `wrangler pages deploy` 路徑已失效，經使用者逐步確認後完成遷移到 Cloudflare Workers（含 static assets）架構並成功部署正式 00 過場影片。
+- 過程與問題：
+  1. 第一次執行 `npm run deploy:cf` 失敗：安裝的 wrangler 已是 4.142.0，這個版本的 `wrangler pages deploy` 會自動改道到 Cloudflare 新的「Workers 統一部署」流程；偵測到帳號裡已有一個同名（`sparkling-glitter-6ce0`）資源，但無法確認可以安全覆寫，因此中止、沒有部署任何東西，線上舊站台未受影響。
+  2. 這次失敗的過程中，wrangler 自己的偵測精靈（非我主動要求）已經side-effect 修改了 repo：`vite.config.ts`（加入 `cloudflare()` plugin）、`package.json`（新增 `deploy`／`preview` script、把 `wrangler` 版本要求改成 `^4.142.0`、新增 `@cloudflare/vite-plugin` devDependency）、`.gitignore`（加 wrangler 忽略規則）、新建 `wrangler.jsonc`（`name` 用的是 package.json 的 `employee-conversation-galgame`，不是 `sparkling-glitter-6ce0`，這正是撞名檢查失敗的原因之一）。這些改動**沒有被使用者要求**，我在回報前先用 `git checkout -- package.json .gitignore vite.config.ts` 與刪除 `wrangler.jsonc` 全部還原，並重跑 build 確認還原後一切正常，才回報使用者。
+  3. 回報使用者後，我主動用 `WebSearch`／`WebFetch` 查證 Cloudflare 官方遷移文件（`developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/`），確認遷移到 Workers**會把網址從 `*.pages.dev` 換成 `*.workers.dev`**（除非額外設定自訂域名），舊網址要等舊 Pages 專案被明確刪除才會失效。這是一個會改變公開網址、影響既有分享連結的決定，因此在使用者第一次答「繼續轉型」後，我又把這個具體後果講清楚、明確追問了一次是否仍要繼續，使用者確認「繼續轉型到 Workers，接受網址會改」後才動手。
+  4. 手動建立正確的 `wrangler.jsonc`（`name: "sparkling-glitter-6ce0"`、`assets.directory: "./dist"`、`assets.not_found_handling: "single-page-application"`，依 Cloudflare 官方文件的最小設定），`npx wrangler deploy --dry-run` 驗證設定正確（讀到 52 個 dist 檔案）後，正式執行 `npx wrangler deploy`。
+- 部署結果：成功。新網址 `https://sparkling-glitter-6ce0.rene-oops.workers.dev`；上傳 6 個新／修改檔案（`index.html`、JS bundle、sourcemap、storyboard manifest、cutscenes README、正式 `00_final_documents.mp4`），另外 37 個檔案因內容雜湊已存在（推測是同帳號下 Pages 專案的資產儲存區被 Workers 統一架構重用，未驗證此假設，但不影響結果）而略過上傳。Current Version ID `3fa9aa59-7dd8-428f-885f-6dff44d34cbe`。
+- 實際變更檔案：
+  - `wrangler.jsonc`（新增，這次是刻意建立並保留）：`name: sparkling-glitter-6ce0`、`compatibility_date: 2026-09-27`、`assets: { directory: ./dist, not_found_handling: single-page-application }`。
+  - `scripts/deploy-cloudflare.mjs`：改成只檢查 `CLOUDFLARE_API_TOKEN`／`CLOUDFLARE_ACCOUNT_ID`（不再需要 `CLOUDFLARE_PAGES_PROJECT`，因為 Worker 名稱現在固定寫在 `wrangler.jsonc`），並把呼叫從 `wrangler pages deploy dist --project-name <project>` 改成 `wrangler deploy`。
+  - `package.json`：`wrangler` 版本要求同步改成 `^4.142.0`（對齊實際安裝、且這正是能做 Workers 部署的版本，不再回退）。
+  - `.gitignore`：新增 `.wrangler/`、`.dev.vars*` 忽略規則（這次是刻意需要的，wrangler 本機快取與潛在的本機 secret 檔不該進版控）。
+  - `docs/CLOUDFLARE_DEPLOY.md`：改寫，新增「Migration from Pages」一節說明整個過程、新舊網址現況、舊 Pages 專案尚未刪除、token 建議權限改為 Workers Scripts Edit。
+  - `README.md`：「## 部署（Cloudflare Pages）」改名「## 部署（Cloudflare）」，說明手動 zip 與直接部署現在指向兩個不同網址。
+  - `C:\Users\reneo\Desktop\cloudflare-pages-upload\HOW-TO-UPDATE.md`（專案目錄外，不在此 repo）：加上兩個網址已分流的說明，更新「Deploy to Cloudflare directly」範例的目標網址。
+  - 使用者的持久記憶（`~/.claude/projects/.../memory/cloudflare-direct-deploy.md`、`cloudflare-pages-release.md`）：同步更新新網址、遷移原因與「舊 Pages 專案尚未刪除、需另外明確同意」的狀態，避免未來 session 誤用已過期的網址或架構假設。
+  - `docs/ai-handoff/CLAUDE.md`：本 Entry。
+- 已定案事項：
+  1. 舊 Cloudflare Pages 專案（`sparkling-glitter-6ce0.pages.dev`）**沒有刪除**。只確認新 Worker 部署成功且內容正確；是否／何時刪除舊專案由使用者另外決定，屬於刪除雲端資源的動作，需要使用者在對話中另外明確同意，不隨這次部署一併執行。
+  2. 手動 zip 流程（`cloudflare-pages-upload/`）現在只更新舊 Pages 專案，`npm run deploy:cf` 只更新新 Worker——兩者從本次起是兩個獨立網址，不會自動同步。這個分流狀態已同步進 repo 文件與使用者的持久記憶，避免未來誤判「兩條路徑效果相同」。
+  3. 未刪除或修改 `CLOUDFLARE_PAGES_PROJECT` 環境變數本身（使用者自行 `setx` 設定，Claude 不經手憑證），只是部署腳本不再讀它；如果使用者想清掉這個不再使用的變數，需要使用者自己在終端機執行。
+- 交給 ChatGPT：無新增待辦。
+- 未決問題或阻塞：
+  1. 舊 Pages 專案何時淘汰、要不要幫新 Worker 設定自訂域名以恢復原本可分享的網址型態，等使用者之後決定。
+  2. API token 目前仍是舊的「Cloudflare Pages Edit」範圍，這次 Worker 部署仍成功（原因未深究，可能是 Cloudflare 帳號層級權限重疊），`docs/CLOUDFLARE_DEPLOY.md` 已建議之後改辦 Workers Scripts Edit 範圍的 token，但未強制使用者立即更換。
+- 驗證結果：
+  - `npx wrangler deploy --dry-run` 與正式 `npx wrangler deploy` 皆成功，過程與輸出見上。
+  - 下載線上 `https://sparkling-glitter-6ce0.rene-oops.workers.dev/assets/cutscenes/00_final_documents.mp4` 並算 SHA-256，與本機正式檔、`ChatGPT-20260928-0747` 記錄的雜湊完全一致（`e8bc409...`）。
+  - Chromium 瀏覽器開啟新網址，畫面正常顯示標題頁，`read_console_messages` 無錯誤。
+  - 嘗試從這個沙箱環境存取舊 `sparkling-glitter-6ce0.pages.dev` 驗證其是否仍正常運作，但 `curl` 與瀏覽器工具對這個網域的請求都被環境層擋下（DNS 無法解析／導覽被拒），懷疑是沙箱網路白名單問題而非站台本身故障——因為整個過程中我沒有執行任何會刪除或修改 Pages 專案本身的指令，第一次失敗的 `wrangler pages deploy` 也明確回報「沒有部署任何東西」。但無法在本次對話裡完成獨立驗證，如果使用者方便，建議自行確認 `sparkling-glitter-6ce0.pages.dev` 仍可正常開啟。
+  - `npm run typecheck`、`npm test`（19 檔／206／206）、`npm run build` 在改動部署腳本／設定後重跑，全數通過（這些改動不影響 `dist/` 輸出內容）。
+- 提交後續：本次未改動 `src/`／`public/`／`property/`，`dist/` 輸出內容與上次 commit 相同，因此不需要重建 `cloudflare-pages-upload/last-one-on-one-site.zip`（上一筆 Entry 已重建過、且這次沒有再改動任何出貨內容）。

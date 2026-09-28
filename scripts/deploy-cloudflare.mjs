@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-// Deploys dist/ to Cloudflare Pages via wrangler.
-// Requires env vars: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_PAGES_PROJECT.
+// Deploys dist/ to Cloudflare (Worker with static assets) via wrangler.
+// Requires env vars: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID.
+// The deploy target (Worker name, assets directory) lives in wrangler.jsonc.
 
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 
-const required = ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_PAGES_PROJECT"];
+const required = ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"];
 const missing = required.filter((name) => !process.env[name]);
 if (missing.length > 0) {
   console.error(`Missing required environment variable(s): ${missing.join(", ")}`);
@@ -18,10 +19,6 @@ if (!existsSync("dist/index.html")) {
   process.exit(1);
 }
 
-const result = spawnSync(
-  "npx",
-  ["wrangler", "pages", "deploy", "dist", "--project-name", process.env.CLOUDFLARE_PAGES_PROJECT],
-  { stdio: "inherit", shell: true }
-);
+const result = spawnSync("npx", ["wrangler", "deploy"], { stdio: "inherit", shell: true });
 
 process.exit(result.status ?? 1);

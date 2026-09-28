@@ -5,3 +5,8 @@ dist/
 *.log
 *.tsbuildinfo
 package-lock.json
+
+# wrangler local cache/secrets — wrangler.jsonc itself is tracked (see docs/CLOUDFLARE_DEPLOY.md)
+.wrangler/
+.dev.vars*
+!.dev.vars.example

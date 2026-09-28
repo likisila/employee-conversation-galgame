@@ -61,14 +61,14 @@ npm run build
 
 因為專案站服務在 `/<repo>/` 子路徑，workflow 以 `--base=/<repo>/` build；`property/images.json` 內的 `/assets/...` 邏輯路徑會在載入時透過 `import.meta.env.BASE_URL` 解析成正確 URL（見 `src/data/assetPath.ts`），資料本身不需修改。
 
-## 部署（Cloudflare Pages）
+## 部署（Cloudflare）
 
-正式上線的網址在 Cloudflare Pages（`sparkling-glitter-6ce0.pages.dev`），採 Direct Upload，沒有接 Git 整合，因此 push 到 GitHub 不會影響它。兩種更新方式並行：
+2026-09-28 起，兩種更新方式改指向**不同的**上線網址（見 `docs/CLOUDFLARE_DEPLOY.md`「Migration from Pages」）：
 
-- **手動 zip**：`cloudflare-pages-upload/HOW-TO-UPDATE.md`（在專案目錄外，`C:\Users\reneo\Desktop\cloudflare-pages-upload\`）。Claude 建置後把 `dist/` 打包成 `last-one-on-one-site.zip`，使用者到 Cloudflare 後台的 Deployments 頁面拖入部署。
-- **直接部署**：`docs/CLOUDFLARE_DEPLOY.md`。已於 2026-09-27 設定完成，本機環境變數 `CLOUDFLARE_API_TOKEN`／`CLOUDFLARE_ACCOUNT_ID`／`CLOUDFLARE_PAGES_PROJECT` 已就位，`npm run build && npm run deploy:cf` 會用 Wrangler 直接把 `dist/` 上傳成新的部署，略過 zip 與後台點擊。
+- **手動 zip** → 舊的 Cloudflare Pages 專案 `sparkling-glitter-6ce0.pages.dev`（Direct Upload，沒有接 Git 整合，push 到 GitHub 不會影響它）。流程見 `cloudflare-pages-upload/HOW-TO-UPDATE.md`（在專案目錄外，`C:\Users\reneo\Desktop\cloudflare-pages-upload\`）：Claude 建置後把 `dist/` 打包成 `last-one-on-one-site.zip`，使用者到 Cloudflare 後台的 Deployments 頁面拖入部署。
+- **直接部署** → 新的 Worker（含 static assets）`sparkling-glitter-6ce0.rene-oops.workers.dev`。`wrangler pages deploy` 在 wrangler 4.142 起會自動改道到這個統一架構，因此已改用 `wrangler.jsonc` ＋ `wrangler deploy`；`npm run build && npm run deploy:cf` 會把 `dist/` 部署到這個網址。
 
-兩者都會建立新的 Cloudflare 部署、保留舊版本可回滾；用哪一種由使用者決定，Claude 不會未經明確要求就執行會上線的部署。
+兩個網址目前都還在線上，但不再同步——舊 Pages 專案要等驗證新網址沒問題後才會考慮刪除（刪除前必須先問使用者）。都會保留舊版本可回滾；用哪一種、要不要淘汰舊網址由使用者決定，Claude 不會未經明確要求就執行會上線的部署。
 
 ## 過場影片
 
