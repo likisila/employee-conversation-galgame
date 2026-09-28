@@ -864,3 +864,14 @@
 - 交給 Claude 的明確行動：`ChatGPT-20260928-0429` 的三項仍全部有效，且因使用者明確要求 major／minor 全改，請不要只更新文案：必須完成五個主要選擇 effects／IDs／門檻／MBA 對應、`doc-private` 立即終止路由、受影響測試與 Claude-owned README 狀態。完成後重新枚舉全路徑並回覆本 Entry 與 `ChatGPT-20260928-0429`。
 - 未決問題或阻塞：技術 major issues 仍受角色邊界阻擋，需 Claude 接手；在 Claude 回覆前不能宣稱整體 major／minor 修訂全部進入 runtime。未追蹤 `.claude/` 未修改、未納入。
 - 驗證結果：三個修改 JSON 可解析；`npm test` 19 檔／206／206 通過；章節舊式寓意句、舊承諾與 scene `draft`／`planned-revision` 掃描均清空；`git diff --check` 通過。提交前另重跑 typecheck／build。
+
+## ChatGPT-20260928-0632
+
+- 時間：2026-09-28T06:32:48Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄；最新仍為 `Claude-20260928-0057`。本次依使用者「做」處理上一輪三則 diff comment。
+- 本次範圍與實際變更檔案：依 `revision-continuity` 修正 `docs/narrative/last-one-on-one/worldbuilding/artifacts/rights-packet.md` 的非法 `branch-dependent` frontmatter，改為 Choice 4 前的共同基準狀態（`status: active`、`owner: weiguang-interactive`、`location: moon-meeting-room`）；同步 `worldbuilding/_index.md` 與 `continuity/state.md`，把各結局的持有與位置分歧保留在連續性狀態；本交接紀錄。
+- 已定案事項：artifact frontmatter 只記錄可索引的共同基準，不再用非標準值表達分支；TRUE END／體面句點、柔軟的刀與越線三種結果仍由 `continuity/state.md` 明列。
+- 交給 Claude 的明確行動：使用者已要求落實另外兩則 P1 comment。請依 `property/choice-and-route-revision-20260928.md` 第 93–97 行整合五個主要選擇的玩家文案、choice IDs／effects、結局門檻、MBA、舊存檔遷移與測試；並讓 `doc-private` 在反應結束後直接走專屬程序收尾再進 END 04，永不進入推薦微選擇或 Choice 5。完成後重新枚舉完整路徑並回覆本 Entry、`ChatGPT-20260928-0429` 與 `ChatGPT-20260928-0553`。
+- 未決問題或阻塞：依 `docs/AI_ROLE_BOUNDARIES.md`，effects、conditions、routes、存檔與測試屬 Claude 唯一責任，ChatGPT 不得直接修改，因此三則 comment 中有兩則仍待 Claude 接手，不能宣稱全部完成。Story Skills bundled fallback 可用，修正先前紀錄中「fallback 不存在」的說法；目前專案仍有既有結構錯誤，見驗證結果。未追蹤 `.claude/` 未修改、未納入。
+- 驗證結果：`git diff --check` 通過；bundled Story CLI `links` 通過（0 errors／0 warnings）；`validate` 仍因缺少 `continuity/clues/_index.md` 失敗 1 項；`continuity` 因專案索引未辨識既有 chapter／characters／artifact 失敗 7 項；`doctor` 如實回報上述錯誤。完整 `npm test` 的新一輪執行因權限審核遇到帳戶用量限制而未啟動，沒有繞過；本輪修改前同一 HEAD 已通過 19 檔／206 項測試，本次只修改 Markdown metadata 與交接文件。

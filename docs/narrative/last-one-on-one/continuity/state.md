@@ -11,7 +11,7 @@ character-state:
     state: 持有通知紀錄，為正式程序第二窗口；曾在前公司相似會議中沉默，因此本次主動更正、記錄並在越線時終止談話。
 object-state:
   - artifact: rights-packet
-    state: TRUE END／體面句點由雨澄帶走；柔軟的刀留在會議室；越線由 HR 接管。
+    state: Choice 4 前由微光互動持有並放在月球會議室；TRUE END／體面句點由雨澄帶走；柔軟的刀留在會議室；越線由 HR 接管。
 knowledge-state:
   - character: lin-yucheng
     knows: 公司已完成決策、主管提前兩週得知評估、文件與申訴窗口存在。
@@ -38,7 +38,7 @@ knowledge-state:
 
 | Artifact | Owner | Location | Status |
 |----------|-------|----------|--------|
-| 藍色權益資料夾 | branch-dependent | branch-dependent | 已交付或由 HR 接管 |
+| 藍色權益資料夾 | Choice 4 前：微光互動；結局後：林雨澄或曾雅琳 | Choice 4 前：月球會議室；結局後依路徑分歧 | TRUE END／體面句點由雨澄帶走；柔軟的刀留在會議室；越線由 HR 接管 |
 
 ## Knowledge State
 

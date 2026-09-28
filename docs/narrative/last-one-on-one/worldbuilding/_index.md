@@ -34,4 +34,4 @@ story: last-one-on-one
 
 | Name | Type | Status | File |
 |------|------|--------|------|
-| 藍色權益資料夾 | Document | transferred | [rights-packet](artifacts/rights-packet.md) |
+| 藍色權益資料夾 | Document | active | [rights-packet](artifacts/rights-packet.md) |
