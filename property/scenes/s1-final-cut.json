@@ -3,8 +3,9 @@
   "title": "五點以前",
   "lines": [
     { "speaker": null, "kind": "narration", "text": "16:40。藍色資料夾已經躺在我桌上。雨澄仍盯著螢幕，像剛才什麼也沒發生。" },
-    { "speaker": null, "kind": "message", "channel": "私訊", "from": "曾雅琳", "text": "五點，月球。文件照最後版本。" },
-    { "speaker": "zhou-yuan", "kind": "thought", "text": "我把訊息縮到一旁，翻開資料夾。" },
+    { "speaker": "zeng-yalin", "text": "五點，月球。照這一版。" },
+    { "speaker": null, "kind": "narration", "text": "雅琳轉身走開。" },
+    { "speaker": "zhou-yuan", "kind": "thought", "text": "我存好手邊的設計稿，收掉工作視窗。鍵盤推開，藍色資料夾挪到桌面正中間，翻開。" },
     { "speaker": null, "kind": "narration", "text": "封面印著：「離職與權益說明——林雨澄」。" },
     { "speaker": null, "kind": "narration", "text": "「離職」兩字是公司範本，「職位裁撤」是雅琳用黑筆補在旁邊的。" },
     { "speaker": null, "kind": "message", "channel": "私訊", "from": "周予安", "text": "不是說明天？這版確定？" },

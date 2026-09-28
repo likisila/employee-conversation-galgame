@@ -975,3 +975,19 @@
 - 交給 Claude 的明確行動：請在 `src/domain/mba.ts` 移除跨卡共用的選項排除集合，讓各維度依自己的優先序獨立選證據；保留單一卡內「證據矛盾」必須各列一正一負，以及不可抵銷項優先的規則。同步更新 `tests/mba.test.ts`：刪除「六張卡不共用選項」斷言，新增「有非零證據的維度不因跨卡重用而成為空卡」與「同一選項跨卡時 analysis 仍為維度專屬」案例；確認全 A TRUE END 與 `doc-private` END 04 六張卡只在真正零證據時才顯示空卡。
 - 未決問題或阻塞：上述 runtime 與測試調整屬 Claude 權限，待 Claude 回覆；在更新前，已部署版本仍可能在有非零證據的維度顯示空卡。04／06 過場影片沿續未生成，本次未處理。
 - 驗證結果：人工對照 v2 稀疏矩陣、六維證據優先序與 `Claude-20260928-1336` 的全 A／`doc-private` 實測邊界；規格現在區分「可重用同一行動」與「不可複製泛用分析」；`git diff --check` 通過。本次僅修改 Markdown，未執行程式測試或建置。
+
+## ChatGPT-20260928-2159
+
+- 時間：2026-09-28T13:59:12Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-1347`（最新；已部署取消跨卡排除的修正）。`Claude-20260928-1346` 交回的逐維度 MBA 分析文字缺口仍是另一項內容待辦，本次依使用者要求先處理 Scene 1 影片後的對白與注意力轉移。
+- 本次範圍：使用 `revision-continuity`、`screenwriting:sw-dialogue` 與 `screenwriting:sw-scene-craft`，修正正式 00 過場之後仍顯示雅琳私訊、予安只把訊息縮到一旁的敘事斷裂；只修改 runtime 內容、章節正典、scene record 與分鏡續接規格，不修改 schema、程式、UX、測試或影片。
+- 實際變更檔案：`property/scenes/s1-final-cut.json`、`docs/narrative/last-one-on-one/chapters/chapter-01.md`、`docs/narrative/last-one-on-one/chapters/_index.md`、`docs/narrative/last-one-on-one/scenes/chapter-01-scene-01.md`、`property/cutscene-storyboard-v4-review.md`、`docs/ai-handoff/CHATGPT.md`。
+- 已定案事項：
+  1. 正式 00 影片已演出雅琳親手把藍色資料夾送到予安桌上；影片後第一句不再顯示她的私訊泡泡，改為雅琳當面說：「五點，月球。照這一版。」說完才在文字段落轉身離開，避免現場對白與影片時序衝突。
+  2. 予安不再只是「把訊息縮到一旁」。他先存好手邊設計稿、收掉工作視窗，再推開鍵盤，把藍色資料夾挪到桌面正中間並翻開；以可見動作完成「先放下工作、把注意力切到裁撤文件」。
+  3. 後續「不是說明天？這版確定？」等內容仍保留為雅琳離開後的私訊核對，因此只有第一則與實體交付直接相連的訊息改為現場對白。
+  4. 依使用者目前描述，影片只承擔親手交付資料夾；runtime 不重演雅琳舉起或放下資料夾，雅琳離場改由對白後的一句動作承接。
+- 交給 Claude 的明確行動：請在桌機與手機從正式 `00_final_documents.mp4` 完整播放到 `s1-final-cut`，確認影片結尾後顯示雅琳現場對白而非私訊卡；接著確認予安的工作收束動作分拍正常、雅琳離開後的後續私訊仍使用原本訊息 UI。若部署，請使用本次本地 commit 的建置結果；本次未授權部署。
+- 未決問題或阻塞：無本次內容阻塞。`Claude-20260928-1346` 的多維度選項逐維度分析文字仍待另行處理；04／06 過場影片沿續未生成。
+- 驗證結果：`property/scenes/s1-final-cut.json` 可解析；章節以 `Intl.Segmenter('zh-Hant')` 重算為 4074，已同步 frontmatter 與章節索引；Story CLI `links`／`validate` 通過，`continuity` 仍回報既有 7 項索引辨識錯誤（未因本次修改增加）；`npm.cmd run typecheck`、`npm.cmd test -- --run`（19 檔／210 項）與 `npm.cmd run build` 全數通過；`git diff --check` 通過。
