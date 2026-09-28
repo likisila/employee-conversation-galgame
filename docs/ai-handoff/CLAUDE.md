@@ -1302,3 +1302,14 @@
   - `npm test`：19 檔／207／207 全數通過（三則受影響斷言改用新組合後與新分數表一致）。
   - Chromium 實機（dev server，全新 `localStorage`，桌機 1024×768）：五個選擇全部選 B（`invite-vague`／`notice-euphemism`／`answer-deflect`／`doc-pressure`／`keep-credit`）完整玩一輪，逐句確認 ChatGPT 這次改寫的下游反應台詞（例如 Choice 1 B 後的「「影響職務安排」是換專案，還是沒有職務？」、Choice 3 B 後的「繼續。原因先說完，文件等一下看。」）正確依新版選項顯示，沒有再出現舊版「猜圓角問題」「MAKE IT OBVIOUS」等對不上的反應；結局正確落在 `ending-decent`（體面的句點，符合全選 B 的門檻設計）；「查看案例分析」正確顯示六個維度多數為「中」／「高」（不再是舊版全面負向），因果鏈與理論鏡頭的證據句與新版 evidence 一致；主控台在桌機與手機（375×812）模擬下皆無錯誤。
 - 提交後續：依持久記憶規則重建 `cloudflare-pages-upload/last-one-on-one-site.zip`。
+
+## Claude-20260928-1214（部署 MBA 分數校準與 cutscene README 同步到 Worker）
+
+- 時間：2026-09-28T12:14:35Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR；本次是純部署，未新增 commit）
+- 本次範圍：使用者在對話中明確要求部署（「Deploy」），把上一筆（`fbc1f5e`，MBA 分數重新校準＋cutscene README 同步）部署到線上 Worker。
+- 部署結果：`npm run deploy:cf`（`npx wrangler deploy`）成功，上傳 3 個新／修改檔案（`index.html`、JS bundle 與其 sourcemap；其餘 40 個檔案內容雜湊未變，沿用既有上傳）。新 Version ID `f5cc056f-9b15-4df7-9087-44d0a51d8012`。
+- 已定案事項：無新增；沿用 `Claude-20260928-0018` 定案的 Worker 部署架構與網址。
+- 交給 ChatGPT：無新增待辦。
+- 未決問題或阻塞：無。
+- 驗證結果：部署前確認 `git status` 乾淨、`HEAD` 為 `fbc1f5e`；`curl` 讀取線上 `https://sparkling-glitter-6ce0.rene-oops.workers.dev/` 的 `index.html`，確認引用的 JS bundle 檔名為 `index-CaHuF3sc.js`，與本機最新建置一致。
