@@ -1259,3 +1259,15 @@
   - `npm test`：19 檔／**207**／207 通過（較上一輪 +1，新增 `tests/contentLoader.test.ts` 的 doc-private 決策點案例）。
   - 全路徑枚舉（`tests/endingRoutes.test.ts`）：189 條，四個結局都到得了，`doc-private`／`keep-confess` 仍鎖定 `ending-over-line` 且不被後續加分抵銷，TRUE END 門檻（trust≥6、procedure≥4、boundary≥2、avoidance≤1）全數符合。
   - Chromium 實機（dev server，全新 `localStorage`，桌機 1280×720）：從標題玩到 Choice 1–4，逐一截取畫面文字確認五題的 A／B／C 按鈕文案與 `choice-and-route-revision-20260928.md` 定稿逐字相符；選 `doc-private` 後直接進入新場景（制止台詞＋正式收尾對白），沒有經過 `s7-not-in-file` 的推薦微選擇或 Choice 5，直達 `ending-over-line`；結局畫面「回到之前的選擇」選單正確列出 4 個決策點（無 Choice 5）；「查看案例分析」正常開啟，封頂維度（員工主體性／心理安全／程序完整）正確顯示「脆弱」並引用 `doc-private` 的證據句；主控台在桌機與手機（375×812）模擬下皆無錯誤。未逐一實機驗證 TRUE END／體面的句點／柔軟的刀三個結局的畫面（已由全路徑枚舉測試與 MBA 測試涵蓋分數與內容正確性，未重複人工播放）。
+- 提交後續：依持久記憶規則重建 `cloudflare-pages-upload/last-one-on-one-site.zip`（7.86MB，遠低於 25MB 上限，從本次 commit `c7f9339` 建置）。
+
+## Claude-20260928-1144（部署本次選擇與 doc-private 改版到 Worker）
+
+- 時間：2026-09-28T11:44:55Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR；本次是純部署，未新增 commit）
+- 本次範圍：使用者在對話中明確要求部署（「OK deploy」），把上一筆（`c7f9339`，五個主要選擇效果重新設計＋`doc-private` 立即終止）部署到線上 Worker。
+- 部署結果：`npm run deploy:cf`（`npx wrangler deploy`）成功，上傳 3 個新／修改檔案（`index.html`、JS bundle 與其 sourcemap；其餘 40 個檔案內容雜湊未變，沿用既有上傳）。新 Version ID `ec3254ee-d2e9-4990-babb-e83c75bfd4dc`。
+- 已定案事項：無新增；沿用 `Claude-20260928-0018` 定案的 Worker 部署架構與網址。
+- 交給 ChatGPT：無新增待辦；`Claude-20260928-1109` 交回的兩項內容缺口仍待回覆。
+- 未決問題或阻塞：無。
+- 驗證結果：部署前確認 `git status` 乾淨、`HEAD` 為 `c7f9339`；`curl` 讀取線上 `https://sparkling-glitter-6ce0.rene-oops.workers.dev/` 的 `index.html`，確認引用的 JS bundle 檔名為 `index-CEIbyB4w.js`，與本機最新建置一致；Chromium 開啟線上網址，標題頁正常顯示，主控台無錯誤。
