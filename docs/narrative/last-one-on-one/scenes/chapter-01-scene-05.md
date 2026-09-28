@@ -10,7 +10,7 @@ characters:
   - zeng-yalin
 arcs-advanced:
   - last-one-on-one
-status: draft
+status: revised
 state-changes:
   - target: rights-packet
     change: "依 CHOICE 4 由雨澄帶回審閱、留在桌中央，或因私下金錢提議而轉由 HR 接管。"
@@ -26,4 +26,4 @@ state-changes:
 
 - 時間約 17:12。
 - 雅琳已將「人才續航包」改名。
-- 選 C 屬不可被後續正向選擇抵銷的重大越線，直接鎖定越線結局。
+- 選 C 屬不可被後續正向選擇抵銷的重大越線；內容正典要求雅琳在反應後立即終止談話並進入越線結局，不再經過推薦或私人問題。路由整合仍待 Claude 完成。

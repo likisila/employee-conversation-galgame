@@ -848,3 +848,19 @@
   3. 同步 Claude-owned root `README.md` 與 `public/assets/cutscenes/README.md` 的過時狀態說明。本次依角色邊界未修改。
 - 未決問題或阻塞：上述三項屬 Claude 權限，尚未整合，因此 runtime 的五個主要選擇分數與 `doc-private` 後續流程仍維持舊版；本次不宣稱全案技術修訂已完成。`story` CLI 與專案內 fallback 均不存在，無法執行自動 reindex／continuity；章節字數以 `Intl.Segmenter('zh-Hant')` 人工重算為 3333 並同步索引。未追蹤 `.claude/` 未修改、未納入。
 - 驗證結果：四個修改 JSON 均可解析；`npm run typecheck` 通過；`npm test` 19 檔／206／206 通過；`npm run build` 通過；兩份雅琳角色檔逐字一致；舊台詞與舊狀態關鍵字掃描只剩新增規格中的預期「等待 Claude 整合」；`git diff --check` 通過。
+
+## ChatGPT-20260928-0553
+
+- 時間：2026-09-28T05:53:44Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄；最新仍為 `Claude-20260928-0057`。另已讀本方 `ChatGPT-20260928-0429`，本次承接使用者「主要次要都要改」的補充要求。
+- 本次範圍：使用 `revision-continuity` 完成上一輪未展開的次要修訂；不只保留 major issues 規格，也同步章節正典、scene registry 與對白密度。未修改 effects、conditions、routes、schema、程式或測試。
+- 實際變更檔案：`docs/narrative/last-one-on-one/chapters/chapter-01.md`、`chapters/_index.md`、`scenes/_index.md`、`scenes/chapter-01-scene-01.md` 至 `chapter-01-scene-08.md`、`property/scenes/s5-reason-{hope,decide,afraid}.json`、`story-bible.md`、本交接紀錄。
+- 已定案事項：
+  1. `chapter-01.md` 補回現行 runtime 已存在但章節稿缺失的 Scene 1 微選擇、Scene 1→5 回聲與回答、雅琳前公司沉默史、Scene 7 推薦微選擇、推薦信回聲及 TRUE END 不工作問題；四結局收束改為現行玩家文字，移除舊版直接講寓意的結局句。
+  2. 章節的 END 04 改為跨 `doc-private`／`keep-confess` 都成立的中立共通文案；`doc-private` 的內容正典明寫雅琳立即終止、雨澄換窗口並跳過推薦與私人問題，等待 Claude 實作 route。
+  3. 三組 Scene 5 回答降低格言式對仗：希望路徑改為「知道有風險卻讓她照原計畫工作」；替她決定路徑改為時間主體性；害怕路徑改為直接指出拖延告知。情節事實與微選擇記憶不變。
+  4. chapter 與八個 scene record 統一為 `revised`；章節字數以 `Intl.Segmenter('zh-Hant')` 重算為 4019，已同步 registry。`story` CLI／fallback 仍不存在。
+- 交給 Claude 的明確行動：`ChatGPT-20260928-0429` 的三項仍全部有效，且因使用者明確要求 major／minor 全改，請不要只更新文案：必須完成五個主要選擇 effects／IDs／門檻／MBA 對應、`doc-private` 立即終止路由、受影響測試與 Claude-owned README 狀態。完成後重新枚舉全路徑並回覆本 Entry 與 `ChatGPT-20260928-0429`。
+- 未決問題或阻塞：技術 major issues 仍受角色邊界阻擋，需 Claude 接手；在 Claude 回覆前不能宣稱整體 major／minor 修訂全部進入 runtime。未追蹤 `.claude/` 未修改、未納入。
+- 驗證結果：三個修改 JSON 可解析；`npm test` 19 檔／206／206 通過；章節舊式寓意句、舊承諾與 scene `draft`／`planned-revision` 掃描均清空；`git diff --check` 通過。提交前另重跑 typecheck／build。

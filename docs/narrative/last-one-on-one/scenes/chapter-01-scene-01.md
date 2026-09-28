@@ -10,7 +10,7 @@ characters:
   - zeng-yalin
 arcs-advanced:
   - last-one-on-one
-status: draft
+status: revised
 state-changes:
   - target: zhou-yuan
     change: "得知林雨澄的職位裁撤已最終核准。"
