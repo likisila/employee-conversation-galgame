@@ -12,7 +12,8 @@ const PATHS: Record<string, string[]> = {
   'ending-true-finale': ['invite-clear', 'notice-direct', 'answer-admit', 'doc-protect', 'keep-advocate'],
   'ending-decent': ['invite-clear', 'notice-direct', 'answer-admit', 'doc-protect', 'keep-credit'],
   'ending-soft-knife': ['invite-vague', 'notice-euphemism', 'answer-deflect', 'doc-pressure', 'keep-credit'],
-  'ending-over-line': ['invite-goodnews', 'notice-performance', 'answer-bargain', 'doc-private', 'keep-confess'],
+  // doc-private 立即終止談話，跳過 Scene 7 推薦微選擇與 Choice 5，此路徑只有 4 個主要決策點。
+  'ending-over-line': ['invite-goodnews', 'notice-performance', 'answer-bargain', 'doc-private'],
 };
 
 /** 走一輪主線（可指定微選擇；沒指定就一律選第一個可用選項）。 */
@@ -38,10 +39,23 @@ function play(mainChoices: string[], microPicks: Record<string, string> = {}): S
   return engine;
 }
 
+/**
+ * 只給「四個結局都能算出分析內容」這則測試用：驗證某個組合真的會被引擎判給該結局。
+ * `PATHS` 的 ending-decent／ending-soft-knife 組合刻意保留舊版效果下的選項 ID 組合
+ * （分數為 0／-1 的整齊平手，見下方「低」「淨零」等測試），只當純函式 `computeDebrief`
+ * 的輸入，不代表引擎實際會走到那個結局——2026-09-28 效果重新設計後（B 選項不再是弱選項），
+ * 這兩組舊組合改走到別的結局，所以另外準備一組「真的會被引擎判到」的組合。
+ */
+const REACHABLE_PATHS: Record<string, string[]> = {
+  ...PATHS,
+  'ending-decent': ['invite-clear', 'notice-direct', 'answer-deflect', 'doc-protect', 'keep-credit'],
+  'ending-soft-knife': ['invite-clear', 'notice-direct', 'answer-bargain', 'doc-pressure', 'keep-advocate'],
+};
+
 describe('MBA Organizational Debrief：計算層', () => {
   it('四個結局都能算出分析內容', () => {
     const content = loadContent();
-    for (const [endingId, mainChoices] of Object.entries(PATHS)) {
+    for (const [endingId, mainChoices] of Object.entries(REACHABLE_PATHS)) {
       const engine = play(mainChoices);
       expect(engine.currentScene.id, endingId).toBe(endingId);
       const majorChoiceIds = engine.decisionPoints.map((decision) => decision.choiceId);
@@ -49,7 +63,8 @@ describe('MBA Organizational Debrief：計算層', () => {
       const result = computeDebrief(content, endingId, majorChoiceIds);
       expect(result, endingId).toBeDefined();
       expect(result!.dimensions).toHaveLength(6);
-      expect(result!.choiceTexts).toHaveLength(5);
+      // doc-private 立即終止談話後只有 4 個主要決策點（見上方 PATHS 註解），其餘結局仍是 5 個。
+      expect(result!.choiceTexts).toHaveLength(mainChoices.length);
       expect(result!.causalChains.length).toBeGreaterThanOrEqual(1);
       expect(result!.theories).toHaveLength(3);
       expect(result!.overallConsequence).toBe(content.mba.endings[endingId]!.unintendedConsequence);
@@ -144,15 +159,16 @@ describe('MBA Organizational Debrief：計算層', () => {
     expect(info.evidence).not.toContain('正向行為被另一個選擇抵銷'); // 舊版報表式措辭已撤回
   });
 
-  it('END 04 封頂維度的證據必須引用 doc-private／keep-confess，不得引用 keep-advocate 等正向選擇', () => {
+  it('END 04 封頂維度的證據必須引用 doc-private，不得引用 keep-advocate 等正向選擇', () => {
     const content = loadContent();
+    // doc-private 現在會立即終止談話並跳過 Choice 5（見 PATHS 註解），
+    // 因此這條路徑不會再同時出現 doc-private 與 keep-confess；封頂維度的證據只能來自 doc-private。
     const result = computeDebrief(content, 'ending-over-line', PATHS['ending-over-line']!)!;
     const capped = ['employee_agency', 'psychological_safety', 'process_integrity'];
     for (const key of capped) {
       const dimension = result.dimensions.find((d) => d.key === key)!;
       expect(['脆弱', '低'], key).toContain(dimension.level);
-      // doc-private 與 keep-confess 皆出現於此路徑，較晚的 keep-confess 應勝出，即使加總數字已經落在「低」。
-      expect(dimension.evidence, key).toBe('推薦、文件和作品核准還沒結束，就要求雨澄回應主管的私人感情。');
+      expect(dimension.evidence, key).toBe('用私人金錢補正式給付，把公司責任變成一筆欠主管的人情。');
     }
   });
 

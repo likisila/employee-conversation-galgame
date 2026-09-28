@@ -24,6 +24,7 @@
     "scenes/s5-reason-converge.json",
     "scenes/s6-receipt.json",
     "scenes/s7-not-in-file.json",
+    "scenes/s7-doc-private-close.json",
     "scenes/s7-recommend-precision.json",
     "scenes/s7-recommend-witness.json",
     "scenes/s7-recommend-honesty.json",

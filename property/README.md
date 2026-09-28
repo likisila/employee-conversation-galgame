@@ -18,6 +18,7 @@
 - `romance-microchoices.md`：四組不影響結局的感情線微選擇正式文案；已由 Claude 整合進 `scenes/*.json`（見下方「感情線微選擇」一節的技術寫法）。
 - `dialogue-beat-revisions-20260926.md`：六處長段落的正式分拍規格；由 Claude 依原技術欄位拆成連續畫面。
 - `narrative-integration-revision-20260926.md`：感情線 setup/payoff 與曾雅琳角色弧的整合修訂；取代孤立的 Scene 5 回憶段落。
+- `choice-and-route-revision-20260928.md`：五個主要選擇改為「兩個可辯護策略＋一個明確高風險選項」的正式文案與 `doc-private` 立即終止規格；已由 Claude 整合進 `scenes/*.json` 的選項文字、效果與路由（技術對應見下方「主要選擇的效果設計」一節）。
 - `mba-organizational-debrief.md`：結局後 MBA 案例分析、理論映射、organizational state 與期末報告規劃的正式內容／實作需求；已由 Claude 整合為 `mba-debrief.json` ＋ `src/domain/mba.ts`（見下方「MBA Organizational Debrief」一節）。**課程定位是組織行為（Organizational Behavior，OB），不是 HR；往後 Review 與 Playthrough 必須依該文件的「課程定位與 Review 門檻」驗收。理論白話文案、證據方向規則、四方 stakeholder 後果與每結局兩套替代策略亦以此文件為唯一內容定稿。**
 - `ob-playthrough-review-20260926.md`：依「組織行為，不是 HR」重新實玩四個結局與最後評估頁的審查紀錄；包含通過項、教學閉環缺口及下一輪驗收標準。
 - `mba-debrief-sepia-revision-20260927.md`：`查看案例分析` 的 Sepia 完整文案修訂、語氣原則與 Claude 接線規格；玩家可見文字以 `mba-debrief.json` 為準，程式內硬編碼字串依此文件替換。
@@ -36,8 +37,26 @@
 - 另有 `s1Memory`／`s7Memory` 兩個「敘事記憶」字串：由 s1、s7 的感情線微選擇各自 `set`，只用來讓 Scene 5、TRUE END 自動路由到對應的回聲場景（見下方「感情線微選擇」一節），不參與結局判定、不進「回到之前的選擇」選單。
 - 四組感情線微選擇（`property/narrative-integration-revision-20260926.md`）已接進 s1、s5、s7 與 TRUE END 的對應插入點：s1／s7 的選擇會分別在 Scene 5、TRUE END 被回收（setup/payoff），不改動上述核心狀態、五個主要選擇或結局分布；技術寫法見下方「感情線微選擇」一節。
 - 曾雅琳的角色弧（Scene 1／3／6，見同一份修訂文件）與六處對話分拍（`property/dialogue-beat-revisions-20260926.md`）已整合進對應場景，純屬敘事節奏與新增對白，不影響任何技術欄位。
-- 場景流程：`content-warning → s1-final-cut →（感情線微選擇）→ s2-invite → s3-meeting → s4-notice → s5-when-did-you-know →（依 s1Memory 自動路由的回聲＋新的感情線微選擇）→ s6-receipt → s7-not-in-file →（感情線微選擇）→ s8-reaction → s9-doorway →（四個結局之一，TRUE END 再依 s7Memory 自動路由一段推薦信回聲＋感情線微選擇才到 ending-true-finale）`。
-- `s9-doorway` 是純路由節點，依序判定：**越線**（`boundary <= -2`）→ **TRUE END**（`trust >= 6`、`procedure >= 4`、`boundary >= 2`、`avoidance <= 1`）→ **體面的句點**（`procedure >= 4`、`trust >= 2`、`boundary >= 0`）→ **柔軟的刀**（其餘）。
+- 場景流程：`content-warning → s1-final-cut →（感情線微選擇）→ s2-invite → s3-meeting → s4-notice → s5-when-did-you-know →（依 s1Memory 自動路由的回聲＋新的感情線微選擇）→ s6-receipt →`（`choice4=protect／pressure` 走 `s7-not-in-file →`（感情線微選擇）`→ s8-reaction`；`choice4=private` 改走 `s7-doc-private-close`，立即終止談話並跳過推薦微選擇與 Choice 5）`→ s9-doorway →`（四個結局之一，TRUE END 再依 s7Memory 自動路由一段推薦信回聲＋感情線微選擇才到 `ending-true-finale`；`choice4=private` 的路徑沒有 s7Memory／choice5，直接落在 `ending-over-line`）。詳見 `property/choice-and-route-revision-20260928.md`「doc-private 立即終止」。
+- `s9-doorway` 是純路由節點，依序判定：**越線**（`choice4 = private` 或 `choice5 = confess` 無條件命中；否則 `boundary <= -2`）→ **TRUE END**（`trust >= 6`、`procedure >= 4`、`boundary >= 2`、`avoidance <= 1`）→ **體面的句點**（`procedure >= 4`、`trust >= 2`、`boundary >= 0`）→ **柔軟的刀**（其餘）。
+
+### 主要選擇的效果設計（`property/choice-and-route-revision-20260928.md` 的技術對應）
+
+五個主要選擇的每一題都是「A：資訊透明」「B：節奏／隱私／主體性」「C：明確高風險（鎖定越線或重扣分）」，A、B 刻意給不同的加分組合而不是單純高低分：
+
+| 選擇 | A（trust/procedure/boundary） | B（trust/procedure/boundary） | C |
+| --- | --- | --- | --- |
+| Choice 1 邀請 | `invite-clear` +1/+1/0 | `invite-vague` +1/+1/+1 | `invite-goodnews`（trust-1、avoidance+2，不變） |
+| Choice 2 說出裁撤 | `notice-direct` +1/+2/0 | `notice-euphemism` +1/+1/+1 | `notice-performance`（trust-2、procedure-1，不變） |
+| Choice 3 承認決定已定 | `answer-admit` +2/0/+1 | `answer-deflect` +1/+1/+2 | `answer-bargain`（trust-1、procedure-1、avoidance+1，不變） |
+| Choice 4 文件 | `doc-protect` +1/+2/0 | `doc-pressure` +1/+1/+1 | `doc-private`（procedure-2、boundary-2，不變；立即終止，見下） |
+| Choice 5 是否曾想留下她 | `keep-advocate` +2/0/+2 | `keep-credit` +1/+1/+2 | `keep-confess`（trust-1、boundary-3，不變） |
+
+全選 A 仍會拿到 trust7／procedure5／boundary3，維持原本的 TRUE END 門檻；全選 B 拿到 trust5／procedure5／boundary7，落在體面的句點——每一題單獨選 B、其餘選 A，都還能湊到 TRUE END（`tests/endingRoutes.test.ts` 的全路徑枚舉會鎖住這個分布）。C 選項的分數維持 ChatGPT 原定案不變。
+
+### `doc-private` 立即終止
+
+`doc-private` 的 `next` 指向新場景 `s7-doc-private-close`（不再經過 `s7-not-in-file`），把雅琳原本在 `s7-not-in-file` 裡對「私下補一筆」的制止台詞，加上正式的收尾對白（見 `choice-and-route-revision-20260928.md`）接在一起，說完直接 `next: "s9-doorway"`。這條路徑因此只有 4 個主要決策點（沒有 Choice 5），`choice5`／`s7Memory` 維持未設定，`s9-doorway` 的 `choice4 = private` 無條件路由不受影響。全路徑枚舉從 3^5=243 條變成 189 條：27 條（`choice4=private`）× 4 個決策點 ＋ 162 條（`choice4=protect／pressure`）× 5 個決策點。
 
 ## 修改角色名字
 只改 `characters.json` 的 `displayName`。場景只使用穩定 `id`，不用逐場景搜尋替換。
@@ -126,7 +145,7 @@
 `game.json` 的 `initialState` 可新增任意字串、數值或布林值。選項透過 `effects` 修改狀態（`add` 僅限數值、`set` 可為任何型別），透過 `conditions` 決定是否顯示。
 
 ## 感情線微選擇（不影響結局的選項）
-選項可以加 `"minor": true`，代表這是不影響結局的短對話分支（例如感情線）：不記入通關後「回到之前的選擇」的決策點選單，也不算進主要決策路徑。大多數不帶 `effects`；s1、s7 的三個選項例外，各自 `set` 一個敘事記憶字串（`s1Memory`／`s7Memory`），供 Scene 5、TRUE END 的 `route` 自動挑對應分支——**這個 `effects` 只能寫敘事記憶變數，不得寫 `trust`／`procedure`／`boundary`／`avoidance` 或 `choice1`…`choice5`**，否則會影響結局判定與 243 條主要路徑分布。場景也可以加 `"choicePrompt"` 覆寫這一頁選項的提示句（不寫就用 `ui.json` 的 `choicePrompt`）。
+選項可以加 `"minor": true`，代表這是不影響結局的短對話分支（例如感情線）：不記入通關後「回到之前的選擇」的決策點選單，也不算進主要決策路徑。大多數不帶 `effects`；s1、s7 的三個選項例外，各自 `set` 一個敘事記憶字串（`s1Memory`／`s7Memory`），供 Scene 5、TRUE END 的 `route` 自動挑對應分支——**這個 `effects` 只能寫敘事記憶變數，不得寫 `trust`／`procedure`／`boundary`／`avoidance` 或 `choice1`…`choice5`**，否則會影響結局判定與主要路徑分布（`doc-private` 會立即終止談話並跳過 Choice 5，因此正式內容是 189 條而不是 3^5=243 條，見 `property/choice-and-route-revision-20260928.md`）。場景也可以加 `"choicePrompt"` 覆寫這一頁選項的提示句（不寫就用 `ui.json` 的 `choicePrompt`）。
 
 兩種實作方式，依有沒有下游回聲決定：
 

@@ -117,7 +117,12 @@ function dominantDimension(mba: MbaContent, row: MbaScoreRow): { label: string; 
 
 const NO_STABLE_EVIDENCE = '這五次選擇沒有留下足夠證據，不能只靠其中一句判斷。';
 
-/** 造成 END 04 越線的兩個旗標選項；封頂維度的證據只能引用這兩者，兩者皆出現時取較晚的 `keep-confess`。 */
+/**
+ * 造成 END 04 越線的兩個旗標選項；封頂維度的證據只能引用這兩者。
+ * `doc-private` 立即終止談話並跳過 Choice 5（見 property/choice-and-route-revision-20260928.md
+ * 「doc-private 立即終止」），因此兩者不會再出現在同一條路徑；陣列順序（較晚者優先）只在
+ * 內容改版、資料還沒完全一致時作為防呆，不代表這兩者現在仍會同時出現。
+ */
 const OVER_LINE_FLAG_CHOICES = ['doc-private', 'keep-confess'];
 
 interface DimensionRow {
@@ -141,9 +146,9 @@ function pickDirectional(rows: readonly DimensionRow[], direction: 'positive' | 
  * 顯示的等級與對應證據文字：
  * 1. 高／中只取正向證據、脆弱／低只取負向證據，同分取較晚的選擇。
  * 2. END 04 的三個封頂維度（不論這次加總數字原本是否已經落在脆弱／低，只要是這三個維度且結局是
- *    越線）一律優先引用造成越線的 `doc-private`／`keep-confess`（較晚者優先），不得引用
- *    `keep-advocate` 等正向選擇——但越線也可能單純由 boundary 累計觸發、未選這兩項，此時仍要有
- *    負向證據可用，因此在兩者皆不存在時退回一般的負向證據挑選，而不是顯示「查無證據」。
+ *    越線）一律優先引用造成越線的 `doc-private`／`keep-confess`，不得引用 `keep-advocate` 等
+ *    正向選擇——但越線也可能單純由 boundary 累計觸發、未選這兩項，此時仍要有負向證據可用，因此
+ *    在兩者皆不存在時退回一般的負向證據挑選，而不是顯示「查無證據」。
  * 3. 分數為零且正負皆有：不得用單一正向句解釋「脆弱」，並列一正一負兩項證據。
  * 4. 該方向完全沒有非零選項時，顯示「查無穩定證據」，不借用不相關選項。
  */

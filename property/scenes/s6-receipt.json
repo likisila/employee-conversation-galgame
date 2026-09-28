@@ -28,7 +28,7 @@
   "choices": [
     {
       "id": "doc-protect",
-      "text": "「可以，先帶回去看。雅琳，請再說明哪些簽名只代表收到文件。」",
+      "text": "「可以。今天不用做同意的決定；請雅琳說明哪些簽名只代表收訖。」",
       "next": "s7-not-in-file",
       "effects": [
         { "variable": "choice4", "operation": "set", "value": "protect" },
@@ -38,18 +38,19 @@
     },
     {
       "id": "doc-pressure",
-      "text": "「這只是確認收到，現在簽一簽比較不會漏掉流程。」",
+      "text": "「今天只說明，不簽；電子檔現在寄，紙本由妳決定要不要帶走。」",
       "next": "s7-not-in-file",
       "effects": [
         { "variable": "choice4", "operation": "set", "value": "pressure" },
-        { "variable": "trust", "operation": "add", "value": -2 },
-        { "variable": "procedure", "operation": "add", "value": -2 }
+        { "variable": "trust", "operation": "add", "value": 1 },
+        { "variable": "procedure", "operation": "add", "value": 1 },
+        { "variable": "boundary", "operation": "add", "value": 1 }
       ]
     },
     {
       "id": "doc-private",
       "text": "「如果正式給付不夠，我可以私下補一筆給你。」",
-      "next": "s7-not-in-file",
+      "next": "s7-doc-private-close",
       "effects": [
         { "variable": "choice4", "operation": "set", "value": "private" },
         { "variable": "procedure", "operation": "add", "value": -2 },

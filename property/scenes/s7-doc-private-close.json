@@ -1,0 +1,16 @@
+{
+  "id": "s7-doc-private-close",
+  "lines": [
+    { "speaker": "zeng-yalin", "text": "停止。不要提出文件外的金錢承諾。" },
+    { "speaker": null, "kind": "narration", "text": "雨澄鬆開資料夾，手收回桌沿。" },
+    { "speaker": "lin-yucheng", "text": "私下？" },
+    { "speaker": "zhou-yuan", "text": "我只是想——" },
+    { "speaker": "lin-yucheng", "text": "為什麼要私下給？我不想跟你有這種往來。" },
+    { "speaker": "zeng-yalin", "text": "談話先停在這裡。雨澄，後續我會單獨寄正式資訊；妳現在可以離開，不需要再回答任何問題。" },
+    { "speaker": "lin-yucheng", "text": "作品、推薦、文件，都換窗口。" },
+    { "speaker": "zeng-yalin", "text": "我會處理。" },
+    { "speaker": null, "kind": "narration", "text": "雨澄拿起手機，沒有碰桌上的資料夾。" }
+  ],
+  "choices": [],
+  "next": "s9-doorway"
+}

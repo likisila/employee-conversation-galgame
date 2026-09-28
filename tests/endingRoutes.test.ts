@@ -48,9 +48,17 @@ function walkAllPaths(): Array<{ path: string[]; ending: string; state: Record<s
 describe('結局路由（全路徑枚舉）', () => {
   const paths = walkAllPaths();
 
-  it('每條路徑都走到結局，且五個選擇節點都有三個選項', () => {
-    expect(paths).toHaveLength(3 ** 5);
-    for (const path of paths) expect(path.path).toHaveLength(5);
+  // doc-private 立即終止談話，跳過 Scene 7 推薦微選擇與 Choice 5
+  // （見 property/choice-and-route-revision-20260928.md「doc-private 立即終止」），
+  // 所以只有 choice1×choice2×choice3 = 27 條路徑在 choice4=private 之後只有 4 個決策點；
+  // 其餘 2/3（choice4=protect／pressure）仍會走到 choice5，維持原本的 5 個決策點。
+  // 總數：27 條（4 個決策點）＋ 27×2×3 = 162 條（5 個決策點）＝ 189 條。
+  it('每條路徑都走到結局；choice4=private 只有 4 個決策點，其餘都是 5 個，且每個節點都有三個選項', () => {
+    expect(paths).toHaveLength(189);
+    for (const path of paths) {
+      const skippedChoice5 = path.path.includes('doc-private');
+      expect(path.path).toHaveLength(skippedChoice5 ? 4 : 5);
+    }
   });
 
   it('四個結局都到得了', () => {

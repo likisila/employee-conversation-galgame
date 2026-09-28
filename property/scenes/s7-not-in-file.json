@@ -15,13 +15,6 @@
     { "speaker": "lin-yucheng", "text": "但那是你剛才要求我做的事。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
     { "speaker": null, "kind": "narration", "text": "她把資料夾推回桌子中央。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
 
-    { "speaker": "zeng-yalin", "text": "停止。不要提出文件外的金錢承諾。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-    { "speaker": null, "kind": "narration", "text": "雨澄鬆開資料夾，手收回桌沿。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-    { "speaker": "lin-yucheng", "text": "私下？", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-    { "speaker": "zhou-yuan", "text": "我只是想——", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-    { "speaker": "lin-yucheng", "text": "為什麼要私下給？我不想跟你有這種往來。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-    { "speaker": "zeng-yalin", "text": "這一段我會如實記錄。後續由我補充正式資訊。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-
     { "speaker": null, "kind": "narration", "text": "17:18。雨澄又看了一次錶，把話題拉回文件。" },
     { "speaker": "lin-yucheng", "text": "作品集呢？我做的流程圖、測試摘要，哪些可以用？" },
     { "speaker": "zeng-yalin", "text": "文件有申請方式。涉及客戶資料的部分要移除；可公開範圍會由專人書面回覆。" },

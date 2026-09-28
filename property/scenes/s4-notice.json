@@ -27,7 +27,7 @@
   "choices": [
     {
       "id": "answer-admit",
-      "text": "「對，公司已經決定了。抱歉，現在才告訴你。」",
+      "text": "「對，公司已經決定了。抱歉，現在才告訴妳。」",
       "next": "s5-when-did-you-know",
       "effects": [
         { "variable": "choice3", "operation": "set", "value": "admit" },
@@ -37,11 +37,13 @@
     },
     {
       "id": "answer-deflect",
-      "text": "「大家都很不容易，我也不希望事情變成這樣。」",
+      "text": "「職位決定已完成。妳現在能決定的是要不要繼續、何時看文件、由誰回答。」",
       "next": "s5-when-did-you-know",
       "effects": [
         { "variable": "choice3", "operation": "set", "value": "deflect" },
-        { "variable": "avoidance", "operation": "add", "value": 1 }
+        { "variable": "trust", "operation": "add", "value": 1 },
+        { "variable": "procedure", "operation": "add", "value": 1 },
+        { "variable": "boundary", "operation": "add", "value": 2 }
       ]
     },
     {

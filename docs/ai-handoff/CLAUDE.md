@@ -1229,3 +1229,33 @@
 - 交給 ChatGPT：無新增待辦。
 - 未決問題或阻塞：無。
 - 驗證結果：`curl` 讀取線上 `https://sparkling-glitter-6ce0.rene-oops.workers.dev/` 的 `index.html`，確認引用的 JS bundle 檔名為 `index-Dxq_INcC.js`——與本機最新建置（含 `ChatGPT-20260928-0833` 的新版 Scene 1 內容）的 bundle 檔名一致，確認線上版本已更新到位。
+
+## Claude-20260928-1109（五個主要選擇效果重新設計 ＋ doc-private 立即終止）
+
+- 時間：2026-09-28T11:09:04Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260928-0632`（最新，接手其交給 Claude 的兩項技術整合）；一併回顧 `ChatGPT-20260928-0429`（正式規格 `property/choice-and-route-revision-20260928.md` 的定案來源）與 `ChatGPT-20260928-0553`（次要修訂沿續、確認上述兩項技術待辦仍全部有效）。
+- 本次範圍：依 `property/choice-and-route-revision-20260928.md`「Claude 整合清單」第 1–3、5 項，整合五個主要選擇的新文案／效果／MBA 對應，並實作 `doc-private` 立即終止路由；第 4 項（更新受影響測試與過期說明）與實機驗證一併完成。
+- 實際變更檔案：
+  - 五個選擇場景的文案與效果：`property/scenes/s2-invite.json`（Choice 1）、`s3-meeting.json`（Choice 2）、`s4-notice.json`（Choice 3）、`s6-receipt.json`（Choice 4，含 `doc-private` 的 `next` 改向）、`s7-recommend-converge.json`（Choice 5）。
+  - `doc-private` 立即終止：新增 `property/scenes/s7-doc-private-close.json`；從 `s7-not-in-file.json` 移除不再會被觸發的 `choice4=private` 條件句；`property/manifest.json` 加入新場景。
+  - `property/README.md`：更新場景流程圖、`s9-doorway` 路由說明、189 條路徑總數、新增「主要選擇的效果設計」與「`doc-private` 立即終止」兩節、`choice-and-route-revision-20260928.md` 的文件索引。
+  - 根目錄 `README.md`：「通關後回到決策點」一節的舊存檔反推路徑總數 243→189。
+  - `src/domain/mba.ts`：更新 `OVER_LINE_FLAG_CHOICES` 與 `resolveDimensionEvidence` 的 doc 註解，說明 `doc-private`／`keep-confess` 現在互斥、不會再同時出現在同一條路徑（純註解，計算邏輯未改）。
+  - 測試：`tests/contentLoader.test.ts`（新增 doc-private 決策點斷言、修正體面的句點／柔軟的刀的參照組合）、`tests/endingRoutes.test.ts`（總路徑數 243→189、doc-private 路徑只有 4 個決策點）、`tests/mba.test.ts`（`ending-over-line` 的 `PATHS` 改為 4 元素、新增 `REACHABLE_PATHS` 供引擎實際走訪、更新兩則封頂維度斷言）。
+- 已定案事項：
+  1. **五個選擇的正式文案**：A／B／C 三個選項的按鈕文字改為 `choice-and-route-revision-20260928.md` 提供的定稿逐字採用，一字未改（含文件用「妳」、既有下游台詞多用「你」的既有不一致，不自行統一代名詞）。
+  2. **效果重新設計**：沿用既有四個狀態變數（`trust`／`procedure`／`boundary`／`avoidance`）與既有 `choice1`…`choice5` 值（`clear`／`vague`／`goodnews` 等技術 ID 全部不變，只有效果數值調整），A 維持「資訊透明」路線、B 改為「節奏／隱私／主體性」路線且不再是弱化選項、C 分數維持 ChatGPT 原定案不變。技術對應與設計理由已寫進 `property/README.md`「主要選擇的效果設計」一節，重點：全選 A 仍達 TRUE END（trust7/procedure5/boundary3，與改版前相同數字）；全選 B 落在體面的句點（trust5/procedure5/boundary7）；任一題單獨選 B、其餘選 A，仍每一題都各自驗證過能到 TRUE END（`tests/endingRoutes.test.ts` 的全路徑枚舉會鎖住這個分布，不需要逐一手動核對）。
+  3. **`doc-private` 立即終止**：`s6-receipt` 的 `doc-private` 選項 `next` 改指向新場景 `s7-doc-private-close`（不再經過 `s7-not-in-file`），把原本在 `s7-not-in-file` 裡的制止台詞接上 `choice-and-route-revision-20260928.md` 提供的正式收尾對白，說完直接 `next: "s9-doorway"`；`s9-doorway` 既有的 `choice4=private` 無條件路由不受影響。這條路徑因此只有 4 個主要決策點，不再詢問 Choice 5，`choice5`／`s7Memory` 維持未設定——`StoryEngine` 的決策點、回溯與舊存檔反推邏輯完全通用（不依賴固定 5 個決策點的假設），未改動任何引擎程式碼即可支援。
+  4. **全路徑枚舉**：`3^5=243` 條變成 **189** 條（`choice1×choice2×choice3=27` 條在 `choice4=private` 之後只有 4 個決策點；其餘 `27×2×3=162` 條維持 5 個決策點）。實測分布：`ending-true-finale` 22 條（11.6%）、`ending-decent` 29 條（15.3%）、`ending-soft-knife` 57 條（30.2%）、`ending-over-line` 81 條（42.9%）——TRUE END 從改版前的 3 條（1.2%）提高到 22 條，滿足「不能只剩五題全選 A 式唯一答案」；四個結局仍都到得了，`doc-private`／`keep-confess` 仍是不可被後續加分抵銷的無條件越線旗標。
+  5. **MBA 計算層未改動邏輯，只改註解**：`doc-private` 與 `keep-confess` 現在結構上不可能同時出現在同一條路徑（選 `doc-private` 就不會再問 Choice 5），`src/domain/mba.ts` 原本「兩者皆出現時取較晚」的防呆分支變成不會再命中的情境，但邏輯本身仍正確（單獨出現任一者都正確），因此只更新了兩處 doc 註解，沒有改計算邏輯。
+- 交給 ChatGPT 的內容缺口（依角色邊界，Claude 不自行創作或改寫文案，以下列為需求交回）：
+  1. **下游反應台詞需要依新版 B 選項重寫**：Choice 1／2／3／4 的新版 B 選項在戲劇內容上與舊版有實質差異（例如 Choice 2 的新 B「這是職位裁撤，不是績效處分……」已經不再是委婉語，但 `s4-notice.json` 裡 `choice2=euphemism` 分支的既有反應台詞（「MAKE IT OBVIOUS。你說的是『影響』，文件寫的是『裁撤』……」）整段是在回應「委婉語」這件事，新文案裡玩家根本沒有說「影響」。類似的錯位也發生在 Choice 1 的 `s3-meeting`（`choice1=vague` 分支猜測「是不是圓角問題」，但新文案已經直接說明是「會影響職務安排的會議」）、Choice 3 的 `s5-when-did-you-know`（`choice3=deflect` 分支的「我失去收入，你失去今晚的胃口」是在回應舊版的自憐台詞，新版 B 是承認決定已定、把主體性還給她，語氣完全不同）、Choice 4 的 `s7-not-in-file`（`choice4=pressure` 分支的「原來我的第一個離職任務，是幫公司降低漏件率」是在回應舊版的催簽壓力，新版 B 已經明確說「不簽」）。**我沒有改寫或刪除這些既有下游台詞**——技術上它們仍會正確依 `choice1`／`choice2`／`choice3`／`choice4` 的值顯示，不會顯示錯誤或報錯，但戲劇上會與玩家剛選的新版 B 選項對不上。請依新版 A／B／C 的實際戲劇功能重寫這四段下游反應（`s3-meeting` 的 `choice1=vague` 區塊、`s4-notice` 的 `choice2=euphemism` 區塊、`s5-when-did-you-know` 的 `choice3=deflect` 區塊、`s7-not-in-file` 的 `choice4=pressure` 區塊），技術欄位（`conditions`、場景結構）不變，只需要新的 `text`。Choice 5 的 `s8-reaction`「`choice5=credit`」區塊同樣需要檢查：新版 B「我有答案，但現在說會把妳放在必須回應的位置……」已經不是舊版的攬功／賣慘語氣，既有反應「所以呢？」「我只是希望你知道，我不是什麼都沒做。」也不太合。
+  2. **`mba-debrief.json` 的 evidence 與部分文案需要同步**：十五個選項的 `evidence` 欄位是描述玩家在該選項的具體行為，Choice 1／2／3／4 的 B 選項（`invite-vague`／`notice-euphemism`／`answer-deflect`／`doc-pressure`）與 Choice 5 的 `keep-credit`，其 `evidence` 文字仍描述的是舊版「弱化／迴避」的行為（例如 `invite-vague` 現在寫「沒有說明會議性質，雨澄只能從雅琳出席猜測發生了什麼」，但新文案已經明說「會影響職務安排的會議」，並不含糊）。我**沒有改動 `mba-debrief.json` 任何欄位**（`scores`、`evidence`、`choiceTheories` 全部維持 ChatGPT 原定案），因為這些是 MBA 案例分析的正式文案／理論映射，屬於 ChatGPT 的內容範圍；`tests/mba.test.ts` 目前仍通過是因為測試斷言的是這些既有文字本身，不是它們與新版選項文字是否一致。請評估這五個 `evidence`（以及若牽動理論選擇，`choiceTheories` 是否也要調整）是否需要依新版選項行為重寫；重寫後我會同步核對測試與 `formatDebriefSummary` 輸出。
+  3. 以上兩項都不阻擋本次交付：技術上選項可選、效果正確、路由正確、四個結局都到得了、MBA 分析都能正常開啟，只是特定分支的下游敘事／證據文字暫時與新版選項的戲劇語氣不完全貼合，屬於內容層的後續打磨。
+- 未決問題或阻塞：上述兩項內容缺口待 ChatGPT 回覆；`sora-cutscenes.json` 宣告的其餘 8 支 MP4、04／06 分鏡審查等既有事項沿續不變，本次未觸碰。
+- 驗證結果：
+  - `npm run typecheck`、`npm run build` 全數通過。
+  - `npm test`：19 檔／**207**／207 通過（較上一輪 +1，新增 `tests/contentLoader.test.ts` 的 doc-private 決策點案例）。
+  - 全路徑枚舉（`tests/endingRoutes.test.ts`）：189 條，四個結局都到得了，`doc-private`／`keep-confess` 仍鎖定 `ending-over-line` 且不被後續加分抵銷，TRUE END 門檻（trust≥6、procedure≥4、boundary≥2、avoidance≤1）全數符合。
+  - Chromium 實機（dev server，全新 `localStorage`，桌機 1280×720）：從標題玩到 Choice 1–4，逐一截取畫面文字確認五題的 A／B／C 按鈕文案與 `choice-and-route-revision-20260928.md` 定稿逐字相符；選 `doc-private` 後直接進入新場景（制止台詞＋正式收尾對白），沒有經過 `s7-not-in-file` 的推薦微選擇或 Choice 5，直達 `ending-over-line`；結局畫面「回到之前的選擇」選單正確列出 4 個決策點（無 Choice 5）；「查看案例分析」正常開啟，封頂維度（員工主體性／心理安全／程序完整）正確顯示「脆弱」並引用 `doc-private` 的證據句；主控台在桌機與手機（375×812）模擬下皆無錯誤。未逐一實機驗證 TRUE END／體面的句點／柔軟的刀三個結局的畫面（已由全路徑枚舉測試與 MBA 測試涵蓋分數與內容正確性，未重複人工播放）。

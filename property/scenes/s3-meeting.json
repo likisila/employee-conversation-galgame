@@ -45,7 +45,7 @@
   "choices": [
     {
       "id": "notice-direct",
-      "text": "「公司已決定裁撤你目前的職位。這不是績效處分。」",
+      "text": "「公司已決定裁撤妳目前的職位。這不是績效處分。」",
       "next": "s4-notice",
       "effects": [
         { "variable": "choice2", "operation": "set", "value": "direct" },
@@ -55,12 +55,13 @@
     },
     {
       "id": "notice-euphemism",
-      "text": "「公司正在進行組織優化，你的角色會受到影響。」",
+      "text": "「這是職位裁撤，不是績效處分。我先說到這裡；妳想停一下，還是先聽原因？」",
       "next": "s4-notice",
       "effects": [
         { "variable": "choice2", "operation": "set", "value": "euphemism" },
+        { "variable": "trust", "operation": "add", "value": 1 },
         { "variable": "procedure", "operation": "add", "value": 1 },
-        { "variable": "avoidance", "operation": "add", "value": 1 }
+        { "variable": "boundary", "operation": "add", "value": 1 }
       ]
     },
     {

@@ -14,7 +14,7 @@
   "choices": [
     {
       "id": "keep-advocate",
-      "text": "「有。我提過凍結外包、把你轉到平台組，沒通過。這些是我該做的，你不欠我。」",
+      "text": "「有。我提過凍結外包和縮小專案，沒有被採用。這不是妳欠我的人情。」",
       "next": "s8-reaction",
       "effects": [
         { "variable": "choice5", "operation": "set", "value": "advocate" },
@@ -24,12 +24,13 @@
     },
     {
       "id": "keep-credit",
-      "text": "「我為了你跟上面吵了很多次，差點連自己的位置都保不住。」",
+      "text": "「我有答案，但現在說會把妳放在必須回應的位置。等程序結束，如果妳還想問，再由妳開口。」",
       "next": "s8-reaction",
       "effects": [
         { "variable": "choice5", "operation": "set", "value": "credit" },
-        { "variable": "trust", "operation": "add", "value": -1 },
-        { "variable": "boundary", "operation": "add", "value": -1 }
+        { "variable": "trust", "operation": "add", "value": 1 },
+        { "variable": "procedure", "operation": "add", "value": 1 },
+        { "variable": "boundary", "operation": "add", "value": 2 }
       ]
     },
     {
