@@ -14,14 +14,18 @@ function texts(sceneId: string): string[] {
 }
 
 describe('對話分拍：六處長段落各自拆成兩個連續項目', () => {
-  it('s1-final-cut：視線轉移與文件標題揭露各拆一次', () => {
+  it('s1-final-cut：正式 00 過場已承接視線轉移與文件標題揭露，文字不再重複演出', () => {
+    // property/dialogue-beat-revisions-20260926.md 的原分拍已被 2026-09-28 接入的正式
+    // 00_final_documents.mp4 取代：影片已經演完「雅琳舉起資料夾 → 予安點頭 → 雅琳放下資料夾」，
+    // 文字改從資料夾已在桌上、雨澄仍盯著螢幕開始（見 ChatGPT-20260928-0833）。
     const lines = texts('s1-final-cut');
-    expect(lines).toContain('我抬頭。雅琳站在兩排辦公桌外，舉了一下手裡的藍色資料夾。');
-    expect(lines).toContain('我看了看雨澄的座位，朝雅琳點頭。');
-    expect(lines).toContain('她把資料夾放下，封面印著：「離職與權益說明——林雨澄」。');
+    expect(lines).toContain('16:40。藍色資料夾已經躺在我桌上。雨澄仍盯著螢幕，像剛才什麼也沒發生。');
+    expect(lines).toContain('封面印著：「離職與權益說明——林雨澄」。');
     expect(lines).toContain('「離職」兩字是公司範本，「職位裁撤」是雅琳用黑筆補在旁邊的。');
-    // 原本擠在同一句的完整原文不應再出現。
-    expect(lines).not.toContain('我抬頭。雅琳站在兩排辦公桌外，舉了一下手裡的藍色資料夾。我看了看雨澄的座位，朝雅琳點頭。');
+    // 影片已承擔的動作不應在文字裡重演。
+    expect(lines).not.toContain('我抬頭。雅琳站在兩排辦公桌外，舉了一下手裡的藍色資料夾。');
+    expect(lines).not.toContain('我看了看雨澄的座位，朝雅琳點頭。');
+    expect(lines).not.toContain('她把資料夾放下，封面印著：「離職與權益說明——林雨澄」。');
   });
 
   it('s3-meeting：封閉感與荒謬陳設分開兩拍', () => {
