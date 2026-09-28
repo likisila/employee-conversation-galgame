@@ -1,10 +1,10 @@
 # MBA Organizational Debrief 與期末報告規格
 
-> 狀態：已整合結局後案例分析頁並完成驗證；本文保留為教學邏輯、內容邊界與驗收依據。
+> 狀態：現行結局後案例分析頁已整合；本文保留教學邏輯與內容邊界。本文舊版「內部計算表」、高／中／脆弱／低門檻及雷達式組織狀態，已由 `mba-dramatic-analysis-scoring-v2-20260928.md` 取代，待 Claude 實作。
 >
 > 定位：玩家先完成故事，再把自己的決策還原成可分析的組織行為案例；理論不塞進角色台詞。
 >
-> 玩家可見文案：以 `mba-debrief.json` 為唯一來源；Sepia 語氣與程式內硬編碼文字見 `mba-debrief-sepia-revision-20260927.md`。本文保留教學邏輯與內容邊界，不再作逐字畫面稿。
+> 玩家可見文案：目前以 `mba-debrief.json` 為來源；下一版依 `mba-dramatic-analysis-scoring-v2-20260928.md` 的稀疏評分、不可抵銷規則與證據卡規格更新。Sepia 語氣與程式內硬編碼文字見 `mba-debrief-sepia-revision-20260927.md`。
 
 ## 零、課程定位與 Review 門檻
 

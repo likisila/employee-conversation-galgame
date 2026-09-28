@@ -936,3 +936,26 @@
 - 交給 Claude 的明確行動：不要再以路徑可達 TRUE END 或校準後分數，視為 A／B 戲劇選項已平衡。若整合問卷，先使用「五組主要選項驗證」核心區並自動帶入玩家實際選項與直接下游反應。待玩家回收後，Choice 2 若被判為 B 支配 A，須由內容端改寫取捨；Choice 5 B 可優先測試審查文件中的候選句。任何 runtime、route、effect、UI、儲存與測試變更仍由 Claude 負責。
 - 未決問題或阻塞：目前沒有成功的獨立編劇審查結果；只能稱為以多套編劇判準完成的單一證據審查。若之後取得可用的獨立審查額度，應讓審查者先各自判斷，再互相反駁，最後才更新共識，不得以本文件預設答案要求附和。
 - 驗證結果：五組問卷均引用 runtime 現行玩家文案；Choice 1–5 的直接反應已逐檔核對；問卷核心與選填區分開並提供誠實作答時間；`git diff --check` 通過。文件變更未執行程式測試或建置。
+
+## ChatGPT-20260928-2056
+
+- 時間：2026-09-28T20:56:37+08:00
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-1214`（最新）。本次依使用者更正，取消要求玩家回答的問卷，改為把問卷判準轉成五個既有劇情選擇的隱藏分析評分。
+- 本次範圍：以 `screenwriting:sw-premise-theme`、`screenwriting:sw-character-conflict`、`screenwriting:sw-scene-craft` 判斷每個選項在戲裡真正測到的價值、角色主體性與直接後果；只交付內容與 UI 顯示規格，不修改 score runtime、effect、route、schema、renderer、UX 或測試。
+- 實際變更檔案：
+  - `property/mba-dramatic-analysis-scoring-v2-20260928.md`（新增）：五道情境題定位、十五選項稀疏評分矩陣、等級換算、不可抵銷規則、分析卡格式、證據唯一化與驗收條件。
+  - `to-questionnaire-last-one-on-one-story-review.md`（刪除）：玩家不填額外問卷。
+  - `property/story-choice-screenwriting-audit-20260928.md`：把問卷原則改成遊戲內隱藏分析原則。
+  - `property/mba-organizational-debrief.md`：標明舊版全面加總、高／中／脆弱／低與雷達呈現已由 v2 規格取代。
+  - `story-bible.md`：下一步改為 Claude 實作 v2，並記錄問卷被劇情選擇評分取代。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 玩家只玩現有五次主要選擇；不顯示問卷、課堂題目、維度名稱或分數提示。
+  2. 十五個選項使用稀疏矩陣；沒有被該行動在戲裡測到的維度一律為零，禁止「整體感覺良好」就六項一起加分。
+  3. 玩家顯示改為「穩定建立／部分建立／證據矛盾／未充分建立／明顯受損」，不顯示數字或雷達面積。
+  4. `invite-goodnews`、`notice-performance`、`answer-bargain`、`doc-private`、`keep-confess` 有明確不可抵銷規則；END 04 只確認越線觸發，不另重複扣分。
+  5. Choice 5 B 必須呈現混合結果：程序界線受支持，但雨澄已提問後仍被替她決定時機，因此可信度與員工主體性付出代價。
+  6. 每張狀態卡固定顯示本輪行動、直接角色反應與分析；六張卡不得重複同一句泛用評語。
+- 交給 Claude 的明確行動：以 `property/mba-dramatic-analysis-scoring-v2-20260928.md` 取代現行 `property/mba-debrief.json` 的全面加總與雷達／高低呈現。實作稀疏矩陣、五種顯示狀態、不可抵銷規則、零分的「矛盾／未充分建立」分流、路徑限定的直接反應證據、六卡證據唯一化及複製摘要。同步更新 schema／計算、renderer、行動版 UX 與測試；保留故事結局、回到選擇與微選擇不計分。
+- 驗證結果：以代表路線驗算原始稀疏總分：全 A=`4,4,4,3,2,3`；全 B=`0,2,0,5,3,4`；含 `invite-goodnews` 的柔軟刀示例=`-3,0,0,5,1,4`；含 `doc-private` 的越線示例=`2,4,0,-1,-2,-4`，再依規格套用不可抵銷上限。結果能區分全 A 的資訊／問責、全 B 的主體性／程序，以及局部良好但重大越線的混合狀態。`git diff --check` 通過；文件變更未執行程式測試或建置。
