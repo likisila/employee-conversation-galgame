@@ -805,3 +805,21 @@
 - 交給 Claude 的明確行動：使用者要求完成實際部署。依 `AI_ROLE_BOUNDARIES.md`，建置／CI/CD／部署為 Claude 專屬責任；請在此 commit 上重新執行 production build，使用已設定的 `npm run deploy:cf`／Wrangler 將 `dist/` 部署到 `sparkling-glitter-6ce0.pages.dev`，再驗證線上 `/assets/cutscenes/00_final_documents.mp4` 可讀且 hash／大小符合正式檔。保留 `property/cutscene-cues.json` 既有 cue，不修改 runtime，不把 storyboard fallback 當成正式 00，也不重新生成影片。
 - 未決問題或阻塞：正式 00 的內容與本地整合已完成，但 Cloudflare 上線必須由 Claude 執行，尚未部署。04、06 仍待使用者審查／授權；本次沒有批准它們生成。影片解析工具未安裝，因此技術長度取自 Windows 媒體 metadata；內容正確性直接依使用者核准，不由 Agent 再驗片。
 - 驗證結果：正式檔與 production build 複本 SHA-256 完全一致；`property/sora-cutscenes.json` 與 current manifest 均可解析；Vitest 19 files／206 tests 全通過；TypeScript＋Vite production build 通過；`git diff --check` 通過。測試前 pnpm 曾因 sandbox network 限制嘗試移動本地依賴，已完整移回原位置並刪除它建立的 `.pnpm-store/`；未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260928-0833
+
+- 時間：2026-09-28T00:32:26Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-0000`（最新）。該紀錄已確認正式 00 影片與既有 cue 接線有效，並暫停遠端部署。
+- 本次範圍：使用 `screenwriting:sw-workflow`、`story-skills:premise-workshop`、`screenwriting:sw-scene-craft`、`screenwriting:sw-dialogue` 與 revision-continuity 檢查正式 00 接入後的劇情連續性；只修改 ChatGPT 權限內的敘事內容與文件，不修改 cue、runtime、schema、測試或部署設定。
+- 實際變更檔案：
+  - `property/scenes/s1-final-cut.json`：刪除正式 00 已演出的「雅琳舉起／放下資料夾」重複動作；Scene 1 改從資料夾已在桌上開始；雅琳離開後的說明改為私訊；刪除與本場行動無關的「韌性日／鹼性水」，保留直接服務期限壓力的「財務把明天也省掉了」。
+  - `docs/narrative/last-one-on-one/chapters/chapter-01.md`、`scenes/chapter-01-scene-01.md`、`worldbuilding/locations/weiguang-office.md`：同步正式文本、空間連續性與場景功能。
+  - `property/dialogue-beat-revisions-20260926.md`：把舊 Scene 1 兩組交付分拍標成已由 00 取代。
+  - `property/cutscene-storyboard-v4-review.md`：更新 00 後的實際首句與「影片負責動作、runtime 負責新資訊」續接原則。
+  - `story-bible.md`（新增）：依 workflow 建立目前階段、已定決策、前提／賭注、Scene 1 修改目標與決策日志。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：正式 00 是 Scene 1 的可見前半拍；runtime 不得再次演出交付。Scene 1 的價值轉折保持「普通加班夜 → 壞消息已進場、雨澄仍不知情」；笑點只保留能推進公司流程、時限或角色策略者。
+- 交給 Claude 的明確行動：更新 `tests/narrativeIntegration20260926.test.ts` 第 17–23 行的舊分拍斷言。新測試應確認首句為資料夾已在桌上／雨澄仍盯著螢幕，並確認「雅琳舉起資料夾」「予安點頭」「雅琳放下資料夾」三個由 00 承擔的文字動作不再出現在 `s1-final-cut`；之後重跑 206 項測試並用實機從 00 播到 Scene 1，檢查影片結尾到首句、私訊與雨澄轉身的節奏。
+- 未決問題或阻塞：ChatGPT 角色邊界禁止修改測試，因此保留 1 個已知舊斷言失敗。Story Skills 維護工具把 repo root 當成制式 story project，沒有辨識實際位於 `docs/narrative/last-one-on-one/` 的索引，回報 10 個既有缺路徑錯誤與 2 個警告；本次未跨界重組目錄。
+- 驗證結果：`property/scenes/s1-final-cut.json` 可解析；`npm run typecheck` 通過；`npm run build` 通過；Vitest 19 files 中 18 files 通過，205/206 tests 通過，唯一失敗是上述仍要求舊「雅琳舉起／放下資料夾」文字的整合測試；`git diff --check` 在提交前再次執行。
