@@ -657,7 +657,13 @@ export interface MbaDimension {
   scoreKey: 'C' | 'I' | 'F' | 'A' | 'S' | 'P';
 }
 
-/** 十五個主要選項各自對六個維度的加減分，以及這個選項的路徑證據摘要。 */
+/**
+ * 十五個主要選項各自對六個維度的加減分（稀疏矩陣，見 property/mba-dramatic-analysis-scoring-v2-20260928.md
+ * 「二、隱藏評分矩陣」；`0` 代表這個選項在這個維度上沒有可判斷的證據，不是中性分數，不得因為
+ * 「整體感覺不錯」而六項一起加分），`evidence` 是這個選項的分析摘要（供「關鍵選擇與後果」／
+ * 理論鏡頭引用），`reactionQuote` 是雨澄或雅琳在這個選項的直接下游說出的一句話（逐字引用既有台詞，
+ * 供結局後「組織狀態卡」的「故事中的反應」欄位使用）。
+ */
 export interface MbaScoreRow {
   C: number;
   I: number;
@@ -666,6 +672,7 @@ export interface MbaScoreRow {
   S: number;
   P: number;
   evidence: string;
+  reactionQuote: string;
 }
 
 export interface MbaStakeholder {
@@ -726,7 +733,16 @@ function parseMbaScoreRow(raw: unknown, label: string): MbaScoreRow {
     if (typeof raw[key] !== 'number') throw new Error(`${label}.${key} 必須是數字`);
     return raw[key];
   };
-  return { C: num('C'), I: num('I'), F: num('F'), A: num('A'), S: num('S'), P: num('P'), evidence: stringField(raw, 'evidence') };
+  return {
+    C: num('C'),
+    I: num('I'),
+    F: num('F'),
+    A: num('A'),
+    S: num('S'),
+    P: num('P'),
+    evidence: stringField(raw, 'evidence'),
+    reactionQuote: stringField(raw, 'reactionQuote'),
+  };
 }
 
 function parseMbaStakeholder(raw: unknown, label: string): MbaStakeholder {

@@ -162,15 +162,13 @@
 .debrief-section h3{margin:0 0 .5rem;color:var(--amber);font-size:.82rem;font-weight:700;letter-spacing:.1em}
 .debrief-section p,.debrief-section li{margin:0;color:var(--paper);font-size:.92rem;line-height:1.65}
 .debrief-section ol,.debrief-section ul{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:.4rem}
-.debrief-state li strong{color:var(--teal)}
-.debrief-state-layout{display:flex;flex-direction:column;align-items:stretch;gap:1rem}
-.debrief-state-chart{width:100%;max-width:22rem;margin:0 auto}
-.debrief-state-chart svg{display:block;width:100%;height:auto}
-.debrief-radar-grid{fill:none;stroke:rgba(255,255,255,.16)}
-.debrief-radar-axis{stroke:rgba(255,255,255,.16)}
-.debrief-radar-shape{fill:rgba(120,174,183,.32);stroke:var(--teal);stroke-width:1.4}
-.debrief-radar-dot{fill:var(--teal)}
-.debrief-radar-label{fill:var(--paper-dim,rgba(240,240,240,.75));font-size:12px}
+.debrief-state-cards{display:flex;flex-direction:column;gap:.7rem}
+.debrief-state-card{padding:.8rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-left:3px solid var(--teal)}
+.debrief-state-card h4{margin:0 0 .4rem;color:var(--teal);font-size:.88rem;font-weight:700;letter-spacing:.04em}
+.debrief-state-card p{margin:0;color:var(--paper);font-size:.88rem;line-height:1.6}
+.debrief-state-card p+p{margin-top:.3rem}
+.debrief-entry-divider{margin:.6rem 0;border:none;border-top:1px dashed rgba(255,255,255,.14)}
+.debrief-note{color:var(--paper-dim,rgba(240,240,240,.75));font-style:italic}
 .debrief-alternative+.debrief-alternative{margin-top:.7rem;padding-top:.7rem;border-top:1px dashed rgba(255,255,255,.14)}
 .debrief-section li strong{color:var(--teal)}
 .debrief-section li p+p{margin-top:.3rem}
@@ -181,7 +179,7 @@
 @media(max-width:700px){
   .debrief-panel{padding:1rem}
   .debrief-section p,.debrief-section li{font-size:.88rem}
-  .debrief-state-chart{max-width:16rem}
+  .debrief-state-card p{font-size:.85rem}
 }
 
 /* ───── 手機直版：一律只露半身 ─────

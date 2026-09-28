@@ -1,5 +1,5 @@
 import type { LoadedContent } from '../data/contentLoader';
-import type { MbaContent, MbaScoreRow } from './schema';
+import type { MbaContent, MbaDimension, MbaScoreRow } from './schema';
 
 /**
  * MBA Organizational Debrief 的計算層（見 property/mba-debrief.md「二、Debrief 使用的資料」）。
@@ -17,30 +17,99 @@ const CHOICE_POINTS = [
   { key: 'choice5', options: ['keep-advocate', 'keep-credit', 'keep-confess'] },
 ] as const;
 
-const DIMENSION_ORDER: readonly (keyof Omit<MbaScoreRow, 'evidence'>)[] = ['C', 'I', 'F', 'A', 'S', 'P'];
+const DIMENSION_ORDER: readonly (keyof Omit<MbaScoreRow, 'evidence' | 'reactionQuote'>)[] = ['C', 'I', 'F', 'A', 'S', 'P'];
 
-export type DebriefLevel = '高' | '中' | '脆弱' | '低';
+/**
+ * v2 戲劇分析等級（見 property/mba-dramatic-analysis-scoring-v2-20260928.md「三、等級換算」）。
+ * 取代舊版「高／中／脆弱／低」的數字門檻；不顯示數字，也不畫雷達面積。
+ */
+export type DebriefLevel = '穩定建立' | '部分建立' | '證據矛盾' | '未充分建立' | '明顯受損';
 
-const LEVEL_RANK: Record<DebriefLevel, number> = { 高: 3, 中: 2, 脆弱: 1, 低: 0 };
+/** 供「上限」比較用的排序：數字越大代表越正面。未充分建立與證據矛盾都是「這輪沒有淨向哪一邊」，排序相鄰。 */
+const LEVEL_RANK: Record<DebriefLevel, number> = { 穩定建立: 4, 部分建立: 3, 證據矛盾: 2, 未充分建立: 1, 明顯受損: 0 };
 
-function levelForSum(sum: number): DebriefLevel {
-  if (sum >= 5) return '高';
-  if (sum >= 1) return '中';
-  if (sum >= -2) return '脆弱';
-  return '低';
+/**
+ * 依「二、隱藏評分矩陣」非零列的加總，換算成 v2 的五種等級（見「三、等級換算」）：
+ * - `3` 以上：穩定建立。`1–2`：部分建立。
+ * - `0` 且同時有正負證據：證據矛盾（本輪既保護又傷害同一維度）。
+ * - `0` 且沒有任何非零證據：未充分建立（五次選擇沒有實際測到這一面）。
+ * - `-1` 以下：明顯受損。
+ */
+function levelForRows(values: readonly number[]): DebriefLevel {
+  const sum = values.reduce((total, value) => total + value, 0);
+  const hasPositive = values.some((value) => value > 0);
+  const hasNegative = values.some((value) => value < 0);
+  if (sum >= 3) return '穩定建立';
+  if (sum >= 1) return '部分建立';
+  if (sum === 0 && hasPositive && hasNegative) return '證據矛盾';
+  if (sum === 0) return '未充分建立';
+  return '明顯受損';
 }
 
 /**
- * END 04（越線）的三個維度不能因為其他選擇正向而顯得體面：即使加總數字落在「中」或「高」，
- * 畫面最高也只顯示「脆弱」，避免掩蓋這一路徑本身就是重大越線。
+ * 不可抵銷規則（見「四、不可抵銷規則」）：重大越線不能靠前面累積的好行為洗掉。
+ * `at-most`＝這個維度最高只能顯示到 `cap`（原本更好時才下修，已經更差就不動）；
+ * `fixed`＝只要選到這個選項，這個維度就固定顯示 `cap`（不看原始加總）。
+ * 第六條「END 04 不另外憑結局名稱扣分」——即不再有舊版「只要是 ending-over-line 就封頂三個維度」
+ * 的邏輯，全部改成只看玩家實際選了哪個選項。
  */
-const CLAMPED_TO_FRAGILE_ON_OVER_LINE = new Set(['employee_agency', 'psychological_safety', 'process_integrity']);
+const NON_CANCELABLE_RULES: ReadonlyArray<{
+  choiceId: string;
+  dimensions: readonly string[];
+  cap: DebriefLevel;
+  mode: 'at-most' | 'fixed';
+}> = [
+  { choiceId: 'invite-goodnews', dimensions: ['management_credibility', 'information_quality'], cap: '證據矛盾', mode: 'at-most' },
+  { choiceId: 'notice-performance', dimensions: ['information_quality', 'perceived_fairness', 'psychological_safety'], cap: '證據矛盾', mode: 'at-most' },
+  { choiceId: 'answer-bargain', dimensions: ['management_credibility', 'perceived_fairness', 'employee_agency', 'psychological_safety'], cap: '明顯受損', mode: 'at-most' },
+  { choiceId: 'doc-private', dimensions: ['perceived_fairness', 'employee_agency', 'psychological_safety', 'process_integrity'], cap: '明顯受損', mode: 'fixed' },
+  { choiceId: 'keep-confess', dimensions: ['employee_agency', 'psychological_safety', 'process_integrity'], cap: '明顯受損', mode: 'fixed' },
+];
+
+function applyNonCancelableCaps(level: DebriefLevel, dimensionKey: string, majorChoiceIds: readonly string[]): DebriefLevel {
+  let result = level;
+  for (const rule of NON_CANCELABLE_RULES) {
+    if (!rule.dimensions.includes(dimensionKey) || !majorChoiceIds.includes(rule.choiceId)) continue;
+    if (rule.mode === 'fixed') {
+      result = rule.cap;
+    } else if (LEVEL_RANK[result] > LEVEL_RANK[rule.cap]) {
+      result = rule.cap;
+    }
+  }
+  return result;
+}
+
+/**
+ * 依維度找主要證據的優先順序：每一項是 `majorChoiceIds` 的索引（0＝Choice1…4＝Choice5），
+ * 見「五、證據分配」的「證據優先順序」表。找不到時（該題沒選、分數為 0，或已被其他卡片用掉）
+ * 就依序退回下一個候選；全部找不到時，`findEvidenceEntry` 會再退回「不看優先序，依 Choice1…5
+ * 自然順序找任一個還沒用過的非零選項」，避免明明有證據卻因為不在優先表裡而顯示「查無證據」。
+ */
+const EVIDENCE_PRIORITY: Record<keyof Omit<MbaScoreRow, 'evidence' | 'reactionQuote'>, readonly number[]> = {
+  C: [2, 0, 4, 1],
+  I: [0, 1, 2, 3],
+  F: [3, 1, 2, 4],
+  A: [2, 3, 1, 4],
+  S: [4, 1, 2, 0],
+  P: [3, 4, 2],
+};
+
+/** 一張組織狀態卡裡的一組證據：你的行動（選項原文）＋故事中的反應（既有台詞逐字引用）＋分析。 */
+export interface DebriefEvidenceEntry {
+  choiceId: string;
+  actionQuote: string;
+  reactionQuote: string;
+  analysis: string;
+}
 
 export interface DebriefDimension {
   key: string;
   label: string;
   level: DebriefLevel;
-  evidence: string;
+  /** 穩定建立／部分建立／明顯受損通常 1 筆；證據矛盾最多 2 筆（一正一負）；未充分建立或找不到證據時為空陣列。 */
+  entries: DebriefEvidenceEntry[];
+  /** 只在 `entries` 為空時有值：本輪沒有可觀察行動，或找不到同方向證據。 */
+  note?: string;
 }
 
 export interface DebriefStakeholder {
@@ -115,68 +184,80 @@ function dominantDimension(mba: MbaContent, row: MbaScoreRow): { label: string; 
   return best;
 }
 
-const NO_STABLE_EVIDENCE = '這五次選擇沒有留下足夠證據，不能只靠其中一句判斷。';
+const NO_STABLE_EVIDENCE = '本輪沒有足夠的可觀察行動。';
 
 /**
- * 造成 END 04 越線的兩個旗標選項；封頂維度的證據只能引用這兩者。
- * `doc-private` 立即終止談話並跳過 Choice 5（見 property/choice-and-route-revision-20260928.md
- * 「doc-private 立即終止」），因此兩者不會再出現在同一條路徑；陣列順序（較晚者優先）只在
- * 內容改版、資料還沒完全一致時作為防呆，不代表這兩者現在仍會同時出現。
+ * 在 `priorityIndices`（`EVIDENCE_PRIORITY` 的其中一組）指定的順序裡，找第一個「玩家真的選了、
+ * 這個維度非零、還沒被其他卡片用掉」的選項；找不到就退回「依 Choice1…5 自然順序，找任一個還沒
+ * 用過的非零選項」，確保不會因為優先表沒列到某個決策點就誤判成查無證據。
  */
-const OVER_LINE_FLAG_CHOICES = ['doc-private', 'keep-confess'];
-
-interface DimensionRow {
-  choiceId: string;
-  value: number;
-  evidence: string;
-}
-
-/** 依方向（正／負）挑影響最大的一筆；同分時取較晚（陣列中較後面）的選擇，呈現 delayed consequence。 */
-function pickDirectional(rows: readonly DimensionRow[], direction: 'positive' | 'negative'): DimensionRow | undefined {
-  let best: DimensionRow | undefined;
-  for (const row of rows) {
-    if (direction === 'positive' ? row.value <= 0 : row.value >= 0) continue;
-    if (!best || Math.abs(row.value) >= Math.abs(best.value)) best = row;
+function findEvidenceEntry(
+  priorityIndices: readonly number[],
+  majorChoiceIds: readonly string[],
+  scores: Record<string, MbaScoreRow>,
+  dimensionKey: keyof Omit<MbaScoreRow, 'evidence' | 'reactionQuote'>,
+  direction: 'positive' | 'negative',
+  used: ReadonlySet<string>,
+): string | undefined {
+  const matches = (choiceId: string | undefined): boolean => {
+    if (!choiceId || used.has(choiceId)) return false;
+    const row = scores[choiceId];
+    if (!row) return false;
+    const value = row[dimensionKey];
+    return direction === 'positive' ? value > 0 : value < 0;
+  };
+  for (const index of priorityIndices) {
+    const choiceId = majorChoiceIds[index];
+    if (matches(choiceId)) return choiceId;
   }
-  return best;
+  return majorChoiceIds.find((choiceId) => matches(choiceId));
 }
 
 /**
- * 依「證據句方向規則」（property/mba-organizational-debrief.md「二、證據句方向規則」）決定一個維度
- * 顯示的等級與對應證據文字：
- * 1. 高／中只取正向證據、脆弱／低只取負向證據，同分取較晚的選擇。
- * 2. END 04 的三個封頂維度（不論這次加總數字原本是否已經落在脆弱／低，只要是這三個維度且結局是
- *    越線）一律優先引用造成越線的 `doc-private`／`keep-confess`，不得引用 `keep-advocate` 等
- *    正向選擇——但越線也可能單純由 boundary 累計觸發、未選這兩項，此時仍要有負向證據可用，因此
- *    在兩者皆不存在時退回一般的負向證據挑選，而不是顯示「查無證據」。
- * 3. 分數為零且正負皆有：不得用單一正向句解釋「脆弱」，並列一正一負兩項證據。
- * 4. 該方向完全沒有非零選項時，顯示「查無穩定證據」，不借用不相關選項。
+ * 組出一張「組織狀態卡」（見「五、最後分析畫面」）：先用該維度非零列的加總換算等級、套用不可抵銷
+ * 上限，再依最終等級決定要顯示幾筆證據——穩定建立／部分建立各挑一筆正向、明顯受損挑一筆負向、
+ * 證據矛盾同時挑一正一負、未充分建立不挑（沒有非零證據可挑）。挑中的選項會計入 `used`，讓後面
+ * 處理的維度不會重複引用同一句（見「六張卡不可共用同一句泛用說明」）。
  */
-function resolveDimensionEvidence(rows: readonly DimensionRow[], level: DebriefLevel, sum: number, isOverLineSpecialDimension: boolean): string {
-  if (isOverLineSpecialDimension) {
-    const flagRows = rows.filter((row) => OVER_LINE_FLAG_CHOICES.includes(row.choiceId));
-    // rows 依 choice1…choice5 順序排列，OVER_LINE_FLAG_CHOICES 內較晚出現的（keep-confess）自然排在陣列後面。
-    const chosen = flagRows[flagRows.length - 1];
-    if (chosen) return chosen.evidence;
-    // 越線由 boundary 累計觸發、未選 doc-private／keep-confess：退回一般負向證據，仍不得引用正向選擇。
-    const fallback = pickDirectional(rows, 'negative');
-    return fallback ? fallback.evidence : NO_STABLE_EVIDENCE;
+function buildDimension(
+  content: LoadedContent,
+  mba: MbaContent,
+  key: string,
+  dim: MbaDimension,
+  majorChoiceIds: readonly string[],
+  used: Set<string>,
+): DebriefDimension {
+  const values = majorChoiceIds
+    .map((choiceId) => (choiceId ? mba.scores[choiceId] : undefined))
+    .filter((row): row is MbaScoreRow => row !== undefined)
+    .map((row) => row[dim.scoreKey])
+    .filter((value) => value !== 0);
+
+  let level = levelForRows(values);
+  level = applyNonCancelableCaps(level, key, majorChoiceIds);
+
+  const priority = EVIDENCE_PRIORITY[dim.scoreKey];
+  const toEntry = (choiceId: string): DebriefEvidenceEntry => {
+    const row = mba.scores[choiceId]!;
+    return { choiceId, actionQuote: findChoiceText(content, choiceId), reactionQuote: row.reactionQuote, analysis: row.evidence };
+  };
+
+  const entries: DebriefEvidenceEntry[] = [];
+  if (level === '證據矛盾') {
+    const positiveId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'positive', used);
+    if (positiveId) { entries.push(toEntry(positiveId)); used.add(positiveId); }
+    const negativeId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'negative', used);
+    if (negativeId) { entries.push(toEntry(negativeId)); used.add(negativeId); }
+  } else if (level === '穩定建立' || level === '部分建立') {
+    const positiveId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'positive', used);
+    if (positiveId) { entries.push(toEntry(positiveId)); used.add(positiveId); }
+  } else if (level === '明顯受損') {
+    const negativeId = findEvidenceEntry(priority, majorChoiceIds, mba.scores, dim.scoreKey, 'negative', used);
+    if (negativeId) { entries.push(toEntry(negativeId)); used.add(negativeId); }
   }
-  if (level === '高' || level === '中') {
-    const chosen = pickDirectional(rows, 'positive');
-    return chosen ? chosen.evidence : NO_STABLE_EVIDENCE;
-  }
-  const positives = rows.filter((row) => row.value > 0);
-  const negatives = rows.filter((row) => row.value < 0);
-  if (sum === 0 && positives.length > 0 && negatives.length > 0) {
-    const bestPositive = pickDirectional(rows, 'positive')!;
-    const bestNegative = pickDirectional(rows, 'negative')!;
-    const positiveQuote = bestPositive.evidence.replace(/。$/, '');
-    const negativeQuote = bestNegative.evidence.replace(/。$/, '');
-    return `一邊是「${positiveQuote}」，另一邊是「${negativeQuote}」。兩個選擇互相抵銷，所以這一項仍不穩定。`;
-  }
-  const chosen = pickDirectional(rows, 'negative');
-  return chosen ? chosen.evidence : NO_STABLE_EVIDENCE;
+  // 未充分建立：不挑證據（sum=0 且沒有任何非零選項，本來就沒有東西可挑）。
+
+  return { key, label: dim.label, level, entries, note: entries.length === 0 ? NO_STABLE_EVIDENCE : undefined };
 }
 
 interface MagnitudePoint {
@@ -260,22 +341,12 @@ export function computeDebrief(content: LoadedContent, endingId: string, majorCh
   const ending = mba.endings[endingId];
   if (!ending) return undefined;
 
-  const dimensions: DebriefDimension[] = Object.entries(mba.dimensions).map(([key, dim]) => {
-    const rows: DimensionRow[] = [];
-    let sum = 0;
-    for (const choiceId of majorChoiceIds) {
-      const row = mba.scores[choiceId];
-      if (!row) continue;
-      const value = row[dim.scoreKey];
-      sum += value;
-      rows.push({ choiceId, value, evidence: row.evidence });
-    }
-    let level = levelForSum(sum);
-    const isOverLineSpecialDimension = endingId === 'ending-over-line' && CLAMPED_TO_FRAGILE_ON_OVER_LINE.has(key);
-    if (isOverLineSpecialDimension && LEVEL_RANK[level] > LEVEL_RANK['脆弱']) level = '脆弱';
-    const evidence = resolveDimensionEvidence(rows, level, sum, isOverLineSpecialDimension);
-    return { key, label: dim.label, level, evidence };
-  });
+  // 依 C／I／F／A／S／P 固定順序處理（等同畫面卡片由上到下的順序），讓「已被前一張卡用掉的
+  // 選項」在處理後面的維度時正確被排除，六張卡才不會共用同一句證據。
+  const usedEvidenceChoices = new Set<string>();
+  const dimensions: DebriefDimension[] = Object.entries(mba.dimensions).map(([key, dim]) =>
+    buildDimension(content, mba, key, dim, majorChoiceIds, usedEvidenceChoices),
+  );
 
   const stakeholderOrder: Array<{ key: string; outcome: string }> = [
     { key: 'lin-yucheng', outcome: ending.stakeholderOutcomes['lin-yucheng'] ?? '' },
@@ -336,7 +407,18 @@ export function formatDebriefSummary(result: DebriefResult): string {
   result.choiceTexts.forEach((text, index) => lines.push(`${index + 1}. ${text}`));
   lines.push('');
   lines.push('組織狀態：');
-  for (const dimension of result.dimensions) lines.push(`${dimension.label}：${dimension.level}——${dimension.evidence}`);
+  for (const dimension of result.dimensions) {
+    lines.push(`${dimension.label}：${dimension.level}`);
+    if (dimension.entries.length === 0) {
+      lines.push(`　${dimension.note ?? ''}`);
+      continue;
+    }
+    for (const entry of dimension.entries) {
+      lines.push(`　你的行動：${entry.actionQuote}`);
+      lines.push(`　故事中的反應：${entry.reactionQuote}`);
+      lines.push(`　分析：${entry.analysis}`);
+    }
+  }
   lines.push('');
   lines.push('各方結果：');
   for (const stakeholder of result.stakeholders) lines.push(`${stakeholder.name}：${stakeholder.outcome}`);

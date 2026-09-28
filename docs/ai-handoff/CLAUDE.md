@@ -1313,3 +1313,34 @@
 - 交給 ChatGPT：無新增待辦。
 - 未決問題或阻塞：無。
 - 驗證結果：部署前確認 `git status` 乾淨、`HEAD` 為 `fbc1f5e`；`curl` 讀取線上 `https://sparkling-glitter-6ce0.rene-oops.workers.dev/` 的 `index.html`，確認引用的 JS bundle 檔名為 `index-CaHuF3sc.js`，與本機最新建置一致。
+
+## Claude-20260928-1336（MBA v2：戲劇稀疏評分取代舊版雷達／高中脆弱低）
+
+- 時間：2026-09-28T13:36:20Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260928-2056`（最新，交付 `property/mba-dramatic-analysis-scoring-v2-20260928.md` 並交給 Claude 實作）；一併回顧 `ChatGPT-20260928-1956`（下游台詞重寫，已於上一筆處理其技術待辦）、`ChatGPT-20260928-2021`／`2050`（問卷嘗試，後續已被本筆的規格取代，未整合到 runtime，不需要 Claude 回應）。
+- 本次範圍：依 `property/mba-dramatic-analysis-scoring-v2-20260928.md`「七、Claude 實作交接」，把整個 MBA debrief 的計分／等級／呈現邏輯換成戲劇稀疏評分系統，取代舊版「六維度加總 → 高／中／脆弱／低雷達圖」。
+- 實際變更檔案：
+  - `src/domain/schema.ts`：`MbaScoreRow` 新增 `reactionQuote` 欄位（既有下游台詞逐字引用）；`parseMbaScoreRow` 同步要求該欄位。
+  - `property/mba-debrief.json`：十五個選項的 `scores` 全部換成 v2 稀疏矩陣數值（`0` 代表未測到，不是中性分）、v2 的 `evidence`（原「分析依據」欄）與新增的 `reactionQuote`；`endings`／`stakeholders`／`theories`／`choiceTheories`／`copy` 未改動。
+  - `src/domain/mba.ts`：`DebriefLevel` 改為五級（穩定建立／部分建立／證據矛盾／未充分建立／明顯受損）；移除舊版 `levelForSum`／`resolveDimensionEvidence`／`pickDirectional`／`OVER_LINE_FLAG_CHOICES`／`CLAMPED_TO_FRAGILE_ON_OVER_LINE`；新增 `levelForRows`（稀疏加總換算等級）、`NON_CANCELABLE_RULES`＋`applyNonCancelableCaps`（五條不可抵銷規則）、`EVIDENCE_PRIORITY`＋`findEvidenceEntry`（依維度優先序、跨卡不重複選項）、`buildDimension`（組一張狀態卡）；`DebriefDimension` 改為 `{ key, label, level, entries: DebriefEvidenceEntry[], note? }`，新增 `DebriefEvidenceEntry { choiceId, actionQuote, reactionQuote, analysis }`；`formatDebriefSummary` 同步改輸出新結構。causalChains／theories／stakeholders 的既有邏輯（`sumAbs`／`dominantDimension`／`selectTheories`）未改動，稀疏矩陣下一樣可運作。
+  - `src/ui/render.ts`：移除 `renderDebriefRadar`（雷達圖 SVG），新增 `renderDebriefStateCard`（每個維度一張卡：標題「維度：等級」＋一組或兩組「你的行動／故事中的反應／分析」，或查無證據時的 `note`）；`openDebrief` 的「這次形成的組織狀態」區塊改用新卡片。
+  - `src/visual.css`：移除 `.debrief-radar-*`／`.debrief-state-chart`／`.debrief-state-layout` 樣式，新增 `.debrief-state-cards`／`.debrief-state-card`／`.debrief-entry-divider`／`.debrief-note`。
+  - `tests/mba.test.ts`：重寫全部因新計分邏輯而失效的斷言（見下方「已定案事項」），並新增四則 v2 專屬驗收（不共用同一選項當證據、未充分建立不挑證據、狀態卡不再帶數字欄位等）。
+  - `property/README.md`：「MBA Organizational Debrief」一節改寫為 v2 說明。
+- 已定案事項：
+  1. **十五個選項的 reactionQuote 逐字引用既有下游台詞**（不是新寫的台詞）：`invite-clear`→「我把檔案存好了。」、`invite-vague`→「「影響職務安排」是換專案，還是沒有職務？」、`invite-goodnews`→「這就是你說的好消息？」、`notice-direct`→「好。繼續。」、`notice-euphemism`→「先聽原因。說完我再決定要不要停。」、`notice-performance`→「這是績效改善計畫？」、`answer-admit`→「好。那我還能決定什麼？」、`answer-deflect`→「後面的問題先由雅琳記。」、`answer-bargain`→「周主管，這句不在核准資訊裡。沒有保留職位的轉圜方案。」、`doc-protect`→「直接找我。你也可以帶你信任的人一起確認。」、`doc-pressure`→「紙本留下。寄件時間和版本請寫清楚。」、`doc-private`→「作品、推薦、文件，都換窗口。」、`keep-advocate`→「……那就讓我先氣著。」、`keep-credit`→「我剛才已經開口了。」（與 v2 規格「五、最後分析畫面」範例逐字相符）、`keep-confess`→「推薦信、作品核准、離職文件，我還要找你處理。你現在說喜歡我，要我怎麼回？」。每個都已對照現行 `property/scenes/*.json` 逐字核對存在。
+  2. **「分析」欄位直接沿用 v2 矩陣表的「分析依據」文字**（ChatGPT 原文，一字未改），作為 `MbaScoreRow.evidence`；causalChains／理論鏡頭沿用舊有演算法讀取同一欄位，未受影響。
+  3. **「證據矛盾」的呈現方式**：v2 規格「五」的範例把一正一負兩個行動寫成一句合併的第三人稱轉述（例如「你先讓雨澄決定是否繼續聽原因；後來又說等程序結束、由她再次開口」）。這句轉述不是任何選項的逐字引用，屬於新的敘事改寫，依角色邊界不是 Claude 能自行創作的內容。改為每個方向各自完整顯示一組「你的行動（逐字引用該選項按鈕文字）／故事中的反應／分析」，兩組並列，不合併成一句轉述——效果相同（同時看到一正一負的具體行動與後果），但每一個字都是既有內容，沒有新寫的連接句。
+  4. **證據優先序**：依 v2「五、證據分配」的六個維度優先序表（各自列出的 Choice 順序）逐一在該維度非零、且尚未被其他維度卡片使用過的選項裡挑；優先序表找不到就退回「依 Choice1…5 自然順序找任一個還沒用過的非零選項」，避免因為優先序表沒列到某個決策點（例如 `management_credibility` 沒列 Choice4）就誤判成查無證據。
+  5. **不可抵銷規則的「不再看結局名稱」**：移除舊版「只要 endingId 是 ending-over-line，就把三個維度封頂到脆弱」的邏輯；改成純粹依玩家選了哪個選項（`invite-goodnews`／`notice-performance`／`answer-bargain`／`doc-private`／`keep-confess`）觸發對應維度的上限，符合 v2「四」第 6 條。
+- **實測發現的邊界情況，交給 ChatGPT 或使用者評估是否需要調整（未擅自更動矩陣或優先序表）：**
+  1. **六張卡不共用同一個選項的規則，配合矩陣裡「一個選項同時影響 4–6 個維度」的密度（例如 `answer-bargain` 影響全部六維、`doc-private`／`keep-confess` 影響五維、`keep-advocate`／`keep-credit` 各影響四維），會讓某些健康路徑也出現「查無足夠的可觀察行動」的空卡**。實測「全選 A」的 TRUE END 路徑（`invite-clear`／`notice-direct`／`answer-admit`／`doc-protect`／`keep-advocate`）：心理安全與程序完整這兩張卡都落到「本輪沒有足夠的可觀察行動」——不是因為這兩個維度沒有證據（心理安全其實是「部分建立」，加總為正），而是唯一的非零貢獻者（`keep-advocate`）已經被員工主體性那張卡用掉。這是依規則忠實運算的結果，不是程式錯誤，但整體案例分析會比預期空。若覺得這個比例不理想，可能的方向：(a) 放寬「跨卡不重複」規則（例如允許同一選項被引用，只要「分析」文字不同）；(b) 調整矩陣，讓每個選項少觸及一兩個維度；(c) 接受現狀。三個方向都涉及 ChatGPT 的內容判斷，Claude 未自行選擇。
+  2. `doc-private`／`answer-bargain` 等 C 選項因為觸及維度多，同樣容易在越線結局把好幾張卡的證據「用光」，導致該結局的部分封頂維度顯示查無證據而非直接引用觸發越線的那個選項本身（例如 `ending-over-line` 的 `employee_agency`／`process_integrity` 兩張卡查無證據，`perceived_fairness` 才輪到 `doc-private` 本身作證）。這同樣是規則忠實運算的結果，測試已鎖定這個行為（見 `tests/mba.test.ts`）。
+- 交給 ChatGPT：上述兩點邊界情況，待評估是否需要調整不可抵銷規則的「跨卡不重複」限制或矩陣密度；`property/mba-organizational-debrief.md` 開頭的「待 Claude 實作」狀態可以更新了（Claude 未自行修改該檔）。
+- 未決問題或阻塞：無新增；既有的 04／06 過場影片、`to-questionnaire...md` 相關的問卷嘗試（已被本次規格取代，非本次整合對象）沿續不變。
+- 驗證結果：
+  - `npm run typecheck`、`npm run build` 全數通過。
+  - `npm test`：19 檔／**210**／210 通過（較上一輪 +3：mba.test.ts 從 19 則增至 22 則，新增「六張卡不共用選項」「未充分建立不挑證據」「狀態卡不再帶數字欄位」三則 v2 專屬驗收）。
+  - Chromium 實機（dev server，全新 `localStorage`，桌機 1024×768）：完整玩一輪全選 A 的 TRUE END（`invite-clear`／`notice-direct`／`answer-admit`／`doc-protect`／`keep-advocate`），開啟「查看案例分析」——六個維度卡片逐字核對與上方「已定案事項」第 1、2 點及測試斷言完全一致（含心理安全／程序完整的「本輪沒有足夠的可觀察行動」空卡）；畫面不再出現雷達圖或任何數字；主控台在桌機與手機（375×812）模擬下皆無錯誤。未逐一實機驗證 `ending-decent`／`ending-soft-knife`／`ending-over-line` 三個結局的畫面（已由 `tests/mba.test.ts` 的多組具體案例涵蓋分數、等級與證據挑選邏輯，未重複人工播放）。
+- 提交後續：依持久記憶規則重建 `cloudflare-pages-upload/last-one-on-one-site.zip`。

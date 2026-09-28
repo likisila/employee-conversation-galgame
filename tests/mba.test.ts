@@ -5,7 +5,9 @@ import { computeDebrief, formatDebriefSummary } from '../src/domain/mba';
 
 /**
  * property/mba-debrief.md「八、Claude 實作需求」的驗收：四結局皆可開啟分析、同一路徑產生穩定內容、
- * 微選擇不影響 debrief、摘要不包含內部數值。
+ * 微選擇不影響 debrief、摘要不包含內部數值。2026-09-28 起計分邏輯改依
+ * property/mba-dramatic-analysis-scoring-v2-20260928.md 重寫（稀疏矩陣、五種顯示等級、
+ * 不可抵銷規則、依優先序挑證據且六張卡不共用同一個選項），相關驗收併入本檔。
  */
 
 const PATHS: Record<string, string[]> = {
@@ -93,23 +95,30 @@ describe('MBA Organizational Debrief：計算層', () => {
     expect(resultB).toEqual(withoutMicro);
   });
 
-  it('END 04：員工主體性／心理安全／程序完整最高只顯示「脆弱」', () => {
+  it('END 04：doc-private 的不可抵銷規則固定顯示「明顯受損」（不論該維度是否找得到證據）', () => {
+    // 2026-09-28 依 mba-dramatic-analysis-scoring-v2-20260928.md「四、不可抵銷規則」第 4 條，
+    // doc-private 讓感知公平／員工主體性／心理安全／程序完整固定顯示「明顯受損」，不是「最高只能」，
+    // 也不再看結局名稱（見同文件第 6 條：END 04 不另外憑結局名稱扣分）。
     const content = loadContent();
     const result = computeDebrief(content, 'ending-over-line', PATHS['ending-over-line']!)!;
-    const clamped = ['employee_agency', 'psychological_safety', 'process_integrity'];
+    const fixed = ['perceived_fairness', 'employee_agency', 'psychological_safety', 'process_integrity'];
     for (const dimension of result.dimensions) {
-      if (clamped.includes(dimension.key)) {
-        expect(['脆弱', '低'], dimension.key).toContain(dimension.level);
-      }
+      if (fixed.includes(dimension.key)) expect(dimension.level, dimension.key).toBe('明顯受損');
     }
   });
 
-  it('證據句同分時取較晚的選擇（呈現 delayed consequence）', () => {
+  it('依維度的證據優先順序挑主要證據，不是依分數大小或選擇順序（見「五、證據分配」）', () => {
+    // management_credibility 的優先序是 Choice3→Choice1→Choice5→Choice2；這條路徑裡
+    // answer-admit（Choice3）、invite-clear（Choice1）、keep-advocate（Choice5）都對這個維度有
+    // 正向證據，但 Choice3 優先序最前，即使 keep-advocate 的分數與它相同、又排在陣列後面。
     const content = loadContent();
-    // doc-protect 與 keep-advocate 在 management_credibility 都是 +1；較晚的 keep-advocate 應勝出。
     const result = computeDebrief(content, 'ending-true-finale', PATHS['ending-true-finale']!)!;
     const credibility = result.dimensions.find((d) => d.key === 'management_credibility')!;
-    expect(credibility.evidence).toBe('說明自己做過什麼，也把推薦和資源留下，沒有要求雨澄回報。');
+    expect(credibility.level).toBe('穩定建立');
+    expect(credibility.entries).toHaveLength(1);
+    expect(credibility.entries[0]!.choiceId).toBe('answer-admit');
+    expect(credibility.entries[0]!.analysis).toBe('正面承認決定已定與延遲告知，先回答雨澄問的問題。');
+    expect(credibility.entries[0]!.reactionQuote).toBe('好。那我還能決定什麼？');
   });
 
   it('複製摘要不包含內部數值（±數字或原始 C/I/F/A/S/P 欄位名），並使用正式新標題', () => {
@@ -138,57 +147,70 @@ describe('MBA Organizational Debrief：計算層', () => {
     expect(computeDebrief(content, 'not-a-real-ending', [])).toBeUndefined();
   });
 
-  it('證據句方向規則：「低」只從負向選項取證據，不會借用正向選項', () => {
+  it('五個 C 選項讓 management_credibility 加總落到「明顯受損」，證據依優先序挑 answer-bargain', () => {
+    // 五個 C 選項的 management_credibility 全部是負分；優先序 Choice3→Choice1→Choice5→Choice2，
+    // Choice3（answer-bargain）最前，即使 Choice4（doc-private）與 Choice5（keep-confess）
+    // 也都是負分且排在陣列更後面（doc-private 甚至不在這個維度的優先序表裡）。
     const content = loadContent();
-    // 2026-09-28 分數重新校準後，五個 B 選項（invite-vague／notice-euphemism／answer-deflect／
-    // doc-pressure／keep-credit）的 management_credibility 都轉為正向或接近零，不再適合示範
-    // 「低」；改用五個 C 選項，management_credibility 全部是 -2（同分），同分取較晚：keep-confess。
     const majorChoiceIds = ['invite-goodnews', 'notice-performance', 'answer-bargain', 'doc-private', 'keep-confess'];
     const result = computeDebrief(content, 'ending-soft-knife', majorChoiceIds)!;
     const credibility = result.dimensions.find((d) => d.key === 'management_credibility')!;
-    expect(credibility.level).toBe('低');
-    expect(credibility.evidence).toBe('推薦、文件和作品核准還沒結束，就要求雨澄回應主管的私人感情。');
+    expect(credibility.level).toBe('明顯受損');
+    expect(credibility.entries).toHaveLength(1);
+    expect(credibility.entries[0]!.choiceId).toBe('answer-bargain');
+    expect(credibility.entries[0]!.analysis).toBe('用不存在的轉圜交換配合，雅琳必須揭露沒有任何保留職位方案。');
   });
 
-  it('證據句方向規則：淨零且正負皆有的維度，畫面並列正負兩項證據', () => {
+  it('證據矛盾：淨零且正負皆有的維度，畫面並列一正一負兩張證據（不是合併成一句話）', () => {
+    // information_quality：invite-clear +2、notice-performance -2、其餘三選擇這個維度都是 0
+    // → 加總 0，正負皆有 → 證據矛盾。優先序 Choice1→Choice2→Choice3→Choice4，
+    // 兩者都排在最前面兩位，各自成為正向／負向證據，不需要再比大小或比先後。
     const content = loadContent();
-    // 2026-09-28 分數重新校準後，answer-deflect 的 information_quality 已轉為正向，換一組仍會
-    // 淨零的組合：invite-clear +2、notice-performance -2、answer-bargain -2、doc-protect +1、
-    // keep-advocate +1 → 加總 0，正負皆有；兩個負向同分（-2），較晚出現的 answer-bargain 勝出。
-    const majorChoiceIds = ['invite-clear', 'notice-performance', 'answer-bargain', 'doc-protect', 'keep-advocate'];
+    const majorChoiceIds = ['invite-clear', 'notice-performance', 'answer-admit', 'doc-protect', 'keep-advocate'];
     const result = computeDebrief(content, 'ending-soft-knife', majorChoiceIds)!;
     const info = result.dimensions.find((d) => d.key === 'information_quality')!;
-    expect(info.evidence).toContain('兩個選擇互相抵銷');
-    expect(info.evidence).toContain('會議前先說明要談職務調整，也說雅琳會在場，雨澄至少知道該準備什麼'); // invite-clear：最強正向
-    expect(info.evidence).toContain('拿不存在的轉圜空間交換雨澄當場配合'); // answer-bargain：最強負向（與 notice-performance 同分，取較晚）
-    expect(info.evidence).not.toContain('正向行為被另一個選擇抵銷'); // 舊版報表式措辭已撤回
+    expect(info.level).toBe('證據矛盾');
+    expect(info.entries).toHaveLength(2);
+    const byId = Object.fromEntries(info.entries.map((entry) => [entry.choiceId, entry]));
+    expect(byId['invite-clear']?.analysis).toBe('先說職務調整、雅琳在場與存檔準備；雨澄能先完成手邊工作。');
+    expect(byId['notice-performance']?.analysis).toBe('把結構性裁撤引向個人表現，雅琳必須當場更正，雨澄被迫替自己辯護。');
   });
 
-  it('END 04 封頂維度的證據必須引用 doc-private，不得引用 keep-advocate 等正向選擇', () => {
+  it('封頂維度即使查無可顯示證據，等級仍固定顯示「明顯受損」（不會因為查無證據就回退成其他等級）', () => {
+    // doc-private 讓 perceived_fairness／employee_agency／psychological_safety／process_integrity
+    // 固定顯示「明顯受損」；但這條路徑（invite-goodnews／notice-performance／answer-bargain／
+    // doc-private）裡，每個維度會依優先序找還沒被別張卡用掉的證據——employee_agency 與
+    // process_integrity 的候選（answer-bargain、doc-private）都已被前面的卡片用掉，因此查無
+    // 證據；perceived_fairness 由 doc-private 本身作證，psychological_safety 由 notice-performance
+    // 作證。四個維度的等級都不受影響，一律是「明顯受損」。
     const content = loadContent();
-    // doc-private 現在會立即終止談話並跳過 Choice 5（見 PATHS 註解），
-    // 因此這條路徑不會再同時出現 doc-private 與 keep-confess；封頂維度的證據只能來自 doc-private。
     const result = computeDebrief(content, 'ending-over-line', PATHS['ending-over-line']!)!;
-    const capped = ['employee_agency', 'psychological_safety', 'process_integrity'];
-    for (const key of capped) {
-      const dimension = result.dimensions.find((d) => d.key === key)!;
-      expect(['脆弱', '低'], key).toContain(dimension.level);
-      expect(dimension.evidence, key).toBe('用私人金錢補正式給付，把公司責任變成一筆欠主管的人情。');
-    }
+    const byKey = Object.fromEntries(result.dimensions.map((dimension) => [dimension.key, dimension]));
+    expect(byKey['perceived_fairness']!.level).toBe('明顯受損');
+    expect(byKey['employee_agency']!.level).toBe('明顯受損');
+    expect(byKey['psychological_safety']!.level).toBe('明顯受損');
+    expect(byKey['process_integrity']!.level).toBe('明顯受損');
+
+    expect(byKey['perceived_fairness']!.entries[0]?.choiceId).toBe('doc-private');
+    expect(byKey['psychological_safety']!.entries[0]?.choiceId).toBe('notice-performance');
+    expect(byKey['employee_agency']!.entries).toHaveLength(0);
+    expect(byKey['employee_agency']!.note).toBe('本輪沒有足夠的可觀察行動。');
+    expect(byKey['process_integrity']!.entries).toHaveLength(0);
+    expect(byKey['process_integrity']!.note).toBe('本輪沒有足夠的可觀察行動。');
   });
 
-  it('END 04 由 boundary 累計觸發、未選 doc-private／keep-confess 時，封頂維度仍退回負向證據而非正向', () => {
+  it('answer-bargain 的不可抵銷規則不需要越線結局或 doc-private／keep-confess 也會生效', () => {
+    // 「四、不可抵銷規則」第 3 條只看有沒有選 answer-bargain，不管結局是什麼；這裡刻意傳入
+    // ending-over-line 純粹是為了呼叫 computeDebrief（純函式，不驗證引擎是否真的走到這裡），
+    // 用來證明封頂邏輯是依選項而非結局名稱觸發（見第 6 條）。
     const content = loadContent();
-    // 2026-09-28 分數重新校準後 doc-pressure 的 employee_agency 已轉為正向，換成仍含一個負向項
-    // 的組合：invite-clear +1、notice-direct +1、answer-bargain -2、doc-protect +2、keep-advocate +1
-    // → 加總 3（中），但本路徑結局仍傳入 ending-over-line（模擬未選旗標選項也可能因其他機制越線
-    // 的情境），封頂應強制顯示「脆弱」，且因沒有 doc-private／keep-confess，須退回一般負向證據
-    // （answer-bargain 是唯一負向項），不得顯示查無證據或借用正向選項。
     const majorChoiceIds = ['invite-clear', 'notice-direct', 'answer-bargain', 'doc-protect', 'keep-advocate'];
     const result = computeDebrief(content, 'ending-over-line', majorChoiceIds)!;
-    const agency = result.dimensions.find((d) => d.key === 'employee_agency')!;
-    expect(agency.level).toBe('脆弱');
-    expect(agency.evidence).toBe('拿不存在的轉圜空間交換雨澄當場配合。');
+    const byKey = Object.fromEntries(result.dimensions.map((dimension) => [dimension.key, dimension]));
+    for (const key of ['management_credibility', 'perceived_fairness', 'employee_agency', 'psychological_safety']) {
+      expect(byKey[key]!.level, key).toBe('明顯受損');
+    }
+    expect(byKey['management_credibility']!.entries[0]?.choiceId).toBe('answer-bargain');
   });
 
   it('每個結局都有兩套替代策略，各自是一段完整文字（不拆成改善／代價）', () => {
@@ -274,6 +296,35 @@ describe('MBA Organizational Debrief：計算層', () => {
       const strategy = content.mba.endings[endingId]!.strategy;
       expect(company.outcome, endingId).not.toBe(strategy);
       expect(company.outcome.length, endingId).toBeGreaterThan(0);
+    }
+  });
+
+  it('六張卡不共用同一個選項當證據（見「六、與故事一致性的驗收」第 6 點）', () => {
+    const content = loadContent();
+    for (const [endingId, mainChoices] of Object.entries(PATHS)) {
+      const result = computeDebrief(content, endingId, mainChoices)!;
+      const usedChoiceIds = result.dimensions.flatMap((dimension) => dimension.entries.map((entry) => entry.choiceId));
+      expect(usedChoiceIds, endingId).toEqual([...new Set(usedChoiceIds)]);
+    }
+  });
+
+  it('未充分建立：五次選擇對這個維度全部是 0 分時，不挑證據，只顯示查無可觀察行動', () => {
+    const content = loadContent();
+    // perceived_fairness：invite-clear／notice-euphemism／answer-deflect／doc-pressure／keep-credit
+    // 這五個選項對這個維度全部是 0（見 mba-debrief.json 的稀疏矩陣），加總 0 且沒有任何非零證據。
+    const majorChoiceIds = ['invite-clear', 'notice-euphemism', 'answer-deflect', 'doc-pressure', 'keep-credit'];
+    const result = computeDebrief(content, 'ending-soft-knife', majorChoiceIds)!;
+    const fairness = result.dimensions.find((d) => d.key === 'perceived_fairness')!;
+    expect(fairness.level).toBe('未充分建立');
+    expect(fairness.entries).toHaveLength(0);
+    expect(fairness.note).toBe('本輪沒有足夠的可觀察行動。');
+  });
+
+  it('組織狀態卡不再顯示數字或雷達面積：DebriefDimension 沒有裸露的 C/I/F/A/S/P 分數欄位', () => {
+    const content = loadContent();
+    const result = computeDebrief(content, 'ending-true-finale', PATHS['ending-true-finale']!)!;
+    for (const dimension of result.dimensions) {
+      expect(Object.keys(dimension).sort()).toEqual(['entries', 'key', 'label', 'level', 'note'].sort());
     }
   });
 });

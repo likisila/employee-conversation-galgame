@@ -742,47 +742,19 @@ function openDecisionMenu(app: HTMLElement, engine: StoryEngine, content: Loaded
  * 面板本身可捲動（見 style.css 的 `.debrief-panel`）。
  */
 /**
- * 「這次形成的組織狀態」左欄的雷達圖：把六個維度的文字等級（高／中／脆弱／低）映成 0–3 的
- * 半徑比例，純粹是右欄文字清單的視覺化，不是另一份數值來源；圖示標記 `aria-hidden`，
- * 完整內容仍以右欄文字為準，螢幕閱讀器不會重複唸兩次。
+ * 「這次形成的組織狀態」一張卡片：維度＋等級一行，接著依 `entries` 列出一組或兩組
+ * 「你的行動／故事中的反應／分析」，或在沒有證據時顯示 `note`（見
+ * property/mba-dramatic-analysis-scoring-v2-20260928.md「五、最後分析畫面」）。
+ * 不再畫雷達圖或顯示數字——v2 明文規定「不顯示數字，也不畫雷達面積」。
  */
-function renderDebriefRadar(dimensions: readonly DebriefDimension[]): string {
-  const levelValue = (level: DebriefDimension['level']): number => {
-    if (level === '高') return 3;
-    if (level === '中') return 2;
-    if (level === '脆弱') return 1;
-    return 0;
-  };
-  const size = 200;
-  // 標籤用 text-anchor start/end 錨定在軸線端點，字串本身會往錨點外側延伸；
-  // padding 留出這段延伸的空間，避免最長的四、五字標籤在 SVG 視埠邊緣被裁掉
-  // （字級加大後，最長的五字標籤需要的延伸空間也跟著變大，padding 一併調高）。
-  const padding = 52;
-  const viewBoxSize = size + padding * 2;
-  const center = size / 2 + padding;
-  const maxRadius = size / 2 - 22;
-  const count = dimensions.length;
-  const angleFor = (index: number): number => (Math.PI * 2 * index) / count - Math.PI / 2;
-  const pointFor = (index: number, ratio: number): [number, number] => {
-    const angle = angleFor(index);
-    return [center + maxRadius * ratio * Math.cos(angle), center + maxRadius * ratio * Math.sin(angle)];
-  };
-  const gridPolygons = [0.25, 0.5, 0.75, 1].map((ratio) =>
-    `<polygon points="${dimensions.map((_, index) => pointFor(index, ratio).join(',')).join(' ')}" class="debrief-radar-grid" />`).join('');
-  const axisLines = dimensions.map((_, index) => {
-    const [x, y] = pointFor(index, 1);
-    return `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" class="debrief-radar-axis" />`;
-  }).join('');
-  const dataPoints = dimensions.map((dimension, index) => pointFor(index, levelValue(dimension.level) / 3));
-  const dataPolygon = `<polygon points="${dataPoints.map(([x, y]) => `${x},${y}`).join(' ')}" class="debrief-radar-shape" />`;
-  const dataDots = dataPoints.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.2" class="debrief-radar-dot" />`).join('');
-  const labels = dimensions.map((dimension, index) => {
-    const [x, y] = pointFor(index, 1.28);
-    const cos = Math.cos(angleFor(index));
-    const anchor = Math.abs(cos) < 0.2 ? 'middle' : cos > 0 ? 'start' : 'end';
-    return `<text x="${x}" y="${y}" text-anchor="${anchor}" class="debrief-radar-label">${escapeHtml(dimension.label)}</text>`;
-  }).join('');
-  return `<svg viewBox="0 0 ${viewBoxSize} ${viewBoxSize}" class="debrief-radar" aria-hidden="true" focusable="false">${gridPolygons}${axisLines}${dataPolygon}${dataDots}${labels}</svg>`;
+function renderDebriefStateCard(dimension: DebriefDimension): string {
+  const entries = dimension.entries.map((entry) => `
+    <p>你的行動：${escapeHtml(entry.actionQuote)}</p>
+    <p>故事中的反應：${escapeHtml(entry.reactionQuote)}</p>
+    <p>分析：${escapeHtml(entry.analysis)}</p>
+  `).join('<hr class="debrief-entry-divider" />');
+  const body = entries || `<p class="debrief-note">${escapeHtml(dimension.note ?? '')}</p>`;
+  return `<div class="debrief-state-card"><h4>${escapeHtml(dimension.label)}：${escapeHtml(dimension.level)}</h4>${body}</div>`;
 }
 
 function openDebrief(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks): void {
@@ -801,8 +773,7 @@ function openDebrief(app: HTMLElement, engine: StoryEngine, content: LoadedConte
   const body = [
     section('stakeholders', '利害關係人結果', `<ul>${result.stakeholders.map((stakeholder) =>
       `<li><strong>${escapeHtml(stakeholder.name)}</strong>：${escapeHtml(stakeholder.outcome)}</li>`).join('')}</ul>`),
-    section('state', '這次形成的組織狀態', `<div class="debrief-state-layout"><div class="debrief-state-chart">${renderDebriefRadar(result.dimensions)}</div><ul class="debrief-state">${result.dimensions.map((dimension) =>
-      `<li><strong>${escapeHtml(dimension.label)}：${escapeHtml(dimension.level)}</strong> — ${escapeHtml(dimension.evidence)}</li>`).join('')}</ul></div>`),
+    section('state', '這次形成的組織狀態', `<div class="debrief-state-cards">${result.dimensions.map(renderDebriefStateCard).join('')}</div>`),
     section('causalChains', '關鍵選擇與後果', `<ul>${result.causalChains.map((step) =>
       `<li><p>選擇：「${escapeHtml(step.choiceText)}」</p><p>當下：${escapeHtml(step.immediate)}</p><p>影響：${escapeHtml(step.impact)}</p></li>`).join('')}</ul><p class="debrief-overall"><strong>整體後果：</strong>${escapeHtml(result.overallConsequence)}</p>`),
     section('theories', '相關的組織行為概念', `<ul>${result.theories.map((theory) =>
