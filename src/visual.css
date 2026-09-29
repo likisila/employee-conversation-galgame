@@ -152,34 +152,35 @@
 .decision-close{margin-top:1rem}
 @media(max-width:700px){.decision-panel{padding:1rem}.decision-item .decision-choice{font-size:.9rem}}
 
-/* MBA Organizational Debrief：通關後可選的案例分析，長文閱讀為主，沿用決策點選單同一套
+/* MBA 最後分析 v3：通關後可選的案例分析，長文閱讀為主，沿用決策點選單同一套
    遮罩／面板／焦點循環做法，只是內容多很多、面板本身要能捲動。正式視覺規格待 ChatGPT 定案。 */
 .debrief-menu{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:1rem;background:rgba(4,12,18,.86);backdrop-filter:blur(4px);overflow-y:auto;animation:cutscene-in 200ms ease-out both}
 .debrief-panel{display:flex;flex-direction:column;gap:1rem;width:min(40rem,100%);margin:1rem 0;padding:1.4rem;background:var(--surface);border:1px solid rgba(255,255,255,.2);border-top:3px solid var(--teal);box-shadow:0 20px 60px rgba(0,0,0,.45)}
 .debrief-panel h2{margin:0;color:var(--paper);font-family:'Noto Serif TC',serif;font-size:1.1rem;font-weight:600;letter-spacing:.04em}
+.debrief-mode-label{margin:0;color:var(--teal);font-size:.85rem;font-weight:600;letter-spacing:.03em}
 .debrief-description{margin:0;color:var(--paper-dim,rgba(240,240,240,.75));font-size:.88rem;line-height:1.6}
 .debrief-section{padding-top:.9rem;border-top:1px solid rgba(255,255,255,.12)}
 .debrief-section h3{margin:0 0 .5rem;color:var(--amber);font-size:.82rem;font-weight:700;letter-spacing:.1em}
 .debrief-section p,.debrief-section li{margin:0;color:var(--paper);font-size:.92rem;line-height:1.65}
 .debrief-section ol,.debrief-section ul{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:.4rem}
-.debrief-state-cards{display:flex;flex-direction:column;gap:.7rem}
-.debrief-state-card{padding:.8rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-left:3px solid var(--teal)}
-.debrief-state-card h4{margin:0 0 .4rem;color:var(--teal);font-size:.88rem;font-weight:700;letter-spacing:.04em}
-.debrief-state-card p{margin:0;color:var(--paper);font-size:.88rem;line-height:1.6}
-.debrief-state-card p+p{margin-top:.3rem}
-.debrief-entry-divider{margin:.6rem 0;border:none;border-top:1px dashed rgba(255,255,255,.14)}
-.debrief-note{color:var(--paper-dim,rgba(240,240,240,.75));font-style:italic}
-.debrief-alternative+.debrief-alternative{margin-top:.7rem;padding-top:.7rem;border-top:1px dashed rgba(255,255,255,.14)}
-.debrief-section li strong{color:var(--teal)}
-.debrief-section li p+p{margin-top:.3rem}
-.debrief-overall{margin:.6rem 0 0;padding-top:.6rem;border-top:1px dashed rgba(255,255,255,.14)}
+.debrief-question{margin:0;padding-left:.9rem;border-left:3px solid var(--teal);color:var(--paper);font-size:.94rem;font-style:italic;line-height:1.65}
+.debrief-authority-map{width:100%;border-collapse:collapse;font-size:.85rem}
+.debrief-authority-map th,.debrief-authority-map td{padding:.45rem .5rem;text-align:left;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.12);color:var(--paper);line-height:1.5}
+.debrief-authority-map thead th{color:var(--amber);font-weight:700;letter-spacing:.04em;font-size:.78rem}
+.debrief-authority-map tbody th{color:var(--teal);font-weight:700;white-space:nowrap}
+.debrief-analysis h4{margin:.7rem 0 .3rem;color:var(--teal);font-size:.85rem;font-weight:700;letter-spacing:.04em}
+.debrief-analysis h4:first-child{margin-top:0}
+.debrief-analysis p{margin:0;color:var(--paper);font-size:.92rem;line-height:1.65}
+.debrief-final-title{margin:0 0 .3rem}
 .debrief-actions{display:flex;flex-wrap:wrap;gap:.6rem}
 .debrief-actions .secondary-action{flex:1;min-width:9rem}
 .debrief-copied{margin:0;color:var(--teal);font-size:.82rem}
 @media(max-width:700px){
   .debrief-panel{padding:1rem}
   .debrief-section p,.debrief-section li{font-size:.88rem}
-  .debrief-state-card p{font-size:.85rem}
+  .debrief-analysis p{font-size:.88rem}
+  .debrief-authority-map{font-size:.8rem}
+  .debrief-authority-map th,.debrief-authority-map td{padding:.4rem .35rem}
 }
 
 /* ───── 手機直版：一律只露半身 ─────

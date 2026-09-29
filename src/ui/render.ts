@@ -4,7 +4,7 @@ import type { StoryEngine } from '../engine/StoryEngine';
 import { playCutscene } from './cutscene';
 import { icon } from './icons';
 import { setKeyHandler } from './keyboard';
-import { computeDebrief, formatDebriefSummary, type DebriefDimension } from '../domain/mba';
+import { computeDebrief, formatDebriefSummary } from '../domain/mba';
 import { resolveCharacterFraming, resolvePresentation, spriteSource } from './presentation';
 import { planTyping, runTyping, type TypingHandle, type TypingPlan } from './typing';
 
@@ -736,27 +736,12 @@ function openDecisionMenu(app: HTMLElement, engine: StoryEngine, content: Loaded
 }
 
 /**
- * 通關後可選的 MBA Organizational Debrief：把這一輪的五個主要選擇還原成組織行為案例分析。
- * 只讀 `engine.decisionPoints`（已排除感情線微選擇）與結局場景 ID，不改動存檔、結局或選擇歷史。
- * 蓋在結局畫面上，與 `openDecisionMenu` 同一套遮罩／焦點循環／Esc 關閉做法，但內容長很多，
- * 面板本身可捲動（見 style.css 的 `.debrief-panel`）。
+ * 通關後可選的 MBA 最後分析 v3：把這一輪的主要選擇還原成「管理判斷／決策權／衝突與合作／
+ * 對主問題的回答」的完整路徑分析，不再逐題評分。只讀 `engine.decisionPoints`（已排除感情線
+ * 微選擇）與結局場景 ID，不改動存檔、結局或選擇歷史。蓋在結局畫面上，與 `openDecisionMenu`
+ * 同一套遮罩／焦點循環／Esc 關閉做法，但內容長很多，面板本身可捲動（見 style.css 的
+ * `.debrief-panel`）。
  */
-/**
- * 「這次形成的組織狀態」一張卡片：維度＋等級一行，接著依 `entries` 列出一組或兩組
- * 「你的行動／故事中的反應／分析」，或在沒有證據時顯示 `note`（見
- * property/mba-dramatic-analysis-scoring-v2-20260928.md「五、最後分析畫面」）。
- * 不再畫雷達圖或顯示數字——v2 明文規定「不顯示數字，也不畫雷達面積」。
- */
-function renderDebriefStateCard(dimension: DebriefDimension): string {
-  const entries = dimension.entries.map((entry) => `
-    <p>你的行動：${escapeHtml(entry.actionQuote)}</p>
-    <p>故事中的反應：${escapeHtml(entry.reactionQuote)}</p>
-    <p>分析：${escapeHtml(entry.analysis)}</p>
-  `).join('<hr class="debrief-entry-divider" />');
-  const body = entries || `<p class="debrief-note">${escapeHtml(dimension.note ?? '')}</p>`;
-  return `<div class="debrief-state-card"><h4>${escapeHtml(dimension.label)}：${escapeHtml(dimension.level)}</h4>${body}</div>`;
-}
-
 function openDebrief(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks): void {
   const endingId = engine.currentScene.id;
   const result = computeDebrief(content, endingId, engine.decisionPoints.map((decision) => decision.choiceId));
@@ -770,18 +755,32 @@ function openDebrief(app: HTMLElement, engine: StoryEngine, content: LoadedConte
       ${body}
     </section>`;
 
+  const authorityTable = `
+    <table class="debrief-authority-map">
+      <thead><tr><th scope="col">角色</th><th scope="col">能決定</th><th scope="col">不能決定</th></tr></thead>
+      <tbody>${result.authorityMap.map((row) =>
+        `<tr><th scope="row">${escapeHtml(row.role)}</th><td>${escapeHtml(row.canDecide)}</td><td>${escapeHtml(row.cannotDecide)}</td></tr>`).join('')}</tbody>
+    </table>`;
+
   const body = [
-    section('stakeholders', '利害關係人結果', `<ul>${result.stakeholders.map((stakeholder) =>
-      `<li><strong>${escapeHtml(stakeholder.name)}</strong>：${escapeHtml(stakeholder.outcome)}</li>`).join('')}</ul>`),
-    section('state', '這次形成的組織狀態', `<div class="debrief-state-cards">${result.dimensions.map(renderDebriefStateCard).join('')}</div>`),
-    section('causalChains', '關鍵選擇與後果', `<ul>${result.causalChains.map((step) =>
-      `<li><p>選擇：「${escapeHtml(step.choiceText)}」</p><p>當下：${escapeHtml(step.immediate)}</p><p>影響：${escapeHtml(step.impact)}</p></li>`).join('')}</ul><p class="debrief-overall"><strong>整體後果：</strong>${escapeHtml(result.overallConsequence)}</p>`),
-    section('theories', '相關的組織行為概念', `<ul>${result.theories.map((theory) =>
-      `<li><strong>${escapeHtml(theory.name)}／${escapeHtml(theory.label)}</strong>：${escapeHtml(theory.explanation)}<br />對應證據：${escapeHtml(theory.pathEvidence)}</li>`).join('')}</ul>`),
-    section('alternative', '其他可行做法', result.alternatives.map((alternative) =>
-      `<div class="debrief-alternative"><p>${escapeHtml(alternative.text)}</p></div>`).join('')),
-    section('tradeoffs', '沒有單一最佳答案的地方', `<p>${escapeHtml(result.tradeoffsText)}</p>`),
-    section('limitations', '案例限制', `<ul>${result.limitations.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`),
+    section('question', '主問題', `<blockquote class="debrief-question">${escapeHtml(result.mainQuestion)}</blockquote>`),
+    section('conclusion', '共同結論', `<p>${escapeHtml(result.sharedConclusion)}</p>`),
+    section('path', '你做過的五次選擇', `<ol class="debrief-path">${result.path.map((step) =>
+      `<li><strong>${escapeHtml(step.label)}：</strong>「${escapeHtml(step.choiceText)}」</li>`).join('')}</ol>`),
+    section('authorityMap', '權限地圖', authorityTable),
+    section('analysis', '這條路徑的綜合分析', `
+      <div class="debrief-analysis">
+        <h4>管理判斷</h4><p>${escapeHtml(result.managerialJudgment)}</p>
+        <h4>決策權如何被使用</h4><p>${escapeHtml(result.decisionRights)}</p>
+        <h4>衝突與合作</h4><p>${escapeHtml(result.conflictCollaboration)}</p>
+        <h4>對主問題的回答</h4><p>${escapeHtml(result.answer)}</p>
+      </div>`),
+    section('alternative', '另一種做法與代價', `<p>${escapeHtml(result.alternative)}</p>`),
+    section('finalConclusion', '結論', `
+      <p class="debrief-final-title"><strong>${escapeHtml(result.finalConclusionTitle)}</strong></p>
+      <p>${escapeHtml(result.finalConclusionBody)}</p>
+      <p>${escapeHtml(result.courseLinkSentence)}</p>`),
+    section('limitations', '分析限制', `<p>${escapeHtml(result.analysisLimitation)}</p>`),
   ].join('');
 
   const overlay = document.createElement('section');
@@ -795,6 +794,7 @@ function openDebrief(app: HTMLElement, engine: StoryEngine, content: LoadedConte
   overlay.innerHTML = `
     <div class="debrief-panel">
       <h2>${escapeHtml(result.endingTitle)}｜案例分析</h2>
+      <p class="debrief-mode-label">${escapeHtml(result.endingLabel)}</p>
       ${description}
       ${body}
       <div class="debrief-actions">

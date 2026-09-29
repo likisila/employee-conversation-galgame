@@ -162,15 +162,12 @@
 
 > 課程定位：組織行為（Organizational Behavior，OB），不是人力資源管理（HR）。期末報告主軸是 Managerial Judgment、Decision Rights、Conflict & Collaboration 與 Managerial Roles。完整 Review 門檻見 `mba-organizational-debrief.md` 第零節。
 
-> 轉換狀態：線上／runtime 目前仍為 v2 六維分析；`mba-final-analysis-managerial-judgment-v3-20260929.md` 是待 Claude 整合的新內容權威。v3 上線前，不得把現行六張狀態卡當成已完成的課綱對齊成果。
+> 轉換狀態：2026-09-29 起線上／runtime 已整合 v3（`mba-final-analysis-managerial-judgment-v3-20260929.md`），取代舊版六維分析。v2 的稀疏矩陣、五級狀態、不可抵銷規則、理論篩選與因果鏈已從 `src/domain/mba.ts` 移除，只保留為 `property/mba-dramatic-analysis-scoring-v2-20260928.md` 的實作沿革記錄。
 
 四個結局畫面都有「查看案例分析」按鈕（沒有對應內容時自動不顯示）。內容資料是 `mba-debrief.json`（見上方「property 資料夾」一節），計算在 `src/domain/mba.ts` 的 `computeDebrief()`：
 
-- 只吃五個主要選擇的 ID（`engine.decisionPoints.map(d => d.choiceId)`，本來就已排除感情線微選擇）與結局場景 ID，不讀存檔以外的任何東西，因此同一條路徑每次算出來的內容完全相同。
-- **六項組織狀態卡（2026-09-28 起依 `property/mba-dramatic-analysis-scoring-v2-20260928.md` 重寫，取代舊版雷達圖與高／中／脆弱／低門檻）：**
-  - `mba-debrief.json` 的 `scores` 是稀疏矩陣——`0` 代表這個選項在這個維度沒有可判斷的證據，不是中性分數。等級依五個選擇在該維度的非零分數加總換算成五種顯示狀態：`穩定建立`（≥3）、`部分建立`（1–2）、`證據矛盾`（=0 且正負皆有）、`未充分建立`（=0 且沒有任何非零證據）、`明顯受損`（≤-1）。不顯示數字，也不畫雷達面積。
-  - 不可抵銷規則：`invite-goodnews`／`notice-performance` 讓對應維度最高只能顯示「證據矛盾」；`answer-bargain` 讓對應維度最高只能顯示「明顯受損」；`doc-private`／`keep-confess` 讓對應維度固定顯示「明顯受損」——只看玩家選了哪個選項，不再看結局名稱（舊版「只要是 ending-over-line 就封頂三個維度」的邏輯已移除）。
-  - 每張卡顯示「你的行動」（選項原文）、「故事中的反應」（`scores.<id>.reactionQuote`，逐字引用既有下游台詞）與「分析」（`scores.<id>.evidence`）；`證據矛盾` 同時列一正一負兩組。證據依維度各自的優先序（`src/domain/mba.ts` 的 `EVIDENCE_PRIORITY`）在五個選擇裡挑，且六張卡不會共用同一個選項——因此即使某個維度「明顯受損」，若它唯一的負向來源已被別張卡引用，也可能顯示「本輪沒有足夠的可觀察行動」而不是硬湊一句證據。
-- 因果鏈與理論鏡頭依「五個選擇裡影響最大的決策點」動態挑選（沿用舊版 `sumAbs`／`selectTheories` 邏輯，稀疏矩陣下一樣運作），不是每次都顯示同一批。
+- 只吃主要選擇的 ID（`engine.decisionPoints.map(d => d.choiceId)`，本來就已排除感情線微選擇；`doc-private` 立即終止談話時只有 4 個）與結局場景 ID，不讀存檔以外的任何東西，因此同一條路徑每次算出來的內容完全相同。
+- **不再逐題評分。** 五次選擇只組成「你做過的五次選擇」時間線（`mba-debrief.json` 的 `copy.decisionPointLabels` 提供五個固定標籤，逐字引用玩家選過的選項原文），實際分析依 ending ID 從 `endings.<結局場景 id>` 取一篇固定的完整路徑分析：`managerialJudgment`（管理判斷）、`decisionRights`（決策權如何被使用）、`conflictCollaboration`（衝突與合作）、`answer`（對主問題的回答）、`alternative`（一段完整的替代做法與代價）。
+- 主問題（`copy.mainQuestion`）、共同結論（`copy.sharedConclusion`）、四個角色的權限地圖（`authorityMap`，四個結局共用、不隨路徑改變）與結論區（`copy.finalConclusionTitle`／`finalConclusionBody`／`courseLinkSentence`）都是固定內容，不依選擇計算。
 - 畫面文案（按鈕、區塊標題、案例限制等）都在 `mba-debrief.json` 的 `copy`，改文案不需要碰 `src/`。
 - 要新增／調整結局分析，改 `mba-debrief.json` 的 `endings.<結局場景 id>` 即可；`endings` 缺該結局時，那個結局畫面就不會顯示「查看案例分析」按鈕。

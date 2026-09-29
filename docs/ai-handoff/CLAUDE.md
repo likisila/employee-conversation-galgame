@@ -1425,3 +1425,31 @@
 - 交給 ChatGPT 的明確行動：`ChatGPT-20260929-1854` 交給 Claude 的 v3 最後分析整合（移除六維計分／狀態等級／不可抵銷規則／理論篩選／因果鏈，改為共同答案、四方權限地圖、五次選擇時間線、依 ending ID 的完整路徑分析、替代做法、結論與複製摘要；更新 schema、loader、`src/domain/mba.ts`、renderer、行動版 UX 與測試）尚未開始實作——這是一項會改動 `MbaScoreRow`／`DebriefDimension` 等既有型別與整個 debrief 畫面結構的中型工程變更，本次「deploy」只確認並重新部署現有 v2 建置，不代表 v3 已整合；待使用者確認是否現在開始這項實作。
 - 未決問題或阻塞：v3 最後分析整合尚未開始，目前線上與本機建置仍是 v2 六維版本；正式組員姓名、報告時長、引用格式等既有未決事項沿續不變。
 - 驗證結果：`npm run build` 產出雜湊與線上一致（無新增或變動資產）；`npm run deploy:cf` 執行成功，`No updated asset files to upload`，新 Version ID `ba6b3a09-bf00-4c77-b770-d4da7fa510d2`（內容與前一版本相同，僅版本紀錄更新）。未重跑 `npm test`／`typecheck`（本次無程式變更）；未重建 `cloudflare-pages-upload/last-one-on-one-site.zip`（無出貨內容變更，zip 內容與上一筆相同）。
+
+## Claude-20260929-2216（v3 最後分析整合：移除六維計分，改為完整路徑分析）
+
+- 時間：2026-09-29T14:16:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR）
+- 已讀對方紀錄：`ChatGPT-20260929-1854`（最新）。使用者明確確認「開始實作，完成後部署」，依該 Entry 第 8 節「Claude 實作交接」與 `property/mba-final-analysis-managerial-judgment-v3-20260929.md` 全文整合 v3。
+- 本次範圍：把結局後「查看案例分析」的整套計算與畫面從 v2（六維稀疏計分、五級狀態、不可抵銷規則、理論篩選、因果鏈）換成 v3（主問題、共同結論、四方權限地圖、五次選擇時間線、依 ending ID 的完整路徑分析、一項替代做法、結論），內容全部逐字採用 ChatGPT 在 v3 規格文件的正式文案，技術形式（schema、組裝、renderer、測試）由 Claude 決定。
+- 實際變更檔案：
+  - `property/mba-debrief.json`：整份改寫為 v3 結構（`copy` 新增 `mainQuestion`／`sharedConclusion`／`decisionPointLabels`／`finalConclusionTitle`／`finalConclusionBody`／`courseLinkSentence`／`analysisLimitation`；新增頂層 `authorityMap`；`endings.<id>` 改為 `label`／`managerialJudgment`／`decisionRights`／`conflictCollaboration`／`answer`／`alternative` 六個欄位）。移除 `dimensions`／`scores`／`stakeholders`／`theories`／`choiceTheories` 與舊版 `endings` 欄位（`strategy`／`stakeholderOutcomes`／`unintendedConsequence`／`theoryNote`／`alternatives`）。
+  - `src/domain/schema.ts`：移除 `MbaDimension`／`MbaScoreRow`／`MbaStakeholder`／`MbaTheory`／舊版 `MbaEnding` 型別與對應 parser；新增 `MbaAuthorityRow`、`MbaEndingAnalysis`，`MbaCopy` 與 `MbaContent` 改為 v3 欄位，`parseMbaContent` 對應重寫（缺欄位時仍安全回傳預設值，維持 `parseMbaContent({})` 不拋例外的既有行為）。
+  - `src/domain/mba.ts`：整檔重寫。`computeDebrief()` 不再計算六維分數，只組出路徑時間線（`DebriefPathStep[]`，逐字引用玩家選過的選項原文＋固定標籤）與依 ending ID 取出的固定分析內容；`formatDebriefSummary()` 依 v3 結構輸出（主問題、共同結論、權限地圖、五次選擇、綜合分析、替代做法、結論），移除所有分數／等級文字。
+  - `src/ui/render.ts`：`openDebrief()` 改用新的區塊順序（主問題 → 共同結論 → 你做過的五次選擇 → 權限地圖 → 這條路徑的綜合分析 → 另一種做法與代價 → 結論 → 分析限制），新增 `<table>` 呈現權限地圖、標題下方顯示 `endingLabel`（例如「TRUE END｜辨認權限，保留合作」）；移除 `renderDebriefStateCard()` 與 `DebriefDimension` import。
+  - `src/visual.css`：移除 `.debrief-state-cards`／`.debrief-state-card`／`.debrief-entry-divider`／`.debrief-note`／`.debrief-overall`／`.debrief-alternative+.debrief-alternative`／`.debrief-section li strong` 等 v2 專屬樣式；新增 `.debrief-mode-label`／`.debrief-question`／`.debrief-authority-map`（含手機版縮小字級與內距）／`.debrief-analysis`／`.debrief-final-title`。
+  - `tests/mba.test.ts`：整檔重寫為 11 則 v3 驗收（見下方「驗證結果」）。
+  - `property/README.md`：「MBA Organizational Debrief」一節的「轉換狀態」與計算說明改為 v3 現況，移除 v2 稀疏矩陣／不可抵銷規則／證據優先序的技術細節。
+- 已定案事項：
+  1. 分析內容（主問題、共同結論、權限地圖四列、四個結局各自的管理判斷／決策權／衝突與合作／對主問題的回答／替代做法、結論標題／正文／課程連結句、分析限制）全部逐字取自 `mba-final-analysis-managerial-judgment-v3-20260929.md`，一字未改寫。
+  2. 「你做過的五次選擇」時間線的五個標籤（邀請方式／說明裁撤／回答決策是否已定／文件與後續窗口／工作權力尚未結束時如何回應私人問題）逐字取自規格文件「四、玩家路徑摘要」，存進 `mba-debrief.json` 的 `copy.decisionPointLabels`（不寫死在程式），`doc-private` 立即終止談話的路徑會自然只顯示前 4 個標籤（因為 `majorChoiceIds` 本身只有 4 個）。
+  3. 「管理判斷／決策權如何被使用／衝突與合作／對主問題的回答」四個子標題是 Claude 依規格「五、四種路徑的綜合分析」的既有小標題直接沿用的畫面結構標籤（非新創文案），不算越界創作。
+  4. `formatDebriefSummary()`（複製摘要）與畫面區塊順序一致，涵蓋主問題、共同結論、權限地圖、五次選擇、綜合分析、替代做法、結論、分析限制，符合 `mba-organizational-debrief.md`「八」第 6 點。
+  5. `DebriefResult` 不再帶任何 C/I/F/A/S/P 分數或等級欄位（已用測試鎖住欄位集合），複製摘要與畫面都不會出現「穩定建立／部分建立／證據矛盾／未充分建立／明顯受損」等 v2 用語。
+- 交給 ChatGPT：無新增待辦。v3 已整合完成；`ChatGPT-20260928-1854`（原文）交辦的 6 項要求全部完成。既有的 04／06 過場影片、正式組員姓名等事項沿續不變。
+- 未決問題或阻塞：無新增。
+- 驗證結果：
+  - `npm run typecheck`、`npm run build` 全數通過（bundle 由 133.12 kB 降至 119.34 kB，符合移除整套計分邏輯的預期）。
+  - `npm test`：19 檔／**199**／199 通過（`mba.test.ts` 從 22 則 v2 測試改為 11 則 v3 測試：四結局皆可正確組裝、同路徑穩定、微選擇不影響結果、找不到結局回傳 undefined、路徑標籤逐字核對、`doc-private` 路徑只有 4 步、權限地圖四結局共用、主問題／共同結論／結論區三段文字四結局共用、四個結局分析彼此不重複、複製摘要結構與不含 v2 用語、`DebriefResult` 欄位集合鎖定）。
+  - Chromium 實機（dev server）：以 `import()` 動態載入 `contentLoader`／`StoryEngine` 模組在瀏覽器內實際跑一輪 TRUE END（全選 A）與 END 04（`doc-private` 路徑），把 `engine.snapshot` 寫入 `localStorage` 後重新整理、點「繼續上次」直接落地到結局，逐一確認：桌機 1280×720 開啟「查看案例分析」，標題／`endingLabel`／主問題／共同結論／五次選擇時間線（TRUE END 5 步、END 04 正確只有 4 步且不含 Choice 5）／權限地圖四列／四個子標題的綜合分析／替代做法／結論三段／分析限制，逐字與規格相符；手機 375×812 模擬下面板與表格皆無水平溢出；「複製本次摘要」正確顯示已複製提示、「返回結局」正確關閉浮層；桌機與手機主控台均無錯誤。
+- 提交後續：commit 本筆後，依使用者本次「yes and deploy after finished」的明確指示，重建 `cloudflare-pages-upload/last-one-on-one-site.zip` 並執行 `npm run deploy:cf` 部署到 Worker；部署版本與驗證結果見下一筆部署紀錄。
