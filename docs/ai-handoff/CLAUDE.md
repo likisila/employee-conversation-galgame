@@ -1465,3 +1465,17 @@
 - 未決問題或阻塞：無。
 - 驗證結果：部署前確認 `git status` 乾淨、`HEAD` 為 `a30d116`；`curl` 讀取線上 `index.html`，確認 `<script src="/assets/index-BWdxSPvP.js">` 與 `<link href="/assets/index-BYol1eGh.css">`，與本機最新建置雜湊一致。
 - 提交後續：依持久記憶規則重建 `cloudflare-pages-upload/last-one-on-one-site.zip`（7.84MB，從本次建置產出，已於部署前完成）。
+
+## Claude-20260930-0900（恢復遠端交付：推送分支、準備開 PR）
+
+- 時間：2026-09-30T01:00:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；使用者於 2026-09-30 明確通知「Github is working now, push PR and merge」，依 `docs/AI_HANDOFF.md`／`CLAUDE.md`／`AGENTS.md` 原訂規則恢復遠端交付。
+- 已讀對方紀錄：`ChatGPT-20260929-1854`（最新）。本次只處理交付方式與遠端同步，不修改任何遊戲內容、程式或 ChatGPT 的交接紀錄。
+- 本次範圍：
+  1. 本地沙箱環境（Bash／PowerShell 皆無互動式終端機）無法完成 GitHub 互動式登入；請使用者在自己的終端機手動執行一次 `git push`，讓 Git Credential Manager 快取憑證。使用者確認已完成，`git fetch` 核對 `origin/codex/player-copy-sepia-20260920` 已與本機 HEAD（`2528321`）一致，推送成功。
+  2. 依使用者指示更新三份規則文件的交付狀態：`CLAUDE.md`、`AGENTS.md`、`docs/AI_HANDOFF.md` 的「目前交付方式：僅本地」章節改為「已恢復遠端」，標註 2026-09-30 使用者指示，並移除「以下規則僅在使用者明確通知恢復遠端交付後適用」的條件句（該條件已成立），讓「完成後必須開 PR」規則直接生效。
+- 實際變更檔案：`CLAUDE.md`、`AGENTS.md`、`docs/AI_HANDOFF.md`、`docs/ai-handoff/CLAUDE.md`（本 Entry）。
+- 已定案事項：往後每次有檔案變更的更新都必須依「完成後必須開 PR」流程推送並開／更新 PR，不再適用暫停期間的本地例外。
+- 交給 ChatGPT：往後更新請比照辦理——有檔案變更時 push 並開／更新 PR，`AGENTS.md` 的交付狀態章節已同步更新。
+- 未決問題或阻塞：此分支相對 `origin/main` 有 307 個檔案變更（`main` 本身也落後 `origin/main`，已於本次 `git fetch` 後重新核對，未落後於目前 `origin/main`），PR 內容涵蓋過去兩週累積的全部遊戲功能、素材與文案；尚待建立 PR 本體（下一筆記錄）。
+- 驗證結果：`git fetch origin codex/player-copy-sepia-20260920` 後 `origin/codex/player-copy-sepia-20260920` 與本機 HEAD 皆為 `2528321`，確認推送成功；`git diff --stat main..HEAD` 確認 307 個檔案變更、17262 行新增、593 行刪除，且 `HEAD..origin/main` 為 0（未落後於遠端 main）。
