@@ -1401,3 +1401,27 @@
   - `npm run typecheck`、`npm test`（19 檔／210／210）、`npm run build` 全數通過（本次未改程式，重跑確認未回歸）。
   - Chromium 實機（dev server，全新 `localStorage`）：桌機 1024×768 從標題經內容提醒、跳過 `00_final_documents.mp4` 後，轉場卡「五點以前」→ 第一句「16:40。藍色資料夾已經躺在我桌上……」→ 曾雅琳現場對白「五點，月球。照這一版。」（帶立繪與說話者標籤，非私訊卡）→「雅琳轉身走開。」→ 周予安思考白「我存好手邊的設計稿，收掉工作視窗。鍵盤推開，藍色資料夾挪到桌面正中間，翻開。」→ 資料夾封面與「離職」／「職位裁撤」兩則旁白 → 後續「不是說明天？這版確定？」等維持原本私訊 UI（頭像圓標、「私訊」標籤、對話泡泡），與交辦一致。手機 375×812 模擬下同一段落版面無溢出、私訊泡泡與立繪對齊正常。主控台於桌機與手機皆無錯誤。
 - 提交後續：本次僅交接紀錄變更，先 commit 本筆，再依使用者本次「deploy after finish without asking this time」的明確指示，重建 `cloudflare-pages-upload/last-one-on-one-site.zip` 並執行 `npm run deploy:cf` 部署 `81d01d5` 的建置結果到 Worker；部署版本與驗證結果見下一筆部署紀錄。
+
+## Claude-20260928-2213（部署 s1-final-cut 銜接修正到 Worker）
+
+- 時間：2026-09-28T14:13:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR；本次是純部署，未新增 commit）
+- 本次範圍：使用者在對話中明確要求「deploy after finish without asking this time」，把上一筆（`8835f5f`，內容為交接紀錄，實際內容變更為 `81d01d5` 的 s1-final-cut 銜接修正）部署到線上 Worker。
+- 部署結果：`npm run deploy:cf`（`npx wrangler deploy`）成功，上傳 3 個新／修改檔案（`index.html`、JS bundle 與其 sourcemap；其餘 40 個檔案內容雜湊未變，沿用既有上傳）。新 Version ID `dec06e20-2d35-4c5a-9ea5-b603f59973de`。
+- 已定案事項：無新增；沿用 `Claude-20260928-0018` 定案的 Worker 部署架構與網址。
+- 交給 ChatGPT：無新增待辦。
+- 未決問題或阻塞：無。
+- 驗證結果：部署後 `curl` 讀取線上 `index.html`，確認 `<script src="/assets/index-BG-43j5f.js">` 與 `<link href="/assets/index-CSYVdxod.css">`，與本機最新建置雜湊一致（`CF-Cache-Status: MISS` 排除快取誤判）。
+- 提交後續：依持久記憶規則重建 `cloudflare-pages-upload/last-one-on-one-site.zip`（7.86MB，從本次建置產出）。
+
+## Claude-20260929-2127（確認三筆 ChatGPT 期末專案規劃無 runtime 變更，回應使用者「deploy」）
+
+- 時間：2026-09-29T13:27:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR；本次未新增內容 commit，僅本筆交接紀錄）
+- 已讀對方紀錄：`ChatGPT-20260929-1150`、`ChatGPT-20260929-1154`、`ChatGPT-20260929-1854`（皆為最新三筆，依序讀畢）。三筆皆為 MBA OB 期末報告規劃／研究問題／最後分析改版規格的純文件更新（`property/mba-ob-final-project-plan-20260929.md`、`property/mba-final-analysis-managerial-judgment-v3-20260929.md`、`property/mba-organizational-debrief.md`、`property/README.md`），未修改 `property/scenes/*.json`、`property/mba-debrief.json`、schema、程式、UX 或測試，ChatGPT 本身在各筆都已註明「未執行程式測試或建置」「不重建站點 ZIP」。
+- 本次範圍：使用者連續兩次要求「deploy」。先確認這三筆是否有任何出貨內容變更：`git show --stat` 逐筆核對，確認只有 `docs/ai-handoff/CHATGPT.md`、`property/README.md` 與新增／修改的 `property/mba-*.md` 規劃文件，沒有觸及 `dist/` 建置輸入的任何 runtime 資料。重新執行 `npm run build`，確認輸出雜湊（`index-BG-43j5f.js`、`index-CSYVdxod.css`）與線上已部署版本完全相同後，仍依使用者指示執行 `npm run deploy:cf`。
+- 實際變更檔案：`docs/ai-handoff/CLAUDE.md`（本 Entry）。無程式或內容檔案變更。
+- 已定案事項：無新增。
+- 交給 ChatGPT 的明確行動：`ChatGPT-20260929-1854` 交給 Claude 的 v3 最後分析整合（移除六維計分／狀態等級／不可抵銷規則／理論篩選／因果鏈，改為共同答案、四方權限地圖、五次選擇時間線、依 ending ID 的完整路徑分析、替代做法、結論與複製摘要；更新 schema、loader、`src/domain/mba.ts`、renderer、行動版 UX 與測試）尚未開始實作——這是一項會改動 `MbaScoreRow`／`DebriefDimension` 等既有型別與整個 debrief 畫面結構的中型工程變更，本次「deploy」只確認並重新部署現有 v2 建置，不代表 v3 已整合；待使用者確認是否現在開始這項實作。
+- 未決問題或阻塞：v3 最後分析整合尚未開始，目前線上與本機建置仍是 v2 六維版本；正式組員姓名、報告時長、引用格式等既有未決事項沿續不變。
+- 驗證結果：`npm run build` 產出雜湊與線上一致（無新增或變動資產）；`npm run deploy:cf` 執行成功，`No updated asset files to upload`，新 Version ID `ba6b3a09-bf00-4c77-b770-d4da7fa510d2`（內容與前一版本相同，僅版本紀錄更新）。未重跑 `npm test`／`typecheck`（本次無程式變更）；未重建 `cloudflare-pages-upload/last-one-on-one-site.zip`（無出貨內容變更，zip 內容與上一筆相同）。
