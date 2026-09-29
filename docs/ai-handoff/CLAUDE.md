@@ -1453,3 +1453,15 @@
   - `npm test`：19 檔／**199**／199 通過（`mba.test.ts` 從 22 則 v2 測試改為 11 則 v3 測試：四結局皆可正確組裝、同路徑穩定、微選擇不影響結果、找不到結局回傳 undefined、路徑標籤逐字核對、`doc-private` 路徑只有 4 步、權限地圖四結局共用、主問題／共同結論／結論區三段文字四結局共用、四個結局分析彼此不重複、複製摘要結構與不含 v2 用語、`DebriefResult` 欄位集合鎖定）。
   - Chromium 實機（dev server）：以 `import()` 動態載入 `contentLoader`／`StoryEngine` 模組在瀏覽器內實際跑一輪 TRUE END（全選 A）與 END 04（`doc-private` 路徑），把 `engine.snapshot` 寫入 `localStorage` 後重新整理、點「繼續上次」直接落地到結局，逐一確認：桌機 1280×720 開啟「查看案例分析」，標題／`endingLabel`／主問題／共同結論／五次選擇時間線（TRUE END 5 步、END 04 正確只有 4 步且不含 Choice 5）／權限地圖四列／四個子標題的綜合分析／替代做法／結論三段／分析限制，逐字與規格相符；手機 375×812 模擬下面板與表格皆無水平溢出；「複製本次摘要」正確顯示已複製提示、「返回結局」正確關閉浮層；桌機與手機主控台均無錯誤。
 - 提交後續：commit 本筆後，依使用者本次「yes and deploy after finished」的明確指示，重建 `cloudflare-pages-upload/last-one-on-one-site.zip` 並執行 `npm run deploy:cf` 部署到 Worker；部署版本與驗證結果見下一筆部署紀錄。
+
+## Claude-20260929-2220（部署 v3 最後分析整合到 Worker）
+
+- 時間：2026-09-29T14:20:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`（本地；依「目前交付方式：僅本地」不推送、不建立 PR；本次是純部署，未新增 commit）
+- 本次範圍：使用者在對話中明確要求「yes and deploy after finished」，把上一筆（`a30d116`，MBA v3 最後分析整合）部署到線上 Worker。
+- 部署結果：`npm run deploy:cf`（`npx wrangler deploy`）成功，上傳 4 個新／修改檔案（`index.html`、JS bundle 與其 sourcemap、CSS bundle；其餘 39 個檔案內容雜湊未變，沿用既有上傳）。新 Version ID `9ef00d78-3780-4646-b4e8-7be336b92818`。
+- 已定案事項：無新增；沿用 `Claude-20260928-0018` 定案的 Worker 部署架構與網址。
+- 交給 ChatGPT：無新增待辦。
+- 未決問題或阻塞：無。
+- 驗證結果：部署前確認 `git status` 乾淨、`HEAD` 為 `a30d116`；`curl` 讀取線上 `index.html`，確認 `<script src="/assets/index-BWdxSPvP.js">` 與 `<link href="/assets/index-BYol1eGh.css">`，與本機最新建置雜湊一致。
+- 提交後續：依持久記憶規則重建 `cloudflare-pages-upload/last-one-on-one-site.zip`（7.84MB，從本次建置產出，已於部署前完成）。
