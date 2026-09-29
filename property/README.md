@@ -19,8 +19,9 @@
 - `dialogue-beat-revisions-20260926.md`：六處長段落的正式分拍規格；由 Claude 依原技術欄位拆成連續畫面。
 - `narrative-integration-revision-20260926.md`：感情線 setup/payoff 與曾雅琳角色弧的整合修訂；取代孤立的 Scene 5 回憶段落。
 - `choice-and-route-revision-20260928.md`：五個主要選擇改為「兩個可辯護策略＋一個明確高風險選項」的正式文案與 `doc-private` 立即終止規格；已由 Claude 整合進 `scenes/*.json` 的選項文字、效果與路由（技術對應見下方「主要選擇的效果設計」一節）。
-- `mba-organizational-debrief.md`：結局後 MBA 案例分析、理論映射、organizational state 與期末報告規劃的正式內容／實作需求；已由 Claude 整合為 `mba-debrief.json` ＋ `src/domain/mba.ts`（見下方「MBA Organizational Debrief」一節）。**課程定位是組織行為（Organizational Behavior，OB），不是 HR；往後 Review 與 Playthrough 必須依該文件的「課程定位與 Review 門檻」驗收。理論白話文案、證據方向規則、四方 stakeholder 後果與每結局兩套替代策略亦以此文件為唯一內容定稿。**
+- `mba-organizational-debrief.md`：結局後 MBA 案例分析與期末報告規劃的總體規格；現行 v2 已由 Claude 整合為 `mba-debrief.json` ＋ `src/domain/mba.ts`，待整合的 v3 內容則以 `mba-final-analysis-managerial-judgment-v3-20260929.md` 為準。**課程定位是組織行為（Organizational Behavior，OB），不是 HR；往後 Review 與 Playthrough 必須依該文件的「課程定位與 Review 門檻」驗收。**
 - `mba-ob-final-project-plan-20260929.md`：依 2026 MBA 組織行為課綱整理的期末報告對齊方案；包含課綱五項要求對照、研究問題、文獻使用、簡報敘事、八人分工、提交包、限制與上台前驗收清單。
+- `mba-final-analysis-managerial-judgment-v3-20260929.md`：依 Managerial Judgment、Decision Rights、Conflict & Collaboration 與 Managerial Roles 重寫的最後分析內容規格；移除六維評分，改用權限地圖與四結局的完整路徑分析直接回答主問題。
 - `ob-playthrough-review-20260926.md`：依「組織行為，不是 HR」重新實玩四個結局與最後評估頁的審查紀錄；包含通過項、教學閉環缺口及下一輪驗收標準。
 - `mba-debrief-sepia-revision-20260927.md`：`查看案例分析` 的 Sepia 完整文案修訂、語氣原則與 Claude 接線規格；玩家可見文字以 `mba-debrief.json` 為準，程式內硬編碼字串依此文件替換。
 - `mba-debrief.json`：上述內容的結構化資料——十五個主要選項對六個維度的加減分與路徑證據、stakeholder matrix、五個決策點的理論映射、四個結局的策略／stakeholder 結果／非預期後果／理論重點／替代方案，以及 Debrief 畫面的文案與區塊標題。`manifest.json` 的 `mba` 欄位指向它。
@@ -159,7 +160,9 @@
 
 ## MBA Organizational Debrief（結局後可選的案例分析）
 
-> 課程定位：組織行為（Organizational Behavior，OB），不是人力資源管理（HR）。HR、裁撤與文件程序是案例情境；評估核心是權力與依賴、組織公平、心理安全、員工 voice、心理契約、信任、情緒勞動及管理者行為造成的組織後果。完整 Review 門檻見 `mba-organizational-debrief.md` 第零節。
+> 課程定位：組織行為（Organizational Behavior，OB），不是人力資源管理（HR）。期末報告主軸是 Managerial Judgment、Decision Rights、Conflict & Collaboration 與 Managerial Roles。完整 Review 門檻見 `mba-organizational-debrief.md` 第零節。
+
+> 轉換狀態：線上／runtime 目前仍為 v2 六維分析；`mba-final-analysis-managerial-judgment-v3-20260929.md` 是待 Claude 整合的新內容權威。v3 上線前，不得把現行六張狀態卡當成已完成的課綱對齊成果。
 
 四個結局畫面都有「查看案例分析」按鈕（沒有對應內容時自動不顯示）。內容資料是 `mba-debrief.json`（見上方「property 資料夾」一節），計算在 `src/domain/mba.ts` 的 `computeDebrief()`：
 
