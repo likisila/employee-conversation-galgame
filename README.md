@@ -61,19 +61,38 @@ npm run build
 
 因為專案站服務在 `/<repo>/` 子路徑，workflow 以 `--base=/<repo>/` build；`property/images.json` 內的 `/assets/...` 邏輯路徑會在載入時透過 `import.meta.env.BASE_URL` 解析成正確 URL（見 `src/data/assetPath.ts`），資料本身不需修改。
 
+## 部署（Cloudflare）
+
+2026-09-28 起，兩種更新方式改指向**不同的**上線網址（見 `docs/CLOUDFLARE_DEPLOY.md`「Migration from Pages」）：
+
+- **手動 zip** → 舊的 Cloudflare Pages 專案 `sparkling-glitter-6ce0.pages.dev`（Direct Upload，沒有接 Git 整合，push 到 GitHub 不會影響它）。流程見 `cloudflare-pages-upload/HOW-TO-UPDATE.md`（在專案目錄外，`C:\Users\reneo\Desktop\cloudflare-pages-upload\`）：Claude 建置後把 `dist/` 打包成 `last-one-on-one-site.zip`，使用者到 Cloudflare 後台的 Deployments 頁面拖入部署。
+- **直接部署** → 新的 Worker（含 static assets）`sparkling-glitter-6ce0.rene-oops.workers.dev`。`wrangler pages deploy` 在 wrangler 4.142 起會自動改道到這個統一架構，因此已改用 `wrangler.jsonc` ＋ `wrangler deploy`；`npm run build && npm run deploy:cf` 會把 `dist/` 部署到這個網址。
+
+兩個網址目前都還在線上，但不再同步——舊 Pages 專案要等驗證新網址沒問題後才會考慮刪除（刪除前必須先問使用者）。都會保留舊版本可回滾；用哪一種、要不要淘汰舊網址由使用者決定，Claude 不會未經明確要求就執行會上線的部署。
+
 ## 過場影片
 
-`property/sora-cutscenes.json`（ChatGPT 維護）是影片內容的唯一來源；`property/cutscene-cues.json`（Claude 維護）把它的敘事層 `trigger` 對到引擎場景 ID，決定哪一段影片掛在哪個場景之前。兩份的檔名與 trigger 是否一致由 `tests/cutscenes.test.ts` 把關。
+`property/sora-cutscenes.json`（ChatGPT 維護）是影片內容的唯一來源；`property/cutscene-cues.json`（Claude 維護）把它的敘事層 `trigger` 對到引擎場景 ID 與實際播放時機。兩份的檔名與 trigger 是否一致由 `tests/cutscenes.test.ts` 把關。
 
-進入掛有影片的場景時，先確認影片載得到才蓋上畫面，接著全螢幕播放，播完自動進入該場景。影片缺檔、解碼失敗或載入逾時都直接進入場景（`property/cutscenes.json` 的 `skip-video-and-enter-canonical-scene`），不會有黑畫面，也不回退到任何替代影片。
+播放時機（`cutscene-cues.json` 的 `anchor.type`）分三種，見 `property/cutscene-storyboard-v4-review.md`：
+
+- `scene`：進場景前播放（例如 00 五點以前）。
+- `line`：這場中途接到指定文字的那一句之前播放（例如 06 三週時間橋，接在 TRUE END 「離開記得關燈」之後、揭露訊息內容之前）。以文字比對而非行號，因為分支條件會讓不同路徑的可見行號不同。
+- `choices`：這場的台詞讀完、選項出現之前播放（例如 04 問題之後、Choice 5 之前）。
+
+依 v4 審查定案，正式清單縮為 3 段（00 五點以前、04 問題之後、06 三週），01／02／03／07／08／09 全數退役——文字已完整演出同一個戲劇動作，影片只會提前或重播；因此四個結局裡只有 TRUE END 掛過場（06），其餘三個結局沒有影片。
+
+先確認影片載得到才蓋上畫面，接著全螢幕播放，播完自動接回原本該顯示的內容。影片缺檔、解碼失敗或載入逾時都直接跳過（`property/cutscenes.json` 的 `skip-video-and-enter-canonical-scene`），不會有黑畫面；有分鏡影格時先輪播分鏡當 placeholder，兩者都沒有才直接跳過。
 
 播放中可用畫面點擊、Enter／空白鍵、Esc 或右下角的「跳過」按鈕跳過；旁邊的按鈕可切換靜音，偏好記在瀏覽器。已播完或跳過的影片不會重播，這個狀態跟著存檔走，重新載入不會再看一次；「重新開始」則清空，重玩時影片會再播。
 
-實作：`src/ui/cutscene.ts`（播放器）、`src/data/contentLoader.ts`（載入與驗證）、`StoryEngine` 的 `hasWatchedCutscene`／`markCutsceneWatched`。
+實作：`src/ui/cutscene.ts`（播放器）、`src/ui/render.ts`（依 `anchor.type` 判斷何時攔截 `advance()` 播放）、`src/data/contentLoader.ts`（載入、驗證與 `anchorText` 對得上場景台詞的檢查）、`StoryEngine` 的 `hasWatchedCutscene`／`markCutsceneWatched`。
 
 ## 存檔 / 讀檔
 
 對話採視覺小說節奏：一次只顯示一句，點畫面（或按 Enter／空白鍵）才到下一句；該場台詞讀完後才出現選項或結局按鈕。
+
+私訊會演出來：`kind: "message"` 的台詞逐字打進輸入框、標點後停一下、打完停一下才送出（送出時泡泡從半透明變成正常並輕輕彈一下）。宣告了 `drafts` 的台詞會先演一次「打了又刪掉」——草稿逐字打出來、停一下、再逐字刪掉，最後才是那句的正式內容。打字期間不顯示前進的 `▼`；點畫面、按 Enter 或空白鍵是「立刻打完」而不是前進，再點一下才到下一句。同一句只演一次（回上一句再前進不會重打），`prefers-reduced-motion` 直接顯示整句，螢幕閱讀器也一開始就拿到完整台詞。實作：`src/ui/typing.ts`（節奏計算與播放）、`src/ui/render.ts`（接到台詞上）；資料寫法見 `property/README.md`。
 
 往回看：點對話框左側 1/3 的區塊、按鍵盤左方向鍵，或點對話框左緣的三個小箭頭，都會回到上一句（跨場景時回到上一場的最後一句）。做過選擇的那一頁不能回去——一旦選了，回溯紀錄就清空，因此無法回頭改選；載入存檔與重新開始同樣從沒有回溯紀錄的狀態開始。有上一句可回時才會出現左側箭頭。
 
@@ -85,7 +104,7 @@ npm run build
 - 跳回去之後不能再用「回到上一句」退進已作廢的那條路（回溯紀錄清空）。
 - 已看過的過場影片不會因此重播——回到決策點是續玩同一輪，只有「重新開始」才會讓影片再播一次。
 - 決策紀錄跟著存檔走，所以通關後關掉瀏覽器再回來，「繼續上次」仍然回得到任一決策點。
-- 這個功能上線前存的舊檔沒有決策紀錄，但仍記著完整狀態，因此讀檔時會從起始場景窮舉所有選擇組合，反推出「停在同一場景、狀態完全相同」的那條路徑（正式內容 243 條，實測約 1 ms）。只有恰好一條對得上才採用：兩條以上代表推不出唯一的歷史，寧可不顯示也不會列出玩家沒做過的選擇。因此舊存檔不必重玩也能用這個選單。
+- 這個功能上線前存的舊檔沒有決策紀錄，但仍記著完整狀態，因此讀檔時會從起始場景窮舉所有選擇組合，反推出「停在同一場景、狀態完全相同」的那條路徑（正式內容 189 條——`doc-private` 會立即終止談話並跳過 Choice 5，見 `property/choice-and-route-revision-20260928.md`，實測約 1 ms）。只有恰好一條對得上才採用：兩條以上代表推不出唯一的歷史，寧可不顯示也不會列出玩家沒做過的選擇。因此舊存檔不必重玩也能用這個選單。
 - 選單以浮層蓋在結局畫面上：可用 Esc、「關閉」按鈕或點浮層外圍關閉，焦點限制在選單內，關閉後回到原本的結局畫面。
 
 實作：`StoryEngine` 的 `decisionPoints` / `rewindTo()` 與 `src/ui/render.ts` 的決策點選單。

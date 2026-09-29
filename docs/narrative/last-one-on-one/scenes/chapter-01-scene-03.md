@@ -10,7 +10,7 @@ characters:
   - zeng-yalin
 arcs-advanced:
   - last-one-on-one
-status: draft
+status: revised
 state-changes:
   - target: lin-yucheng
     change: "得知公司已決定裁撤其職位，且 HR 將說明程序。"

@@ -92,6 +92,14 @@ export interface Choice {
   next: string;
   conditions?: Condition[];
   effects?: Effect[];
+  /**
+   * 不影響結局的感情線微選擇：不記入通關後的「回到決策點」選單，也不算進主要決策路徑。
+   * 大多沒有 `effects`，純粹是短對話分支；若有，只能用來設定本作品自訂的「敘事記憶」變數
+   * （例如 `s1Memory`／`s7Memory`，供後續場景的台詞或 `route` 依早先的微選擇分支），
+   * 不得寫入 `trust`／`procedure`／`boundary`／`avoidance` 或 `choice1`…`choice5`，
+   * 否則會影響結局判定與 243 條主要路徑分布。
+   */
+  minor?: boolean;
 }
 
 /**
@@ -116,6 +124,13 @@ export interface Line {
   from?: string;
   /** 只有全部條件成立時才顯示這句；用來呈現「依先前選擇」的分歧台詞。 */
   conditions?: Condition[];
+  /**
+   * 「打字又刪除」的草稿：依序打進輸入框、停一下、再逐字刪掉，最後才是這句的正式內容。
+   *
+   * 給私訊這種「在輸入框裡反覆改寫」的段落用。字串本身是既有台詞裡已經寫過的草稿原文
+   * （例如 s2「我寫下『方便聊聊嗎』，刪掉」），這裡只是把它標記成可以演出來的一段。
+   */
+  drafts?: string[];
   /**
    * 從這一句開始換背景，直到同場景中下一句指定為止。
    * 用來處理一個場景內的時間／地點跳躍（例如結局的「三週後」）。
@@ -143,6 +158,8 @@ export interface Scene {
   ending?: boolean;
   /** 結局／分歧的優先序路由；進入本場景時依序判定並自動前往命中者。 */
   route?: RouteEntry[];
+  /** 這一頁選項的提示句；沒寫就用 `ui.choicePrompt`（給感情線微選擇等場景專屬的提示用）。 */
+  choicePrompt?: string;
 }
 
 export interface Game {
@@ -164,6 +181,8 @@ export interface Manifest {
   cutscenes?: string;
   /** 過場影片掛在哪個引擎場景之前（Claude 維護的技術對應）。 */
   cutsceneCues?: string;
+  /** 結局後可選的 MBA Organizational Debrief 內容（ChatGPT 維護，見 property/mba-debrief.md）。 */
+  mba?: string;
 }
 
 export interface UiCopy {
@@ -180,6 +199,11 @@ export interface UiCopy {
   playerLabel: string;
   /** 讀取／轉場畫面等待點擊時的提示。 */
   tapToContinueLabel: string;
+  /**
+   * 讀取畫面在素材還沒載完時的說明句。載完之後換成 `tapToContinueLabel`，兩句不會同時出現。
+   * 這句原本寫死在 renderer 裡；`ChatGPT-20260920-0833` 定了新文案，改由 `property/ui.json` 提供。
+   */
+  loadingNote: string;
   /** 回到上一句的按鈕標籤（螢幕閱讀器用）。 */
   backLabel: string;
   /** 過場影片的「跳過」按鈕文字。 */
@@ -225,6 +249,7 @@ export function parseManifest(raw: unknown): Manifest {
     images: typeof raw.images === 'string' ? raw.images : undefined,
     cutscenes: typeof raw.cutscenes === 'string' ? raw.cutscenes : undefined,
     cutsceneCues: typeof raw.cutsceneCues === 'string' ? raw.cutsceneCues : undefined,
+    mba: typeof raw.mba === 'string' ? raw.mba : undefined,
   };
 }
 
@@ -275,7 +300,8 @@ function parseChoice(raw: unknown): Choice {
         return { variable: stringField(effect, 'variable'), operation, value: asGameValue(effect.value, 'effect.value') };
       })
     : undefined;
-  return { id: stringField(raw, 'id'), text: stringField(raw, 'text'), next: stringField(raw, 'next'), conditions, effects };
+  const minor = typeof raw.minor === 'boolean' ? raw.minor : undefined;
+  return { id: stringField(raw, 'id'), text: stringField(raw, 'text'), next: stringField(raw, 'next'), conditions, effects, minor };
 }
 
 const LINE_KINDS: readonly LineKind[] = ['dialogue', 'thought', 'narration', 'message'];
@@ -291,6 +317,9 @@ export function parseLine(raw: unknown): Line {
   if (raw.background !== undefined && typeof raw.background !== 'string') throw new Error('line.background 必須是字串');
   if (raw.character !== undefined && raw.character !== null && typeof raw.character !== 'string') {
     throw new Error('line.character 必須是字串或 null');
+  }
+  if (raw.drafts !== undefined && (!Array.isArray(raw.drafts) || !raw.drafts.every((draft) => typeof draft === 'string' && draft.length > 0))) {
+    throw new Error('line.drafts 必須是非空字串的陣列');
   }
   const speaker = raw.speaker as string | null;
   let text = stringField(raw, 'text');
@@ -318,6 +347,7 @@ export function parseLine(raw: unknown): Line {
     channel,
     from,
     conditions: parseConditions(raw.conditions),
+    drafts: Array.isArray(raw.drafts) ? (raw.drafts as string[]) : undefined,
     background: typeof raw.background === 'string' ? raw.background : undefined,
     // `'character' in raw` 才能區分「沒有指定」與「指定為 null（不顯示立繪）」。
     character: 'character' in raw ? (raw.character as string | null) : undefined,
@@ -341,6 +371,7 @@ export function parseScene(raw: unknown): Scene {
     next: typeof raw.next === 'string' ? raw.next : undefined,
     ending: typeof raw.ending === 'boolean' ? raw.ending : undefined,
     route,
+    choicePrompt: typeof raw.choicePrompt === 'string' ? raw.choicePrompt : undefined,
   };
 }
 
@@ -358,6 +389,7 @@ export function parseUi(raw: unknown): UiCopy {
     newGameLabel: typeof value.newGameLabel === 'string' ? value.newGameLabel : '重新開始',
     playerLabel: typeof value.playerLabel === 'string' ? value.playerLabel : '你',
     tapToContinueLabel: typeof value.tapToContinueLabel === 'string' ? value.tapToContinueLabel : '點擊畫面繼續',
+    loadingNote: typeof value.loadingNote === 'string' ? value.loadingNote : '讀取完成後，點擊畫面繼續。',
     backLabel: typeof value.backLabel === 'string' ? value.backLabel : '回到上一句',
     skipCutsceneLabel: typeof value.skipCutsceneLabel === 'string' ? value.skipCutsceneLabel : '跳過',
     muteCutsceneLabel: typeof value.muteCutsceneLabel === 'string' ? value.muteCutsceneLabel : '靜音',
@@ -378,18 +410,46 @@ export interface CutsceneSettings {
   missingAssetBehavior: 'skip-video-and-enter-canonical-scene';
 }
 
-/** 一段過場影片掛在哪個引擎場景之前。 */
+/**
+ * 一段過場影片在 `scene` 內的播放時機：
+ * - `scene`：進場景前播放（原有行為，用於場景前的轉場，例如 00）。
+ * - `line`：播完接到 `anchorText` 那一句——播放時機是「讀完前一句、正要顯示這一句」之前，
+ *   因此以目標行的文字比對，不依賴行號（分支條件會讓不同路徑的可見行號不同）。
+ * - `choices`：這一場的台詞已讀完、正要翻到選項頁之前播放（用於「問完問題、選項出現前」）。
+ */
+export type CutsceneAnchorType = 'scene' | 'line' | 'choices';
+
+/** 一段過場影片掛在哪個引擎場景、什麼時機播放。 */
 export interface CutsceneCue {
   /** 對應 `property/sora-cutscenes.json` 的 item id。 */
   id: string;
   /** MP4 檔名，需與 sora manifest 的 `file` 一致（由測試把關）。 */
   file: string;
-  /** sora manifest 的敘事層 trigger，原樣保留供對照與測試。 */
+  /** sora manifest 的敘事層 trigger，原樣保留供對照與測試；技術播放時機以 anchorType 為準。 */
   trigger: string;
-  /** 進入這個引擎場景前播放。 */
+  /** 播放時機所在的引擎場景。 */
   scene: string;
+  /** 播放時機，見 `CutsceneAnchorType`。沒寫時視為 `scene`（進場景前）。 */
+  anchorType: CutsceneAnchorType;
+  /** `anchorType: 'line'` 專用：目標行解析後的 `Line.text`（不含 kind 前綴）。 */
+  anchorText?: string;
   /** 解析後的影片 URL。 */
   src: string;
+  /**
+   * 正式 MP4 還沒生成時的 placeholder：依序輪播的分鏡影格。
+   * 影片載得到就一律播影片；只有影片缺檔／無法解碼時才輪播這些圖。
+   */
+  storyboard?: StoryboardFrame[];
+}
+
+/** 分鏡輪播的一格。 */
+export interface StoryboardFrame {
+  /** 鏡號（例如 `00-A`），對應分鏡表與 `keyframes/runway-v2/<鏡號>.png`。 */
+  shot: string;
+  /** 解析後的交付圖 URL。 */
+  src: string;
+  /** 這一格停留的秒數，沿用分鏡表的剪輯長度。 */
+  seconds: number;
 }
 
 export function parseCutsceneSettings(raw: unknown): CutsceneSettings {
@@ -406,6 +466,9 @@ export function parseCutsceneCues(raw: unknown): CutsceneCue[] {
   const value = isRecord(raw) ? raw : {};
   if (!Array.isArray(value.cues)) throw new Error('cutscene-cues.cues 必須是陣列');
   const directory = typeof value.directory === 'string' ? value.directory.replace(/\/$/, '') : '/assets/cutscenes';
+  const storyboardDirectory = typeof value.storyboardDirectory === 'string'
+    ? value.storyboardDirectory.replace(/\/$/, '')
+    : `${directory}/storyboard`;
   const seenIds = new Set<string>();
   const seenScenes = new Set<string>();
   return value.cues.map((item, index) => {
@@ -418,7 +481,44 @@ export function parseCutsceneCues(raw: unknown): CutsceneCue[] {
     if (seenScenes.has(scene)) throw new Error(`cutscene-cues 的場景 ${scene} 掛了多段影片`);
     seenIds.add(id);
     seenScenes.add(scene);
-    return { id, file, scene, trigger: stringField(item, 'trigger'), src: `${directory}/${file}` };
+    const storyboard = item.storyboard === undefined
+      ? undefined
+      : parseStoryboard(item.storyboard, storyboardDirectory, `cutscene-cues ${id}.storyboard`);
+    const { anchorType, anchorText } = parseCutsceneAnchor(item.anchor, `cutscene-cues ${id}.anchor`);
+    return { id, file, scene, trigger: stringField(item, 'trigger'), anchorType, anchorText, src: `${directory}/${file}`, storyboard };
+  });
+}
+
+const CUTSCENE_ANCHOR_TYPES: readonly CutsceneAnchorType[] = ['scene', 'line', 'choices'];
+
+/** `anchor` 沒寫時視為 `{ type: 'scene' }`（進場景前，原有行為）。 */
+function parseCutsceneAnchor(raw: unknown, label: string): { anchorType: CutsceneAnchorType; anchorText?: string } {
+  if (raw === undefined) return { anchorType: 'scene' };
+  if (!isRecord(raw)) throw new Error(`${label} 格式錯誤`);
+  const type = raw.type;
+  if (typeof type !== 'string' || !CUTSCENE_ANCHOR_TYPES.includes(type as CutsceneAnchorType)) {
+    throw new Error(`${label}.type 必須是 ${CUTSCENE_ANCHOR_TYPES.join(' / ')} 之一`);
+  }
+  if (type === 'line') {
+    if (typeof raw.matchText !== 'string' || raw.matchText.length === 0) {
+      throw new Error(`${label}.matchText 是 'line' 類型的必要欄位（非空字串）`);
+    }
+    return { anchorType: 'line', anchorText: raw.matchText };
+  }
+  return { anchorType: type as CutsceneAnchorType };
+}
+
+function parseStoryboard(raw: unknown, directory: string, label: string): StoryboardFrame[] {
+  if (!Array.isArray(raw) || raw.length === 0) throw new Error(`${label} 必須是非空陣列`);
+  return raw.map((frame, index) => {
+    if (!isRecord(frame)) throw new Error(`${label}[${index}] 格式錯誤`);
+    const shot = stringField(frame, 'shot');
+    const seconds = frame.seconds;
+    // 0 秒或負數會讓輪播瞬間跳過，太長則像當機；兩種都當成資料錯誤。
+    if (typeof seconds !== 'number' || !(seconds > 0 && seconds <= 30)) {
+      throw new Error(`${label}[${index}].seconds 必須是 0–30 之間的正數`);
+    }
+    return { shot, seconds, src: `${directory}/${shot}.webp` };
   });
 }
 
@@ -542,4 +642,114 @@ export function parseImages(raw: unknown): ImageCatalog {
     };
   }
   return { characters, backgrounds, sceneBackgrounds, screens, ui, transitions, scenePresentation };
+}
+
+/**
+ * 結局後可選的 MBA 最後分析 v3 內容（見 property/mba-final-analysis-managerial-judgment-v3-20260929.md）。
+ * 取代 v2 的六維分數／等級／不可抵銷規則／理論篩選／因果鏈：v3 只依 ending ID 顯示一篇固定的
+ * 管理判斷／決策權／衝突與合作／主問題回答＋一項替代做法，五個主要選擇只作為路徑時間線的證據，
+ * 不逐題評分。內容（主問題、共同結論、權限地圖、結局分析、結論、限制）全部是 ChatGPT 提供的
+ * 正式文案，這裡只定義承載它的資料形狀；組裝邏輯在 `src/domain/mba.ts`。
+ */
+export interface MbaAuthorityRow {
+  /** 角色名稱，例如「周予安」或「決策層／公司」。 */
+  role: string;
+  canDecide: string;
+  cannotDecide: string;
+}
+
+export interface MbaEndingAnalysis {
+  /** 這個結局代表的管理模式，例如「TRUE END｜辨認權限，保留合作」，顯示在結局標題下方。 */
+  label: string;
+  managerialJudgment: string;
+  decisionRights: string;
+  conflictCollaboration: string;
+  /** 對主問題的回答。 */
+  answer: string;
+  /** 一段完整敘述（做法＋代價合寫成一段，不拆成改善／代價兩個標籤）。 */
+  alternative: string;
+}
+
+export interface MbaCopy {
+  entryButton: string;
+  keepEndingButton: string;
+  entryDescription: string;
+  closeButton: string;
+  copyButton: string;
+  copiedNotice: string;
+  sectionHeadings: Record<string, string>;
+  mainQuestion: string;
+  sharedConclusion: string;
+  /** 五個主要決策點的路徑時間線標籤，依 choice1…choice5 順序。 */
+  decisionPointLabels: string[];
+  finalConclusionTitle: string;
+  finalConclusionBody: string;
+  courseLinkSentence: string;
+  analysisLimitation: string;
+}
+
+export interface MbaContent {
+  copy: MbaCopy;
+  /** 四個角色的權限地圖，四個結局共用，不隨玩家路徑改變。 */
+  authorityMap: MbaAuthorityRow[];
+  /** 結局場景 ID → 該結局的完整路徑分析。 */
+  endings: Record<string, MbaEndingAnalysis>;
+}
+
+function parseMbaAuthorityRow(raw: unknown, label: string): MbaAuthorityRow {
+  if (!isRecord(raw)) throw new Error(`${label} 格式錯誤`);
+  return {
+    role: stringField(raw, 'role'),
+    canDecide: stringField(raw, 'canDecide'),
+    cannotDecide: stringField(raw, 'cannotDecide'),
+  };
+}
+
+function parseMbaEndingAnalysis(raw: unknown, label: string): MbaEndingAnalysis {
+  if (!isRecord(raw)) throw new Error(`${label} 格式錯誤`);
+  return {
+    label: stringField(raw, 'label'),
+    managerialJudgment: stringField(raw, 'managerialJudgment'),
+    decisionRights: stringField(raw, 'decisionRights'),
+    conflictCollaboration: stringField(raw, 'conflictCollaboration'),
+    answer: stringField(raw, 'answer'),
+    alternative: stringField(raw, 'alternative'),
+  };
+}
+
+export function parseMbaContent(raw: unknown): MbaContent {
+  const value = isRecord(raw) ? raw : {};
+  const copySource = isRecord(value.copy) ? value.copy : {};
+  const headingsSource = isRecord(copySource.sectionHeadings) ? copySource.sectionHeadings : {};
+  const sectionHeadings: Record<string, string> = {};
+  for (const [id, text] of Object.entries(headingsSource)) {
+    if (typeof text === 'string') sectionHeadings[id] = text;
+  }
+  const copy: MbaCopy = {
+    entryButton: typeof copySource.entryButton === 'string' ? copySource.entryButton : '查看案例分析',
+    keepEndingButton: typeof copySource.keepEndingButton === 'string' ? copySource.keepEndingButton : '先保留故事結尾',
+    entryDescription: typeof copySource.entryDescription === 'string' ? copySource.entryDescription : '',
+    closeButton: typeof copySource.closeButton === 'string' ? copySource.closeButton : '返回結局',
+    copyButton: typeof copySource.copyButton === 'string' ? copySource.copyButton : '複製本次摘要',
+    copiedNotice: typeof copySource.copiedNotice === 'string' ? copySource.copiedNotice : '已複製。',
+    sectionHeadings,
+    mainQuestion: typeof copySource.mainQuestion === 'string' ? copySource.mainQuestion : '',
+    sharedConclusion: typeof copySource.sharedConclusion === 'string' ? copySource.sharedConclusion : '',
+    decisionPointLabels: Array.isArray(copySource.decisionPointLabels)
+      ? copySource.decisionPointLabels.filter((item): item is string => typeof item === 'string')
+      : [],
+    finalConclusionTitle: typeof copySource.finalConclusionTitle === 'string' ? copySource.finalConclusionTitle : '',
+    finalConclusionBody: typeof copySource.finalConclusionBody === 'string' ? copySource.finalConclusionBody : '',
+    courseLinkSentence: typeof copySource.courseLinkSentence === 'string' ? copySource.courseLinkSentence : '',
+    analysisLimitation: typeof copySource.analysisLimitation === 'string' ? copySource.analysisLimitation : '',
+  };
+
+  const authorityMapSource = Array.isArray(value.authorityMap) ? value.authorityMap : [];
+  const authorityMap = authorityMapSource.map((entry, index) => parseMbaAuthorityRow(entry, `mba.authorityMap[${index}]`));
+
+  const endingsSource = isRecord(value.endings) ? value.endings : {};
+  const endings: Record<string, MbaEndingAnalysis> = {};
+  for (const [id, entry] of Object.entries(endingsSource)) endings[id] = parseMbaEndingAnalysis(entry, `mba.endings.${id}`);
+
+  return { copy, authorityMap, endings };
 }

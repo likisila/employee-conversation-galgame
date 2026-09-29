@@ -1,0 +1,15 @@
+{
+  "id": "ending-true-recommend-converge",
+  "title": "TRUE END：真正的告別",
+  "lines": [
+    { "speaker": null, "kind": "narration", "text": "雨澄把杯蓋轉了半圈。" },
+    { "speaker": "lin-yucheng", "text": "好。工作部分到這裡。" },
+    { "speaker": "lin-yucheng", "text": "既然今天不談工作，你可以問一個不工作的問題。" }
+  ],
+  "choicePrompt": "你想問什麼？",
+  "choices": [
+    { "id": "question-place", "text": "「為什麼選這家店？」", "next": "ending-true-question-place", "minor": true },
+    { "id": "question-weeks", "text": "「這三週過得怎麼樣？」", "next": "ending-true-question-weeks", "minor": true },
+    { "id": "question-unasked", "text": "「妳那天其實想問我的，是不是不只工作？」", "next": "ending-true-question-unasked", "minor": true }
+  ]
+}

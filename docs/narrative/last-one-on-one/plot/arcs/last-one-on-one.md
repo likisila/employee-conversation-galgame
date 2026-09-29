@@ -26,7 +26,9 @@ acts:
 2. 雨澄從 HR 在場與藍色資料夾察覺異常。
 3. 予安必須說出決定，而不是用「調整」掩蓋。
 4. 雨澄追問原因與決策時間，拒絕被要求立刻消化。
-5. 文件簽署與推薦資源使制度權力變得具體。
+5. 雨澄以予安在 Scene 1 的具體回應追問他為何選擇沉默，使感情線成為資訊不對等的證據，而非插入的回憶。
+6. 雅琳承認自己同時代表公司與守程序，並揭露曾因沉默而成為施壓流程的一部分。
+7. 文件簽署與推薦資源使制度權力變得具體。
 
 ## Climax
 
@@ -34,7 +36,7 @@ acts:
 
 ## Resolution
 
-依坦誠、程序與界線分為四個結局。TRUE END 不在當天建立戀愛關係，而在所有職務關係結束後，由雨澄主動開啟一次平等的私人見面。
+依坦誠、程序與界線分為四個結局。TRUE END 不在當天建立戀愛關係，而在所有職務關係結束、推薦信依雨澄指定完成後，由她主動開啟一次平等的私人見面。每個結局後另提供 MBA Organizational Debrief，把玩家的五個主要決策還原為組織機制、stakeholder 結果與替代策略；分析不改寫故事結局。
 
 ## Plot Points
 
@@ -47,6 +49,7 @@ acts:
 | 5 | 文件審閱與簽名 | Act 2 | Ch 1 | written | choice 4 |
 | 6 | 回答是否曾爭取 | Act 3 | Ch 1 | written | choice 5 |
 | 7 | 四結局判定 | Act 3 | Ch 1 | written | resolution |
+| 8 | MBA Organizational Debrief | Resolution | Ch 1 | planned | 結局後可選分析，不打斷故事收尾 |
 
 ## Foreshadowing
 
@@ -55,3 +58,6 @@ acts:
 | 雨澄 T 恤寫著 MAKE IT OBVIOUS | 她要求把「調整」改稱「裁撤」 | Ch 1 | Ch 1 | paid-off |
 | 予安進門前把識別證翻面 | 雨澄離開時也把識別證翻面 | Ch 1 | Ch 1 | paid-off |
 | 兩人過去各自買咖啡 | TRUE END 首次真正一起喝咖啡 | Ch 1 | Ch 1 epilogue | paid-off |
+| Scene 1 對雨澄設計稿的回應 | Scene 5 由雨澄以同一句話追問沉默 | Ch 1 | Ch 1 | paid-off |
+| Scene 7 選擇推薦信最先寫哪項能力 | TRUE END 顯示對應推薦信回聲 | Ch 1 | Ch 1 epilogue | paid-off |
+| 雅琳刪除「立即」 | 她承認過去曾在相似會議中沉默 | Ch 1 | Ch 1 | paid-off |

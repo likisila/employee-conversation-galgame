@@ -11,7 +11,7 @@ mentions:
   - zeng-yalin
 arcs-advanced:
   - last-one-on-one
-status: draft
+status: revised
 state-changes:
   - target: zhou-yuan
     change: "在 TRUE END 中不再是雨澄主管；其他結局依正式或斷聯狀態收束。"

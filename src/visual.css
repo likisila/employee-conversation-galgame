@@ -18,9 +18,8 @@
 /* ───── 台詞類型：對話／內心／旁白／訊息 ───── */
 /* 對話：琥珀色名字＋正常字色（沿用 .line 樣式） */
 .line--dialogue p{color:var(--paper)}
-/* 內心：名字在名牌上（見下方 .name-plate），本體與訊息卡共用頭像＋泡泡版面（.message-*），
-   固定在來源端：頭像在左、泡泡尾（小圓角）朝向想的人。邊框虛線、底色近透明、字色偏冷偏淡。 */
-.line--thought .message-avatar{background:transparent;border:1.5px dashed rgba(120,174,183,.75);color:var(--teal)}
+/* 內心：名字已經在名牌上（見下方 .name-plate），本體沿用訊息卡的泡泡樣式（.message-bubble）
+   但不重複頭像——頭像只會把名牌上同一個名字再縮寫顯示一次，純屬重複。邊框虛線、底色近透明、字色偏冷偏淡。 */
 .line--thought .message-bubble{background:rgba(120,174,183,.08);border:1.5px dashed rgba(120,174,183,.65)}
 .line--thought .message-bubble p{margin-top:0;color:#b8cbd1;font-family:'Noto Serif TC',serif;letter-spacing:.02em}
 /* 旁白：沒有名字、置中、較小字與字距，像舞台指示 */
@@ -35,11 +34,30 @@
 .message-avatar{flex:none;display:grid;place-items:center;width:2.25rem;height:2.25rem;border-radius:50%;background:#5b5fc7;color:#fff;font-size:.72rem;font-weight:700;letter-spacing:0}
 .message-bubble{min-width:0;max-width:100%;padding:.55rem .85rem .65rem;border-radius:4px 12px 12px 12px;background:#292b45;border:1px solid rgba(123,131,235,.35)}
 .message-bubble strong{display:block;color:#c5c9ff;font-family:'Noto Sans TC',system-ui,sans-serif;font-size:.8rem;font-weight:600}
-.message-bubble p{margin-top:.2rem;font-size:1rem;line-height:1.65}
+.message-bubble p{margin-top:.2rem;font-size:1rem;line-height:1.65;text-wrap:pretty}
 .line--message.is-self .message-meta{text-align:right}
 .line--message.is-self .message-row{flex-direction:row-reverse}
 .line--message.is-self .message-bubble{border-radius:12px 4px 12px 12px;background:#3d3f7a}
 .line--message.is-self .message-avatar{background:#8b5cf6}
+
+/* ───── 私訊的打字與送出（見 src/ui/typing.ts） ─────
+   訊息逐字打出來、標點後停一下、打完停一下才送出；宣告了 drafts 的台詞會先演一次
+   「打了又刪掉」。這裡只是文字特效與一個游標，沒有新的視覺元件——泡泡、顏色、字體
+   全部沿用上面的訊息卡樣式，正式的視覺規格若要調整由 ChatGPT 定案。
+
+   .line-sizer 是整段過程中最長的一段文字，visibility:hidden 只用來把高度先撐好；
+   .line-live 疊在它上面顯示打到哪裡。沒有這一層的話，每多打出一行對話框就往上長一次。 */
+.line-text{position:relative}
+.line-sizer{visibility:hidden}
+.line-live{position:absolute;inset:0}
+.line.is-composing .line-live::after{content:'';display:inline-block;width:2px;height:1.05em;margin-left:2px;vertical-align:-.16em;background:currentColor;animation:caret-blink 1s step-end infinite}
+@keyframes caret-blink{0%,100%{opacity:1}50%{opacity:0}}
+/* 還沒送出：泡泡壓暗一點，讀起來是「輸入框裡的字」而不是已經送到對方那邊的訊息。 */
+.line--message.is-composing .message-bubble{opacity:.78}
+.line--message.is-sent .message-bubble{animation:message-send 240ms ease-out both}
+@keyframes message-send{from{opacity:.65;transform:translateY(.3rem) scale(.985)}to{opacity:1;transform:none}}
+/* 打字期間不顯示「下一句」的 ▼：這一句還沒說完。點畫面＝立刻打完，不前進。 */
+.game-screen[data-typing="true"] .advance-hint{visibility:hidden}
 
 /* ───── 名牌：說話者名字放在對話框上緣，不混在台詞裡 ─────
    仿一般文字冒險的名牌：貼著面板頂線的小標籤，右側斜切。其他角色琥珀色、玩家自己青色並加「你」，
@@ -65,6 +83,8 @@
 .loading-screen[data-ready="true"]{cursor:pointer}
 .loading-screen[data-ready="true"] .loading-hint{visibility:visible}
 .loading-screen[data-ready="true"] .loading-bar{visibility:hidden}
+/* 載完就換成「點擊畫面繼續」提示，不讓說明句與提示同時出現（兩句話都在講點擊）。 */
+.loading-screen[data-ready="true"] .loading-note{visibility:hidden}
 
 /* ───── 轉場卡：進新場景先停在這，點擊才淡出顯示對話 ───── */
 .scene-intro{position:absolute;z-index:21;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;animation:intro-in var(--transition-duration,420ms) ease-out both}
@@ -98,6 +118,12 @@
 .cutscene-shield{position:fixed;inset:0;z-index:100;background:transparent}
 .cutscene{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:#000;cursor:pointer;animation:cutscene-in 320ms ease-out both}
 .cutscene-video{width:100%;height:100%;object-fit:contain;background:#000}
+.cutscene-storyboard{position:absolute;inset:0;overflow:hidden;background:#000}
+.cutscene-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity 500ms ease-in-out}
+.cutscene-frame.is-active{opacity:1}
+.cutscene-frame.is-shown{animation:storyboard-drift linear both}
+@keyframes storyboard-drift{from{transform:scale(1)}to{transform:scale(1.05)}}
+@media(prefers-reduced-motion:reduce){.cutscene-frame{transition:none}.cutscene-frame.is-shown{animation:none}}
 /* 控制列外觀依 property/VISUALS.md：深藍黑半透明膠囊、8px 模糊、按鈕至少 44×44、間距 8px，
    圖示是 src/ui/icons.ts 產生的線框 SVG（不用 emoji 或字型符號），
    狀態切換只做 160ms 的顏色與背景變化，不縮放也不位移。 */
@@ -125,6 +151,37 @@
 .decision-item .decision-choice{color:var(--paper);font-size:.95rem;line-height:1.6}
 .decision-close{margin-top:1rem}
 @media(max-width:700px){.decision-panel{padding:1rem}.decision-item .decision-choice{font-size:.9rem}}
+
+/* MBA 最後分析 v3：通關後可選的案例分析，長文閱讀為主，沿用決策點選單同一套
+   遮罩／面板／焦點循環做法，只是內容多很多、面板本身要能捲動。正式視覺規格待 ChatGPT 定案。 */
+.debrief-menu{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:1rem;background:rgba(4,12,18,.86);backdrop-filter:blur(4px);overflow-y:auto;animation:cutscene-in 200ms ease-out both}
+.debrief-panel{display:flex;flex-direction:column;gap:1rem;width:min(40rem,100%);margin:1rem 0;padding:1.4rem;background:var(--surface);border:1px solid rgba(255,255,255,.2);border-top:3px solid var(--teal);box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.debrief-panel h2{margin:0;color:var(--paper);font-family:'Noto Serif TC',serif;font-size:1.1rem;font-weight:600;letter-spacing:.04em}
+.debrief-mode-label{margin:0;color:var(--teal);font-size:.85rem;font-weight:600;letter-spacing:.03em}
+.debrief-description{margin:0;color:var(--paper-dim,rgba(240,240,240,.75));font-size:.88rem;line-height:1.6}
+.debrief-section{padding-top:.9rem;border-top:1px solid rgba(255,255,255,.12)}
+.debrief-section h3{margin:0 0 .5rem;color:var(--amber);font-size:.82rem;font-weight:700;letter-spacing:.1em}
+.debrief-section p,.debrief-section li{margin:0;color:var(--paper);font-size:.92rem;line-height:1.65}
+.debrief-section ol,.debrief-section ul{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:.4rem}
+.debrief-question{margin:0;padding-left:.9rem;border-left:3px solid var(--teal);color:var(--paper);font-size:.94rem;font-style:italic;line-height:1.65}
+.debrief-authority-map{width:100%;border-collapse:collapse;font-size:.85rem}
+.debrief-authority-map th,.debrief-authority-map td{padding:.45rem .5rem;text-align:left;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.12);color:var(--paper);line-height:1.5}
+.debrief-authority-map thead th{color:var(--amber);font-weight:700;letter-spacing:.04em;font-size:.78rem}
+.debrief-authority-map tbody th{color:var(--teal);font-weight:700;white-space:nowrap}
+.debrief-analysis h4{margin:.7rem 0 .3rem;color:var(--teal);font-size:.85rem;font-weight:700;letter-spacing:.04em}
+.debrief-analysis h4:first-child{margin-top:0}
+.debrief-analysis p{margin:0;color:var(--paper);font-size:.92rem;line-height:1.65}
+.debrief-final-title{margin:0 0 .3rem}
+.debrief-actions{display:flex;flex-wrap:wrap;gap:.6rem}
+.debrief-actions .secondary-action{flex:1;min-width:9rem}
+.debrief-copied{margin:0;color:var(--teal);font-size:.82rem}
+@media(max-width:700px){
+  .debrief-panel{padding:1rem}
+  .debrief-section p,.debrief-section li{font-size:.88rem}
+  .debrief-analysis p{font-size:.88rem}
+  .debrief-authority-map{font-size:.8rem}
+  .debrief-authority-map th,.debrief-authority-map td{padding:.4rem .35rem}
+}
 
 /* ───── 手機直版：一律只露半身 ─────
    依使用者指示（2026-09-17）：手機直版不論背景是哪種取景（`none` 除外，那本來就不顯示立繪），

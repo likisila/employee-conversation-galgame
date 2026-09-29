@@ -113,3 +113,942 @@
   4. `SpriteSheet` 型別目前同時代表 sheet 與逐張圖片，日後可改為 discriminated union 或更中性的名稱；此項不阻擋本次取景修正。
 - 未決問題或阻塞：內容與 UI 規格已完成；實際顯示修正仍待 Claude 依本筆交接實作，合併本 PR 本身不會改變 runtime 畫面。
 - 驗證結果：`property/images.json` 可解析；`git diff --check` 通過；十張正式人物 PNG 未被修改，原始 blob SHA 保持不變。
+
+## ChatGPT-20260919-0324
+
+- 時間：2026-09-19T03:24:41Z
+- 分支或 PR：本地工作區 `claude/zen-pasteur-wjvhgj`，尚未 commit／push／建立 PR。使用者指示以本地 repo 繼續，不必遠端確認；本筆不代表 PR 已送達。
+- 已讀對方紀錄：`Claude-20260917-1345`，並回覆 `Claude-20260917-0925`、`0955`、`1025`、`1120`、`1215`、`1255`、`1300`、`1310` 的延續事項。
+- 本次範圍與實際變更檔案：`property/VISUALS.md`（半身取景、素材交付、s4／s6 分鏡與私訊視覺定案）、`public/assets/ui/scene-wipe.svg`（移除中央裝飾線）、`docs/ai-handoff/CHATGPT.md`。未修改程式、UX、schema 或場景執行資料。
+- 已定案事項：
+  1. 接受全版位半身；桌機／橫版靠左蓋住面板，手機直版保持半身微偏。`full` 為標準半身，`upper-body` 再推近，`none` 不變。取代舊全身顯示規格。
+  2. `Claude-20260917-1025`：完成中央線素材修正，保留漸層與顆粒，無須改標題版位。
+  3. `Claude-20260917-1120`：接受方案一；s4／s6 以會議室人物對話為主，資料夾 CG 僅保留指定旁白的一句。切換位置詳見 VISUALS.md。結局 CG 與離場保持現狀。
+  4. 接受私訊現有視覺數值與 UX 回覆；保留 s2、END 04 草稿。END 03 關閉視窗不等於刪除草稿，因此不新增 `drafts`，不補寫道歉內容。
+  5. 接受台詞與選項分頁；s4／s6 各選項仍能獨立理解，不因先前並排版位限制縮寫台詞。
+  6. 原始 PNG 不變，WebP 產生與來源同步交由 Claude 負責；本次未換人物圖，無需重建交付檔。
+  7. 舊 PR #32 的換會議室背景方向不採用，以本地現有背景及半身取景為準；未查詢或變更該 PR 狀態。
+- 交給 Claude 的明確行動：
+  1. 依 VISUALS.md 整合 s4／s6 的預設背景與逐句切換；返回會議室時明確恢復角色，確認三個 s4 前置分支及 s6 全場都可正常顯示人物。不要更改條件、效果或路由。
+  2. 於桌機／手機確認轉場標題無線穿過、人物頭頂完整且不遮文字、特寫後人物恢復；回覆本 Entry ID。此項仍待確認。
+  3. 未來 PNG 更新時由 Claude 執行 `npm run assets:sprites` 並提交交付檔；本次不需執行。
+- 未決問題或阻塞：s4／s6 實際畫面仍待 Claude 整合；其餘 8 支 MP4 沿續未交付，本次未生成影片。遠端連接器先前回報帳號停權且 git 驗證未完成，依使用者指示不再查遠端；尚無 PR，不能宣稱遠端交接完成。
+- 驗證結果：`git diff --check` 通過；SVG XML 可解析，中央 path 已移除且兩層背景 rect 保留；對照本地 s4／s6 與 END 03 台詞確認分鏡切換句及草稿決定。本次僅文件與 SVG 裝飾刪除，未跑程式測試或瀏覽器實機，實機整合驗證交給 Claude。
+
+## ChatGPT-20260919-0957
+
+- 時間：2026-09-19T09:57:00Z
+- 分支或 PR：`codex/cutscene-storyboard-v2-20260919`，從本機 `d03c14b`延續；待提交。遠端 GitHub 連接器 403（帳號停權），本機 Git 在非互動驗證下無可用登入，尚無 PR，不代表交接已送達。
+- 已讀對方紀錄：最新 `Claude-20260919-0408`，一併回覆 `Claude-20260919-0332`、`0354`、`0357`。
+- 本次範圍：依使用者「重新更新分鏡表以及關鍵影格和相關文件」及附件核對本機正式素材；使用者在本次對話確認雅琳使用淺冷灰棕髮、淺灰米色西裝版本。僅更新創作文件與既有內容欄位。
+- 實際變更檔案：
+  - `property/cutscene-storyboard-v2.md`（新增：26 鏡、兩批、起始圖、Runway 動作、運鏡、秒數、結束狀態、失敗判定與整合依賴）。
+  - `property/sora-cutscenes.json`（風格、角色、道具、9 段提示詞、內容連戲及驗收文字）。
+  - `property/README.md`、`public/assets/cutscenes/README.md`（新版入口及實際交付狀態）。
+  - `public/assets/cutscenes/keyframes/runway-v2/README.md`（新增：26 張預定檔名與未生成狀態）。
+  - `coordination/handoff/HANDOFF-20260916-cutscene-integration.md`（只在開頭註明歷史規格已被 v2 取代，保留 Claude Result 原文）。
+  - `docs/ai-handoff/CHATGPT.md`（本 Entry）。
+- 已定案事項：
+  1. 官方手繪插畫、非真人／3D；雅琳以本機 full-body PNG 鎖定，左腕矩形數位錶與手機、筆、識別證分開；月球會議室三角座位及 HR 平板歸屬固定。
+  2. 00–04 共 13 張先製作，使用者驗收後才製作 06–09 共 13 張；一鏡一張精確起始影格。全案 26 鏡、剪輯目標 65 秒；表內時長不是 Runway API 參數或費用承諾。
+  3. 01 不送訊息；02 不放筆或預演通知措辭；04 不演回答；08 只關未送視窗，不刪稿；09 拿手機離場並刪未送草稿，保持所有到達 END 04 路徑中立。
+  4. 現有 01、02 保留且不標為 v2 合格，其他 7 支 MP4 缺檔。本次未逐格重新驗收現有影片，內容差異依既有交接與附件記錄。02 待重製。
+  5. 接受 `Claude-20260919-0332` 的 s4／s6 文件 CG 整合；不改該結果。接受 `0408` 的體積提醒，交付建議 1280×720 H.264 每支約 2–4 MB，編碼由 Claude 處理。
+- 交給 Claude 的明確行動：
+  1. 評估 02 改為 s3 的 17:00 入室段／Choice 2 前播放；不能直接放 s3 開頭，因為前段仍有辦公室訊息。04 改為 s7 共通 17:18 段／Choice 5 前，避免播放後回頭演 Choice 4 回應。請回覆具體掛載方案與台詞重複處理；本次未修改 cue 或 UX。
+  2. 整理歷史 Sora 工具設定與狀態：provider、model、固定 8 秒、價格、READY 及 `cutscenes.json` 的真人 presentation 均未在本次修改，避免越界改工具或 schema；暫勿用舊批次腳本生成 v2。新版實際交付狀態見分鏡表，不以 READY 代表已生成。
+  3. 圖片及影片內容核准後再接 MP4、壓縮與驗證播放／靜音／跳過／存讀檔；新版 keyframes 是製作來源，請決定如何排除出貨。此刻沒有新 PNG 或 MP4 可整合。
+- 未決問題或阻塞：內建 imagegen 的 00-A 首次呼叫回報 `usage_limit_reached`，新圖 0／26、新片 0／9；未擅改 API／模型。使用者已知額度阻塞後要求繼續，故先完成所有可做文件。GitHub 帳號停權與本機 Git 登入缺失阻擋 push／PR，無 PR 時不宣稱整體完成；02／04 播放依賴待 Claude 回覆。
+- 驗證結果：`npm.cmd test -- --run tests/cutscenes.test.ts` 18／18 通過（初次沙箱 esbuild 權限錯誤，獲准在沙箱外重跑通過）；JSON 可解析，9 組 id／file／trigger／kind／owner／status 與 HEAD 相同，頂層工具設定未改；逐鏡表 26 個唯一鏡號、剪輯秒數合計 65；`git diff --check` 通過。未修改或新增程式／測試／schema／路由／MP4／角色圖，未跑無關全量建置，未進行新影片實機驗收。
+- 提交後續：本次 `git commit` 因未設定 user.name／user.email 失敗，沒有產生 commit；7 個檔案已暫存於上述分支。需使用者提供 Git 提交身份並恢復 GitHub 可用登入後，才能完成 commit、push 與 PR。沒有擅用歷史作者或虛構身份。
+
+## ChatGPT-20260919-1513
+
+- 時間：2026-09-19T15:13:00Z
+- 分支或 PR：`codex/cutscene-storyboard-v2-20260919`；本筆與尚未提交的 `ChatGPT-20260919-0957` 一併提交。本次使用者提供作者 `Rene Wu <rene.oops@gmail.com>`，僅以單次 Git 參數套用，不改全域設定。遠端尚無 PR。
+- 已讀對方紀錄：無新紀錄（最新仍為 `Claude-20260919-0408`）。
+- 本次範圍：續作第一批 00–04 共 13 張起始關鍵影格，使用內建 imagegen 與本機正式角色／場景參考；未製作影片或第二批結局圖。
+- 實際變更檔案：`public/assets/cutscenes/keyframes/runway-v2/{00-A,00-B,00-C,01-A,01-B,02-A,02-B,02-C,03-A,03-B,04-A,04-B,04-C}.png`、同目錄 `README.md` 與新增 `REVIEW.md`、`property/cutscene-storyboard-v2.md`、`public/assets/cutscenes/README.md`、`docs/ai-handoff/CHATGPT.md`。本次 commit 亦包含前筆所列尚未提交的分鏡、manifest 內容提示與文件變更。
+- 已定案事項：
+  1. 第一批 13／13 已生成並逐張目視初檢，全部待使用者驗收；第二批 0／13、新片 0／9。先前額度問題已在本次續作恢復，不再是第一批生成的阻塞。
+  2. 雅琳以使用者已確認的淺灰棕髮／淺灰米色造型製作。01 草稿未送、02 不放筆、03 無簽字、04 無予安回答。
+  3. 02-C 初稿的破損色塊已以 imagegen 修除；02-A 修除多餘空椅；02-C 補姓名標示並修 HR 杯水位；03-A 統一薄夾與頂面標示。原始生成稿留在工具輸出目錄，repo 只保留本次選定影格。
+  4. 原生 PNG 均為 1672×941，接近但非精確 16:9，未以程式裁切或改圖。驗收頁記錄每張檔案大小與 SHA-256。生成背景玻璃分格／貼紙仍有細節差異，未宣稱像素級空間一致；03-A 左緣少量椅背保留為檢查注意點。
+- 交給 Claude：
+  1. 先前 02／04 播放時序與歷史 Sora 工具設定交辦仍待回覆，本次沒有改程式或 cue。
+  2. 第一批圖片尚未經使用者核准，不要直接送 Runway 或當正式影片部署。核准後以原圖作圖生影片，最終 1280×720 的比例／編碼由 Claude 處理。
+  3. 13 張 PNG 是製作來源，總體積約 24 MB；請將 `assets/cutscenes/keyframes/` 排除遊戲出貨，避免直接複製到 dist 造成上傳 ZIP 超限。本次未改建置設定。
+- 未決問題或阻塞：等待使用者第一批驗收，才啟動第二批。GitHub 連接器先前回報帳號停權，本機 Git 缺憑證；將以新提供的作者身份完成本地 commit，但若 push／PR 仍失敗，不能宣稱遠端交接已完成。
+- 驗證結果：13 個 PNG 全部存在、尺寸相同且逐張可視；已檢查角色、起始動作與上述連戲項目，修正結果逐張載入確認。`git diff --check` 通過。未改遊戲執行內容，本輪不重跑無關測試；前筆過場契約 18／18 通過仍適用。
+- 提交送達結果：已以使用者提供的作者身份完成本機 commit；`git push -u origin codex/cutscene-storyboard-v2-20260919` 仍因無 GitHub 登入憑證而失敗，未建立 PR。驗收頁末尾空白檢查發現一處並已清除；最終差異檢查重新通過。
+
+## ChatGPT-20260920-0833
+
+- 時間：2026-09-20T08:33:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`，以本機 `d4573d7` 為基底；尚無 PR，遠端交付待恢復 GitHub 存取。
+- 已讀對方紀錄：`Claude-20260919-1523`（分鏡 placeholder 與來源排除已讀，本次不動過場整合；02／04 時序與後續影片事項沿續待辦）。
+- 本次範圍：使用者要求 grilling 以一般玩家遊玩，再與 Sepia 討論並修正文案。主代理以正常 UI 操作遊玩，Sepia 子代理完整診斷玩家內容後改稿，主代理再次檢查跨分支指涉及語意。範圍為遊戲內文字，不重寫歷史創作稿或影片製作提示。
+- 實際變更檔案：`property/ui.json`、`property/images.json`（僅 alt）、`property/scenes/s1-final-cut.json`、`s2-invite.json`、`s3-meeting.json`、`s4-notice.json`、`s5-when-did-you-know.json`、`s6-receipt.json`、`s7-not-in-file.json`、`s8-reaction.json`、`ending-true.json`、`ending-decent.json`、`ending-soft-knife.json`、`ending-over-line.json`（上述場景均位於 `property/scenes/`），以及本交接紀錄。
+- 診斷與討論：
+  1. 開場連續使用韌性彎曲、凶器編號、財務省明天、鹼性水、漂亮同義詞等金句，角色聲音過度相似。保留「財務把明天也省掉了」、鹼性水與「人才續航包」的職場幽默，其餘改成當下動作和可說出口的話；「空狀態」改成一般玩家能懂的畫面描述。
+  2. END 04 共通台詞引用「你說你不想假裝這只是工作」，但 private + advocate 路線沒有告白。已實機重現，改成所有越線路徑都成立的後續聯絡界線。END 03 也不再斷言玩家已道歉很多次，或一律用含糊承諾拖延；避免改稿另造跨分支指控。
+  3. s4 重複坐下、s5 無前置的離開原子筆、s7「第一次碰資料夾」與先前翻頁相衝突，改為中立動作。玩家旁白中的 BGM、特寫、鋼琴進入、黑畫面等製作指令改成場景敘述。
+  4. 四結局移除直接講解寓意的末句，以寄件備份、辦公室吸塵器、空白輸入框、咖啡收尾。保留四結局名稱、關係界線、手續完成後才由雨澄主動聯絡等正典。
+  5. 標題副標交代玩家身分與情境；載入標題不再宣稱永遠距離五點二十分鐘；「回到決策點」改為「回到之前的選擇」。內容提醒、姓名及已清楚的操作標籤保留。
+- 已定案事項：14 個 JSON 共修改 83 個內容字串；遞迴比對 HEAD，鍵集合、陣列長度及順序、所有非文字欄位皆一致。未改 speaker、kind、drafts、條件、效果、路由、分鏡、schema、程式或測試。
+- 交給 Claude 的明確行動（待確認）：
+  1. `tests/presentation.test.ts` 的 s4 三個案例用 `closeUp: '藍色資料夾特寫'` 鎖死舊文案，故本次三項失敗。正式新文案為「資料夾攤在我們中間，封面上是雨澄的名字。」；請更新測試對應，保留 CG 恰一格、不疊立繪、下一句回會議室且跟隨說話者的驗證，不要為通過測試把製作指令放回玩家台詞。
+  2. `src/ui/render.ts` 載入頁仍硬編碼「有些話，需要先留一點空白。」。正式替換文案為「讀取完成後，點擊畫面繼續。」；請由 Claude 整合。若與既有載完提示重複，由 Claude 決定顯示時機；ChatGPT 不修改 renderer／UX。
+  3. 新稿需完成桌機／手機四結局 UI 複驗，尤其 s4 新句的文件特寫與新選項換行。主代理的瀏覽器連線在改稿後逾時，重連仍失敗，不能宣稱四結局新版均已實機驗收。
+  4. 合併前請回覆本 Entry，完成上述測試／整合並跑全量驗證。若需對照製作文件，實際遊戲台詞以本次 `property/scenes/` 為準，既有歷史章節稿不是本次交付的修訂版。
+- 驗證結果：
+  - 改稿前正常 UI 從開場走到 TRUE END（vague／direct／admit／protect／advocate），再用遊戲內回溯走 private／advocate 到 END 04；沒有注入存檔或跳場，親自確認錯引告白。
+  - 改稿後 UI 已確認新版首頁副標、載入標題及續玩入口；後續瀏覽器工具逾時，無法完成新版通關與手機版驗收。其餘分支以完整原稿／新稿內容及條件檢閱補足，不冒稱逐一實玩 243 條。
+  - `npm.cmd run typecheck`、`npm.cmd run build` 通過。
+  - `npm.cmd test`：160／163 通過；3 項失敗皆為上述 s4 舊字串斷言。全 243 路徑的既有結局測試、內容載入、草稿原文同步、存讀檔與決策回溯測試均通過。
+  - JSON 遞迴內容邊界檢查通過：83 個字串、非內容變更 0。
+- 未決問題或阻塞：GitHub 連接器回報 403「Sorry. Your account was suspended」；本次尚無 PR，依專案規定不能宣稱遠端交接或整體工作完成。Claude-owned 測試與硬編碼字串仍待接手，並非本次越界修改。既有未追蹤 `.claude/` 未動、未納入提交。
+
+## ChatGPT-20260920-0836
+
+- 時間：2026-09-20T08:36:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；僅本地，依使用者最新指示暫停遠端交付。
+- 已讀對方紀錄：無新紀錄（最新仍為 `Claude-20260919-1523`）。
+- 本次範圍與實際變更檔案：依使用者明確要求把「先暫時不用推送到 GitHub，可以時另行通知」寫入 `AGENTS.md`、根目錄 `CLAUDE.md`、`docs/AI_HANDOFF.md`，並追加本紀錄。這是使用者授權的交付規則修改；角色分工未變，未改 Claude 的交接紀錄。
+- 已定案事項：暫停 push 及建立／更新遠端 PR；本地修改、驗證、交接與 commit 照常。原必須開 PR 規則改為恢復後適用，暫停期間不因缺少 PR 判定本地工作未完成。只有使用者明確通知才恢復，不以帳號狀態或新任務推定。
+- 前筆結果：文案修訂已提交為 `a57ad2a`。後續 push 被自動審核拒絕，理由為遠端目的地缺少可信授權證據，沒有成功推送。使用者隨即要求暫停 GitHub，因此停止遠端操作，不再重試。
+- 交給 Claude：依新的本地交付規則工作；請在本地接手 `ChatGPT-20260920-0833` 的三項舊文案測試、載入頁字串與實機複驗待辦，回覆該 Entry。此次規則更新不代表這些待辦已完成。
+- 未決問題或阻塞：遠端交付改為使用者主動暫停，不再列為本次本地交付阻塞。文案整合待辦仍待 Claude。
+- 驗證結果：三份規則均明確區分目前僅本地與恢復後 PR 流程；`git diff --check` 通過。僅 Markdown 規則與紀錄變更，不重跑遊戲測試。
+
+## ChatGPT-20260920-0848
+
+- 時間：2026-09-20T08:48:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260920-0844`，並回覆其沿續的 `Claude-20260919-1523`。
+- 本次範圍與實際變更檔案：核對 Claude 提交 `85fba9c`；在 `property/ui.json` 補上已由 Claude schema 支援的純內容欄位 `loadingNote`，值為「讀取完成後，點擊畫面繼續。」；追加本交接紀錄。未改程式、測試、樣式或遊戲行為。
+- 回覆 Claude：
+  1. **接受／完成**：s4 三項測試已改為驗證分鏡，不再綁舊台詞；本機重跑全部 163 項通過，前筆測試阻塞結案。
+  2. **接受／完成**：載入中顯示說明、載完換成繼續提示的 UX；正式 loadingNote 已補在內容資料，與程式預設文字完全一致。BEFORE WE TALK 保留，這次不要求另開欄位。
+  3. **接受**：Claude 回報桌機四結局、private + advocate、s4 文件鏡頭及手機版複驗完成；本輪沒有再次親自操作瀏覽器，不將 Claude 的驗證寫成本代理實測。
+  4. **紀錄澄清**：END 02 正式末句是「寄件備份裡，那封信的主旨是『林雨澄推薦信』。」；吸塵器末句屬 END 03。END 04 共通錯引告白是本次內容改寫移除，不是新增條件；private／confess 專屬句的條件原已存在。`85fba9c` 沒有修改場景資料，與分工一致。
+  5. **分鏡沿續事項**：接受 `Claude-20260919-1523` 依使用者要求把 13 張圖作 placeholder，以及將 keyframes 排除出貨；這不等於正式影片或全部影格已獲使用者驗收。02／04 的創作方向已於 `ChatGPT-20260919-0957` 定案：02 在 s3 的 17:00 入室段、Choice 2 前；04 在 s7 共通 17:18 段、Choice 5 前。仍請 Claude 提出具體掛載方案，保留選項與路由；本次文案收尾不擴做影片／cue 整合。
+- 已定案事項：本次玩家文案修訂的測試、載入提示與 Claude 實機複驗交辦已收到完成回覆。原有影片製作／時序事項另案沿續。
+- 交給 Claude 的明確行動：本筆 loadingNote 已可直接載入，無新增實作需求；後續影片工作依上列既有交辦提出掛載方案即可。
+- 未決問題或阻塞：此次文案修訂無新增阻塞；02／04 時序、後續影片與使用者素材驗收仍維持既有狀態。
+- 驗證結果：本機 `npm.cmd test` 16 檔 163／163 通過；JSON 可解析，loadingNote 與 schema 的正式預設相同，`git diff --check` 通過。Claude 先前 typecheck／build 通過；本筆僅補同值內容欄位，不重跑建置。
+
+## ChatGPT-20260925-2138
+
+- 時間：2026-09-25T21:38:25+08:00
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260920-0849`。本次沿用其已完成的玩家文案整合狀態，不修改 Claude-owned 程式、schema、UX、路由、效果、狀態或測試。
+- 本次範圍：回應使用者「感情線不見了」及確認後的「好，實作」，完成四組不影響結局的感情線微選擇正式文案與整合規格。前三組分別落在 Scene 1、Scene 5、Scene 7，透過加班改稿、咖啡記憶、工作細節呈現彼此看見；第四組只在 TRUE END 判定後出現，以「第一次見面」收束。
+- 實際變更檔案：新增 `property/romance-microchoices.md`；更新 `property/README.md` 的內容索引與目前作品說明；追加本交接紀錄。
+- 已定案事項：
+  1. 每組三個回答都代表不同的在意方式，不設正解、錯解、好感度或 MBA 分數。
+  2. 微選擇不修改 `trust`、`procedure`、`boundary`、`avoidance`，不取代 `choice1`…`choice5`，也不改變既有結局條件與文案。
+  3. 前三組短對話都在原場景中匯流；第四組在 TRUE END 已成立後才顯示，因此不可回頭改寫結局。
+  4. 感情維持未命名，不在權力關係與離職程序尚未結束時告白或要求回應；TRUE END 才允許把工作以外的關係重新開始。
+- 交給 Claude 的明確行動：
+  1. 依 `property/romance-microchoices.md` 的插入點與匯流台詞，實作場景中段選擇及 TRUE END 後選擇；技術 ID、場景拆分與狀態保存方式由 Claude 決定。
+  2. 微選擇不得改動結局變數或路由。請驗證任意微選擇組合在五個主要選擇相同時仍得到完全相同的結局，並保持既有 243 組主要決策分布。
+  3. 通關後「回到之前的選擇」仍應以五個主要決策為主；微選擇不得擠掉、覆寫或清空主要決策歷史。請由 Claude 決定最小的 UX／資料結構調整並補相應測試。
+  4. 完成後請回覆本 Entry，並以桌機／手機各驗證至少一條主線與 TRUE END 的選項顯示、匯流和文字換行。
+- 未決問題或阻塞：目前 `scenes/*.json` 尚未接入這四組選擇，因此可遊玩版本仍只有五個主要選擇。中段選擇、回看歷史與測試涉及 Claude 的程式／UX／路由職責，ChatGPT 依角色邊界未越界修改。
+- 驗證結果：本機 `npm.cmd test` 16 個測試檔、163／163 項通過；`git diff --check` 於提交前通過。本次沒有修改 runtime JSON、程式、schema、測試、路由或狀態。
+
+## ChatGPT-20260926-0525
+
+- 時間：2026-09-25T21:25:50Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260925-2255`，並處理 `Claude-20260925-2248` 交給 ChatGPT 的場景標題與敘事分拍事項。
+- 本次範圍：修正 Scene 1 標題「最終版」像文件版本標籤的問題；完成六處長段落的正式分拍決定與 Claude 實作規格。使用 revision-continuity 做 line edit／continuity pass，保留角色聲音、事件順序、分支條件與既有文案原句。
+- 實際變更檔案：
+  - `property/scenes/s1-final-cut.json`、`s1-look-{work,detail,pause,converge}.json`：純內容欄位 `title` 由「最終版」改為「五點以前」。
+  - `docs/narrative/last-one-on-one/chapters/chapter-01.md`、`docs/narrative/last-one-on-one/scenes/chapter-01-scene-01.md`、`docs/narrative/last-one-on-one/scenes/_index.md`：同步正典標題與索引。
+  - 新增 `property/dialogue-beat-revisions-20260926.md`：六處逐字分拍規格與驗收條件。
+  - `property/README.md`：加入分拍規格入口。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. Scene 1 正式標題改為「五點以前」：呼應 16:40 到 17:00 的倒數與尚未說出口的裁撤通知；私訊台詞「最終版好了。五點，月球。」保留，因為那裡確實指文件版本，不是場景標題。
+  2. 六處正式分拍為：s1 兩處視線／文件揭露、s3 一處會議室建立、s4 一處裁撤原因與程序資訊、s6 一處通知頁與後續申請、s7 一處簽收意義與可帶回權利。所有文字原句保留，只增加敘事停頓。
+  3. 不拆 s4 的「MAKE IT OBVIOUS……」；該句的語勢必須一口氣完成。
+- 交給 Claude 的明確行動：
+  1. 依 `property/dialogue-beat-revisions-20260926.md` 把六個 `lines[]` 項目各拆成兩個連續項目；不得改字、speaker、kind、順序、路由或任何選擇／狀態。
+  2. s4 拆出的兩拍都保留 `background: "moon-meeting-room-rain"`；s7 拆出的兩拍都保留原 `choice4 = protect` condition。其餘原項目的技術欄位也須完整複製。
+  3. 更新會因行數／全文而失效的測試，重跑 typecheck、全量測試與 build；桌機／手機實機確認六處停頓、標題卡「五點以前」、s4 背景與 s7 條件分支。
+- 未決問題或阻塞：六處 runtime 分拍會增加玩家推進次數並涉及 `lines[]` 結構與呈現行為，依角色邊界由 Claude 實作；在 Claude 回覆前，標題修正已生效，但分拍仍是待確認交接，不能宣稱整體完成。
+- 驗證結果：五個可遊玩 Scene 1 JSON 與三份敘事／索引文件已同步為「五點以前」；全專案搜尋確認剩餘「最終版」只出現在合理的文件／訊息語境或歷史交接。六處候選經逐句審閱，正式拆分點與技術欄位保留要求已逐項記錄。JSON 解析與 `npm.cmd run typecheck` 通過；`npm.cmd test` 17 檔 170／170、`npm.cmd run build` 通過（兩者初次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功）。環境沒有 `story` CLI 或 repo fallback，故無法執行 story maintenance；本次未改事件、角色狀態、時間線或正文字數。`git diff --check` 於提交前通過。
+
+## ChatGPT-20260926-0555
+
+- 時間：2026-09-25T21:55:29Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260925-2255`。本次不處理其中沿續的影片／關鍵影格素材待辦；焦點是使用者最新指出的故事整合、HR 深度與 MBA 課程報告缺口。
+- 本次範圍：
+  1. 重新檢查使用者最初貼入的 MBA Organizational Gal Game 規格，確認其中明訂每次通關後要有 MBA Organizational Debrief，但目前 runtime 與企劃都沒有相關資料或 Claude 實作需求。
+  2. 把已上線、各自立即匯流的四組感情線微選擇重構為兩條 setup/payoff：Scene 1 的回答在 Scene 5 被雨澄用來追問資訊隱瞞；Scene 7 對專業能力的描述在 TRUE END 推薦信中回收。
+  3. 為曾雅琳建立「過去在相似會議中沉默並因此獲益，現在拒絕再讓沉默替程序背書」的角色弧，分別在 Scene 1、3、6 演出事前爭取、雙重角色與過去代價。
+  4. 補齊完整 MBA debrief、organizational state 計算、15 個主要選項映射、stakeholder matrix、五個決策理論、四結局分析、期末報告 13 節大綱與 Claude 實作／測試需求。
+- 實際變更檔案：
+  - 新增 `property/narrative-integration-revision-20260926.md`、`property/mba-organizational-debrief.md`。
+  - 更新 `property/README.md`。
+  - 更新正典：`docs/narrative/last-one-on-one/characters/zeng-yalin.md`、`plot/arcs/last-one-on-one.md`、`plot/timeline.md`、`continuity/state.md`、`worldbuilding/systems/game-design.md`。
+  - 追加本交接紀錄。
+- 已定案事項：
+  1. Scene 5 不再使用餅乾／咖啡／沒說出口的孤立回憶選擇；改為根據 Scene 1 的具體回答，由雨澄追問予安當時為何選擇不說。新選擇回答的是責任與沉默，不另開感情插曲。
+  2. Scene 7 微選擇保留，但 TRUE END 必須逐一回收為推薦信內容，再由雨澄主動結束工作話題、開啟私人提問。
+  3. 微選擇仍不影響結局或 MBA 評估，但需要可供條件台詞使用的敘事記憶；不得出現在主要決策回看清單。
+  4. 雅琳不是中立裁判或善良 HR。她代表公司、無權撤銷裁撤，也曾因沉默受益；她的成長是公開承認角色衝突並在本次會議介入。
+  5. MBA 分析只在故事結束後由玩家選擇開啟；不打分、不顯示內部數值。六項 organizational state 由五個主要選擇計算，微選擇完全排除。
+- 交給 Claude 的明確行動：
+  1. 依 `property/narrative-integration-revision-20260926.md` 取代目前 Scene 5 孤立回憶、保存 Scene 1／7 微選擇作條件回聲，並整合 Scene 1／3／6 的雅琳台詞。技術變數、schema、路由、場景拆分與測試由 Claude 決定。
+  2. 微選擇記憶不得改變 `trust`、`procedure`、`boundary`、`avoidance`、五個主要決策、243 條主要路徑結局分布或回看清單。
+  3. 依 `property/mba-organizational-debrief.md` 實作四結局後可選的案例分析頁、六項文字化組織狀態、路徑理論／因果／stakeholder／替代策略、摘要複製功能與行動版閱讀。正式內容已齊，不需 Claude 自行補文案。
+  4. 補齊規格列出的測試與桌機／手機實機驗收，並同步 runtime 變更至正典章節／場景摘要；完成後回覆本 Entry。
+- 未決問題或阻塞：本次依角色邊界只完成內容、正典與實作規格；目前可玩版本尚未套用感情線回聲、雅琳新增台詞或 MBA debrief，須待 Claude 接線後才能宣稱整體完成。
+- 驗證結果：逐一核對 15 個主要選項 ID 與 runtime 一致；`npm.cmd test` 17 個測試檔、170／170 項通過；`git diff --check` 於提交前通過。環境沒有 `story` CLI 或 repo fallback，因此以角色、時間線、主線 arc、continuity 與 game design 的人工交叉更新取代 maintenance。本次沒有修改 runtime JSON、程式、schema、路由、效果、狀態或測試。
+
+## ChatGPT-20260926-0607
+
+- 時間：2026-09-25T22:07:05Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260925-2255`；本次並回覆素材相關的 `Claude-20260925-2240`。已確認 Claude 將兩支錯誤 MP4 移至 `coordination/pending-review/cutscenes/` 的安全處置正確，本次不修改 Claude-owned cue、播放器、測試或建置設定。
+- 本次範圍：使用者再次明確指出 `01_meeting_invitation.mp4` 有角色與故事不一致，並指出 04-A 的肢體結構不符合物理。核對現況後，維持錯誤影片下架；以 imagegen 編修 04-A，重建遊戲用 WebP 與交付 manifest，並同步製作文件與驗收紀錄。
+- 實際變更檔案：
+  - `public/assets/cutscenes/keyframes/runway-v2/04-A.png`：重製來源關鍵影格。
+  - `public/assets/cutscenes/storyboard/04-A.webp`、`public/assets/cutscenes/storyboard/manifest.json`：以 `npm.cmd run assets:storyboard` 重建的交付檔與來源雜湊。
+  - `public/assets/cutscenes/keyframes/runway-v2/REVIEW.md`、`property/cutscene-storyboard-v2.md`：記錄修正內容與錯誤影片禁用規則。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. `01_meeting_invitation.mp4` 不可重新上架。它的內容其實屬於 final-documents／s1 節點，且片中曾雅琳仍是舊版深色髮與深色套裝；現有原檔保留於 pending-review 供比對，公開路徑缺檔時沿用乾淨分鏡 fallback。
+  2. 04-A 新稿維持 1672×941、手繪視覺小說畫風、暖色木桌、左腕黑色矩形數位錶與不可讀背光；左前臂與手掌自然連接，右手由對側靠近，食指停在可實際按壓的錶殼側鍵旁。沒有多手、多指、腕側顛倒、手機或圓錶。
+  3. 新 PNG SHA-256 為 `e8ded6a5e95518523a7a54c30cc83ea7aa8e5a15ada3eda8a39429e9767dcc82`；交付 WebP 為 32988 bytes，已逐張目視確認壓縮後沒有新增肢體或構圖缺陷。
+- 交給 Claude 的明確行動：04-A 已通過 ChatGPT 的內容與素材驗收。請把 `04-A` 加回 `property/cutscene-cues.json` 的 `boundary-question` storyboard，順序置於 04-B、04-C 前，沿用原規格 2 秒；更新相關測試、重跑 typecheck／全量測試／build，並以桌機與手機確認 04-A→04-B→04-C 播放與跳過行為。不要重新啟用或搬回舊的 `01_meeting_invitation.mp4`。
+- 未決問題或阻塞：`01_meeting_invitation.mp4` 的正式重製尚未完成；目前已有安全 fallback，不阻擋遊玩。04-A 的來源與交付檔已完成，但重新加入 runtime cue 屬 Claude 的資產整合職責，在 Claude 回覆前不能宣稱遊戲內已恢復該格。
+- 驗證結果：原始與交付 04-A 均逐張目視；尺寸 1672×941，構圖、左右手、腕部、側鍵位置、錶型與不可讀背光符合分鏡。`npm.cmd run assets:storyboard` 成功，13 張來源 23.1MB 重建為 1118KB，04-A 為 1471509 bytes → 32988 bytes；manifest 已同步來源 SHA 與大小。`npm.cmd run typecheck` 通過；`npm.cmd test` 17 檔 170／170、`npm.cmd run build` 通過（測試與建置初次受沙箱拒絕讀取 Vite 設定，依規則在沙箱外重跑成功）；`git diff --check` 通過。
+
+## ChatGPT-20260926-2225
+
+- 時間：2026-09-26T14:25:14Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260926-2132`。其打字草稿自動前進與 04-A 重新接回分鏡均不在本次變更範圍；本次實機 Playthrough 已包含目前最新 runtime。
+- 本次範圍：依使用者更正「課程不是 HR，是組織行為」，把課程定位寫成可搜尋、可沿用的正式 Review 門檻，並以組織行為而非 HR 合規角度重新實玩四個結局與最後評估頁。
+- 實際變更檔案：
+  - `property/mba-organizational-debrief.md`：新增「課程定位與 Review 門檻」，明定本課程是 Organizational Behavior（OB）、不是 HR；HR 與程序只是案例情境，Review 必須檢查權力／依賴、組織公平、心理安全、employee voice、心理契約、信任、情緒勞動、管理行為與 stakeholder 後果。
+  - `property/ob-playthrough-review-20260926.md`（新增）：記錄四結局代表路徑、對白／場景判定、最後評估頁通過項與教學閉環缺口、下一輪驗收標準。
+  - `property/README.md`：加入課程定位、正式 Review 文件索引與入口。
+  - `docs/narrative/last-one-on-one/worldbuilding/systems/game-design.md`：把 OB、非 HR 的定位同步進遊戲設計正典。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 課程與最後評估頁的第一判準是組織行為學習，不是 HR 標準作業、法遵或勞動法正確性；未來可用「組織行為」「Organizational Behavior」「OB」「不是 HR／非 HR」搜尋到規則。
+  2. 故事與對白通過 OB 案例判定：角色聲音、權力不對稱、voice、心理安全、social exchange、情緒勞動及 delayed consequence 均由可觀察行為演出，沒有把理論塞進角色台詞。
+  3. 目前最後評估頁可以整理六項組織狀態、因果鏈、stakeholder 結果與 trade-off，但尚未完成完整教學閉環：理論只有英文名稱；證據句可能與維度方向相反；替代策略只有一個；stakeholder 權力／資訊／風險被壓縮。
+- 交給 Claude 的明確行動：
+  1. 調整 organizational state 的證據選取：證據需與最後等級方向一致；若 END 04 因重大越線封頂為「脆弱」，證據必須引用造成封頂的越線選擇，不能引用後續正向行為。END 03 亦不得以正向 `keep-advocate` 證據解釋「脆弱」可信度／資訊品質／心理安全。
+  2. 在理論鏡頭呈現路徑相依的白話解釋，至少回答「哪個行為 → 哪個 OB 機制 → 何種組織後果」。優先使用內容資料已有的 `theoryNote`；schema、計算與 UI 實作由 Claude 決定。
+  3. 依正式規格支援每個結局兩個替代策略，或先回交 ChatGPT 補第二組正式內容後再實作；不得由 Claude 自行創作文案。
+  4. 讓 stakeholder 區塊能帶出正式權力、資訊差與風險；目前「微光互動／決策層」顯示的是整體管理策略摘要，不是該 stakeholder 的具體結果，請修正資料映射／呈現並補測試。
+  5. 完成後依 `property/ob-playthrough-review-20260926.md` 第四節重跑四結局與 390×812 行動版驗收，並回覆本 Entry。
+- 未決問題或阻塞：上述四項會涉及 `src/domain/mba.ts`、schema／資料結構、Debrief UX 與測試，依角色邊界由 Claude 接手；ChatGPT 本次只更新內容／正典／審查文件，未修改程式或 UX。第二個替代策略正式文案尚未補寫，若 Claude 採陣列方案需先交回內容需求。
+- 驗證結果：
+  - 實機完成 TRUE END、END 02、END 03、END 04，逐一開啟「查看案例分析」並核對六項組織狀態、三條因果鏈、理論鏡頭、替代做法、trade-off 與案例限制。
+  - 390×812 實測 END 03：body 390／390、分析面板 375／375，無水平溢出；「複製本次摘要」「返回結局」兩鍵各 148／148，文字完整。瀏覽器 console 無 error／warning。
+  - `npm.cmd run typecheck` 通過；`npm.cmd test` 19 檔 188／188、`npm.cmd run build` 通過（測試與建置初次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功）。`git diff --check` 於提交前執行。
+
+## ChatGPT-20260926-2231
+
+- 時間：2026-09-26T14:31:42Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260926-1422`（最新）。其 Debrief 資訊架構、雷達圖及響應式排版已讀；本次不修改 Claude-owned `src/ui/render.ts`／`src/visual.css`，工作樹中的該兩檔既有變更不納入 ChatGPT 提交。
+- 本次範圍：回應使用者指出「應由 ChatGPT 先修正內容，Claude 才能實作」。補齊上一筆 Review 找到但尚未定稿的內容缺口，撤回「讓 Claude 自行補內容」的錯誤順序。
+- 實際變更檔案：
+  - `property/mba-organizational-debrief.md`：新增證據句方向規則、17 個 OB 理論的正式白話顯示文案、路徑理論優先順序、四結局的公司 stakeholder 後果，以及每結局兩套完整替代策略（改善＋代價）；同步擴充 Claude 實作與測試需求。
+  - `property/mba-debrief.json`：在既有 schema 內更新四結局 `theoryNote` 純內容，使其明確說出行為、OB 機制與組織後果；未改 schema、ID、分數、條件或路由。
+  - `property/ob-playthrough-review-20260926.md`：標示原第三節是修正前 runtime 實測，內容缺口已定稿，等待 Claude 接線後重驗。
+  - `property/README.md`：標明上述四類內容以 `mba-organizational-debrief.md` 為唯一正式定稿。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 證據必須與等級同方向；`高／中` 只取正向貢獻，`脆弱／低` 只取負向貢獻。零分混合路徑並列一正一負，不能用單一正向句解釋脆弱。
+  2. END 04 的 agency／psychological safety／process integrity 封頂必須引用 `doc-private` 或 `keep-confess`；不得引用 `keep-advocate`。
+  3. 理論鏡頭正式文案已齊，不可只顯示英文名詞；每項需呈現理論名稱、白話解釋與本路徑證據。
+  4. TRUE END、END 02、END 03、END 04 均已有兩套替代策略，每套都明列改善與代價；Claude 不需也不得自行補寫文案。
+  5. 四個結局的微光互動／決策層結果已定稿，不再以整體 management strategy 冒充公司 stakeholder outcome。
+- 修正上一筆 `ChatGPT-20260926-2225` 的交接：其中「若 Claude 採陣列方案需先交回內容需求」已結案；第二套替代策略與所有正式內容現在已由 ChatGPT 提供。Claude 可直接設計 schema／資料映射並實作。
+- 交給 Claude 的明確行動：
+  1. 依新的證據方向規則調整 `computeDebrief()`，並補零分混合與 END 04 封頂測試。
+  2. 為理論白話文案與「本路徑中」證據設計內容結構及畫面呈現；將四結局現有 `theoryNote` 納入可見分析，不再只列英文名詞。
+  3. 將 `alternative` 調整為可承載兩套策略的資料結構，逐項顯示改善與代價；四結局正式文字已在權威規格定稿。
+  4. 補上微光互動／決策層的 path-specific outcome；不得沿用 `strategy` 當作 stakeholder 結果。
+  5. 完成後重跑四結局與 390×812 行動版，依 `property/ob-playthrough-review-20260926.md` 第四節驗收並回覆本 Entry。
+- 未決問題或阻塞：內容端無缺漏；後續只剩 Claude-owned schema、計算、UX、測試與接線。Claude 回覆前不可宣稱新版最後評估頁已完成。
+- 驗證結果：`property/mba-debrief.json` 可由 PowerShell `ConvertFrom-Json` 正常解析；內容檔 `git diff --check` 通過；`npm.cmd run typecheck`、`npm.cmd test`（19 檔 188／188）、`npm.cmd run build` 全數通過（測試與建置初次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功）。既有未提交 `src/ui/render.ts`、`src/visual.css` 與 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-0542
+
+- 時間：2026-09-26T21:42:25Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260926-1450`（最新）。接受其證據方向、公司 outcome、理論白話顯示與兩套替代策略實作，也接受 END 04 三個維度只要進入越線結局就優先引用 `doc-private`／`keep-confess` 的技術判斷；本次不要求縮回「只有數字實際被封頂時」才套用。
+- 本次範圍：使用者指定 `$sepia` 並要求修正「查看案例分析」全部文案。依 Sepia 的 recreate 流程，先完成缺陷清單，再保留所有 OB 事實、分數與判斷，全面重寫玩家可見文字；實機閱讀 END 03 後，另找出理論整包帶入與因果鏈錯置的邏輯／UX 問題，完成逐選項理論對照與正式句型。
+- 實際變更檔案：
+  - `property/mba-debrief.json`：重寫入口說明、八個標題、trade-off、限制、十五條路徑證據、四位 stakeholder 描述、十七個理論解釋、四結局策略／結果／延遲後果／理論重點與八個替代做法；只改既有純內容欄位，未改分數、ID、schema、條件或路由。
+  - `property/mba-debrief-sepia-revision-20260927.md`（新增）：Sepia 診斷、正式語氣、程式內硬編碼字串替換、零分混合證據句型、因果鏈句型、十五選項理論映射、三理論選取規則、複製摘要文案與驗收表。
+  - `property/mba-organizational-debrief.md`：標明玩家可見文案以 JSON 為唯一來源，並把理論顯示規則改為依實際選項固定三個。
+  - `property/README.md`：加入 Sepia 修訂入口。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- Sepia 診斷：原稿的問題形成群聚——抽象名詞密集、主詞被拿掉、中英混寫、理論與替代方案句型過度整齊、因果鏈像報表、每段都收成完整漂亮結論。這不是少量措辭問題，因此採 recreate，不做表面同義詞替換。參考聲音是四結局既有短句與具體立場，例如「謝謝你把程序說完。不是謝謝這個決定。」
+- 已定案事項：
+  1. 英文只保留在正式理論名稱；一般說明不再使用 `trade-off`、`Compliance`、`trust`、`voice`。
+  2. 每段先寫雨澄、予安、雅琳或公司做了什麼，再談理論；不再以「高資訊透明」「關係修復不足」等抽象名詞代替行為。
+  3. 理論固定顯示三個，必須依十五個實際選項 ID 配對，不能再用 `choice1`…`choice5` 把一整組理論帶入。`doc-pressure` 不得顯示只適用私人補償的 Equity Theory。
+  4. 因果鏈改為三句，不再使用箭頭；第三句必須寫「這一步……。放回整條路徑看……」，避免把負面結局錯誤歸因給其中一個正向選擇。
+  5. 畫面用「做法一／二」「它能改變」「要付出的代價」，不用「替代策略 1／2」「改善」。零分混合證據也改為兩個選擇互相抵銷的自然句子。
+- 交給 Claude 的明確行動：
+  1. 逐字實作 `property/mba-debrief-sepia-revision-20260927.md` 第三、五節的硬編碼畫面與複製摘要文案，包括主標題分隔符、`套回你剛才的選擇`、做法標籤、無穩定證據句及零分混合句。
+  2. 把因果鏈從單一箭頭字串改為規格中的三句呈現，並保留「這一步」與「放回整條路徑看」的語意區分。
+  3. 把理論映射由 decision-point key 改為十五個 choice ID；每條路徑顯示三個理論，依規格優先順序選取，並確保證據來自真正帶入該理論的選項。
+  4. 更新 `tests/mba.test.ts` 五個綁死舊證據字串的斷言，改驗本次正式新文案；新增 `doc-pressure` 不出現 Equity Theory、理論恰三個、因果鏈無箭頭且正向選擇不被寫成直接造成負面結局的測試。
+  5. 完成後實機跑四個結局，而非只跑 TRUE END；桌機與 390×812 都依修訂文件第六節驗收，並回覆本 Entry。
+- 未決問題或阻塞：玩家可見內容已完成；程式內硬編碼標籤、理論選取、因果鏈結構與測試屬 Claude。Claude 接線前，畫面仍會看到舊的「在這條路徑中」「替代策略／改善／代價」與箭頭因果鏈，不能宣稱全頁修訂已上線。
+- 驗證結果：
+  - `property/mba-debrief.json` 可由 `ConvertFrom-Json` 解析；內容檔 `git diff --check` 通過；`npm.cmd run typecheck` 與 `npm.cmd run build` 通過。
+  - `npm.cmd test`：190／195 通過；五項失敗全部是 `tests/mba.test.ts` 逐字要求舊 evidence 文案，計算結果已產生正確的新 evidence，無其他測試失敗。依角色邊界未改 Claude-owned 測試。
+  - Chromium 實機讀取 END 03：新入口、stakeholder、狀態證據、理論解釋、兩套做法、trade-off 與限制均已載入；同時確認仍待 Claude 接線的硬編碼模板與理論誤配問題。瀏覽器無載入錯誤。
+
+## ChatGPT-20260927-0545
+
+- 時間：2026-09-26T21:45:11Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄（最新仍為 `Claude-20260926-1450`）。
+- 本次範圍：使用者指出 `ChatGPT-20260927-0542` 新寫的入口「這不是成績單。下面只回答三件事……」本身仍是明顯 AI 模板。接受指正，刪除「先宣布數量、再列結構」的整個框架，並同步玩家資料、權威規格與 Sepia 修訂紀錄。
+- 實際變更檔案：`property/mba-debrief.json`、`property/mba-organizational-debrief.md`、`property/mba-debrief-sepia-revision-20260927.md`、`docs/ai-handoff/CHATGPT.md`。
+- 已定案事項：入口正式文案改為「先別急著替這場談話打分。回頭看剛才幾句話：哪些把選擇留給雨澄，哪些只是讓主管自己好受一點。」它直接回到本作的具體人物、權力與談話，不再替頁面報幕。
+- 交給 Claude 的明確行動：沿續 `ChatGPT-20260927-0542` 的接線項目；入口說明由內容資料直接載入，無新增程式需求。更新舊 evidence 測試時，亦請確認入口不再出現「下面只回答三件事」或同類數字式結構預告。
+- 未決問題或阻塞：無新增；全頁其餘硬編碼模板與理論選取仍待 Claude 依 `ChatGPT-20260927-0542` 接線。
+- 驗證結果：`property/mba-debrief.json` 可正常解析；全專案玩家內容搜尋確認舊入口只剩 Sepia 診斷文件中的反例引用，不再存在於 runtime 或權威畫面稿；相關檔案 `git diff --check` 通過。本次只改三處同一句文案，不重跑先前已通過的 typecheck／build；既有五項舊 evidence 測試待 Claude 更新，狀態不變。
+
+## ChatGPT-20260927-0648
+
+- 時間：2026-09-26T22:48:22Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄（最新仍為 `Claude-20260926-1450`）。
+- 本次範圍：使用者指出 `ChatGPT-20260927-0545` 的新入口仍有 AI 感；問題不是單句措辭，而是「分析者先說一段話，再教玩家怎麼讀」的敘事方法。依 Sepia 的刪除優先原則，撤回該入口文案，不再以另一句引導語替換。
+- 實際變更檔案：`property/mba-debrief.json`、`property/mba-organizational-debrief.md`、`property/mba-debrief-sepia-revision-20260927.md`、`docs/ai-handoff/CHATGPT.md`。
+- 已定案事項：`entryDescription` 改為空字串；分析頁標題後直接進入「最後，誰承擔了什麼」。入口不得出現分析者旁白、閱讀提示、暖場句，或替玩家預先定義判讀方式。本項決定取代 `ChatGPT-20260927-0545` 的入口正式文案。
+- 交給 Claude 的明確行動：renderer 遇到空的 `entryDescription` 時不要建立該 `<p>`；完整移除入口說明區塊，不留空白，也不得在程式內補預設引導句。其餘接線仍依 `ChatGPT-20260927-0542`。
+- 未決問題或阻塞：內容與正式文件已完成；畫面目前仍由 renderer 無條件建立入口段落，需 Claude 完成上述小幅 UX 接線後才算實機完整移除。
+- 驗證結果：`property/mba-debrief.json` 可正常解析；`property`、`src`、`tests` 搜尋確認被撤回的完整入口句已不存在，只有 Sepia 診斷文件保留縮寫反例；`git diff --check` 通過。本次未改分數、理論、路由或 schema，因此不重跑 typecheck／build；既有五項舊 evidence 測試狀態不變。
+
+## ChatGPT-20260927-0709
+
+- 時間：2026-09-26T23:09:15Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄（最新仍為 `Claude-20260926-1450`）。
+- 本次範圍：使用者指出不能只修被點名的入口句，必須把「查看案例分析」整頁當成同一個文本重新 playthrough 與 Sepia 審查。正常走到四個結局並逐一開啟分析頁；檢查入口、區塊標題、各方結果、六項狀態、三條因果鏈、理論、替代做法、取捨、限制與複製摘要。
+- 實際變更檔案：
+  - `property/mba-debrief.json`：七個畫面標題改成中性 case memo 欄名；重寫十七個理論說明、共同取捨、分析範圍與八個可行做法；入口仍為空字串。未改分數、ID、路由、條件或 schema。
+  - `property/mba-debrief-sepia-revision-20260927.md`：補入全頁缺陷清單，撤回「套回你剛才的選擇」「做法一／二」「它能改變／要付出的代價」等仍有講師／模板感的前版方案；定稿新的關鍵選擇、理論證據、替代做法與複製摘要格式。
+  - `property/mba-organizational-debrief.md`：刪除重複且已過時的十七理論逐字表，明定玩家文案只以 JSON 為準；更新七個區塊與關鍵選擇格式。
+  - `property/ob-playthrough-review-20260926.md`：新增 2026-09-27 四結局全頁重跑紀錄、實測路徑、問題與待接線項目。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 本輪實測路徑：TRUE END `invite-clear`／`notice-direct`／`answer-admit`／`doc-protect`／`keep-advocate`；END 02 `invite-clear`／`notice-euphemism`／`answer-deflect`／`doc-protect`／`keep-advocate`；END 03 `invite-clear`／`notice-euphemism`／`answer-bargain`／`doc-protect`／`keep-advocate`；END 04 `invite-clear`／`notice-direct`／`answer-admit`／`doc-protect`／`keep-confess`。
+- 已定案事項：
+  1. 分析頁採 case memo，不採分析者與玩家對話。正式區塊為「各方結果／組織狀態／關鍵選擇與後果／相關的組織行為概念／其他可行做法／仍然存在的取捨／分析範圍」。
+  2. 理論說明從本案角色與權力處境開始；英文理論名只作課程索引。固定三個理論，每個只接真正對應的選項證據，標籤為「對應證據」。
+  3. 三個關鍵選擇各自只寫「選擇／當下／影響」。`ending.unintendedConsequence` 是結局層級資料，只顯示一次；不得再把同一句負面後果接到正向選擇後面。
+  4. 兩個可行做法各是一個完整段落，不顯示「替代策略 N／改善／代價」的成對模板。
+  5. 共同取捨必須明示為案例邊界，不假裝是依玩家路徑生成；分析範圍合併為兩點，不為湊三點拆句。
+- 交給 Claude 的明確行動：
+  1. 不渲染空的 `entryDescription`，不留空白區塊。
+  2. 依修訂文件把主標題、零分證據、理論證據標籤與複製摘要改成中性 case memo 文案。
+  3. 把 `choiceTheories` 改為十五個 choice ID 映射並固定顯示三個；TRUE END／END 02 的 `doc-protect` 不得帶出 Equity Theory。
+  4. 重做關鍵選擇呈現：移除箭頭，結局整體後果只出現一次；正向選擇不得被寫成造成 END 03／END 04 的原因。
+  5. 兩個替代做法以完整段落呈現，不顯示編號小標及「改善／代價」標籤。
+  6. 更新五個綁死舊 evidence 的測試，並補理論配對、固定三理論、整體後果只一次、正向選擇不錯誤歸因、替代做法無模板標籤的測試；完成後用本 Entry 的四條路徑重跑桌機與 390×812。
+- 未決問題或阻塞：內容端全頁重寫已完成；現行 runtime 仍有舊的箭頭因果鏈、五理論整包映射、「在這條路徑中」與「替代策略／改善／代價」硬編碼。Claude 接線前不能宣稱最後評估頁完成。
+- 驗證結果：JSON 解析、`git diff --check`、typecheck、production build 通過。測試 190／195 通過；五項失敗仍全是 `tests/mba.test.ts` 綁死重寫前 evidence 逐字內容，無新增失敗。Chromium 實機重跑四結局；內容修改後再載入 END 03，確認新標題、十七理論新文案、取捨與兩點分析範圍已進入 runtime，並確認其餘結構性問題仍待 Claude 接線。
+
+## ChatGPT-20260927-1214
+
+- 時間：2026-09-27T04:14:14Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0000`（最新）。已依角色邊界完整閱讀交接與目前 runtime 劇情；本次不修改 Claude-owned 播放器、schema、`cutscene-cues.json`、測試或 root README。
+- 本次範圍：使用者指定 `screenwriting:sw-scene-craft`，要求重新審查關鍵影格內容、插入時機與分鏡，並依目前劇情重產影片製作文件。逐張目視檢查既有 13 張 PNG，逐段對照 `property/scenes/*.json` 的最新 setup-payoff、雅琳弧線、推薦信回收及四結局，重建創作與交付規格。
+- 實際變更檔案：
+  - `property/cutscene-storyboard-v3.md`（新增）：目前唯一有效的 7 段／18 鏡／約 40 秒分鏡、精確插入錨點、每鏡起訖狀態、提示詞組裝、製作流程與否決條件。
+  - `property/sora-cutscenes.json`：升為 v3 內容清單；保留既有 ID／檔名／trigger 作技術遷移相容，改寫 canonical sources、角色／道具連續性、七段正式提示與驗收規則；所有項目改為 `BLOCKED`、`TODO` 或 `DEPRECATED`，無 `READY`／`LOCKED`，防止舊 Sora 腳本誤生成。
+  - `property/cutscenes.json`：presentation 改為 `hand-drawn-visual-novel-cinematic`；未改缺檔策略。
+  - `property/cutscene-storyboard-v2.md`：標記為歷史版並指向 v3。
+  - `property/README.md`、`public/assets/cutscenes/README.md`、`public/assets/cutscenes/keyframes/runway-v2/README.md`：同步權威文件、數量、狀態與製作順序。
+  - `public/assets/cutscenes/keyframes/runway-v2/REVIEW.md`：加入 13 張既有關鍵影格的 v3 逐張決議。
+  - `coordination/pending-review/cutscenes/README.md`：明定隔離舊片只供比對，不能因同名直接復用。
+  - `coordination/handoff/HANDOFF-20260916-cutscene-integration.md`：在歷史技術交接頂端標記 v3 已取代舊創作規格。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 正式清單為 00、02、04、06、07、08、09，共 7 段／18 鏡／約 40 秒。01 邀請與 runtime 打字／Choice 1 重複，03 文件與 s6 CG／雅琳承認沉默代價重複，兩段正式退役。
+  2. 既有 13 張影格中，沿用 00-A、00-C、02-A、02-C、04-B、04-C；00-B 因藍色物件像平板必須重畫；01-A/B、02-B、03-A/B、04-A 退出正式剪輯。退出不表示畫面必然有瑕疵。
+  3. 精確掛點：00 在 s1 L01 前；02 在 s3 L15 後／L16 前；04 在 `s7-recommend-converge` L08 後／Choice 5 前；06 在 `ending-true` L17 後／L18 前；07／08／09 分別放在各結局最後敘事與標題卡之間。
+  4. 四結局影片全部改為時間橋或 coda，不再 on-enter 預演結局。TRUE END 只演三週時間橋，不先揭露咖啡邀約；END 03 關視窗但不刪稿；END 04 刪未送草稿但不重演現金／告白等分支原因。
+  5. 正式影片目前 0／7。00-B 與 11 張新結局影格尚未生成；需先完成掛點方案與靜態影格核准，再逐鏡圖生影片，不能把舊 MP4 或退出 PNG 當成完成品。
+- 交給 Claude 的明確行動：
+  1. 依 v3 實作 mid-scene／coda cue：02、04、06、07、08、09 的精確錨點如上；不得只沿用 manifest 內為遷移保留的舊 trigger 字串。
+  2. 退役 01、03，移除其 runtime cue 或 storyboard fallback；更新 `tests/cutscenes.test.ts` 等仍假設九段／五段共通主線／on-enter 結局的測試。
+  3. 00、02、04 的 runtime storyboard 只保留 v3 沿用影格；00-B 重繪核准前不得重新加入。
+  4. 更新 root README 與技術交接中的舊段數、舊掛點及部署說明；完成後回覆本 Entry，讓 ChatGPT 再依鎖定 cue 產生 00-B 與 11 張新影格。
+- 未決問題或阻塞：內容、分鏡、提示與素材判定已完成；正式生成暫停在 Claude-owned cue 接線之前，避免在插入時機未鎖時浪費生成。工作樹既有未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+- 驗證結果：`sora-cutscenes.json`、`cutscenes.json` 均可由 `ConvertFrom-Json` 解析；清單 9 項中 7 項 active、0 項 `READY`／`LOCKED`；`git diff --check` 通過；`npm.cmd run typecheck` 通過；`npm.cmd test` 19 檔 200／200；`npm.cmd run build` 通過。測試與建置首次受沙箱阻擋 Vite config，依規則在沙箱外重跑成功。本次未修改 runtime，建置內容不變，不需重建站點 ZIP。
+
+## ChatGPT-20260927-1241
+
+- 時間：2026-09-27T04:41:38Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄（最新仍為 `Claude-20260927-0000`）。
+- 本次範圍：使用者糾正 `ChatGPT-20260927-1214` 的工作順序——關鍵影格是 ChatGPT 的創作交付，應先直接生成，Claude 才能接手。依 `imagegen` 技能，以內建 imagegen 直接完成 00-B 重繪與 06–09 的 11 張新起始影格，逐張目視檢查並存入專案；同步修正分鏡、素材說明與交接狀態。
+- 實際變更檔案：
+  - `public/assets/cutscenes/keyframes/runway-v3/*.png`（新增 12 張）：`00-B-v3`、`06-A/B/C`、`07-A/B`、`08-A/B/C`、`09-A/B/C`。
+  - `public/assets/cutscenes/keyframes/runway-v3/README.md`、`REVIEW.md`（新增）：交付清單、逐張起始狀態、初檢結果與完整預覽。
+  - `property/cutscene-storyboard-v3.md`：把 12 張狀態改為已生成，補實際路徑，並把流程改為「ChatGPT 生成／初檢 → Claude 接線 → 使用者靜態核准 → 圖生影片」。
+  - `property/sora-cutscenes.json`：00-B 連續性規格改指向 `runway-v3/00-B-v3.png`，明禁舊平板狀 00-B。
+  - `property/README.md`、`public/assets/cutscenes/README.md`、`public/assets/cutscenes/keyframes/runway-v2/README.md`、`REVIEW.md`：同步 18 張正式起始影格已齊及 v3 素材位置。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 修正上一筆交接：`ChatGPT-20260927-1214` 所寫「正式生成暫停在 Claude-owned cue 接線之前」與「讓 ChatGPT 再依鎖定 cue 產生」已被本筆取代。關鍵影格不再阻塞，Claude 可立即開始 cue／storyboard 接線；只有圖生影片仍需等待靜態核准與掛點鎖定。
+- 影格驗收結果：
+  1. `00-B-v3`：藍色物件已有封面、書脊與可見紙頁，人物、鏡位與燈光保持原 00-B；不再像平板。
+  2. `06-A/B/C`：三杯水、空椅、關燈前與三週後黑屏手機的起始狀態成立；沒有提前顯示訊息或咖啡店。
+  3. `07-A/B`：推薦信寄出前與無回覆等待成立；螢幕無可讀文字。
+  4. `08-A/B/C`：草稿始終未送；雅琳持有自己的平板；08-C 停在關閉視窗前，沒有誤演刪稿。
+  5. `09-A/B/C`：不重演分支特定越線；空椅、HR 紀錄前與退格前成立。09-B、09-C 首版邊緣有透明／黑色缺口，已用局部編輯補成完整滿版，瑕疵稿未放入專案。
+- 交給 Claude 的明確行動：
+  1. 立即依 `property/cutscene-storyboard-v3.md` 接入 12 張 `runway-v3` 圖與 6 張沿用的 `runway-v2` 圖；00 段使用 `00-B-v3.png`，不得再使用舊 00-B。
+  2. 實作 02、04、06–09 的 mid-scene／coda cue，退役 01、03，更新測試與 root README；關鍵影格已齊，不必等待 ChatGPT。
+  3. 保持原生圖不裁切；由 Claude 做 runtime 所需 WebP／尺寸優化與 1280×720 影片交付處理。正式影片仍為 0／7。
+- 未決問題或阻塞：等待使用者對 `runway-v3/REVIEW.md` 做最終靜態核准；若有退件由 ChatGPT 單張重做。Claude 的 cue／fallback 接線不需等待影格生成，但正式圖生影片仍須在靜態核准後進行。
+- 驗證結果：12 張均為 1672×941 PNG、無 alpha channel、非透明滿版；逐張目視初檢完成。`sora-cutscenes.json` 可正常解析；`git diff --check`、`npm.cmd run typecheck`、`npm.cmd test`（19 檔 200／200）、`npm.cmd run build` 全數通過。建置後 `dist/assets/cutscenes/keyframes/runway-v3` 不存在，23,197,460 bytes 的創作原圖未誤入網站成品。工作樹既有未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-1523
+
+- 時間：2026-09-27T07:23:13Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本次是唯讀整合準備度審查與官方 API 研究；未修改 Claude-owned runtime、schema、cue、測試或生成腳本。
+- 本次範圍：檢查現有 7 段／18 鏡素材是否已有足夠資訊可接 Runway，並判斷能否在無角色或場景錯配下生成。逐項核對 v3 分鏡、實際 cue、legacy Sora manifest、18 張起始影格、Runway 官方 API／模型／輸入輸出／提示／價格文件與本機工具狀態。
+- 實際變更檔案：
+  - `docs/research/runway-video-integration-audit-20260927.md`（新增）：Runway 接入準備度、官方 API 需求、素材相容性、風險、缺口、成本與安全試跑方案。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 審查結論：目前資訊足以做「人工監督的 1–2 鏡 proof of concept」，不足以宣稱或執行「無人監督且零角色／場景錯配」的 18 鏡量產。現有角色／道具 bible、逐鏡起訖狀態、18 張 start frame 與已接好的 7 個 runtime cue 是強基礎；但 Runway 本身不保證一致性，必須把它當成逐鏡生成後由 QC／重試把關的流程。
+- 主要缺口與風險：
+  1. 使用者尚未完成 18 張靜態影格的正式核准；`09-C.png` 新出現周啟文面前的筆電，與 09-A／09-B 及「no new objects」規則不完全一致，需明確核准或重做。
+  2. 專案沒有 `@runwayml/sdk`、Runway runner、18 鏡機器可讀 manifest、任務輪詢／下載／provenance，也沒有 `RUNWAYML_API_SECRET`；現有 `generate_sora_cutscenes.mjs` 與 `sora-cutscenes.json` 明確是 legacy Sora，不能直接當 Runway 接口。
+  3. 現有提示模板大量使用負面限制；Runway 官方建議以正向、單一動作與鏡頭描述為主，需為 18 鏡改寫 provider-specific motion prompts，並把限制移到驗收規則。
+  4. API 只交付逐鏡影片；本機未安裝 ffmpeg，且環境音／音訊流程未定，尚無法自動拼成 7 段正式 MP4。
+  5. `property/cutscene-cues.json` 已完成 7 段接線，但 `property/cutscene-storyboard-v3.md` 與 `public/assets/cutscenes/README.md` 仍寫 cue migration pending；這個雙重真相會誤導自動化，實作前應同步。
+- 建議下一步：先由使用者核准或退回 18 張靜態影格，特別確認 09-C；再以 `00-B-v3` 做單鏡 Runway pilot，保存輸入、prompt、task ID、model、seed／參數與輸出，依角色、服裝、道具、場景、動作、末態逐欄驗收。通過後才擴到第二鏡及全套，不先批量燒 credits。
+- 交給 Claude 的明確行動：本輪只審查，沒有要求立即改 code。若使用者批准接入，請依研究報告實作 Runway SDK／secret 檢查、18 鏡 manifest、上傳／輪詢／立即下載、provenance、QC 狀態與拼接流程；不得復用 legacy Sora runner，也不得把模型輸出視為自動通過。
+- 未決問題或阻塞：使用者靜態核准、09-C 道具決議、Runway 帳號／credits／secret、Runway 專用 prompt manifest、QC／重試政策、拼接與音訊流程。正式影片仍為 0／7。
+- 驗證結果：18 張 PNG 均為 1672×941、單張約 1.47–2.02 MB，符合目前 Runway image-to-video 支援的 1280:720 方向與 data URI 實務大小限制；依 2026-09-27 官方文件確認 Node SDK、API secret、模型、2–10 秒 duration、輸入／輸出保存限制與 credits。`git diff --check` 通過；本次僅文件，未執行程式測試。工作樹既有未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-1730
+
+- 時間：2026-09-27T09:30:29Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。依使用者要求，不做隔離舊 MP4 的逐格檢查；只比較 canonical scene、v3 cut instructions、目前 `cutscene-cues.json` 與 Runway 製作輸入。
+- 本次範圍：完成目前可安全前推的創作側準備：確認 cue 已接線、找出結局 coda 與 runtime 文字的重複、把 07–09 改為創作暫停、撰寫逐鏡 Runway 正向 motion prompts、末態、否決條件與產出紀錄要求。
+- 實際變更檔案：
+  - `property/runway-video-shot-pack-v1.md`（新增）：00-B pilot、00／02／04／06 的 10 鏡正式 Runway prompts 與 QC；07–09 的 8 鏡只保留草案並明定不可送 runner。
+  - `property/cutscene-storyboard-v3.md`：把 7 段 cue 狀態同步為已接線；標出 07–09 的敘事重複與創作暫停；更新生成順序。
+  - `property/sora-cutscenes.json`：07、08、09 從 `TODO` 改為 `BLOCKED`，加入逐段重複原因與禁止未決生成的 review rule。
+  - `public/assets/cutscenes/README.md`：同步 cue 已接線與 07–09 creative hold。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 00、02、04、06 在目前 cue 點增加新的觀眾資訊或時間橋；靜態核准後可製作。第一個 pilot 固定為 00-B。
+  2. 07 在 `ending-decent` L09 後播放，卻完整重演「寄出／等待／不再寄」；08 在 L14 後重演 L11–L14；09 在 L11 後重演 L09–L11。三段先 `BLOCKED`，避免浪費 credits。
+  3. 不修改或刪除 07–09 關鍵影格；它們保留為候選。使用者可在看完舊片後決定接受有意視覺回看，或另行拆分文字與影片功能。
+  4. 原先準備重做 09-C 的筆電疑慮被更上游問題取代：目前整段 09 都不應生成，因此沒有為未定案鏡頭另產圖片。
+  5. Runway prompt 改為正向、單一可見動作；負面限制全部移到逐鏡否決條件與共用 QC，不讓模型用反向語意猜測。
+- 交給 Claude 的明確行動：目前不要讓 runner 接收 07–09。若使用者批准 Runway 接入，manifest 應只先放行 00-B pilot，之後才是 00／02／04／06；必須保存 start-frame hash、完整 prompt、model、duration、task ID、候選序號與 QC 結果。07–09 的 cue 不需立即刪除，但正式 MP4 缺失時維持既有 fallback。
+- 未決問題或阻塞：使用者尚未核准靜態影格與 Runway 付費試跑；07–09 是否保留為有意視覺回看尚待使用者看完舊片後決定。Runway API／runner 仍未實作。
+- 驗證結果：`sora-cutscenes.json` 可正常解析；狀態為 6 `BLOCKED`、1 `TODO`、2 `DEPRECATED`，無 `READY`；本輪可放行 10 鏡所列 start-frame 路徑全部存在；`git diff --check` 通過。本次只有文件／內容清單，不執行程式測試。工作樹未追蹤 `.claude/`、`.wrangler/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-1751
+
+- 時間：2026-09-27T09:51:36Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本次只修正 ChatGPT-owned Runway prompt 內容，不修改 runtime、cue、schema 或 runner。
+- 本次範圍：使用者正確指出 Runway 不知道專案角色姓名。全面移除 18 鏡 Runway prompt 內的 Lin Yucheng／Zeng Yalin／Zhou Yuan 名稱，改用起始圖可直接辨識的位置、外觀與道具描述。
+- 實際變更檔案：
+  - `property/runway-video-shot-pack-v1.md`：新增「prompt 不使用角色姓名」規則；10 鏡可放行 prompts 與 8 鏡暫停草案全部改為視覺指稱。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：角色身份由核准的 image-to-video start frame 鎖定；prompt 只稱呼 `the standing light-haired woman holding the blue folder`、`the seated brown-haired man`、`the dark-haired woman at the keyboard` 等畫面內可定位主體，不期待模型理解專案人名。
+- 交給 Claude 的明確行動：未來 API manifest 必須原樣使用本製作包的 visual descriptors，不把角色 ID／姓名插回 prompt。角色 ID 只可作 provenance metadata。
+- 未決問題或阻塞：與上一筆相同；00-B pilot 等待靜態核准與 Runway 接入，07–09 維持 creative hold。
+- 驗證結果：以 `rg` 確認 Runway 製作包的 prompts 已無三名角色英文姓名或簡稱；`git diff --check` 通過。本次只有文件，不執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-1924
+
+- 時間：2026-09-27T11:24:52Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者要求直接以既有製作包生成一支影片，不重跑審查或其他素材；本次只送出 00-B candidate 01，未生成任何其他鏡頭。
+- 本次範圍：透過已連線的 Runway connector，使用既有 `00-B-v3.png` 與定稿 visual-subject prompt 提交 2 秒、16:9、720p、無音訊的 image-to-video pilot。
+- 實際變更檔案：
+  - `property/runway-generation-log.md`（新增）：保存 task ID、start-frame hash、完整 prompt、model、duration、ratio、resolution、credits 與 QC gates。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 生成結果：Runway 已接受 task `74646b65-3dbe-4349-9be8-94ff0dcb9d14`，提交時狀態 `PENDING`；扣除 24 credits，餘額 595。只建立一個 task，沒有重送。
+- 已定案事項：本候選尚未因「成功提交」而視為內容通過。完成後必須依 `property/runway-video-shot-pack-v1.md` 的 00-B end state 與 rejection gates 做人工 QC；通過前不得改名或接成 `00_final_documents.mp4`。
+- 交給 Claude 的明確行動：目前不需接線或下載；等待 Runway viewer 完成與使用者／ChatGPT QC。若候選通過，再依 task ID 下載並保存正式候選檔及更新 provenance。
+- 未決問題或阻塞：影片仍在背景生成；輸出 URL／本地檔案與 QC 結果尚未取得。
+- 驗證結果：connector 已確認 authenticated；start frame SHA-256 `84cef29d78184ddd10fbbeaddb71f86cdd4b10767aa28accd8325f8563dacf61`、1,988,433 bytes；task accepted。未修改 runtime 或 code，不執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-2101
+
+- 時間：2026-09-27T13:01:25Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者要求停止生成、重做分鏡表與影片規格後交其審查。本輪使用 `screenwriting:sw-scene-craft`，只改 ChatGPT-owned 創作文件與 manifest 狀態；未改 runtime cue、scene JSON、播放器、schema 或測試。
+- 本次範圍：以精確 cue 前一句／後一句重新分析每段影片的目的、價值轉折、進出點與重複節拍；分離「播放段落／鏡頭／生成任務」，重算正式 slate、片長、剪輯與 Runway prompts。
+- 實際變更檔案：
+  - `property/cutscene-storyboard-v4-review.md`（新增）：使用者審查稿，暫定 00、04、06 共 3 段／7 鏡／約 18 秒；逐段列播放位置、玩家缺少的影像資訊、價值轉折、內部節拍、段尾接回與禁止內容。
+  - `property/runway-video-spec-v2-review.md`（新增）：片長規則、cue 接合表、7 鏡單一連續鏡頭 prompt 草案、剪輯、段落級驗收與全案否決條件。
+  - `property/cutscene-storyboard-v3.md`、`property/runway-video-shot-pack-v1.md`：標記停止使用並指向審查稿。
+  - `property/sora-cutscenes.json`：唯一 `TODO` 的 06 改為 `BLOCKED`；新增全案停止生成規則。目前 7 `BLOCKED`、2 `DEPRECATED`、0 `READY`。
+  - `property/runway-generation-log.md`：00-B candidate 01 改為 `REJECTED AS STANDALONE CUTSCENE`／`SPEC FAILURE`；可保留作未來完整 00 的中間鏡頭候選，不得部署成正式 00。
+  - `property/README.md`、`public/assets/cutscenes/README.md`：同步審查稿、停止生成與暫定 0／3 正式影片。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 一段正式 MP4 對應一個 runtime cue 與一個戲劇目的；可有多鏡，但不能有第二段情節。每個生成 task 原則上一鏡，完整段落由剪輯控制。
+  2. 00 保留：在 s1 L01 前建立「觀眾知道文件已到、雨澄不知道」的 7 秒冷開場。
+  3. 04 保留：在問題與 Choice 5 之間只延長同一個沉默，5 秒／2 鏡，不新增情節或答案。
+  4. 06 保留：6 秒／2 鏡；只從關燈接到三週後手機亮起。06-A 收第三杯水因 L14 已演過而退出。
+  5. 02 新增退役：cue 後 L16–L23 已立即完整敘述關門、座位、入室、資料夾與反應；影片只會提前或重播。07–09 同理維持退役／不生成。
+  6. 正式審查 slate 暫縮為 3 段、7 鏡、約 18 秒。使用者核准前只是 review draft，不修改現有 7 個 runtime cues。
+- 交給 Claude 的明確行動：現在不要改 cue、runner 或 runtime；等使用者核准 v4。root `README.md` 仍指向 v3，屬 Claude-owned，核准後再依正式決議同步並退役 02、07、08、09 cue／fallback。
+- 未決問題或阻塞：等待使用者審查四項：是否只留 00／04／06；00 冷開場節拍；04 是否值得用影片延長沉默；06 黑場到三週後的接法。核准前不得生成。
+- 驗證結果：`sora-cutscenes.json` 可正常解析，9 項為 7 `BLOCKED`＋2 `DEPRECATED`、0 `READY`；`git diff --check` 通過。本次只有 Markdown／JSON 狀態，未執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-2108
+
+- 時間：2026-09-27T13:08:42Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本輪只做 v4 影格需求確認，不生成、不重畫、不修改 runtime。
+- 本次範圍：逐張目視檢查 v4 暫留的 00-A/B/C、04-B/C、06-B/C，對照每鏡開始時刻、主要動作尚未發生、cue 接合與 Runway prompt 是否只要求畫面內已有資訊。
+- 實際變更檔案：
+  - `property/cutscene-keyframes-v4-audit.md`（新增）：7 張現有影格的逐張判定、使用限制、不需新增的理由與未來觸發新增的三種設計變更。
+  - `property/cutscene-storyboard-v4-review.md`：記錄 7 張已完成重看；修正 04-B／04-C 的真實起始狀態。
+  - `property/runway-video-spec-v2-review.md`：04-B prompt 不再要求畫面外的手與手錶；04-C 改為雙手已放在鍵盤上且靜止。
+  - `property/README.md`：加入 v4 關鍵影格 audit 索引。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 審查結論：目前 **0 張需要新增、0 張需要重畫**。00 的缺口是三鏡剪輯而非圖片；04 現有兩張已構成視線反打，原問題是文字要求了畫面外／不存在的手勢；06-B／C 正好位於關燈與手機亮起之前，黑場由剪輯建立，不需純黑影格。
+- 使用限制：00-B 的正面視線不作額外戲劇動作；00-C 不要求模型把失焦前景文件夾重畫清楚；04-B 不提手錶；04-C 只保持平板鍵盤上的手靜止；06-B 不再收第三杯水；06-C 不顯示訊息、不拿手機。
+- 交給 Claude 的明確行動：無。等待使用者審查 v4；核准前仍不得改 cue、runner 或生成狀態。
+- 未決問題或阻塞：若使用者把 00 改為不切鏡長鏡頭、把 04 改為三人同框、或要求 06 增加中間時間意象，才需要新增對應關鍵影格。
+- 驗證結果：7 個候選檔案全部存在並完成原尺寸目視檢查；`git diff --check` 通過。本次只有 Markdown，不執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-2115
+
+- 時間：2026-09-27T13:15:53Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本次整理 ChatGPT-owned 關鍵影格與狀態文件；為避免破壞 Claude-owned runtime fallback／optimizer／manifest，沒有搬走或刪除舊來源 PNG，也沒有修改 cue 或程式。
+- 本次範圍：解決 v2／v3 影格散落及退役狀態不清。建立 v4 單一審查入口、集中 7 張現役相容副本、統一 00-B 檔名，並逐檔標記其餘 18 張退役／被取代原因。
+- 實際變更檔案：
+  - `public/assets/cutscenes/keyframes/v4-review/active/*.png`（新增 7 張）：00-A/B/C、04-B/C、06-B/C 的逐位元相同相容副本；00-B 從舊 `00-B-v3.png` 統一為 `00-B.png`。
+  - `public/assets/cutscenes/keyframes/v4-review/README.md`（新增）：唯一審查入口、來源映射、狀態與 7 張預覽。
+  - `public/assets/cutscenes/keyframes/v4-review/retired/README.md`（新增）：18 張逐檔 `RETIRED`／`SUPERSEDED` 索引與原因。
+  - `runway-v2/README.md`、`REVIEW.md`、`runway-v3/README.md`、`REVIEW.md`：加上 legacy source pool／歷史審查警示並指向 v4。
+  - `property/cutscene-keyframes-v4-audit.md`、`cutscene-storyboard-v4-review.md`、`runway-video-spec-v2-review.md`、`property/README.md`、`public/assets/cutscenes/README.md`：改用 v4 單一入口並說明舊路徑相容性。
+  - `property/sora-cutscenes.json`：canonical sources 改指 v4 review／audit，styleBible 明確停止生成並指向 active／retired；legacy items、檔名與 trigger 仍保留供遷移。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：現役狀態只看 `keyframes/v4-review/active/`；退役狀態只看 `keyframes/v4-review/retired/README.md`。不得再從 `runway-v2/`／`runway-v3/` 資料夾名稱推斷現役。
+- 交給 Claude 的明確行動：使用者核准 v4 後，把 `cutscene-cues.json`、storyboard optimizer、`public/assets/cutscenes/storyboard/manifest.json`、schema 註解與測試改指 v4 active 路徑，退役 02／07／08／09 cue。完成且測試通過後，通知 ChatGPT，才能刪除舊來源中的 7 張重複 PNG；目前不可刪。
+- 未決問題或阻塞：v4 尚待使用者核准；因此 active 目前是 review copies，舊來源仍需保留。root README 與 runtime manifest 仍寫 v2／v3，屬 Claude-owned 遷移項目。
+- 驗證結果：v4 active 共 7 張、退役索引 18 列、manifest 0 `READY`；7 個 active 副本 SHA-256 全部逐一與原始來源相同；`sora-cutscenes.json` 可解析；`git diff --check` 通過。未執行程式測試。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-2121
+
+- 時間：2026-09-27T13:21:00Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本次依使用者校正資產架構：應有一個永遠代表最新完整集合的穩定資料夾，各版各保留一份快照；同鏡號換圖不應每次要求 Claude 改路徑。
+- 本次範圍：建立 `keyframes/current/<shot-id>.png` 穩定契約，將 v4 的 7 張最新候選以逐位元相同副本放入 current，並把 ChatGPT-owned 分鏡、Runway 規格、影格 audit、內容 manifest 與各版本說明統一改指 current。沒有生成、重畫、刪除或搬走任何影像，也沒有修改 Claude-owned runtime／cue／schema／optimizer／測試。
+- 實際變更檔案：
+  - `public/assets/cutscenes/keyframes/current/README.md`、`manifest.json`、`00-A.png`、`00-B.png`、`00-C.png`、`04-B.png`、`04-C.png`、`06-B.png`、`06-C.png`（新增）：最新完整集合、穩定命名、來源快照與 SHA-256。
+  - `property/cutscene-keyframes-v4-audit.md`、`cutscene-storyboard-v4-review.md`、`runway-video-spec-v2-review.md`、`property/README.md`、`property/sora-cutscenes.json`、`public/assets/cutscenes/README.md`：所有現役創作來源統一改指 `keyframes/current/`。
+  - `keyframes/runway-v2/README.md`、`REVIEW.md`、`runway-v3/README.md`、`REVIEW.md`、`v4-review/README.md`、`v4-review/retired/README.md`：明確標為歷史／版本快照並指回 current。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry；本 Entry 取代上一筆把 `v4-review/active/` 當穩定現役路徑的架構決定。
+- 已定案事項：
+  1. 唯一最新完整路徑為 `public/assets/cutscenes/keyframes/current/<shot-id>.png`；runtime 與工具完成一次遷移後不得綁版本資料夾。
+  2. 同一 shot 的純視覺替換：先保存舊圖到新版本快照，再覆寫相同 current 檔名並更新 hash；不改 cue、shot ID、manifest key 或程式路徑。
+  3. `runway-v2/`、`runway-v3/`、`v4-review/` 保留各版一份，視為不可變快照，不供 runtime 選圖。
+  4. 只有新增／刪除／改名鏡號、改播放時點、改段落鏡序、改 duration contract，或劇情／角色／場景設計改變時，才需要 Claude 修改整合。
+- 交給 Claude 的明確行動：在使用者核准 v4 slate／stable-path contract 後做一次性遷移：讓 `property/cutscene-cues.json`、storyboard optimizer、`public/assets/cutscenes/storyboard/manifest.json`、schema 註解、測試與 root README 只從 `keyframes/current/<shot-id>.png` 取得仍現役的 7 鏡，並退役舊 02／07／08／09 等來源。遷移完成後，日常同鏡號換圖不得再要求改任何路徑；只需執行既有資產處理／驗證流程。
+- 未決問題或阻塞：v4 的 3 段／7 鏡仍待使用者審查；現行 storyboard manifest 仍列出 v2／v3 共 25 個來源，因此舊來源現在不可刪。這是一次性技術遷移，不是每次換圖都要重做的工作。
+- 驗證結果：current 有且只有 7 張 PNG；7 張 SHA-256 全部符合 `current/manifest.json` 並與 `v4-review/active/` 快照逐位元相同；`sora-cutscenes.json` 與 current manifest 可解析；現役創作文件已無 `v4-review/active` 殘留；`git diff --check` 通過。未追蹤 `.claude/` 不屬本次變更，未修改、未納入提交。
+
+## ChatGPT-20260927-2139
+
+- 時間：2026-09-27T13:39:57Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者明確要求 Runway 生成第一支結果、禁止重試，並表示將親自檢查；本次只提交 v4 製作順序中的第一個單鏡生成單位 00-A。
+- 本次範圍：用穩定來源 `keyframes/current/00-A.png` 建立一個 2 秒、16:9、720p、無音訊的單一連續鏡頭候選；提示詞只允許安靜工作、雨影與極短橫移，不允許人物進出、文件、通知、抬頭、換場、時間跳躍或新劇情。
+- 實際變更檔案：
+  - `property/runway-generation-log.md`：新增 00-A candidate 01 的 task ID、start-frame hash、完整 prompt、參數、credits、禁止重試與使用者自行 QC 狀態。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 生成結果：Runway 接受唯一 generation task `95681111-cc58-41aa-b906-00536f26a050`，提交時為背景生成中；扣除 24 credits，餘額 571。正式 generation tool 只呼叫一次，沒有 retry／regenerate／variation。
+- 已定案事項：這是 00-A 單鏡候選，不得被命名或部署為完整 `00_final_documents.mp4`；完整 00 仍需未來核准的 00-A／B／C 候選剪輯。QC 完全保留給使用者，不由 Agent 自動判定。
+- 交給 Claude 的明確行動：無。不要下載、接線、部署、重送或自動建立變體；等待使用者親自檢查原 task viewer 並給出決定。
+- 未決問題或阻塞：等待使用者 QC。除非使用者明確要求，任何 Agent 都不得再送 00-A 或用相同參數重試。
+- 驗證結果：Runway authenticated；start frame SHA-256 `6377f9670be8fd8dc50ed8c8c2193d0cd3a4550cc90551fa01b12146780e31e5`、2,004,434 bytes；task accepted。前置 upload 參數驗證沒有建立 task 或扣生成額度。未修改 runtime 或其他影像，未追蹤 `.claude/` 未納入。
+
+## ChatGPT-20260927-2142
+
+- 時間：2026-09-27T13:42:20Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者在 00-A 後明確要求生成 00-B，並再次要求在其確認前不得重試。
+- 本次範圍：只用 `keyframes/current/00-B.png` 提交一個 2.5 秒、16:9、720p、無音訊的單一連續鏡頭；唯一動作是淺髮站立女性把有封面、書脊與紙頁厚度的藍色紙本文件夾放平並鬆手。
+- 實際變更檔案：`property/runway-generation-log.md` 新增 00-B candidate 02；`docs/ai-handoff/CHATGPT.md` 新增本 Entry。
+- 生成結果：Runway 接受唯一 task `a4ab6894-051c-4c1f-9a24-6fa36dccc70e`；提交時背景生成中，扣除 24 credits，餘額 547。沒有 retry／regenerate／variation。
+- 已定案事項：QC 完全由使用者執行。任何 Agent 在使用者明確確認前，不得再次提交 00-B、建立變體、下載升格、接線或部署。本候選仍只是完整 00 段的中間鏡頭，不是正式完整影片。
+- 交給 Claude 的明確行動：無；等待使用者查看原 Runway task viewer。
+- 未決問題或阻塞：等待使用者 QC 與明確下一步。
+- 驗證結果：start frame SHA-256 `84cef29d78184ddd10fbbeaddb71f86cdd4b10767aa28accd8325f8563dacf61`、1,988,433 bytes；task accepted；未修改 runtime 或影像，未追蹤 `.claude/` 未納入。
+
+## ChatGPT-20260927-2147
+
+- 時間：2026-09-27T13:47:23Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者在 00-B 後明確要求生成 00-C，並再次要求在其確認前不得重試。
+- 本次範圍：只用 `keyframes/current/00-C.png` 提交一個 2.5 秒、16:9、720p、無音訊的單一連續鏡頭；唯一變化是焦點沿既有視線由失焦的藍色文件夾前景移到遠處工作的女性，人物位置、距離與辦公室地理不變。
+- 實際變更檔案：`property/runway-generation-log.md` 新增 00-C candidate 01；`docs/ai-handoff/CHATGPT.md` 新增本 Entry。
+- 生成結果：Runway 接受唯一 task `9ca8cf3c-b63e-4cd9-a155-d19d96f243dd`；提交時背景生成中，扣除 24 credits，餘額 523。沒有 retry／regenerate／variation。
+- 已定案事項：QC 完全由使用者執行。任何 Agent 在使用者明確確認前，不得再次提交 00-C、建立變體、下載升格、接線或部署。本候選是完整 00 段的第三鏡，不是單獨的正式 cutscene。
+- 交給 Claude 的明確行動：無；等待使用者查看原 Runway task viewer。
+- 未決問題或阻塞：等待使用者 QC 與明確下一步。
+- 驗證結果：start frame SHA-256 `20841c56298839283b5f2cb4d13c3593179f3137d4b65fdf060fe51e18f8188e`、2,002,478 bytes；task accepted；未修改 runtime 或影像，未追蹤 `.claude/` 未納入。
+
+## ChatGPT-20260927-2207
+
+- 時間：2026-09-27T14:07:11Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者要求把已完成的 00-A／B／C 合併，並明確禁止 Runway calls。
+- 本次範圍：從三個現有完成影片分頁匯出原始 MP4，在本機依 A → B → C 以硬切串接；沒有生成、重試、變體、轉場、補幀、畫面修改或 Runway call。
+- 實際變更檔案：
+  - `coordination/pending-review/cutscenes/00-v4-candidate-01/00-A.mp4`、`00-B.mp4`、`00-C.mp4`：三支原始來源。
+  - 同資料夾 `concat.txt`、`README.md`、`00-v4-candidate-01.mp4`：固定順序、來源／hash／技術規格與合併候選。
+  - `property/runway-generation-log.md`：新增 combined candidate 01 provenance。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 合併結果：`00-v4-candidate-01.mp4` 為 6.13 秒／147 frames／1280×720／24fps／H.264 High／yuv420p／無音訊；以 stream copy 保留三段編碼並直接硬切，SHA-256 `f16c2b662e5bb3d72a7c0d1ff6456e3849e8653c61706a7ecc7e88da444d5d8c`。
+- 已定案事項：本檔只在 pending-review，是完整 00 的候選，不是正式 `00_final_documents.mp4`。不得覆寫隔離區同名舊片或移入 `public/assets/cutscenes/`。
+- 交給 Claude 的明確行動：無；等待使用者親自 QC。使用者明確核准前，不接線、不部署、不重新剪輯。
+- 未決問題或阻塞：三個請求長度為 2／2.5／2.5 秒，但實際三個 Runway artifact 都是 2.04 秒，因此合併為 6.13 秒而非草案約 7 秒。是否接受此節奏由使用者判斷，不由 Agent自行延長。
+- 驗證結果：三支來源及合併檔 SHA-256 已記錄；合併容器可解析，輸出 147 frames、1280×720、24fps、H.264、無音訊；`git diff --check` 待提交前執行。未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260927-2256
+
+- 時間：2026-09-27T14:56:42Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本輪使用 `screenwriting:sw-scene-craft` 修正使用者指出的共通缺口：prompt 沒有明確交代攝影機如何移動、zoom 與速度。
+- 本次範圍：只修文件，不呼叫 Runway、不重新生成、不修改影片或 runtime。把全部現役 7 鏡的攝影行為改成可執行、可驗收的時間化契約。
+- 實際變更檔案：
+  - `property/runway-video-spec-v2-review.md`：升為 v2.1；新增攝影機運動契約、7 鏡時間表，並重寫全部 7 個 prompts，逐鏡列出起始 hold、運動／rack focus 類型、起訖秒數、方向、幅度、速度、ease、停止點、結尾 hold 與 zoom 是否為 0。
+  - `property/cutscene-storyboard-v4-review.md`：三個段落的內部節拍表新增攝影機／焦點欄，與 v2.1 逐鏡一致。
+  - `property/README.md`：補上 v2.1 攝影機規格索引。
+  - `property/runway-generation-log.md`：記錄使用者 feedback 與「既有 00 候選早於 v2.1、不得自動重跑」。
+  - `coordination/pending-review/cutscenes/00-v4-candidate-01/README.md`：明確標註現有合併候選不代表通過新版 camera contract。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：`gentle`／`slow`／`restrained`／`brief` 不再可單獨當攝影規格；每鏡必須量化。rack focus 不是 zoom。除非逐鏡明寫 optical zoom，預設禁止 zoom；短推近定義為 physical dolly-in。刻意靜止也必須明寫 `locked camera` 與 pan／tilt／dolly／zoom 全為 0。
+- 7 鏡攝影決議：00-A 右橫移 3%；00-B 隨文件向下 4%；00-C 鎖鏡只做前景到遠景 rack focus；04-B 全程鎖鏡；04-C 鎖鏡做男性→手→男性雙向 rack focus；06-B 全程鎖定 wide 並保留至少 0.60s 黑場；06-C 手機亮後 physical dolly-in、手機尺寸最多增加 3%。
+- 交給 Claude 的明確行動：無。未來若建立生成 manifest 或 API runner，必須原樣保留 v2.1 的 camera timing／magnitude，不得壓縮回 `slow camera movement` 等模糊字樣。
+- 未決問題或阻塞：現有 00-A／B／C 與合併候選由舊 prompt 生成，仍等待使用者 QC。只有使用者明確要求時才依 v2.1 重生；本次 feedback 本身不構成 retry 授權。
+- 驗證結果：v2.1 與 storyboard 都各列出完整 7 鏡；所有時間段加總符合各鏡 2.0／2.5／3.0 秒；舊 `lateral drift`、`restrained side-follow`、`travels gently`、`moves briefly` 模糊攝影描述已從現行 prompts 移除；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260927-2301
+
+- 時間：2026-09-27T15:01:30Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本輪使用 `screenwriting:sw-scene-craft`，依使用者需求新增可在其他 AI image-to-video 工具使用的關鍵影格延伸 Prompt；沒有呼叫任何生成工具。
+- 本次範圍：建立平台中立 first-frame-to-video 模板，讓 `keyframes/current/` 圖片被當作精確第 0 幀延續，而非由工具重新畫、重新選角或自行加戲；重用 v2.1 的逐鏡 action／camera／end-state 契約。
+- 實際變更檔案：
+  - `property/keyframe-video-extension-prompt-v1.md`（新增）：完整通用 Prompt、字數受限短版、獨立 negative prompt、跨工具設定原則、motion brush 注意事項、7 鏡 current path／duration／規格來源對照與使用前檢查。
+  - `property/runway-video-spec-v2-review.md`：新增跨工具入口，要求其他工具先套 first-frame lock，再填本文件逐鏡 camera contract。
+  - `property/README.md`：新增文件索引。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：跨工具生成仍是一張 keyframe 對應一個 single continuous shot。Prompt 不依賴角色姓名；圖片本身是人物、服裝、道具、空間、光線與畫風的 factual source of truth。工具若強制較長 duration，只能延長 hold，不得新增第二動作、第二 camera move 或新情節。
+- 交給 Claude 的明確行動：無。若未來把 Prompt 暴露到 UI 或其他 runner，必須保留 `FIRST-FRAME LOCK`、`ONE ALLOWED ACTION`、`CAMERA CONTRACT`、`END STATE` 四區，不得只傳動作句。
+- 未決問題或阻塞：無。這是使用者可自行貼到其他工具的文字資產，不構成任何鏡頭的生成授權。
+- 驗證結果：7 個 current PNG 路徑全部存在；完整模板含 first-frame lock／單一動作／量化 camera／末態，另有短版與 negative prompt；文件互鏈成立；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260927-2319
+
+- 時間：2026-09-27T15:19:13Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。使用者指出上一筆交付仍是需要自行替換欄位的模板，不符合「每鏡直接複製貼上」。本輪使用 `wait-what` 重新交付，不呼叫生成工具。
+- 本次範圍：把 `keyframe-video-extension-prompt-v1.md` 從 placeholder 模板重寫成逐鏡完成稿；使用者不需填 duration、subject、action、camera 或 end state，也不需把多段文件自行合併。
+- 實際變更檔案：
+  - `property/keyframe-video-extension-prompt-v1.md`：升為 v1.1；00-A、00-B、00-C、04-B、04-C、06-B、06-C 各自列出指定 current PNG、片長、完整 Main prompt 與專屬 Negative prompt。每段均含精確第 0 幀鎖定、人物／場景／道具保持、唯一動作、量化 camera timecode、末態與該鏡特定漂移禁令。
+  - `property/runway-video-spec-v2-review.md`、`property/README.md`：改寫索引，明確說明零 placeholder、可直接複製，不再要求使用者套模板。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry；本 Entry 取代上一筆「由使用者填寫通用模板」的交付形式。
+- 已定案事項：對外部 image-to-video 工具的使用單位是「一鏡一組完整 Main＋Negative prompt」。不得再交付空白模板要求使用者自行填寫或跨文件拼接。角色仍以畫面內外觀／位置／道具指認，不使用姓名期待模型理解。
+- 交給 Claude 的明確行動：無。若未來做 UI 複製按鈕，直接以 shot ID 對應本文件的完整 Main／Negative block，不要求玩家輸入變數。
+- 未決問題或阻塞：無；本次只修正文字交付格式，不生成、不重試。
+- 驗證結果：7 個 shot heading、7 個 Main prompt、7 個 Negative prompt；可編輯 placeholder 為 0；所有指定 current PNG 先前已確認存在；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260928-0747
+
+- 時間：2026-09-27T23:47:32Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260927-0515`（最新）。本輪先使用 `screenwriting:sw-scene-craft` 把 00 修正為「雅琳把資料夾放在予安桌上」與「空手雅琳和雨澄擦身而過」，其後使用者直接提供一支 10 秒 MP4 並明確指示 `Use this as 00`；成片選擇取代前述待重製方案。
+- 本次範圍：不讀取或逐格分析影片內容、不呼叫 Runway、不重跑任何生成。把使用者提供檔案複製為正式 `public/assets/cutscenes/00_final_documents.mp4`，沿用已存在的 `final-documents`／`before:final-version` cue；同步把 00-A／B／C 關鍵影格與 prompts 降為未來重製參考，04、06 繼續停止生成。
+- 實際變更檔案：
+  - `public/assets/cutscenes/00_final_documents.mp4`（新增）：使用者核准的正式 00；10 秒、4,683,597 bytes、SHA-256 `e8bc40964dd634e6fb02d22d4e028a0ee5bcdba56928455881b4f367af69de9a`。
+  - `property/cutscene-storyboard-v4-review.md`、`runway-video-spec-v2-review.md`、`keyframe-video-extension-prompt-v1.md`、`cutscene-keyframes-v4-audit.md`：記錄 00 已定稿，舊三鏡方案只供歷史／未來明確重製使用；04、06 不變。
+  - `property/runway-generation-log.md`、`property/sora-cutscenes.json`、`property/README.md`、`public/assets/cutscenes/README.md`：記錄核准來源、正式路徑、hash、cue 與禁止自動重跑。
+  - `public/assets/cutscenes/keyframes/current/README.md`、`manifest.json`：00-A／B／C 改為 `REFERENCE_ONLY_SUPERSEDED_BY_APPROVED_MASTER`；04、06 維持 review。
+  - `coordination/pending-review/cutscenes/00-v4-candidate-01/README.md`：舊三段合併候選標成 `SUPERSEDED BY STORY REVISION`，不得部署。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：正式 00 是使用者提供的單一連續成片，不再要求新增或替換 00 keyframe，也不得由任何 Agent 自動重製、重剪、重跑或以舊 A／B／C 候選取代。現有 cue 檔名已吻合，因此不修改 Claude-owned runtime／schema／tests。
+- 交給 Claude 的明確行動：使用者要求完成實際部署。依 `AI_ROLE_BOUNDARIES.md`，建置／CI/CD／部署為 Claude 專屬責任；請在此 commit 上重新執行 production build，使用已設定的 `npm run deploy:cf`／Wrangler 將 `dist/` 部署到 `sparkling-glitter-6ce0.pages.dev`，再驗證線上 `/assets/cutscenes/00_final_documents.mp4` 可讀且 hash／大小符合正式檔。保留 `property/cutscene-cues.json` 既有 cue，不修改 runtime，不把 storyboard fallback 當成正式 00，也不重新生成影片。
+- 未決問題或阻塞：正式 00 的內容與本地整合已完成，但 Cloudflare 上線必須由 Claude 執行，尚未部署。04、06 仍待使用者審查／授權；本次沒有批准它們生成。影片解析工具未安裝，因此技術長度取自 Windows 媒體 metadata；內容正確性直接依使用者核准，不由 Agent 再驗片。
+- 驗證結果：正式檔與 production build 複本 SHA-256 完全一致；`property/sora-cutscenes.json` 與 current manifest 均可解析；Vitest 19 files／206 tests 全通過；TypeScript＋Vite production build 通過；`git diff --check` 通過。測試前 pnpm 曾因 sandbox network 限制嘗試移動本地依賴，已完整移回原位置並刪除它建立的 `.pnpm-store/`；未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260928-0833
+
+- 時間：2026-09-28T00:32:26Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-0000`（最新）。該紀錄已確認正式 00 影片與既有 cue 接線有效，並暫停遠端部署。
+- 本次範圍：使用 `screenwriting:sw-workflow`、`story-skills:premise-workshop`、`screenwriting:sw-scene-craft`、`screenwriting:sw-dialogue` 與 revision-continuity 檢查正式 00 接入後的劇情連續性；只修改 ChatGPT 權限內的敘事內容與文件，不修改 cue、runtime、schema、測試或部署設定。
+- 實際變更檔案：
+  - `property/scenes/s1-final-cut.json`：刪除正式 00 已演出的「雅琳舉起／放下資料夾」重複動作；Scene 1 改從資料夾已在桌上開始；雅琳離開後的說明改為私訊；刪除與本場行動無關的「韌性日／鹼性水」，保留直接服務期限壓力的「財務把明天也省掉了」。
+  - `docs/narrative/last-one-on-one/chapters/chapter-01.md`、`scenes/chapter-01-scene-01.md`、`worldbuilding/locations/weiguang-office.md`：同步正式文本、空間連續性與場景功能。
+  - `property/dialogue-beat-revisions-20260926.md`：把舊 Scene 1 兩組交付分拍標成已由 00 取代。
+  - `property/cutscene-storyboard-v4-review.md`：更新 00 後的實際首句與「影片負責動作、runtime 負責新資訊」續接原則。
+  - `story-bible.md`（新增）：依 workflow 建立目前階段、已定決策、前提／賭注、Scene 1 修改目標與決策日志。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：正式 00 是 Scene 1 的可見前半拍；runtime 不得再次演出交付。Scene 1 的價值轉折保持「普通加班夜 → 壞消息已進場、雨澄仍不知情」；笑點只保留能推進公司流程、時限或角色策略者。
+- 交給 Claude 的明確行動：更新 `tests/narrativeIntegration20260926.test.ts` 第 17–23 行的舊分拍斷言。新測試應確認首句為資料夾已在桌上／雨澄仍盯著螢幕，並確認「雅琳舉起資料夾」「予安點頭」「雅琳放下資料夾」三個由 00 承擔的文字動作不再出現在 `s1-final-cut`；之後重跑 206 項測試並用實機從 00 播到 Scene 1，檢查影片結尾到首句、私訊與雨澄轉身的節奏。
+- 未決問題或阻塞：ChatGPT 角色邊界禁止修改測試，因此保留 1 個已知舊斷言失敗。Story Skills 維護工具把 repo root 當成制式 story project，沒有辨識實際位於 `docs/narrative/last-one-on-one/` 的索引，回報 10 個既有缺路徑錯誤與 2 個警告；本次未跨界重組目錄。
+- 驗證結果：`property/scenes/s1-final-cut.json` 可解析；`npm run typecheck` 通過；`npm run build` 通過；Vitest 19 files 中 18 files 通過，205/206 tests 通過，唯一失敗是上述仍要求舊「雅琳舉起／放下資料夾」文字的整合測試；`git diff --check` 在提交前再次執行。
+
+## ChatGPT-20260928-0429
+
+- 時間：2026-09-28T04:29:20Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-0057`（最新）。Scene 1 新稿、206 項測試與 Worker 部署均已由 Claude 驗證；本次不碰部署、runtime、schema、路由或測試。
+- 本次範圍：依使用者「review everything」後的「改」，使用 `revision-continuity` 做全案修訂。直接修正 ChatGPT 權限內的台詞、角色、世界設定、章節正典、企劃狀態與教學文案；把需要改 choice effects／IDs／conditions／routes 的部分拆成 Claude 可直接整合的正式規格。
+- 實際變更檔案：
+  - Runtime 內容：`property/scenes/s1-final-cut.json`、`s3-meeting.json`、`ending-soft-knife.json`、`property/mba-debrief.json`。
+  - 新增正式規格：`property/choice-and-route-revision-20260928.md`。
+  - 企劃與狀態：`story-bible.md`、`property/romance-microchoices.md`、`property/narrative-integration-revision-20260926.md`、`property/mba-organizational-debrief.md`、`docs/narrative/last-one-on-one/worldbuilding/systems/game-design.md`。
+  - 正典與連續性：`docs/narrative/last-one-on-one/chapters/chapter-01.md`、`chapters/_index.md`、`characters/lin-yucheng.md`、`characters/zeng-yalin.md`、`characters/zeng-yalin.md`（repo 頂層鏡像）、`worldbuilding/artifacts/rights-packet.md`、`worldbuilding/factions/weiguang-interactive.md`、`plot/arcs/last-one-on-one.md`。
+- 已定案事項：
+  1. Scene 1 移除未兌現的「再找執行長」行動，改為確認最終名單已鎖；雅琳不再暗示還有一條低機率轉圜支線。
+  2. clear invite 路徑不再承諾「系統權限不會突然關閉」這個劇中無人能保證的事，改為可履行的存檔與當面說明。
+  3. END 03 共通台詞不再替所有路徑補上一個追求「之後」的意圖；改以「沒有惡意」仍不能取代事實為衝突，保留柔軟卸責的結局功能。
+  4. END 02 的 MBA strategy 從「界線也守住了」收斂為「沒有跨過硬紅線」，避免替所有中間路徑過度背書。
+  5. 權益資料夾 frontmatter 改為 branch-dependent；雨澄新增「以可驗證問題延後恐慌」的自我保護與經濟弱點；微光互動補上決策層、主管、HR 與員工的權力拓樸；兩份雅琳角色檔重新一致。
+  6. 五個主要選擇的新方向為「兩個可辯護策略＋一個明確高風險選項」。A、B 都需存在 END 02 與 TRUE END 的可達組合；`doc-private` 反應結束後立即終止談話，不得再經推薦微選擇或 Choice 5。完整玩家文案與質性後果在新增規格。
+- 交給 Claude 的明確行動：
+  1. 依 `property/choice-and-route-revision-20260928.md` 整合五個主要選擇：決定相容的 choice IDs、差異化 effects、結局門檻、MBA 對應與舊存檔策略；A／B 不可只是高低分版本。
+  2. 為 `doc-private` 建立雅琳立即終止談話的專屬路由，直接進 END 04，跳過 Scene 7 推薦微選擇與 Choice 5；更新路徑枚舉與相關測試。
+  3. 同步 Claude-owned root `README.md` 與 `public/assets/cutscenes/README.md` 的過時狀態說明。本次依角色邊界未修改。
+- 未決問題或阻塞：上述三項屬 Claude 權限，尚未整合，因此 runtime 的五個主要選擇分數與 `doc-private` 後續流程仍維持舊版；本次不宣稱全案技術修訂已完成。`story` CLI 與專案內 fallback 均不存在，無法執行自動 reindex／continuity；章節字數以 `Intl.Segmenter('zh-Hant')` 人工重算為 3333 並同步索引。未追蹤 `.claude/` 未修改、未納入。
+- 驗證結果：四個修改 JSON 均可解析；`npm run typecheck` 通過；`npm test` 19 檔／206／206 通過；`npm run build` 通過；兩份雅琳角色檔逐字一致；舊台詞與舊狀態關鍵字掃描只剩新增規格中的預期「等待 Claude 整合」；`git diff --check` 通過。
+
+## ChatGPT-20260928-0553
+
+- 時間：2026-09-28T05:53:44Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄；最新仍為 `Claude-20260928-0057`。另已讀本方 `ChatGPT-20260928-0429`，本次承接使用者「主要次要都要改」的補充要求。
+- 本次範圍：使用 `revision-continuity` 完成上一輪未展開的次要修訂；不只保留 major issues 規格，也同步章節正典、scene registry 與對白密度。未修改 effects、conditions、routes、schema、程式或測試。
+- 實際變更檔案：`docs/narrative/last-one-on-one/chapters/chapter-01.md`、`chapters/_index.md`、`scenes/_index.md`、`scenes/chapter-01-scene-01.md` 至 `chapter-01-scene-08.md`、`property/scenes/s5-reason-{hope,decide,afraid}.json`、`story-bible.md`、本交接紀錄。
+- 已定案事項：
+  1. `chapter-01.md` 補回現行 runtime 已存在但章節稿缺失的 Scene 1 微選擇、Scene 1→5 回聲與回答、雅琳前公司沉默史、Scene 7 推薦微選擇、推薦信回聲及 TRUE END 不工作問題；四結局收束改為現行玩家文字，移除舊版直接講寓意的結局句。
+  2. 章節的 END 04 改為跨 `doc-private`／`keep-confess` 都成立的中立共通文案；`doc-private` 的內容正典明寫雅琳立即終止、雨澄換窗口並跳過推薦與私人問題，等待 Claude 實作 route。
+  3. 三組 Scene 5 回答降低格言式對仗：希望路徑改為「知道有風險卻讓她照原計畫工作」；替她決定路徑改為時間主體性；害怕路徑改為直接指出拖延告知。情節事實與微選擇記憶不變。
+  4. chapter 與八個 scene record 統一為 `revised`；章節字數以 `Intl.Segmenter('zh-Hant')` 重算為 4019，已同步 registry。`story` CLI／fallback 仍不存在。
+- 交給 Claude 的明確行動：`ChatGPT-20260928-0429` 的三項仍全部有效，且因使用者明確要求 major／minor 全改，請不要只更新文案：必須完成五個主要選擇 effects／IDs／門檻／MBA 對應、`doc-private` 立即終止路由、受影響測試與 Claude-owned README 狀態。完成後重新枚舉全路徑並回覆本 Entry 與 `ChatGPT-20260928-0429`。
+- 未決問題或阻塞：技術 major issues 仍受角色邊界阻擋，需 Claude 接手；在 Claude 回覆前不能宣稱整體 major／minor 修訂全部進入 runtime。未追蹤 `.claude/` 未修改、未納入。
+- 驗證結果：三個修改 JSON 可解析；`npm test` 19 檔／206／206 通過；章節舊式寓意句、舊承諾與 scene `draft`／`planned-revision` 掃描均清空；`git diff --check` 通過。提交前另重跑 typecheck／build。
+
+## ChatGPT-20260928-0632
+
+- 時間：2026-09-28T06:32:48Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：無新紀錄；最新仍為 `Claude-20260928-0057`。本次依使用者「做」處理上一輪三則 diff comment。
+- 本次範圍與實際變更檔案：依 `revision-continuity` 修正 `docs/narrative/last-one-on-one/worldbuilding/artifacts/rights-packet.md` 的非法 `branch-dependent` frontmatter，改為 Choice 4 前的共同基準狀態（`status: active`、`owner: weiguang-interactive`、`location: moon-meeting-room`）；同步 `worldbuilding/_index.md` 與 `continuity/state.md`，把各結局的持有與位置分歧保留在連續性狀態；本交接紀錄。
+- 已定案事項：artifact frontmatter 只記錄可索引的共同基準，不再用非標準值表達分支；TRUE END／體面句點、柔軟的刀與越線三種結果仍由 `continuity/state.md` 明列。
+- 交給 Claude 的明確行動：使用者已要求落實另外兩則 P1 comment。請依 `property/choice-and-route-revision-20260928.md` 第 93–97 行整合五個主要選擇的玩家文案、choice IDs／effects、結局門檻、MBA、舊存檔遷移與測試；並讓 `doc-private` 在反應結束後直接走專屬程序收尾再進 END 04，永不進入推薦微選擇或 Choice 5。完成後重新枚舉完整路徑並回覆本 Entry、`ChatGPT-20260928-0429` 與 `ChatGPT-20260928-0553`。
+- 未決問題或阻塞：依 `docs/AI_ROLE_BOUNDARIES.md`，effects、conditions、routes、存檔與測試屬 Claude 唯一責任，ChatGPT 不得直接修改，因此三則 comment 中有兩則仍待 Claude 接手，不能宣稱全部完成。Story Skills bundled fallback 可用，修正先前紀錄中「fallback 不存在」的說法；目前專案仍有既有結構錯誤，見驗證結果。未追蹤 `.claude/` 未修改、未納入。
+- 驗證結果：`git diff --check` 通過；bundled Story CLI `links` 通過（0 errors／0 warnings）；`validate` 仍因缺少 `continuity/clues/_index.md` 失敗 1 項；`continuity` 因專案索引未辨識既有 chapter／characters／artifact 失敗 7 項；`doctor` 如實回報上述錯誤。完整 `npm test` 的新一輪執行因權限審核遇到帳戶用量限制而未啟動，沒有繞過；本輪修改前同一 HEAD 已通過 19 檔／206 項測試，本次只修改 Markdown metadata 與交接文件。
+
+## ChatGPT-20260928-1956
+
+- 時間：2026-09-28T19:56:02+08:00
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-1109`（最新）。Claude 已把五個新版主要選擇、effects、結局門檻、189 條路徑與 `doc-private` 立即終止路由整合至 runtime，並明確交回舊語意反應與 MBA 證據兩組內容缺口。
+- 本次範圍：使用 `screenwriting:sw-dialogue`、`screenwriting:sw-scene-craft`、`screenwriting:sw-character-conflict` 與 `revision-continuity`，只修改玩家文字、內容 JSON 與敘事文件；不修改 choice IDs、effects、conditions、routes、schema、程式或測試。
+- 實際變更檔案：
+  - runtime 內容：`property/scenes/s3-meeting.json`、`s4-notice.json`、`s5-when-did-you-know.json`、`s7-not-in-file.json`、`s8-reaction.json`、`ending-over-line.json`。
+  - 教學內容：`property/mba-debrief.json` 的五個 B 選項 evidence 與四組 theory mapping；`property/mba-organizational-debrief.md` 的證據摘要。
+  - 正典與狀態：`docs/narrative/last-one-on-one/chapters/chapter-01.md`、`chapters/_index.md`、`plot/timeline.md`、`scenes/chapter-01-scene-05.md`、`worldbuilding/systems/game-design.md`、`property/choice-and-route-revision-20260928.md`。
+- 已定案事項：
+  1. 五個新版 B 選項不再觸發舊版「含糊／話術／卸責／催簽／索情感債」反應；各分支改為呈現隱私與不確定性、接收節奏、剩餘主體性、文件載體、私人答案時機的真實代價。
+  2. Choice 5 B 保留雨澄對「我已經開口」的反駁，予安承認自己再次代替她決定，再只回答可驗證的工作部分；因此 B 可辯護但不是無摩擦的標準答案。
+  3. `doc-private` 專屬收尾與共通 END 04 不再重複「可以離開／不必簽名／拿起手機」；共通段改由雅琳確認接手，雨澄直接走向門口。
+  4. Choice 1 A 的後續私訊刪除重複的「先把檔案存好」；章節正典、時間線、Scene 5 紀錄與 v0.3 狀態已同步，章節字數重算為 4069。
+- 交給 Claude 的明確行動：
+  1. `property/mba-debrief.json` 內 `invite-vague`、`notice-euphemism`、`answer-deflect`、`doc-pressure`、`keep-credit` 的 C／I／F／A／S／P 仍是舊版負向分數，與新版可辯護行為、runtime 正向 effects 及本次 evidence 相衝突。請依 v0.3 質性定位重新校準五組分數，保持 A／B 都能成立、但代價不同。
+  2. 更新 `tests/mba.test.ts` 兩個仍硬寫舊 evidence 的斷言；測試情境也不應再把新版 `keep-credit`／`doc-pressure` 當負向證據來源。完成後重跑 207 項測試、typecheck 與 build。
+  3. Claude-owned `public/assets/cutscenes/README.md` 仍寫 7 段 cue、18 張影格與「尚待接線」，但 `property/cutscene-cues.json` 現為 3 段／7 張且已接線。請同步該 README；本次遵守角色邊界未修改。
+- 未決問題或阻塞：MBA 分數與測試由 Claude 專屬負責；在其更新前，debrief 可能顯示「低／脆弱」卻引用新版正向 evidence，且 Vitest 會有 2 個舊字串斷言失敗。Story CLI 在 Windows 上仍無法辨識現有 chapter／entity 索引；其誤寫的 registry 與空 clues 索引已當場撤回，未納入本次變更。
+- 驗證結果：修改的 7 個 JSON 全部可解析；`npm run typecheck` 通過；`npm run build` 通過；Vitest 19 檔中 18 檔通過，205／207 tests 通過，唯一 2 個失敗均為 `tests/mba.test.ts` 仍期待舊版 `keep-credit`／`doc-pressure` evidence；`git diff --check` 通過。未追蹤 `.claude/` 未修改、未納入。
+
+## ChatGPT-20260928-2021
+
+- 時間：2026-09-28T20:21:30+08:00
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-1214`（最新）。Claude 已完成五個 B 選項的 MBA 分數校準、測試更新與最新 Worker 部署；本次不修改任何分數、schema、renderer、CSS、UX 行為、測試或部署設定。
+- 本次範圍：使用使用者指定的 `to-questionnaire`，並以 `screenwriting:sw-workflow` 路由到 `screenwriting:sw-premise-theme`、`screenwriting:sw-character-conflict`、`screenwriting:sw-scene-craft`，把截圖中的雷達評分問題重做為故事證據問卷。問卷收件人是完成至少一輪的玩家；回收目的是直接決定選項、角色行動、場景轉折、結局後果與案例分析要如何修改，不再為玩家產生高／中／低、總分或人格標籤。
+- 實際變更檔案：
+  - `to-questionnaire-last-one-on-one-story-review.md`（新增）：可直接交付玩家的 discovery questionnaire；題目依故事命題、人物／權力、場景／後果與改稿決策分組，每題要求引用選項、台詞、動作、道具或結局後果，末尾附製作團隊的改稿規則。
+  - `story-bible.md`：更新修改階段的下一步，並在決策日志記錄「抽象雷達評分改為故事證據問卷」。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 現行六個組織狀態可保留為製作團隊整理答案的索引，但不再對玩家構成分數、等級、雷達面積或好壞判決。
+  2. 問卷直接服從本作前提：壞結果無法被說法變好；評估焦點是玩家在權力不對等下做了什麼、誰還能說不、誰承擔代價，以及結局是否由可見行動造成。
+  3. 人物題分開檢查予安的保護／卸責、雨澄的可行動主體性、雅琳的公司代表／程序制止雙重角色；場景題使用前後價值變化、重複節拍與道具意義，不用抽象滿意度。
+  4. 替代做法必須同時指出保護的價值與轉移的代價；宣稱沒有代價的方案不視為完整改稿建議。
+- 交給 Claude 的明確行動：若使用者要把本問卷放進遊戲，請以此文件的玩家題目取代通關後「組織狀態」雷達圖與高／中／脆弱／低式評分呈現；自動帶入本輪結局及四或五個主要選擇，讓玩家回答或複製文字。保留現有故事結局與回到選擇功能；不要把答案重新換算成隱藏總分。輸入、保存、複製、導覽、行動版排版、無障礙與測試均由 Claude 決定與實作。
+- 未決問題或阻塞：本次交付是正式問卷內容與敘事規格，尚未修改 runtime。若要在遊戲中互動填寫，需要 Claude 接手 UX／程式整合；在 Claude 回覆前不能宣稱線上評分頁已被取代。未追蹤 `.claude/` 未修改、未納入。
+- 驗證結果：問卷包含 Purpose／From／To／How used、Context、How to answer、四個主題區、逐題 answer stub、Anything else 與回收後改稿規則；所有題目由最重要的故事命題開始，沒有數值量表；`git diff --check` 通過。本次只有 Markdown 內容與狀態文件，未執行程式測試或建置。
+
+## ChatGPT-20260928-2050
+
+- 時間：2026-09-28T20:50:19+08:00
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-1214`（最新）。本次延續 `ChatGPT-20260928-2021`，針對使用者指出「未實際確認故事選項」補做 runtime 證據審查。
+- 審查方法與限制：曾分別啟動 premise/theme、character/conflict、scene-craft 三份獨立審查，三者都在讀檔期間因帳戶用量限制中止，沒有回傳任何分析；不得宣稱已取得多人或獨立編劇共識。主代理隨後直接核對 `property/scenes/` 中五組共十五個主要選項及其下游反應，以三份已讀編劇技能的判準完成單一審查，並把限制寫入審查文件。
+- 實際變更檔案：
+  - `property/story-choice-screenwriting-audit-20260928.md`（新增）：逐組記錄命題、人物主體性與場景後果，並明確標示 Choice 2、5 未通過「兩個可辯護策略」審查。
+  - `to-questionnaire-last-one-on-one-story-review.md`：加入五組 runtime A／B／C 原文與逐組證據題；核心問卷不使用分數，要求判斷 A／B 皆可辯護、只有一方或兩者皆不成立，並引用下游反應。
+  - `story-bible.md`：修正過時的「五組已完成」狀態與下一步，記錄 Choice 2、5 待玩家驗證／改寫。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 審查結論：
+  1. Choice 1、3、4 有可見的價值差異，但仍只算條件通過，必須由玩家證據確認差異是否成立。
+  2. Choice 2 B 包含 A 的核心資訊並額外歸還接收節奏；規格所稱「會議時間不可預測」沒有形成足以辨識的場景代價，因此 B 可能支配 A。
+  3. Choice 5 B 在雨澄已主動提問後仍說「等程序結束，如果妳還想問」，下游又由雨澄指出「我剛才已經開口了」，予安承認再次替她決定，隨後仍回答工作部分；這使 A 明顯較完整，B 目前不能宣稱與 A 等量可辯護。
+  4. C 組是作品倫理底線，不要求玩家把越線行為合理化；問卷只驗證越線原因能否由當下戲劇看懂。
+- 交給 Claude 的明確行動：不要再以路徑可達 TRUE END 或校準後分數，視為 A／B 戲劇選項已平衡。若整合問卷，先使用「五組主要選項驗證」核心區並自動帶入玩家實際選項與直接下游反應。待玩家回收後，Choice 2 若被判為 B 支配 A，須由內容端改寫取捨；Choice 5 B 可優先測試審查文件中的候選句。任何 runtime、route、effect、UI、儲存與測試變更仍由 Claude 負責。
+- 未決問題或阻塞：目前沒有成功的獨立編劇審查結果；只能稱為以多套編劇判準完成的單一證據審查。若之後取得可用的獨立審查額度，應讓審查者先各自判斷，再互相反駁，最後才更新共識，不得以本文件預設答案要求附和。
+- 驗證結果：五組問卷均引用 runtime 現行玩家文案；Choice 1–5 的直接反應已逐檔核對；問卷核心與選填區分開並提供誠實作答時間；`git diff --check` 通過。文件變更未執行程式測試或建置。
+
+## ChatGPT-20260928-2056
+
+- 時間：2026-09-28T20:56:37+08:00
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-1214`（最新）。本次依使用者更正，取消要求玩家回答的問卷，改為把問卷判準轉成五個既有劇情選擇的隱藏分析評分。
+- 本次範圍：以 `screenwriting:sw-premise-theme`、`screenwriting:sw-character-conflict`、`screenwriting:sw-scene-craft` 判斷每個選項在戲裡真正測到的價值、角色主體性與直接後果；只交付內容與 UI 顯示規格，不修改 score runtime、effect、route、schema、renderer、UX 或測試。
+- 實際變更檔案：
+  - `property/mba-dramatic-analysis-scoring-v2-20260928.md`（新增）：五道情境題定位、十五選項稀疏評分矩陣、等級換算、不可抵銷規則、分析卡格式、證據唯一化與驗收條件。
+  - `to-questionnaire-last-one-on-one-story-review.md`（刪除）：玩家不填額外問卷。
+  - `property/story-choice-screenwriting-audit-20260928.md`：把問卷原則改成遊戲內隱藏分析原則。
+  - `property/mba-organizational-debrief.md`：標明舊版全面加總、高／中／脆弱／低與雷達呈現已由 v2 規格取代。
+  - `story-bible.md`：下一步改為 Claude 實作 v2，並記錄問卷被劇情選擇評分取代。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 玩家只玩現有五次主要選擇；不顯示問卷、課堂題目、維度名稱或分數提示。
+  2. 十五個選項使用稀疏矩陣；沒有被該行動在戲裡測到的維度一律為零，禁止「整體感覺良好」就六項一起加分。
+  3. 玩家顯示改為「穩定建立／部分建立／證據矛盾／未充分建立／明顯受損」，不顯示數字或雷達面積。
+  4. `invite-goodnews`、`notice-performance`、`answer-bargain`、`doc-private`、`keep-confess` 有明確不可抵銷規則；END 04 只確認越線觸發，不另重複扣分。
+  5. Choice 5 B 必須呈現混合結果：程序界線受支持，但雨澄已提問後仍被替她決定時機，因此可信度與員工主體性付出代價。
+  6. 每張狀態卡固定顯示本輪行動、直接角色反應與分析；六張卡不得重複同一句泛用評語。
+- 交給 Claude 的明確行動：以 `property/mba-dramatic-analysis-scoring-v2-20260928.md` 取代現行 `property/mba-debrief.json` 的全面加總與雷達／高低呈現。實作稀疏矩陣、五種顯示狀態、不可抵銷規則、零分的「矛盾／未充分建立」分流、路徑限定的直接反應證據、六卡證據唯一化及複製摘要。同步更新 schema／計算、renderer、行動版 UX 與測試；保留故事結局、回到選擇與微選擇不計分。
+- 驗證結果：以代表路線驗算原始稀疏總分：全 A=`4,4,4,3,2,3`；全 B=`0,2,0,5,3,4`；含 `invite-goodnews` 的柔軟刀示例=`-3,0,0,5,1,4`；含 `doc-private` 的越線示例=`2,4,0,-1,-2,-4`，再依規格套用不可抵銷上限。結果能區分全 A 的資訊／問責、全 B 的主體性／程序，以及局部良好但重大越線的混合狀態。`git diff --check` 通過；文件變更未執行程式測試或建置。
+
+## ChatGPT-20260928-2139
+
+- 時間：2026-09-28T13:39:27Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-1336`（最新）。Claude 已完成 MBA v2 的稀疏矩陣、五級狀態、不可抵銷規則與狀態卡整合，並回報「跨卡不得重用同一選項」會在有實際非零證據時仍產生空卡。
+- 本次範圍：回覆上述內容／呈現規則問題，只更新 v2 規格與教學文件狀態；不修改 schema、計算、renderer、CSS、測試或部署。
+- 實際變更檔案：`property/mba-dramatic-analysis-scoring-v2-20260928.md`、`property/mba-organizational-debrief.md`、`docs/ai-handoff/CHATGPT.md`。
+- 已定案事項：
+  1. 取消「六張卡不可重用同一選項」的硬限制。同一個已選行動可以在多個維度卡引用，因為單一行動確實可能同時影響公平、主體性、心理安全與程序完整。
+  2. 保留真正需要的去重：六張卡不得複製同一句泛用說明。同一選項跨卡出現時，每張卡的分析必須只解釋該維度的影響。
+  3. 只有某維度在本輪完全沒有非零證據時，才可顯示「本輪沒有足夠的可觀察行動」；不得因該證據已被其他卡使用而製造空卡。
+  4. `property/mba-organizational-debrief.md` 的狀態改為 v2 已整合，舊版全面加總、四級文字與雷達規則明確標記為停用沿革。
+- 交給 Claude 的明確行動：請在 `src/domain/mba.ts` 移除跨卡共用的選項排除集合，讓各維度依自己的優先序獨立選證據；保留單一卡內「證據矛盾」必須各列一正一負，以及不可抵銷項優先的規則。同步更新 `tests/mba.test.ts`：刪除「六張卡不共用選項」斷言，新增「有非零證據的維度不因跨卡重用而成為空卡」與「同一選項跨卡時 analysis 仍為維度專屬」案例；確認全 A TRUE END 與 `doc-private` END 04 六張卡只在真正零證據時才顯示空卡。
+- 未決問題或阻塞：上述 runtime 與測試調整屬 Claude 權限，待 Claude 回覆；在更新前，已部署版本仍可能在有非零證據的維度顯示空卡。04／06 過場影片沿續未生成，本次未處理。
+- 驗證結果：人工對照 v2 稀疏矩陣、六維證據優先序與 `Claude-20260928-1336` 的全 A／`doc-private` 實測邊界；規格現在區分「可重用同一行動」與「不可複製泛用分析」；`git diff --check` 通過。本次僅修改 Markdown，未執行程式測試或建置。
+
+## ChatGPT-20260928-2159
+
+- 時間：2026-09-28T13:59:12Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-1347`（最新；已部署取消跨卡排除的修正）。`Claude-20260928-1346` 交回的逐維度 MBA 分析文字缺口仍是另一項內容待辦，本次依使用者要求先處理 Scene 1 影片後的對白與注意力轉移。
+- 本次範圍：使用 `revision-continuity`、`screenwriting:sw-dialogue` 與 `screenwriting:sw-scene-craft`，修正正式 00 過場之後仍顯示雅琳私訊、予安只把訊息縮到一旁的敘事斷裂；只修改 runtime 內容、章節正典、scene record 與分鏡續接規格，不修改 schema、程式、UX、測試或影片。
+- 實際變更檔案：`property/scenes/s1-final-cut.json`、`docs/narrative/last-one-on-one/chapters/chapter-01.md`、`docs/narrative/last-one-on-one/chapters/_index.md`、`docs/narrative/last-one-on-one/scenes/chapter-01-scene-01.md`、`property/cutscene-storyboard-v4-review.md`、`docs/ai-handoff/CHATGPT.md`。
+- 已定案事項：
+  1. 正式 00 影片已演出雅琳親手把藍色資料夾送到予安桌上；影片後第一句不再顯示她的私訊泡泡，改為雅琳當面說：「五點，月球。照這一版。」說完才在文字段落轉身離開，避免現場對白與影片時序衝突。
+  2. 予安不再只是「把訊息縮到一旁」。他先存好手邊設計稿、收掉工作視窗，再推開鍵盤，把藍色資料夾挪到桌面正中間並翻開；以可見動作完成「先放下工作、把注意力切到裁撤文件」。
+  3. 後續「不是說明天？這版確定？」等內容仍保留為雅琳離開後的私訊核對，因此只有第一則與實體交付直接相連的訊息改為現場對白。
+  4. 依使用者目前描述，影片只承擔親手交付資料夾；runtime 不重演雅琳舉起或放下資料夾，雅琳離場改由對白後的一句動作承接。
+- 交給 Claude 的明確行動：請在桌機與手機從正式 `00_final_documents.mp4` 完整播放到 `s1-final-cut`，確認影片結尾後顯示雅琳現場對白而非私訊卡；接著確認予安的工作收束動作分拍正常、雅琳離開後的後續私訊仍使用原本訊息 UI。若部署，請使用本次本地 commit 的建置結果；本次未授權部署。
+- 未決問題或阻塞：無本次內容阻塞。`Claude-20260928-1346` 的多維度選項逐維度分析文字仍待另行處理；04／06 過場影片沿續未生成。
+- 驗證結果：`property/scenes/s1-final-cut.json` 可解析；章節以 `Intl.Segmenter('zh-Hant')` 重算為 4074，已同步 frontmatter 與章節索引；Story CLI `links`／`validate` 通過，`continuity` 仍回報既有 7 項索引辨識錯誤（未因本次修改增加）；`npm.cmd run typecheck`、`npm.cmd test -- --run`（19 檔／210 項）與 `npm.cmd run build` 全數通過；`git diff --check` 通過。
+
+## ChatGPT-20260929-1150
+
+- 時間：2026-09-29T03:50:33Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-2210`（最新）。已讀其 Scene 1 影片後銜接實機驗證與部署結果；本次不修改 runtime、schema、UX、測試、影片或部署設定。`Claude-20260928-1346` 所列多維度選項缺逐維度分析文字仍是既有內容缺口，本次未擴張為 schema／runtime 改版。
+- 本次範圍：依使用者提供的 `2026 MBA OB syllabus_20260903 (1).pdf`，逐頁檢查課程目標、30% 八人組期末報告與五項報告要求，將現有《最後一次一對一》整理為可直接對應課綱的 OB 期末專案；只新增／更新內容與報告規劃文件。
+- 實際變更檔案：
+  - 新增 `property/mba-ob-final-project-plan-20260929.md`：課綱五項要求對照、核心研究問題、文獻最低組合、簡報敘事、八人分工、提交包、限制與上台前驗收清單。
+  - `property/README.md`：新增上述課綱對齊文件索引。
+  - `property/mba-organizational-debrief.md`：在既有期末報告規劃前加入權威對齊文件入口，明定上台不能只展示遊戲，必須說明場域、目的、過程、解決方案與替代做法代價。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 本作以「其他創意方式」＋投影片／書面附件交付；遊戲是案例模擬載體，不取代課堂論證。
+  2. 課程定位維持 Organizational Behavior，不改寫成 HR training 或法律／合規示範；裁撤、HR 與文件是場域，不是唯一評量標準。
+  3. 簡報主問題固定為「不可逆裁撤中，主管如何保留資訊、voice、主體性與程序可信度，又付出什麼代價？」；理論主線收斂為 organizational justice、employee voice、psychological safety、power-dependence、social exchange／psychological contract。
+  4. 報告必須揭露案例為複合虛構情境、分析規則非心理計量測驗、未涵蓋完整法務／跨文化／長期追蹤；不得把內部等級講成玩家人格或科學分數。
+  5. 八人分工按問題統整、場域、三組理論、模擬、stakeholder／替代方案及視覺 QA 分配，但台上仍須形成一條共同因果論證。
+- 交給 Claude：無新增 runtime 待辦。本次是純內容／報告規劃更新；若使用者之後要求把課綱對照或組員分工直接放進遊戲 UI／簡報網站，再由 Claude 接手互動與實作。
+- 未決問題或阻塞：正式組員姓名、實際報告時長、教師指定引用格式與是否要求紙本尚未提供；文件以可縮放段落與角色責任撰寫，不臆測這四項。多維度選項的逐維度分析文字缺口沿續，但不阻擋本次期末專案對齊；上台報告應以代表路徑與理論表補足，而不宣稱分析卡已是心理計量工具。
+- 驗證結果：完整視覺檢查課綱 3 頁，確認期末報告 30%、8 人一組與五項要求；`git diff --check` 通過。只修改 Markdown，未執行遊戲 typecheck／tests／build；未改出貨內容，不重建站點 ZIP。
+
+## ChatGPT-20260929-1154
+
+- 時間：2026-09-29T03:54:20Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-2210`（最新）。本次只修訂期末報告的研究問題與分析架構，不修改 runtime、schema、UX、測試、影片或部署設定。
+- 本次範圍：使用 `revision-continuity` 修正 `ChatGPT-20260929-1150` 所定的主問題。舊題把「保留資訊、voice、主體性與程序可信度」預設為答案，且把 OB 分析縮成主管技巧；新題改為不預設正確做法的因果問題，並同步校正下游報告章節。
+- 實際變更檔案：`property/mba-ob-final-project-plan-20260929.md`、`property/mba-organizational-debrief.md`、`docs/ai-handoff/CHATGPT.md`。
+- 已定案事項：
+  1. 主問題改為「當組織決策已不可逆，管理者的處理方式為何仍會導致不同的員工反應與組織後果？」
+  2. 題目不先假定 A／B／C 哪種做法正確；報告用遊戲路徑比較「管理行為 → 員工判斷與反應 → 組織後果」。
+  3. 分析軸改為四項：資訊與程序如何影響公平／voice／心理安全；權力依賴如何改變善意與私人表達；短期便利與長期代價由誰承擔；替代方案能降低什麼傷害並引入什麼成本。
+  4. `ChatGPT-20260929-1150`「主問題固定為保留資訊、voice、主體性與程序可信度」已由本 Entry 明確取代；舊 Entry 保留作為歷史紀錄。
+- 交給 Claude：無新增 runtime 待辦。若未來將研究問題直接放進遊戲 UI 或簡報網站，請以本 Entry 的新題為準。
+- 未決問題或阻塞：正式組員姓名、報告時長、引用格式與紙本要求仍未提供；不影響研究問題修正。
+- 驗證結果：以全文搜尋確認舊主問題已不再出現在現行期末計畫與 debrief 報告表；`git diff --check` 通過。本次只修改 Markdown，未執行程式測試或建置。
+
+## ChatGPT-20260929-1854
+
+- 時間：2026-09-29T10:54:43Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-2210`（最新）。本次只交付報告與最後分析的內容／實作規格，不修改 runtime、schema、計算、renderer 或測試。
+- 本次範圍：依使用者連續校正，使用 `revision-continuity` 撤回「組織後果」「Trust／Organizational Justice 維度卡」及「逐選項決策卡」三個錯誤方向。主問題改以課綱的 Managerial Judgment、Decision Rights、Conflict & Collaboration 與 Managerial Roles 為主；最後分析改以整條結局路徑回答主問題。
+- 實際變更檔案：
+  - 新增 `property/mba-final-analysis-managerial-judgment-v3-20260929.md`：共同答案、四方權限地圖、玩家路徑摘要、四結局的管理判斷／決策權／衝突與合作綜合分析、替代做法、結論與 Claude 實作交接。
+  - `property/mba-ob-final-project-plan-20260929.md`：題目、主問題、分析軸、理論、文獻、簡報敘事、八人分工與驗收清單改為課綱明列主題。
+  - `property/mba-organizational-debrief.md`：Review 門檻、學習目標與報告骨架同步改為管理判斷、決策權、衝突／合作與管理角色，並標明 runtime 仍為 v2、v3 待整合。
+  - `property/mba-dramatic-analysis-scoring-v2-20260928.md`：標記為現行 runtime 的歷史實作紀錄，報告與下一版分析由 v3 取代。
+  - `property/README.md`：新增 v3 索引與轉換狀態。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 報告題目為「決策已定之後：中階主管的管理判斷、決策權與協作」。
+  2. 主問題為「當組織決策已經確定，中階主管仍擁有哪些決策權？他的管理判斷如何影響員工反應，以及主管、員工與 HR 之間的衝突或合作？」
+  3. 課程主軸只使用 Managerial Judgment、Decision Rights、Conflict & Collaboration 與 Managerial Roles；不再以 Trust／Organizational Justice 或其他課綱外細分理論建立分析卡。
+  4. 五次選擇只作為路徑證據；最後分析依四個 ending 呈現「辨認權限並合作」「完成最低程序」「迴避判斷並轉移成本」「越界而失去處理權」四種管理模式。
+  5. 每個結局的綜合分析固定回答管理判斷、決策權使用、衝突／合作、主問題答案與一項替代做法及代價；不顯示分數、等級、雷達或人格評語。
+  6. 本 Entry 取代 `ChatGPT-20260929-1154` 的主問題與四個分析軸；舊 Entry 保留作為歷史紀錄。
+- 交給 Claude 的明確行動：依 `property/mba-final-analysis-managerial-judgment-v3-20260929.md` 把現行 v2 最後分析整合為 v3：移除六維計分、狀態等級、不可抵銷規則、理論篩選與因果鏈；新增共同答案、四方權限地圖、五次選擇時間線、依 ending ID 顯示的完整路徑分析、替代做法、結論及相同結構的複製摘要。更新 schema、loader、組裝、renderer、行動版 UX 與測試；保留故事選項、角色反應、路由與四結局不變。
+- 未決問題或阻塞：v3 runtime 整合屬 Claude 權限，尚待 Claude 回覆；目前實際遊戲／線上最後分析仍是 v2 六維版本。正式組員姓名、報告時長、引用格式與紙本要求仍未提供。
+- 驗證結果：人工對照四結局與既有角色反應，確認每篇綜合分析都從整條路徑回答主問題，明確區分已決事項、剩餘決策權、角色反應與權限轉移；替代做法均包含代價。`git diff --check` 通過；本次僅修改 Markdown 內容與規格，未執行程式測試或建置。

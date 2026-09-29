@@ -1,0 +1,12 @@
+{
+  "id": "s7-recommend-witness",
+  "title": "沒有寫在文件裡",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "妳記得每個測試者說過什麼，也記得實習生不敢在會議上說什麼。" },
+    { "speaker": "lin-yucheng", "text": "你有注意到？" },
+    { "speaker": "zhou-yuan", "text": "我坐在妳對面一年多。" },
+    { "speaker": "lin-yucheng", "text": "你有時候很會讓人分不清，自己是被管理，還是被看見。" }
+  ],
+  "choices": [],
+  "next": "s7-recommend-converge"
+}

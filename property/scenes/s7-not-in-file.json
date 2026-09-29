@@ -2,66 +2,30 @@
   "id": "s7-not-in-file",
   "title": "沒有寫在文件裡",
   "lines": [
-    { "speaker": "zeng-yalin", "text": "這一處只確認你收到文件，不等於接受所有內容，也不等於放棄提問。你可以先不簽，帶回電子副本與紙本。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
+    { "speaker": "zeng-yalin", "text": "這一處只確認你收到文件，不等於接受所有內容，也不等於放棄提問。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
+    { "speaker": "zeng-yalin", "text": "你可以先不簽，帶回電子副本與紙本。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
     { "speaker": "lin-yucheng", "text": "如果我之後有問題？", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
     { "speaker": "zeng-yalin", "text": "直接找我。你也可以帶你信任的人一起確認。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
-    { "speaker": null, "kind": "narration", "text": "她把資料夾往自己方向移近兩公分。那是她第一次主動碰它。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
+    { "speaker": null, "kind": "narration", "text": "雨澄把資料夾拉近，翻到印著信箱的那一頁。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
 
-    { "speaker": "zeng-yalin", "text": "我要修正。即使只是收訖，也不必在此刻完成。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": null, "kind": "narration", "text": "雨澄把筆扣上。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": "lin-yucheng", "text": "原來我的第一個離職任務，是幫公司降低漏件率。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": "zhou-yuan", "text": "我不是那個意思。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": "lin-yucheng", "text": "但那是你剛才要求我做的事。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
-    { "speaker": null, "kind": "narration", "text": "她把資料夾推回桌子中央。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": "zeng-yalin", "text": "我現在寄電子檔。紙本可以帶走，也可以留在這裡。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": null, "kind": "narration", "text": "雨澄看了一眼資料夾，又看向亮起的手機。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": "lin-yucheng", "text": "紙本留下。寄件時間和版本請寫清楚。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": "zhou-yuan", "text": "好。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": "lin-yucheng", "text": "後面有問題，我直接找雅琳。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
+    { "speaker": null, "kind": "narration", "text": "她把筆放回桌上，沒有碰資料夾。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
 
-    { "speaker": "zeng-yalin", "text": "停止。不要提出文件外的金錢承諾。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-    { "speaker": null, "kind": "narration", "text": "雨澄的手離開資料夾，像桌面忽然變燙。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-    { "speaker": "lin-yucheng", "text": "私下？", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-    { "speaker": "zhou-yuan", "text": "我只是想——", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-    { "speaker": "lin-yucheng", "text": "不要把規則變成我們兩個的秘密。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-    { "speaker": "zeng-yalin", "text": "這一段我會如實記錄。後續由我補充正式資訊。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "private" }] },
-
-    { "speaker": null, "kind": "narration", "text": "17:18。很淡的鋼琴單音進入，間隔很長。" },
+    { "speaker": null, "kind": "narration", "text": "17:18。雨澄又看了一次錶，把話題拉回文件。" },
     { "speaker": "lin-yucheng", "text": "作品集呢？我做的流程圖、測試摘要，哪些可以用？" },
     { "speaker": "zeng-yalin", "text": "文件有申請方式。涉及客戶資料的部分要移除；可公開範圍會由專人書面回覆。" },
     { "speaker": "lin-yucheng", "text": "推薦信？" },
-    { "speaker": "zhou-yuan", "text": "我可以針對我親自看過的工作寫，內容不需要你今天決定。" },
-    { "speaker": null, "kind": "narration", "text": "她低頭，把電子錶按亮，又按暗。" },
-    { "speaker": "lin-yucheng", "text": "還有一件事。" },
-    { "speaker": null, "kind": "narration", "text": "雅琳沒有打字。" },
-    { "speaker": "lin-yucheng", "text": "你有沒有哪一刻，是真的想把我留下來？" },
-    { "speaker": null, "kind": "narration", "text": "冷氣在這時停了。整間會議室忽然安靜得像有人把背景音軌抽走。" }
+    { "speaker": "zhou-yuan", "text": "我可以寫我親自看過的工作。" },
+    { "speaker": "lin-yucheng", "text": "例如？" }
   ],
+  "choicePrompt": "你最先想到她的哪一面？",
   "choices": [
-    {
-      "id": "keep-advocate",
-      "text": "「有。我提過凍結外包、把你轉到平台組，提案沒有通過。但這不該變成你欠我的人情。」",
-      "next": "s8-reaction",
-      "effects": [
-        { "variable": "choice5", "operation": "set", "value": "advocate" },
-        { "variable": "trust", "operation": "add", "value": 2 },
-        { "variable": "boundary", "operation": "add", "value": 2 }
-      ]
-    },
-    {
-      "id": "keep-credit",
-      "text": "「我為了你跟上面吵了很多次，差點連自己的位置都保不住。」",
-      "next": "s8-reaction",
-      "effects": [
-        { "variable": "choice5", "operation": "set", "value": "credit" },
-        { "variable": "trust", "operation": "add", "value": -1 },
-        { "variable": "boundary", "operation": "add", "value": -1 }
-      ]
-    },
-    {
-      "id": "keep-confess",
-      "text": "「因為我喜歡你。我不能假裝這只是工作。」",
-      "next": "s8-reaction",
-      "effects": [
-        { "variable": "choice5", "operation": "set", "value": "confess" },
-        { "variable": "trust", "operation": "add", "value": -1 },
-        { "variable": "boundary", "operation": "add", "value": -3 }
-      ]
-    }
+    { "id": "recommend-precision", "text": "「妳總是先找到一句話裡最含糊的那個詞。」", "next": "s7-recommend-precision", "minor": true, "effects": [{ "variable": "s7Memory", "operation": "set", "value": "recommend-precision" }] },
+    { "id": "recommend-witness", "text": "「妳記得每個測試者說過什麼，也記得實習生不敢在會議上說什麼。」", "next": "s7-recommend-witness", "minor": true, "effects": [{ "variable": "s7Memory", "operation": "set", "value": "recommend-witness" }] },
+    { "id": "recommend-honesty", "text": "「妳不肯讓錯誤畫面假裝什麼事都沒發生。」", "next": "s7-recommend-honesty", "minor": true, "effects": [{ "variable": "s7Memory", "operation": "set", "value": "recommend-honesty" }] }
   ]
 }

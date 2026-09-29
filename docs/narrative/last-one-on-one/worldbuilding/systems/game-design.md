@@ -3,7 +3,7 @@ name: "Demo 遊戲企劃"
 type: game-design
 prevalence: project-wide
 story: last-one-on-one
-version: 0.2
+version: 0.3
 target-runtime: "Ren'Py or equivalent visual-novel engine"
 ---
 
@@ -20,6 +20,8 @@ target-runtime: "Ren'Py or equivalent visual-novel engine"
 3. 好感不是核心數值；真正影響結局的是坦誠、程序與界線。
 4. 戀愛伏筆存在，但不允許玩家在仍有主管權力時用工作資源交換親密。
 
+> 整合狀態：v0.3 的主要選擇、效果、結局門檻與 `doc-private` 立即終止路由已進入 runtime；五個 B 選項的反應與質性分析也已同步。現存 189 條主要路徑包含 TRUE END 22、END 02 29、END 03 57、END 04 81。
+
 ## 內容提醒
 
 本作包含非自願離職、職場權力不對等、經濟焦慮與不當情感施壓。建議在開始畫面提供「略過強烈職場措辭」與隨時返回標題的選項。
@@ -35,15 +37,23 @@ target-runtime: "Ren'Py or equivalent visual-novel engine"
 
 數值不應以愛心呈現。若要給玩家回饋，可用很短的環境反應：空調聲變清楚、雨澄把文件推近或推遠、雅琳放下或拿起平板。
 
+## Interactive Organizational Case 層
+
+本作除故事結局外，必須在每次通關後提供可選的 `MBA Organizational Debrief`。分析層讀取五個主要選擇、結局與四個既有隱藏狀態，轉譯為 management credibility、information quality、perceived fairness、employee agency、psychological safety、process integrity 六項組織狀態。感情線微選擇只服務角色關係，不列入 MBA 評估。
+
+**課程定位是組織行為（Organizational Behavior，OB），不是 HR。** HR 人員、裁撤通知與文件程序只構成案例情境與 stakeholder 關係；Debrief 的教學核心是權力／依賴、組織公平、心理安全、員工 voice、心理契約、信任、情緒勞動及管理者行為的組織後果，不得退化為 HR 標準流程、法遵檢核或勞動法建議。所有 Playthrough 與最後評估頁 Review 依 `property/mba-organizational-debrief.md` 的「課程定位與 Review 門檻」執行。
+
+Debrief 必須包含玩家管理路徑、stakeholder 結果、因果機制、短長期效果、unintended consequences、相關理論、替代策略及案例限制。正式內容與期末報告結構見 `property/mba-organizational-debrief.md`。
+
 ## 選擇節點
 
 | # | 情境 | 建議選項 | 主要影響 |
 |---|------|----------|----------|
-| 1 | 邀請會議 | 先告知是組織與職務調整／只說聊一下／謊稱有好消息 | 坦誠、程序、逃避 |
-| 2 | 開場通知 | 直接說職位裁撤且非績效／用組織優化包裝／先檢討表現 | 坦誠、程序 |
-| 3 | 「所以不是來問我的？」 | 承認決定已定／強調大家都很難／暗示配合就可能翻案 | 坦誠、程序 |
-| 4 | 文件與簽名 | 允許帶回審閱／要求現在簽／提出私下補償 | 程序、界線 |
-| 5 | 「你有沒有想過留下我？」 | 說明曾提替代案但不要求回報／強調自己多努力／趁機告白 | 坦誠、界線 |
+| 1 | 邀請會議 | 完整揭露性質／有限揭露並保護隱私／謊稱好消息 | 資訊、準備時間、不確定性 |
+| 2 | 開場通知 | 一次說清結果／說清結果並交還接收節奏／先檢討表現 | 資訊、節奏、歸因 |
+| 3 | 「所以不是來問我的？」 | 承擔延遲告知／區分不能改與仍可選／暗示配合就可能翻案 | 坦誠、主體性、程序語氣 |
+| 4 | 文件與簽名 | 現場逐頁說明並帶回／取消當場簽署並自選載體／提出私下補償 | 審閱深度、時間、界線 |
+| 5 | 「你有沒有想過留下我？」 | 說明事實並拒絕索債／暫緩回答並把開口權還給她／趁機告白 | 真相、時機、界線 |
 
 ## 結局判定
 
@@ -56,7 +66,7 @@ target-runtime: "Ren'Py or equivalent visual-novel engine"
 | END 02 體面的句點 | procedure ≥ 4、trust ≥ 2、boundary ≥ 0 | 對話不溫暖但完整；兩人以推薦與告別收束 |
 | END 03 柔軟的刀 | 其他 | 漂亮話讓資訊與責任更模糊；雨澄拒絕私人聯絡 |
 
-「私下補錢」與「在權力關係仍存在時告白」是不可被後續正向選擇抵銷的重大越線，兩者都直接進入 END 04。其他行為仍依 boundary 累計判定。結局不以平均分布為目標，TRUE END 維持刻意嚴格的門檻。
+「私下補錢」與「在權力關係仍存在時告白」是不可被後續正向選擇抵銷的重大越線，兩者都直接進入 END 04；私下補錢的反應結束後必須立即終止會議，不得再進入推薦與私人問題。其他行為仍依 boundary 累計判定。結局不以平均分布為目標，但 A、B 兩種可辯護策略都必須存在通往 END 02 與 TRUE END 的有效組合，不能把 TRUE END 收斂成全選 A 的答案表。
 
 ## 玩法倫理
 

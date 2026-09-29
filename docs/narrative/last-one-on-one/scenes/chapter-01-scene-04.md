@@ -10,7 +10,7 @@ characters:
   - zeng-yalin
 arcs-advanced:
   - last-one-on-one
-status: draft
+status: revised
 state-changes:
   - target: lin-yucheng
     change: "知道方案評估已進行兩週、最終名單於當日確認，並得知裁撤非績效處分。"

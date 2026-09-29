@@ -15,14 +15,50 @@
   **ChatGPT 換過 `full-body/` 裡任何一張 PNG 後，請執行一次 `npm run assets:sprites` 並一併提交交付檔**；
   忘了做的話 `npm test` 會直接指出哪一張過期。
 - `scenes/*.json`：對話、選項、條件、效果與跳轉。
-- `sora-cutscenes.json`：真人微電影過場的 Sora 提示、鏡頭與連戲規則（由 GPT 維護）；`cutscenes.json` 只保存影片格式與缺檔策略。兩者目前皆不由 runtime 載入，接線見 `coordination/handoff/HANDOFF-20260916-cutscene-integration.md`。
+- `romance-microchoices.md`：四組不影響結局的感情線微選擇正式文案；已由 Claude 整合進 `scenes/*.json`（見下方「感情線微選擇」一節的技術寫法）。
+- `dialogue-beat-revisions-20260926.md`：六處長段落的正式分拍規格；由 Claude 依原技術欄位拆成連續畫面。
+- `narrative-integration-revision-20260926.md`：感情線 setup/payoff 與曾雅琳角色弧的整合修訂；取代孤立的 Scene 5 回憶段落。
+- `choice-and-route-revision-20260928.md`：五個主要選擇改為「兩個可辯護策略＋一個明確高風險選項」的正式文案與 `doc-private` 立即終止規格；已由 Claude 整合進 `scenes/*.json` 的選項文字、效果與路由（技術對應見下方「主要選擇的效果設計」一節）。
+- `mba-organizational-debrief.md`：結局後 MBA 案例分析與期末報告規劃的總體規格；現行 v2 已由 Claude 整合為 `mba-debrief.json` ＋ `src/domain/mba.ts`，待整合的 v3 內容則以 `mba-final-analysis-managerial-judgment-v3-20260929.md` 為準。**課程定位是組織行為（Organizational Behavior，OB），不是 HR；往後 Review 與 Playthrough 必須依該文件的「課程定位與 Review 門檻」驗收。**
+- `mba-ob-final-project-plan-20260929.md`：依 2026 MBA 組織行為課綱整理的期末報告對齊方案；包含課綱五項要求對照、研究問題、文獻使用、簡報敘事、八人分工、提交包、限制與上台前驗收清單。
+- `mba-final-analysis-managerial-judgment-v3-20260929.md`：依 Managerial Judgment、Decision Rights、Conflict & Collaboration 與 Managerial Roles 重寫的最後分析內容規格；移除六維評分，改用權限地圖與四結局的完整路徑分析直接回答主問題。
+- `ob-playthrough-review-20260926.md`：依「組織行為，不是 HR」重新實玩四個結局與最後評估頁的審查紀錄；包含通過項、教學閉環缺口及下一輪驗收標準。
+- `mba-debrief-sepia-revision-20260927.md`：`查看案例分析` 的 Sepia 完整文案修訂、語氣原則與 Claude 接線規格；玩家可見文字以 `mba-debrief.json` 為準，程式內硬編碼字串依此文件替換。
+- `mba-debrief.json`：上述內容的結構化資料——十五個主要選項對六個維度的加減分與路徑證據、stakeholder matrix、五個決策點的理論映射、四個結局的策略／stakeholder 結果／非預期後果／理論重點／替代方案，以及 Debrief 畫面的文案與區塊標題。`manifest.json` 的 `mba` 欄位指向它。
+- `cutscene-storyboard-v4-review.md`：00 已採用使用者提供並核准的 10 秒單一連續成片；04、06 仍為待審方案。正式 00 位於 `public/assets/cutscenes/00_final_documents.mp4`，既有 cue 不需修改。
+- `runway-video-spec-v2-review.md`：v4 的 Runway 製作與驗收規格；明確區分播放段落、鏡頭與生成任務，禁止用單鏡代表整段。v2.1 已為全部 7 鏡逐一量化起始／結尾 hold、攝影機或 rack focus 類型、起訖時間、方向、幅度、速度與緩動；鎖鏡也必須明寫 0 移動。
+- `keyframe-video-extension-prompt-v1.md`：平台中立的關鍵影格延伸影片 Prompt；04-B／C、06-B／C 仍為可用的直接貼上稿。00-A／B／C 已被核准的單一連續成片取代，只保留作未來明確要求重製時的歷史參考。
+- `cutscene-keyframes-v4-audit.md`：00-A／B 的替換需求僅在未來重製 00 時適用；本次正式 00 不依賴三張關鍵影格。04、06 的 4 張現有影格仍可沿用。
+- `cutscene-storyboard-v3.md`、`runway-video-shot-pack-v1.md`：已停止使用的歷史版，不得再送生成。`cutscene-storyboard-v2.md` 僅供更早期比對。
+- `sora-cutscenes.json`：保留既有影片 ID／檔名／trigger 相容的機器可讀內容清單。00 已標記為本地核准資產；其他項目仍為 `BLOCKED` 或 `DEPRECATED`，舊的一鍵 Sora 腳本不得使用。`cutscenes.json` 保存格式與缺檔策略；實際接線仍由 Claude-owned `cutscene-cues.json` 維護。
 
 ## 目前作品：《最後一次一對一》
 
 - 狀態變數：`trust`（坦誠）、`procedure`（程序）、`boundary`（界線）、`avoidance`（逃避）。四者預設隱藏，不以好感度呈現。
 - 每個主要選擇會額外 `set` 一個 `choice1`…`choice5` 字串，供後續場景的條件台詞使用。
-- 場景流程：`content-warning → s1-final-cut → s2-invite → s3-meeting → s4-notice → s5-when-did-you-know → s6-receipt → s7-not-in-file → s8-reaction → s9-doorway →（四個結局之一）`。
-- `s9-doorway` 是純路由節點，依序判定：**越線**（`boundary <= -2`）→ **TRUE END**（`trust >= 6`、`procedure >= 4`、`boundary >= 2`、`avoidance <= 1`）→ **體面的句點**（`procedure >= 4`、`trust >= 2`、`boundary >= 0`）→ **柔軟的刀**（其餘）。
+- 另有 `s1Memory`／`s7Memory` 兩個「敘事記憶」字串：由 s1、s7 的感情線微選擇各自 `set`，只用來讓 Scene 5、TRUE END 自動路由到對應的回聲場景（見下方「感情線微選擇」一節），不參與結局判定、不進「回到之前的選擇」選單。
+- 四組感情線微選擇（`property/narrative-integration-revision-20260926.md`）已接進 s1、s5、s7 與 TRUE END 的對應插入點：s1／s7 的選擇會分別在 Scene 5、TRUE END 被回收（setup/payoff），不改動上述核心狀態、五個主要選擇或結局分布；技術寫法見下方「感情線微選擇」一節。
+- 曾雅琳的角色弧（Scene 1／3／6，見同一份修訂文件）與六處對話分拍（`property/dialogue-beat-revisions-20260926.md`）已整合進對應場景，純屬敘事節奏與新增對白，不影響任何技術欄位。
+- 場景流程：`content-warning → s1-final-cut →（感情線微選擇）→ s2-invite → s3-meeting → s4-notice → s5-when-did-you-know →（依 s1Memory 自動路由的回聲＋新的感情線微選擇）→ s6-receipt →`（`choice4=protect／pressure` 走 `s7-not-in-file →`（感情線微選擇）`→ s8-reaction`；`choice4=private` 改走 `s7-doc-private-close`，立即終止談話並跳過推薦微選擇與 Choice 5）`→ s9-doorway →`（四個結局之一，TRUE END 再依 s7Memory 自動路由一段推薦信回聲＋感情線微選擇才到 `ending-true-finale`；`choice4=private` 的路徑沒有 s7Memory／choice5，直接落在 `ending-over-line`）。詳見 `property/choice-and-route-revision-20260928.md`「doc-private 立即終止」。
+- `s9-doorway` 是純路由節點，依序判定：**越線**（`choice4 = private` 或 `choice5 = confess` 無條件命中；否則 `boundary <= -2`）→ **TRUE END**（`trust >= 6`、`procedure >= 4`、`boundary >= 2`、`avoidance <= 1`）→ **體面的句點**（`procedure >= 4`、`trust >= 2`、`boundary >= 0`）→ **柔軟的刀**（其餘）。
+
+### 主要選擇的效果設計（`property/choice-and-route-revision-20260928.md` 的技術對應）
+
+五個主要選擇的每一題都是「A：資訊透明」「B：節奏／隱私／主體性」「C：明確高風險（鎖定越線或重扣分）」，A、B 刻意給不同的加分組合而不是單純高低分：
+
+| 選擇 | A（trust/procedure/boundary） | B（trust/procedure/boundary） | C |
+| --- | --- | --- | --- |
+| Choice 1 邀請 | `invite-clear` +1/+1/0 | `invite-vague` +1/+1/+1 | `invite-goodnews`（trust-1、avoidance+2，不變） |
+| Choice 2 說出裁撤 | `notice-direct` +1/+2/0 | `notice-euphemism` +1/+1/+1 | `notice-performance`（trust-2、procedure-1，不變） |
+| Choice 3 承認決定已定 | `answer-admit` +2/0/+1 | `answer-deflect` +1/+1/+2 | `answer-bargain`（trust-1、procedure-1、avoidance+1，不變） |
+| Choice 4 文件 | `doc-protect` +1/+2/0 | `doc-pressure` +1/+1/+1 | `doc-private`（procedure-2、boundary-2，不變；立即終止，見下） |
+| Choice 5 是否曾想留下她 | `keep-advocate` +2/0/+2 | `keep-credit` +1/+1/+2 | `keep-confess`（trust-1、boundary-3，不變） |
+
+全選 A 仍會拿到 trust7／procedure5／boundary3，維持原本的 TRUE END 門檻；全選 B 拿到 trust5／procedure5／boundary7，落在體面的句點——每一題單獨選 B、其餘選 A，都還能湊到 TRUE END（`tests/endingRoutes.test.ts` 的全路徑枚舉會鎖住這個分布）。C 選項的分數維持 ChatGPT 原定案不變。
+
+### `doc-private` 立即終止
+
+`doc-private` 的 `next` 指向新場景 `s7-doc-private-close`（不再經過 `s7-not-in-file`），把雅琳原本在 `s7-not-in-file` 裡對「私下補一筆」的制止台詞，加上正式的收尾對白（見 `choice-and-route-revision-20260928.md`）接在一起，說完直接 `next: "s9-doorway"`。這條路徑因此只有 4 個主要決策點（沒有 Choice 5），`choice5`／`s7Memory` 維持未設定，`s9-doorway` 的 `choice4 = private` 無條件路由不受影響。全路徑枚舉從 3^5=243 條變成 189 條：27 條（`choice4=private`）× 4 個決策點 ＋ 162 條（`choice4=protect／pressure`）× 5 個決策點。
 
 ## 修改角色名字
 只改 `characters.json` 的 `displayName`。場景只使用穩定 `id`，不用逐場景搜尋替換。
@@ -49,6 +85,19 @@
 正式劇本請優先明確填寫 `kind`。動作、時間、鏡頭與場景描述使用 `speaker: null` 搭配 `kind: "narration"`；內心話才使用角色 `speaker` 搭配 `kind: "thought"`。同一筆不可混合兩種類型，避免遊戲把敘事誤顯示成角色台詞。
 
 `game.json` 的 `player` 指定玩家角色。玩家自己的對話與內心：名牌改青色並加「你」標記，對話框頂線同色；其他角色的名牌是琥珀色。訊息卡的發送者對得到該角色時（「予安」會對到「周予安」），訊息靠右顯示。`ui.json` 可用 `playerLabel` 改「你」的文字。
+
+## 打字與送出（私訊）
+`kind: "message"` 的台詞會自動演出「在輸入框裡逐字打、標點後停一下、打完才送出」，不必額外設定。
+
+要演「打了又刪掉」時，在該句加 `drafts`：依序打進輸入框、停一下、再逐字刪掉，最後才是這句的正式內容。
+
+```json
+{ "speaker": "zhou-yuan", "kind": "thought", "text": "我寫下「方便聊聊嗎」，刪掉。", "drafts": ["方便聊聊嗎"] }
+```
+
+- `drafts` 的字串請沿用該句台詞裡已經寫過的草稿原文；改寫台詞時請一併更新，`npm test` 會檢查兩者是否還對得上並指名是哪一場。
+- `message` 以外的台詞（旁白、內心）只演草稿被打了又刪掉，正式內容照原本的方式直接出現——那段文字是在描述剛才那個動作，逐字打出來會變成同一件事講兩次。
+- 玩家點畫面、按 Enter 或空白鍵可立刻打完，再點一下才前進；使用者要求減少動態時直接顯示整句。
 
 ## 條件台詞（依先前選擇分歧）
 `lines[]` 的每一句都可以帶 `conditions`；全部成立才顯示，沒有 `conditions` 則永遠顯示。
@@ -96,3 +145,29 @@
 
 ## 分支變數
 `game.json` 的 `initialState` 可新增任意字串、數值或布林值。選項透過 `effects` 修改狀態（`add` 僅限數值、`set` 可為任何型別），透過 `conditions` 決定是否顯示。
+
+## 感情線微選擇（不影響結局的選項）
+選項可以加 `"minor": true`，代表這是不影響結局的短對話分支（例如感情線）：不記入通關後「回到之前的選擇」的決策點選單，也不算進主要決策路徑。大多數不帶 `effects`；s1、s7 的三個選項例外，各自 `set` 一個敘事記憶字串（`s1Memory`／`s7Memory`），供 Scene 5、TRUE END 的 `route` 自動挑對應分支——**這個 `effects` 只能寫敘事記憶變數，不得寫 `trust`／`procedure`／`boundary`／`avoidance` 或 `choice1`…`choice5`**，否則會影響結局判定與主要路徑分布（`doc-private` 會立即終止談話並跳過 Choice 5，因此正式內容是 189 條而不是 3^5=243 條，見 `property/choice-and-route-revision-20260928.md`）。場景也可以加 `"choicePrompt"` 覆寫這一頁選項的提示句（不寫就用 `ui.json` 的 `choicePrompt`）。
+
+兩種實作方式，依有沒有下游回聲決定：
+
+1. **單純分支**（沒有下游回聲，例如 TRUE END 最後那組提問）：插入點拆成「選擇前」「三個分支各一場」「匯流後」四個場景，分支場景各自 `next` 指向同一個匯流場景。`ending-true-question-*` 與 `ending-true-finale` 是範本。
+2. **setup → 自動路由 → payoff**（s1 的選擇要在 Scene 5 被回收、s7 的選擇要在 TRUE END 被回收）：setup 端的選項 `effects` 寫入敘事記憶；payoff 端前面加一個「路由場景」（`lines: []`、`route` 依敘事記憶挑分支，見「路由場景」一節），玩家不會停在這個場景上。`s5-echo-router → s5-echo-work/detail/pause` 與 `ending-true-recommend-router → ending-true-recommend-precision/witness/honesty` 是範本；兩邊之後才各自接一組不帶敘事記憶的單純分支（`s5-why-not-question` 系列的 `reason-*`）或直接匯流。
+
+```json
+{ "id": "look-work", "text": "「看。給我三分鐘。」", "next": "s1-look-work", "minor": true, "effects": [{ "variable": "s1Memory", "operation": "set", "value": "look-work" }] }
+```
+
+## MBA Organizational Debrief（結局後可選的案例分析）
+
+> 課程定位：組織行為（Organizational Behavior，OB），不是人力資源管理（HR）。期末報告主軸是 Managerial Judgment、Decision Rights、Conflict & Collaboration 與 Managerial Roles。完整 Review 門檻見 `mba-organizational-debrief.md` 第零節。
+
+> 轉換狀態：2026-09-29 起線上／runtime 已整合 v3（`mba-final-analysis-managerial-judgment-v3-20260929.md`），取代舊版六維分析。v2 的稀疏矩陣、五級狀態、不可抵銷規則、理論篩選與因果鏈已從 `src/domain/mba.ts` 移除，只保留為 `property/mba-dramatic-analysis-scoring-v2-20260928.md` 的實作沿革記錄。
+
+四個結局畫面都有「查看案例分析」按鈕（沒有對應內容時自動不顯示）。內容資料是 `mba-debrief.json`（見上方「property 資料夾」一節），計算在 `src/domain/mba.ts` 的 `computeDebrief()`：
+
+- 只吃主要選擇的 ID（`engine.decisionPoints.map(d => d.choiceId)`，本來就已排除感情線微選擇；`doc-private` 立即終止談話時只有 4 個）與結局場景 ID，不讀存檔以外的任何東西，因此同一條路徑每次算出來的內容完全相同。
+- **不再逐題評分。** 五次選擇只組成「你做過的五次選擇」時間線（`mba-debrief.json` 的 `copy.decisionPointLabels` 提供五個固定標籤，逐字引用玩家選過的選項原文），實際分析依 ending ID 從 `endings.<結局場景 id>` 取一篇固定的完整路徑分析：`managerialJudgment`（管理判斷）、`decisionRights`（決策權如何被使用）、`conflictCollaboration`（衝突與合作）、`answer`（對主問題的回答）、`alternative`（一段完整的替代做法與代價）。
+- 主問題（`copy.mainQuestion`）、共同結論（`copy.sharedConclusion`）、四個角色的權限地圖（`authorityMap`，四個結局共用、不隨路徑改變）與結論區（`copy.finalConclusionTitle`／`finalConclusionBody`／`courseLinkSentence`）都是固定內容，不依選擇計算。
+- 畫面文案（按鈕、區塊標題、案例限制等）都在 `mba-debrief.json` 的 `copy`，改文案不需要碰 `src/`。
+- 要新增／調整結局分析，改 `mba-debrief.json` 的 `endings.<結局場景 id>` 即可；`endings` 缺該結局時，那個結局畫面就不會顯示「查看案例分析」按鈕。

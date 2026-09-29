@@ -1,0 +1,12 @@
+{
+  "id": "ending-true-question-weeks",
+  "title": "TRUE END：真正的告別",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "這三週過得怎麼樣？" },
+    { "speaker": "lin-yucheng", "text": "睡了十六個小時，面試兩次，買了一盆目前還活著的植物。" },
+    { "speaker": "zhou-yuan", "text": "哪一件最有成就感？" },
+    { "speaker": "lin-yucheng", "text": "植物。它沒有問我離職原因。" }
+  ],
+  "choices": [],
+  "next": "ending-true-finale"
+}

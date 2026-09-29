@@ -1,0 +1,14 @@
+{
+  "id": "s5-echo-pause",
+  "title": "職位不是我",
+  "lines": [
+    { "speaker": "lin-yucheng", "text": "剛才你叫我今天不要再改了。" },
+    { "speaker": "lin-yucheng", "text": "那不是體貼，對不對？你只是知道那個專案已經沒有明天。" }
+  ],
+  "choicePrompt": "你為什麼沒有在那時候說？",
+  "choices": [
+    { "id": "reason-hope", "text": "「我還在等替代方案，總覺得沒核准以前不該先說。」", "next": "s5-reason-hope", "minor": true },
+    { "id": "reason-decide", "text": "「我不想讓妳最後一段工作時間也只剩這件事。」", "next": "s5-reason-decide", "minor": true },
+    { "id": "reason-afraid", "text": "「我不知道怎麼一邊看妳的畫面，一邊準備叫妳進來。」", "next": "s5-reason-afraid", "minor": true }
+  ]
+}

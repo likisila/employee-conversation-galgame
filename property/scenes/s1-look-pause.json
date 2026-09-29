@@ -1,0 +1,13 @@
+{
+  "id": "s1-look-pause",
+  "title": "五點以前",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "先存檔。今天不要再改了。" },
+    { "speaker": "lin-yucheng", "text": "這句話從凌晨一點還在調四個像素的人嘴裡說出來，可信度不高。" },
+    { "speaker": "zhou-yuan", "text": "所以我知道什麼時候該停。" },
+    { "speaker": null, "kind": "narration", "text": "雨澄看了我一秒。" },
+    { "speaker": "lin-yucheng", "text": "你最好真的知道。" }
+  ],
+  "choices": [],
+  "next": "s1-look-converge"
+}

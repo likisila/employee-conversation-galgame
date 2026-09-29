@@ -1,5 +1,5 @@
 ---
-title: 最終版
+title: 五點以前
 chapter: chapter-01
 scene: 1
 pov: zhou-yuan
@@ -10,7 +10,7 @@ characters:
   - zeng-yalin
 arcs-advanced:
   - last-one-on-one
-status: draft
+status: revised
 state-changes:
   - target: zhou-yuan
     change: "得知林雨澄的職位裁撤已最終核准。"
@@ -25,5 +25,6 @@ state-changes:
 ## Continuity Notes
 
 - 時間 16:40，窗外開始下雨。
+- 00 過場已演出雅琳把資料夾交到予安桌上；本場從該動作之後續接，由雅琳當面確認「五點，月球。照這一版」後才轉身離開，不重演交付。
 - 雨澄尚不知道裁撤，仍在修改取消專案。
-- 予安先看見藍色資料夾，尚未發出邀請。
+- 予安已拿到藍色資料夾，先存檔並收掉原本的工作視窗，把注意力轉到文件；雅琳離開後，他再透過私訊確認最終內容，尚未發出邀請。

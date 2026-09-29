@@ -1,0 +1,13 @@
+{
+  "id": "s1-look-detail",
+  "title": "五點以前",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "妳先說，這版最滿意哪裡？" },
+    { "speaker": "lin-yucheng", "text": "錯誤頁。" },
+    { "speaker": "zhou-yuan", "text": "正常人不會最喜歡錯誤頁。" },
+    { "speaker": "lin-yucheng", "text": "正常主管也不會記得我每一版最喜歡哪一頁。" },
+    { "speaker": null, "kind": "narration", "text": "她說完才看見我桌上的藍色資料夾。" }
+  ],
+  "choices": [],
+  "next": "s1-look-converge"
+}

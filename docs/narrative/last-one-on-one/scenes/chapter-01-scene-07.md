@@ -10,7 +10,7 @@ characters:
   - zeng-yalin
 arcs-advanced:
   - last-one-on-one
-status: draft
+status: revised
 state-changes:
   - target: lin-yucheng
     change: "在所有分支中離開會議室；是否帶走資料夾與是否保留私人聯絡依結局而定。"

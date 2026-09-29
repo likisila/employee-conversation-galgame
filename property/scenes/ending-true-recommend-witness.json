@@ -1,0 +1,12 @@
+{
+  "id": "ending-true-recommend-witness",
+  "title": "TRUE END：真正的告別",
+  "lines": [
+    { "speaker": "lin-yucheng", "text": "你沒有把那個實習生寫進推薦信。" },
+    { "speaker": "zhou-yuan", "text": "那不是我的故事，也不是她同意公開的事。" },
+    { "speaker": "lin-yucheng", "text": "你只寫我會替沒說出口的意見留位置。" },
+    { "speaker": "zhou-yuan", "text": "那是妳的工作。" }
+  ],
+  "choices": [],
+  "next": "ending-true-recommend-converge"
+}

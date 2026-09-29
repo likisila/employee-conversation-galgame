@@ -10,7 +10,7 @@ characters:
   - zeng-yalin
 arcs-advanced:
   - last-one-on-one
-status: draft
+status: revised
 state-changes:
   - target: lin-yucheng
     change: "知道予安是否提出過替代方案，以及對方是否把努力轉化為情感債。"

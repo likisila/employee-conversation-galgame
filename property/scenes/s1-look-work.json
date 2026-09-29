@@ -1,0 +1,13 @@
+{
+  "id": "s1-look-work",
+  "title": "五點以前",
+  "lines": [
+    { "speaker": "zhou-yuan", "text": "看。給我三分鐘。" },
+    { "speaker": "lin-yucheng", "text": "你上次的三分鐘，留下二十八條註解。" },
+    { "speaker": "zhou-yuan", "text": "這次只看最重要的。" },
+    { "speaker": "lin-yucheng", "text": "你每次都這樣說。" },
+    { "speaker": null, "kind": "narration", "text": "她仍然把畫面轉向我。" }
+  ],
+  "choices": [],
+  "next": "s1-look-converge"
+}

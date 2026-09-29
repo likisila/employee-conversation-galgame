@@ -10,7 +10,7 @@ characters:
   - zeng-yalin
 arcs-advanced:
   - last-one-on-one
-status: draft
+status: revised
 state-changes:
   - target: lin-yucheng
     change: "依 CHOICE 1，提前得知會議與組織調整相關、只知道 HR 出席，或被誤導為好消息。"

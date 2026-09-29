@@ -5,6 +5,7 @@ import {
   parseGame,
   parseImages,
   parseManifest,
+  parseMbaContent,
   parseScene,
   parseUi,
   type Character,
@@ -13,6 +14,7 @@ import {
   type Game,
   type ImageCatalog,
   type Manifest,
+  type MbaContent,
   type Scene,
   type UiCopy,
 } from '../domain/schema';
@@ -48,6 +50,8 @@ export interface LoadedContent {
   cutscenes: CutsceneSettings;
   /** 以「進入哪個場景前播放」為索引的過場影片。 */
   cutsceneCues: Map<string, CutsceneCue>;
+  /** 結局後可選的 MBA Organizational Debrief 內容。 */
+  mba: MbaContent;
 }
 
 export function loadContent(): LoadedContent {
@@ -62,10 +66,15 @@ export function loadContent(): LoadedContent {
   // 依部署 base 解析素材路徑，讓遊戲能部署在子路徑（如 GitHub Pages）。
   const images = resolveCatalogAssets(rawImages);
 
+  const mba = manifest.mba ? parseMbaContent(requireFile(manifest.mba)) : parseMbaContent({});
   const cutscenes = manifest.cutscenes ? parseCutsceneSettings(requireFile(manifest.cutscenes)) : parseCutsceneSettings({});
   const cueList = manifest.cutsceneCues ? parseCutsceneCues(requireFile(manifest.cutsceneCues)) : [];
   const cutsceneCues = new Map(
-    cueList.map((cue) => [cue.scene, { ...cue, src: resolveAssetPath(cue.src) }]),
+    cueList.map((cue) => [cue.scene, {
+      ...cue,
+      src: resolveAssetPath(cue.src),
+      storyboard: cue.storyboard?.map((frame) => ({ ...frame, src: resolveAssetPath(frame.src) })),
+    }]),
   );
 
   const characters = new Map(charactersArray.map((item) => [item.id, item]));
@@ -74,6 +83,15 @@ export function loadContent(): LoadedContent {
   // 影片掛在不存在的場景上永遠不會播，屬於資料錯誤，載入時就擋下來。
   for (const cue of cutsceneCues.values()) {
     if (!scenes.has(cue.scene)) throw new Error(`過場影片 ${cue.id} 掛在不存在的場景 ${cue.scene}`);
+    const scene = scenes.get(cue.scene)!;
+    // anchorText 錯字或行被改寫會讓 mid-scene cue 永遠等不到觸發點，載入時就擋下來，
+    // 不要留到玩家實機才發現某段影片再也不會播。
+    if (cue.anchorType === 'line' && !scene.lines.some((line) => line.text === cue.anchorText)) {
+      throw new Error(`過場影片 ${cue.id} 的 anchorText 在場景 ${cue.scene} 找不到對應的台詞`);
+    }
+    if (cue.anchorType === 'choices' && scene.choices.length === 0) {
+      throw new Error(`過場影片 ${cue.id} 的 anchorType 是 choices，但場景 ${cue.scene} 沒有選項`);
+    }
   }
 
   for (const scene of scenes.values()) {
@@ -120,5 +138,5 @@ export function loadContent(): LoadedContent {
     if (transition.asset && !images.ui[transition.asset]) throw new Error(`轉場 ${transitionId} 引用了不存在的 UI asset ${transition.asset}`);
   }
 
-  return { manifest, game, characters, scenes, ui, images, cutscenes, cutsceneCues };
+  return { manifest, game, characters, scenes, ui, images, cutscenes, cutsceneCues, mba };
 }

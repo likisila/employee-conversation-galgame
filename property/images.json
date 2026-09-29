@@ -38,7 +38,7 @@
   "backgrounds": {
     "weiguang-office-rain-dusk": {
       "src": "/assets/backgrounds/weiguang-office-rain-dusk.webp",
-      "alt": "傍晚四點四十分的台北新創辦公室，窗外下雨，螢幕與玻璃泛著冷藍色",
+      "alt": "窗外下雨的台北新創辦公室，螢幕與玻璃泛著冷藍色",
       "focalPoint": "50% 46%"
     },
     "moon-meeting-room-rain": {
@@ -49,7 +49,7 @@
     },
     "rainy-arcade-night": {
       "src": "/assets/backgrounds/rainy-arcade-night.webp",
-      "alt": "台北雨夜騎樓，霓虹倒映在積水裡，適合作為離席後的結局轉場",
+      "alt": "台北雨夜騎樓，霓虹倒映在積水裡",
       "focalPoint": "50% 50%"
     },
     "apartment-phone-night": {
@@ -83,15 +83,38 @@
   },
   "sceneBackgrounds": {
     "s1-final-cut": "weiguang-office-rain-dusk",
+    "s1-look-work": "weiguang-office-rain-dusk",
+    "s1-look-detail": "weiguang-office-rain-dusk",
+    "s1-look-pause": "weiguang-office-rain-dusk",
+    "s1-look-converge": "weiguang-office-rain-dusk",
     "s2-invite": "weiguang-office-rain-dusk",
     "s3-meeting": "moon-meeting-room-rain",
-    "s4-notice": "cg-rights-packet",
+    "s4-notice": "moon-meeting-room-rain",
     "s5-when-did-you-know": "moon-meeting-room-rain",
-    "s6-receipt": "cg-rights-packet",
+    "s5-echo-work": "moon-meeting-room-rain",
+    "s5-echo-detail": "moon-meeting-room-rain",
+    "s5-echo-pause": "moon-meeting-room-rain",
+    "s5-reason-hope": "moon-meeting-room-rain",
+    "s5-reason-decide": "moon-meeting-room-rain",
+    "s5-reason-afraid": "moon-meeting-room-rain",
+    "s5-reason-converge": "moon-meeting-room-rain",
+    "s6-receipt": "moon-meeting-room-rain",
     "s7-not-in-file": "moon-meeting-room-rain",
+    "s7-recommend-precision": "moon-meeting-room-rain",
+    "s7-recommend-witness": "moon-meeting-room-rain",
+    "s7-recommend-honesty": "moon-meeting-room-rain",
+    "s7-recommend-converge": "moon-meeting-room-rain",
     "s8-reaction": "moon-meeting-room-rain",
     "ending-over-line": "moon-meeting-room-rain",
     "ending-true": "moon-meeting-room-rain",
+    "ending-true-recommend-precision": "platform-zero-cafe",
+    "ending-true-recommend-witness": "platform-zero-cafe",
+    "ending-true-recommend-honesty": "platform-zero-cafe",
+    "ending-true-recommend-converge": "platform-zero-cafe",
+    "ending-true-question-place": "platform-zero-cafe",
+    "ending-true-question-weeks": "platform-zero-cafe",
+    "ending-true-question-unasked": "platform-zero-cafe",
+    "ending-true-finale": "platform-zero-cafe",
     "ending-decent": "moon-meeting-room-rain",
     "ending-soft-knife": "moon-meeting-room-rain"
   },
@@ -105,6 +128,9 @@
       "expression": "neutral",
       "transition": "fade"
     },
+    "s1-look-converge": {
+      "character": "lin-yucheng"
+    },
     "s2-invite": {
       "background": "weiguang-office-rain-dusk",
       "transition": "soft"
@@ -116,7 +142,7 @@
       "transition": "wipe"
     },
     "s4-notice": {
-      "background": "cg-rights-packet",
+      "background": "moon-meeting-room-rain",
       "character": "lin-yucheng",
       "expression": "alert",
       "transition": "fade"
@@ -128,7 +154,7 @@
       "transition": "soft"
     },
     "s6-receipt": {
-      "background": "cg-rights-packet",
+      "background": "moon-meeting-room-rain",
       "character": "zeng-yalin",
       "expression": "neutral",
       "transition": "soft"
@@ -174,7 +200,7 @@
     },
     "loading": {
       "src": "/assets/screens/loading-rain-cursor.webp",
-      "alt": "雨水沿玻璃落下，像刪除線切過遠方城市燈光",
+      "alt": "雨水沿玻璃落下，遠處亮著城市燈光",
       "focalPoint": "50% 50%"
     }
   },

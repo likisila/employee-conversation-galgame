@@ -3,13 +3,13 @@
   "title": "邀請",
   "lines": [
     { "speaker": null, "kind": "narration", "text": "16:43。雨澄的私訊視窗，輸入框空白。" },
-    { "speaker": "zhou-yuan", "kind": "thought", "text": "游標閃了六次。我寫下「方便聊聊嗎」，刪掉。寫下「關於下季安排」，刪掉。" },
-    { "speaker": "zhou-yuan", "kind": "thought", "text": "每一種緩衝，看起來都像替我自己鋪的軟墊。" }
+    { "speaker": "zhou-yuan", "kind": "thought", "text": "游標閃了六次。我寫下「方便聊聊嗎」，刪掉。寫下「關於下季安排」，刪掉。", "drafts": ["方便聊聊嗎", "關於下季安排"] },
+    { "speaker": "zhou-yuan", "kind": "thought", "text": "只剩十幾分鐘。再刪下去，她連準備的時間都沒有。" }
   ],
   "choices": [
     {
       "id": "invite-clear",
-      "text": "「五點想和你談組織與職務調整，雅琳也會在場。」",
+      "text": "「五點談職務調整，雅琳會在。先把手邊檔案存好。」",
       "next": "s3-meeting",
       "effects": [
         { "variable": "choice1", "operation": "set", "value": "clear" },
@@ -19,16 +19,18 @@
     },
     {
       "id": "invite-vague",
-      "text": "「五點方便聊一下嗎？月球會議室。」",
+      "text": "「五點有一場會影響妳職務安排的會議，雅琳會在；細節我需要當面說。」",
       "next": "s3-meeting",
       "effects": [
         { "variable": "choice1", "operation": "set", "value": "vague" },
-        { "variable": "avoidance", "operation": "add", "value": 1 }
+        { "variable": "trust", "operation": "add", "value": 1 },
+        { "variable": "procedure", "operation": "add", "value": 1 },
+        { "variable": "boundary", "operation": "add", "value": 1 }
       ]
     },
     {
       "id": "invite-goodnews",
-      "text": "「有個好消息想和你同步，五點月球見。」",
+      "text": "「有個新安排，也算是好消息。五點來月球聊聊。」",
       "next": "s3-meeting",
       "effects": [
         { "variable": "choice1", "operation": "set", "value": "goodnews" },

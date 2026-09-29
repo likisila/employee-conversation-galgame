@@ -4,7 +4,9 @@ import type { StoryEngine } from '../engine/StoryEngine';
 import { playCutscene } from './cutscene';
 import { icon } from './icons';
 import { setKeyHandler } from './keyboard';
+import { computeDebrief, formatDebriefSummary } from '../domain/mba';
 import { resolveCharacterFraming, resolvePresentation, spriteSource } from './presentation';
+import { planTyping, runTyping, type TypingHandle, type TypingPlan } from './typing';
 
 /** 標題畫面的行為掛勾。有存檔時提供 onResume，讓玩家選擇繼續。 */
 export interface TitleHooks {
@@ -67,7 +69,7 @@ export function renderLoading(app: HTMLElement, content: LoadedContent, ready: P
       <div class="loading-copy">
         <p class="eyebrow">BEFORE WE TALK</p>
         <h1>${escapeHtml(content.ui.loadingLabel)}</h1>
-        <p>有些話，需要先留一點空白。</p>
+        <p class="loading-note">${escapeHtml(content.ui.loadingNote)}</p>
         <div class="loading-bar" role="progressbar" aria-label="${escapeHtml(content.ui.loadingLabel)}"><span></span></div>
         <p class="tap-hint loading-hint" role="status">${escapeHtml(content.ui.tapToContinueLabel)}</p>
       </div>
@@ -172,6 +174,15 @@ let choiceStepSceneId: string | undefined;
  */
 let backHintShown = false;
 /**
+ * 正在播放的打字特效（私訊）。畫面每次重畫都會先中止它；播放期間點畫面＝立刻打完，不前進。
+ */
+let activeTyping: TypingHandle | undefined;
+/**
+ * 已經播過打字特效的台詞（`場景 ID#第幾句`）。同一句只演一次：
+ * 回上一句再前進、或在同一場來回時不該每次都重打一遍。重新開始與回到決策點會清空。
+ */
+const typedLines = new Set<string>();
+/**
  * 忘掉上一次 render 的場景紀錄，讓下一次 render 把目前場景當成「剛進場」：
  * 重播轉場卡與立繪淡入。重新開始與回到決策點這兩種跳躍都要這樣宣告。
  */
@@ -184,6 +195,13 @@ function resetSceneTracking(): void {
   steppingBack = false;
   backHintShown = false;
   choiceStepSceneId = undefined;
+  typedLines.clear();
+}
+
+/** 使用者要求減少動態時不播打字特效，直接顯示整句。 */
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 /*
@@ -248,33 +266,41 @@ function announce(text: string): void {
   region.textContent = text;
 }
 
-function renderLine(line: Line, content: LoadedContent, progress: string): string {
+/**
+ * 台詞的文字節點。要播打字特效時多包一層：
+ * `.line-sizer` 是整段最長的文字、`visibility:hidden` 只用來把高度先撐好，
+ * `.line-live` 疊在它上面顯示目前打到哪裡。否則打字時每多一行，對話框就會往上長一次。
+ */
+function renderText(line: Line, typing: TypingPlan | undefined): string {
+  if (!typing) return `<p>${escapeHtml(line.text)}</p>`;
+  return `<p class="line-text"><span class="line-sizer" aria-hidden="true">${escapeHtml(typing.sizerText)}</span><span class="line-live"></span></p>`;
+}
+
+function renderLine(line: Line, content: LoadedContent, progress: string, typing?: TypingPlan): string {
   const kind = line.kind ?? (line.speaker ? 'dialogue' : 'narration');
   const speakerName = line.speaker ? content.characters.get(line.speaker)?.displayName ?? line.speaker : '';
   const self = line.speaker !== null && line.speaker === content.game.player;
-  const text = `<p>${escapeHtml(line.text)}</p>`;
+  const text = renderText(line, typing);
+  // 打字期間先掛上 is-composing（游標、訊息泡泡壓暗）；打完由 render 拿掉。
+  const composing = typing ? ' is-composing' : '';
 
   switch (kind) {
     case 'thought': {
-      // 內心：名字放在對話框名牌上；本體是來源端泡泡（頭像在左、泡泡尾朝向想的人），
+      // 內心：名字已經在對話框名牌上，泡泡本體不再重複頭像（曾經有頭像，但名牌就在正上方，
+      // 頭像頂多只是把同一個名字再縮寫顯示一次，是純粹的重複，已拿掉）。
       // 邊框虛線、底色透明，讀起來是「沒說出口的話」。
-      const thinker = speakerName || content.ui.narratorName;
-      const avatar = avatarText(content, line.speaker ?? undefined, thinker);
-      return `<article class="line line--thought${self ? ' is-self' : ''}" data-kind="thought" data-line="${progress}">
-        <div class="message-row">
-          <span class="message-avatar" aria-hidden="true">${escapeHtml(avatar)}</span>
-          <div class="message-bubble">${text}</div>
-        </div>
+      return `<article class="line line--thought${self ? ' is-self' : ''}${composing}" data-kind="thought" data-line="${progress}">
+        <div class="message-bubble">${text}</div>
       </article>`;
     }
     case 'narration':
-      return `<article class="line line--narration" data-kind="narration" data-line="${progress}" aria-label="${escapeHtml(content.ui.narratorName)}">${text}</article>`;
+      return `<article class="line line--narration${composing}" data-kind="narration" data-line="${progress}" aria-label="${escapeHtml(content.ui.narratorName)}">${text}</article>`;
     case 'message': {
       const senderId = line.speaker ?? findCharacterByName(content, line.from);
       const sender = line.from ?? speakerName;
       const selfMessage = senderId !== undefined && senderId === content.game.player;
       const avatar = avatarText(content, senderId, sender);
-      return `<article class="line line--message${selfMessage ? ' is-self' : ''}" data-kind="message" data-line="${progress}">
+      return `<article class="line line--message${selfMessage ? ' is-self' : ''}${composing}" data-kind="message" data-line="${progress}">
         <div class="message-meta">${line.channel ? `<span class="message-channel">${escapeHtml(line.channel)}</span>` : ''}</div>
         <div class="message-row">
           <span class="message-avatar" aria-hidden="true">${escapeHtml(avatar)}</span>
@@ -284,19 +310,56 @@ function renderLine(line: Line, content: LoadedContent, progress: string): strin
     }
     default:
       // 對話：名字在名牌上，這裡只放台詞。
-      return `<article class="line line--dialogue${self ? ' is-self' : ''}" data-kind="dialogue" data-line="${progress}">${text}</article>`;
+      return `<article class="line line--dialogue${self ? ' is-self' : ''}${composing}" data-kind="dialogue" data-line="${progress}">${text}</article>`;
   }
+}
+
+/**
+ * 把打字特效接到剛畫好的台詞上：文字寫進 `.line-live`（高度由旁邊的 `.line-sizer` 撐著，
+ * 所以打字時對話框不會一行一行變高），打完拿掉 `is-composing`，訊息再加一次 `is-sent` 的送出動作。
+ *
+ * `onSettled` 在特效完全結束後呼叫一次（含被 `finish()` 直接跳到結尾的情況）：
+ * 訊息（`plan.send`）維持原樣，停在送出後的畫面等玩家自己點下一句；旁白／內心的草稿
+ * （`!plan.send`）只是把剛剛已經演過的動作複述成靜態文字，不需要再讓玩家多點一次才能
+ * 跳過這一句重複的內容，因此呼叫端會在這裡自動前進。
+ */
+function startTyping(app: HTMLElement, plan: TypingPlan, typingKey: string, onSettled: () => void): void {
+  const screen = app.querySelector<HTMLElement>('.game-screen');
+  const article = app.querySelector<HTMLElement>('.dialogue .line');
+  const live = app.querySelector<HTMLElement>('.dialogue .line-live');
+  const paragraph = live?.parentElement;
+  if (!screen || !article || !live || !paragraph) return;
+
+  activeTyping = runTyping(plan, {
+    write: (text) => { live.textContent = text; },
+    onSend: () => { article.classList.add('is-sent'); },
+    onDone: () => {
+      // 演完就把撐高度的那一層拆掉，DOM 回到「沒有特效時本來就會長的樣子」，
+      // 文字不再一式兩份（複製、選取、之後的版位量測都以這一份為準）。
+      paragraph.classList.remove('line-text');
+      paragraph.textContent = plan.finalText;
+      article.classList.remove('is-composing');
+      screen.dataset.typing = 'false';
+      typedLines.add(typingKey);
+      activeTyping = undefined;
+      onSettled();
+    },
+  });
 }
 
 export function render(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks = {}): void {
   const scene = engine.currentScene;
+  // 畫面要重畫了：上一句的打字特效連同它的計時器一起收掉，不要寫進已經被換掉的節點。
+  activeTyping?.cancel();
+  activeTyping = undefined;
 
-  // 進入掛有過場影片的場景時，先播影片再進場景。已看過（含跳過）的不重播；
+  // 進入掛有「進場景前」過場影片的場景時，先播影片再進場景。已看過（含跳過）的不重播；
   // 缺檔或載入失敗由播放器自行跳過，直接進入正式場景。
   // 這一段刻意放在所有轉場記錄（lastSceneId 等）之前：播完後重新 render 時，
   // 這個場景仍然算「剛進場」，轉場卡與立繪淡入照常播放。
+  // `line`／`choices` 兩種場景中段的播放時機在下面的 `advance` 裡處理，不在這裡攔截。
   const cue = content.cutsceneCues.get(scene.id);
-  if (cue && lastSceneId !== scene.id && !engine.hasWatchedCutscene(cue.id)) {
+  if (cue && cue.anchorType === 'scene' && lastSceneId !== scene.id && !engine.hasWatchedCutscene(cue.id)) {
     playCutscene(app, cue, content.ui, () => {
       engine.markCutsceneWatched(cue.id);
       // 影片看過就記進存檔，重新載入不會再看一次。
@@ -372,8 +435,15 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const canAdvance = phase === 'intro' || !atLast
     || (availableChoices.length > 0 && !atChoiceStep)
     || (scene.next !== undefined && !scene.ending);
+  // 私訊的打字特效：訊息逐字打出來再送出，宣告了 drafts 的台詞先演一次「打了又刪掉」。
+  // 只在這一句「第一次往前讀到」時播：停在轉場卡（台詞還看不到）、回上一句、以及使用者
+  // 要求減少動態時都直接顯示整句。
+  const typingKey = `${scene.id}#${lineIndex}`;
+  const typing = line && !atChoiceStep && phase !== 'intro' && !typedLines.has(typingKey) && !prefersReducedMotion()
+    ? planTyping(line)
+    : undefined;
   // 選項頁只放選項：不顯示台詞與名牌，對話框因此矮一截。想重看那一句就按回上一句。
-  const dialogue = line && !atChoiceStep ? renderLine(line, content, `${lineIndex + 1}/${visibleLines.length}`) : '';
+  const dialogue = line && !atChoiceStep ? renderLine(line, content, `${lineIndex + 1}/${visibleLines.length}`, typing) : '';
   const namePlate = line && !atChoiceStep ? renderNamePlate(line, content) : '';
   const speakingSelf = !atChoiceStep && line !== undefined && line.speaker !== null && line.speaker === content.game.player;
   const hint = canAdvance ? `<span class="advance-hint" aria-hidden="true">▼</span>` : '';
@@ -386,14 +456,17 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     ? `<button type="button" class="back-hint${backHintEntering ? ' back-hint--enter' : ''}" id="back" aria-label="${escapeHtml(content.ui.backLabel)}">${icon('back')}</button>`
     : '';
 
+  // 場景可以帶自己的選項提示句（感情線微選擇用來問「你怎麼回答？」之類），沒寫就用全域預設。
+  const choicePrompt = scene.choicePrompt ?? content.ui.choicePrompt;
   const choices = atChoiceStep
     ? availableChoices.map((choice, index) =>
         `<button class="choice" data-choice="${escapeHtml(choice.id)}"><span>${String(index + 1).padStart(2, '0')}</span><span class="choice-text">${escapeHtml(choice.text)}</span></button>`,
       ).join('')
     : '';
-  // 通關畫面：除了重新開始，還可以挑一個之前的決策點回去重選。
+  // 通關畫面：除了重新開始，還可以挑一個之前的決策點回去重選，或查看 MBA 案例分析。
   const decisionCount = engine.decisionPoints.length;
   const isEnding = atLast && scene.ending;
+  const hasDebrief = isEnding && content.mba.endings[scene.id] !== undefined;
   // 對話框底部這次放什麼：結局按鈕／選項／什麼都沒有。CSS 用它決定要單欄還是雙欄
   // （只有結局畫面維持「台詞在左、按鈕在右」；台詞頁與選項頁都是單欄，台詞才不會被擠窄）。
   const footerKind = isEnding ? 'ending' : atChoiceStep ? 'choices' : 'none';
@@ -401,13 +474,14 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     ? `<div class="ending-actions">
         <button class="primary-action full" id="restart">${escapeHtml(content.ui.restartLabel)}</button>
         ${decisionCount > 0 ? `<button type="button" class="secondary-action full" id="rewind">${escapeHtml(content.ui.rewindLabel)}</button>` : ''}
+        ${hasDebrief ? `<button type="button" class="secondary-action full" id="debrief">${escapeHtml(content.mba.copy.entryButton)}</button>` : ''}
       </div>`
     : choices
-      ? `<section class="choices"><h2>${escapeHtml(content.ui.choicePrompt)}</h2>${choices}</section>`
+      ? `<section class="choices"><h2>${escapeHtml(choicePrompt)}</h2>${choices}</section>`
       : '';
 
   app.innerHTML = `
-    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-can-back="${canGoBack}" data-settled="${sameScene}" data-has-choices="${atChoiceStep}" data-portrait="${sprite !== undefined}" data-framing="${escapeHtml(framing)}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}${sprite?.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}">
+    <section class="game-screen" data-phase="${phase}" data-transition="${escapeHtml(transitionId)}" data-advance="${canAdvance}" data-can-back="${canGoBack}" data-typing="${typing !== undefined}" data-settled="${sameScene}" data-has-choices="${atChoiceStep}" data-portrait="${sprite !== undefined}" data-framing="${escapeHtml(framing)}" style="${imageStyle(background?.src, background?.focalPoint)};--transition-duration:${transition?.durationMs ?? 0}ms;--dialogue-panel:${cssUrl(dialoguePanel)}${sprite?.frameAspectRatio ? `;--frame-aspect:${sprite.frameAspectRatio}` : ''}">
       <div class="scene-transition" aria-hidden="true" style="--transition-art:${cssUrl(transitionAsset)}"></div>
       ${phase === 'intro' ? `<div class="scene-intro" role="status"><p class="eyebrow">${escapeHtml(content.game.title)}</p>${scene.title ? `<h2>${escapeHtml(scene.title)}</h2>` : ''}<p class="tap-hint">${escapeHtml(content.ui.tapToContinueLabel)}</p></div>` : ''}
       <div class="scene-scrim" aria-hidden="true"></div>
@@ -417,10 +491,16 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     </section>
   `;
 
-  announce(atChoiceStep ? content.ui.choicePrompt : line ? `${nameOf(line, content)}${line.text}` : scene.title ?? '');
+  // 播報用的 live region 一開始就拿到整句：螢幕閱讀器不必等打字演完。
+  announce(atChoiceStep ? choicePrompt : line ? `${nameOf(line, content)}${line.text}` : scene.title ?? '');
 
   const shownAt = performance.now();
   const advance = (): void => {
+    // 還在打字：先把這一句打完，不前進。
+    if (activeTyping) {
+      activeTyping.finish();
+      return;
+    }
     if (phase === 'intro') {
       // 轉場卡：停留太短的點擊視為連點，忽略。
       if (performance.now() - shownAt < MIN_DWELL_MS) return;
@@ -432,14 +512,45 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
     // 最後一句之後的下一步是翻到選項頁。引擎不動（仍停在最後一句），
     // 所以不用存檔——重新載入會回到那一句，再點一下就是選項頁。
     if (availableChoices.length > 0 && !atChoiceStep) {
+      // `choices` 型過場：問完問題、選項出現之前播放（例如 04 問題之後）。
+      if (cue && cue.anchorType === 'choices' && !engine.hasWatchedCutscene(cue.id)) {
+        playCutscene(app, cue, content.ui, () => {
+          engine.markCutsceneWatched(cue.id);
+          hooks.onAdvance?.();
+          choiceStepSceneId = scene.id;
+          render(app, engine, content, hooks);
+        });
+        return;
+      }
       choiceStepSceneId = scene.id;
       render(app, engine, content, hooks);
+      return;
+    }
+    // `line` 型過場：接到 anchorText 那一句之前播放。以文字比對而非行號，
+    // 因為分支條件會讓不同路徑的可見行號不同（見 property/cutscene-storyboard-v3.md）。
+    const nextLine = !atLast ? visibleLines[lineIndex + 1] : undefined;
+    if (cue && cue.anchorType === 'line' && nextLine?.text === cue.anchorText && !engine.hasWatchedCutscene(cue.id)) {
+      playCutscene(app, cue, content.ui, () => {
+        engine.markCutsceneWatched(cue.id);
+        if (!engine.advance()) return;
+        render(app, engine, content, hooks);
+        hooks.onAdvance?.();
+      });
       return;
     }
     if (!engine.advance()) return;
     render(app, engine, content, hooks);
     hooks.onAdvance?.();
   };
+
+  if (typing) {
+    startTyping(app, typing, typingKey, () => {
+      // 訊息送出後維持原樣，停在這句等玩家自己往下點；旁白／內心的草稿演完就是把剛剛
+      // 已經演過的動作複述成靜態文字，不必再讓玩家多點一次才能跳過這句重複內容。
+      if (typing.send) return;
+      advance();
+    });
+  }
 
   const goBack = (): void => {
     if (!canGoBack) return;
@@ -476,6 +587,12 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   app.querySelector<HTMLElement>('.game-screen')?.addEventListener('click', (event) => {
     // 按鈕（選項、重來、回上一句）各自處理；其他地方點一下就是「下一句」。
     if ((event.target as HTMLElement).closest('button')) return;
+    // 打字進行中：點畫面任何地方都是「不等了，直接打完」，包含左側的回溯區——
+    // 玩家這時想做的是跳過動畫，不是回上一句。真的要回去還有左下角的箭頭與 ArrowLeft。
+    if (activeTyping) {
+      activeTyping.finish();
+      return;
+    }
     if (isBackZone(event)) {
       goBack();
       return;
@@ -515,6 +632,9 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   });
   app.querySelector<HTMLButtonElement>('#rewind')?.addEventListener('click', () => {
     openDecisionMenu(app, engine, content, hooks);
+  });
+  app.querySelector<HTMLButtonElement>('#debrief')?.addEventListener('click', () => {
+    openDebrief(app, engine, content, hooks);
   });
 }
 
@@ -613,4 +733,147 @@ function openDecisionMenu(app: HTMLElement, engine: StoryEngine, content: Loaded
     if ((event.key === 'Enter' || event.key === ' ') && (event.target as HTMLElement | null)?.closest('button')) return;
     if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowLeft') event.preventDefault();
   });
+}
+
+/**
+ * 通關後可選的 MBA 最後分析 v3：把這一輪的主要選擇還原成「管理判斷／決策權／衝突與合作／
+ * 對主問題的回答」的完整路徑分析，不再逐題評分。只讀 `engine.decisionPoints`（已排除感情線
+ * 微選擇）與結局場景 ID，不改動存檔、結局或選擇歷史。蓋在結局畫面上，與 `openDecisionMenu`
+ * 同一套遮罩／焦點循環／Esc 關閉做法，但內容長很多，面板本身可捲動（見 style.css 的
+ * `.debrief-panel`）。
+ */
+function openDebrief(app: HTMLElement, engine: StoryEngine, content: LoadedContent, hooks: RenderHooks): void {
+  const endingId = engine.currentScene.id;
+  const result = computeDebrief(content, endingId, engine.decisionPoints.map((decision) => decision.choiceId));
+  if (!result) return;
+  const copy = content.mba.copy;
+  const heading = (key: string, fallback: string): string => escapeHtml(copy.sectionHeadings[key] ?? fallback);
+
+  const section = (headingKey: string, fallback: string, body: string): string => `
+    <section class="debrief-section">
+      <h3>${heading(headingKey, fallback)}</h3>
+      ${body}
+    </section>`;
+
+  const authorityTable = `
+    <table class="debrief-authority-map">
+      <thead><tr><th scope="col">角色</th><th scope="col">能決定</th><th scope="col">不能決定</th></tr></thead>
+      <tbody>${result.authorityMap.map((row) =>
+        `<tr><th scope="row">${escapeHtml(row.role)}</th><td>${escapeHtml(row.canDecide)}</td><td>${escapeHtml(row.cannotDecide)}</td></tr>`).join('')}</tbody>
+    </table>`;
+
+  const body = [
+    section('question', '主問題', `<blockquote class="debrief-question">${escapeHtml(result.mainQuestion)}</blockquote>`),
+    section('conclusion', '共同結論', `<p>${escapeHtml(result.sharedConclusion)}</p>`),
+    section('path', '你做過的五次選擇', `<ol class="debrief-path">${result.path.map((step) =>
+      `<li><strong>${escapeHtml(step.label)}：</strong>「${escapeHtml(step.choiceText)}」</li>`).join('')}</ol>`),
+    section('authorityMap', '權限地圖', authorityTable),
+    section('analysis', '這條路徑的綜合分析', `
+      <div class="debrief-analysis">
+        <h4>管理判斷</h4><p>${escapeHtml(result.managerialJudgment)}</p>
+        <h4>決策權如何被使用</h4><p>${escapeHtml(result.decisionRights)}</p>
+        <h4>衝突與合作</h4><p>${escapeHtml(result.conflictCollaboration)}</p>
+        <h4>對主問題的回答</h4><p>${escapeHtml(result.answer)}</p>
+      </div>`),
+    section('alternative', '另一種做法與代價', `<p>${escapeHtml(result.alternative)}</p>`),
+    section('finalConclusion', '結論', `
+      <p class="debrief-final-title"><strong>${escapeHtml(result.finalConclusionTitle)}</strong></p>
+      <p>${escapeHtml(result.finalConclusionBody)}</p>
+      <p>${escapeHtml(result.courseLinkSentence)}</p>`),
+    section('limitations', '分析限制', `<p>${escapeHtml(result.analysisLimitation)}</p>`),
+  ].join('');
+
+  const overlay = document.createElement('section');
+  overlay.className = 'debrief-menu';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', copy.entryButton);
+  const description = copy.entryDescription.trim()
+    ? `<p class="debrief-description">${escapeHtml(copy.entryDescription)}</p>`
+    : '';
+  overlay.innerHTML = `
+    <div class="debrief-panel">
+      <h2>${escapeHtml(result.endingTitle)}｜案例分析</h2>
+      <p class="debrief-mode-label">${escapeHtml(result.endingLabel)}</p>
+      ${description}
+      ${body}
+      <div class="debrief-actions">
+        <button type="button" class="secondary-action" id="debrief-copy">${escapeHtml(copy.copyButton)}</button>
+        <button type="button" class="secondary-action" id="debrief-close">${escapeHtml(copy.closeButton)}</button>
+      </div>
+      <p class="debrief-copied" id="debrief-copied-notice" role="status" hidden>${escapeHtml(copy.copiedNotice)}</p>
+    </div>
+  `;
+  app.appendChild(overlay);
+
+  const focusable = (): HTMLButtonElement[] => [...overlay.querySelectorAll<HTMLButtonElement>('button')];
+  focusable()[0]?.focus();
+
+  const close = (): void => {
+    overlay.remove();
+    setKeyHandler(undefined);
+    render(app, engine, content, hooks);
+    app.querySelector<HTMLButtonElement>('#debrief')?.focus();
+  };
+
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) close();
+  });
+  overlay.querySelector<HTMLButtonElement>('#debrief-close')?.addEventListener('click', close);
+  overlay.querySelector<HTMLButtonElement>('#debrief-copy')?.addEventListener('click', () => {
+    void copyToClipboard(formatDebriefSummary(result)).then(() => {
+      const notice = overlay.querySelector<HTMLElement>('#debrief-copied-notice');
+      if (notice) notice.hidden = false;
+    });
+  });
+
+  setKeyHandler((event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      close();
+      return;
+    }
+    if (event.key === 'Tab') {
+      const buttons = focusable();
+      if (buttons.length === 0) return;
+      const first = buttons[0];
+      const last = buttons[buttons.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || !overlay.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+      return;
+    }
+    if ((event.key === 'Enter' || event.key === ' ') && (event.target as HTMLElement | null)?.closest('button')) return;
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowLeft') event.preventDefault();
+  });
+}
+
+/** 複製到剪貼簿；沒有（或被拒絕）Clipboard API 時退回隱藏 textarea + execCommand。 */
+async function copyToClipboard(text: string): Promise<void> {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+  } catch {
+    // 掉到下面的退路。
+  }
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand('copy');
+  } catch {
+    // 兩種方式都失敗就放棄；畫面上的摘要內容還在，玩家仍能手動選取複製。
+  } finally {
+    textarea.remove();
+  }
 }

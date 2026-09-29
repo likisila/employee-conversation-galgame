@@ -1,0 +1,56 @@
+{
+  "encoder": "webp",
+  "options": {
+    "resize": {
+      "width": 1280,
+      "height": 720,
+      "fit": "cover"
+    },
+    "quality": 84,
+    "effort": 6
+  },
+  "files": {
+    "00-A.webp": {
+      "source": "00-A.png",
+      "sourceSha256": "6377f9670be8fd8dc50ed8c8c2193d0cd3a4550cc90551fa01b12146780e31e5",
+      "bytes": 119292,
+      "sourceBytes": 2004434
+    },
+    "00-B.webp": {
+      "source": "00-B.png",
+      "sourceSha256": "84cef29d78184ddd10fbbeaddb71f86cdd4b10767aa28accd8325f8563dacf61",
+      "bytes": 117482,
+      "sourceBytes": 1988433
+    },
+    "00-C.webp": {
+      "source": "00-C.png",
+      "sourceSha256": "20841c56298839283b5f2cb4d13c3593179f3137d4b65fdf060fe51e18f8188e",
+      "bytes": 116790,
+      "sourceBytes": 2002478
+    },
+    "04-B.webp": {
+      "source": "04-B.png",
+      "sourceSha256": "0e28bd2ba585fdf40af353dfaafe0d3d602f57c60142fc4c161bfb17e0bc2356",
+      "bytes": 68916,
+      "sourceBytes": 1767624
+    },
+    "04-C.webp": {
+      "source": "04-C.png",
+      "sourceSha256": "d08c7081ef335d9916adea7e34e5bef1a2d854a91787af5fc3e7634f5b88d7ff",
+      "bytes": 94754,
+      "sourceBytes": 1926455
+    },
+    "06-B.webp": {
+      "source": "06-B.png",
+      "sourceSha256": "4fbcd1f910351ce8561743c7ddce4c15d43f3c19cc1ee2aaa7f5df773b79a03c",
+      "bytes": 102588,
+      "sourceBytes": 1990244
+    },
+    "06-C.webp": {
+      "source": "06-C.png",
+      "sourceSha256": "b069cbd25a8051013d1a48b9f8743f8fd00e961e3188c1c572ba648a8c93284d",
+      "bytes": 85032,
+      "sourceBytes": 1793576
+    }
+  }
+}
