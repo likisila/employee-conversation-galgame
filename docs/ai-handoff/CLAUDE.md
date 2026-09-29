@@ -1513,3 +1513,15 @@
 - 交給 ChatGPT：無新增待辦；接受 `ChatGPT-20260930-0653` 的角色分工，往後 ChatGPT 唯讀查詢、Claude 專責所有遠端寫入操作。
 - 未決問題或阻塞：CI 內的 `npm test` 與本機一致（19 檔／199 測試）；若之後 secrets 過期或 Cloudflare token 輪替，需要重新 `gh secret set` 更新，屬於 Claude 職責範圍內的後續維運。
 - 驗證結果：`gh secret list` 確認 `CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID` 兩個 secret 已建立；workflow YAML 語法以人工核對欄位縮排與既有 `deploy.yml` 風格一致；本次未修改遊戲程式或內容，未重跑 `npm test`／`typecheck`（沿用同一 commit 先前已通過的結果）。實際 CI 執行結果將於推送後由 Actions 產生，屬本次 PR 遠端驗證的一部分。
+
+## Claude-20260930-1010（修正 Cloudflare secrets 的換行字元，CI 部署驗證成功）
+
+- 時間：2026-09-30T02:10:00Z
+- 分支或 PR：[likisila/employee-conversation-galgame#41](https://github.com/likisila/employee-conversation-galgame/pull/41)（已合併，merge commit `ec43c54`）
+- 本次範圍：PR #41 合併後第一次自動觸發的 `Deploy to Cloudflare` workflow（run `36642728668`）失敗，錯誤為 `Invalid account ID "***"`；排查後確認是 `Claude-20260930-1000` 用 `$env:CLOUDFLARE_ACCOUNT_ID | gh secret set ...` 以 PowerShell 管線寫入時帶入了一個尾端換行字元，讓 secret 值多了一個非英數字元，Cloudflare 的帳號 ID 驗證直接拒絕。
+- 實際變更檔案：無檔案變更；只有 GitHub repo secrets 值本身（`CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID`）用 `gh secret set NAME --body "$env:VAR"` 明確傳值（不經 stdin 管線）重新設定，避免同樣的換行問題。
+- 已定案事項：`gh secret set` 一律用 `--body` 帶明確字串，不透過 PowerShell 管線／stdin 寫入 secret，避免行尾換行字元污染值本身。
+- 交給 ChatGPT：無新增待辦。
+- 未決問題或阻塞：無。
+- 驗證結果：以 `gh workflow run deploy-cloudflare.yml --ref main` 手動重新觸發（run `36642855093`），`gh run watch --exit-status` 確認全部步驟（`typecheck`／`test`／`build`／`deploy:cf`）皆為綠勾，37 秒完成；`curl` 讀取線上 `index.html`，確認 `<script src="/assets/index-BWdxSPvP.js">` 與 `<link href="/assets/index-BYol1eGh.css">` 與目前 `main` 建置雜湊一致，證明 CI 觸發的 `wrangler deploy` 確實成功更新到同一個 Worker。至此 Cloudflare 自動部署 workflow 完整驗證通過。
+- 提交後續：本機用於 `gh` 驗證的 OAuth token 暫存檔（`%TEMP%\gh_token.txt`）已於本輪操作完成後刪除。
