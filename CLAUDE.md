@@ -9,13 +9,13 @@
 
 角色邊界與雙向交接都是強制門檻。Claude 必須在每次 commit／PR 前更新自己的交接紀錄；Claude 負責所有遊戲程式碼與 UX 實作，文案、圖片、影片及 UI 視覺設計須交由 ChatGPT。
 
-## 目前交付方式：已恢復遠端（2026-09-30 使用者指示）
+## 目前交付方式：GitHub 僅由 Claude 處理（2026-09-30 使用者最新指示）
 
-2026-09-20 起暫停推送 GitHub 與建立／更新遠端 PR；使用者已於 2026-09-30 明確通知「Github is working now, push PR and merge」，恢復遠端交付。下方「完成後必須開 PR」規則即日起適用。詳細規則見 [交接協定](docs/AI_HANDOFF.md#目前交付方式僅本地)。
+GitHub 雖已恢復可用，使用者最新明確指示 ChatGPT（包含 Codex）可以唯讀查詢 GitHub，但不得執行遠端 Git 或改變 GitHub 狀態。Claude 負責整理雙方本地成果並完成所有遠端變更。詳細規則見 [交接協定](docs/AI_HANDOFF.md#目前交付方式github-僅由-claude-處理)。
 
 ## 完成後必須開 PR
 
-有檔案變更時，一定要把分支推上遠端並讓變更出現在 PR 上。只留在本地、或推了分支卻沒有 PR，對方代理看不到這次的變更，等同沒有交接：
+Claude 整理出要交付的檔案變更時，一定要把分支推上遠端並讓變更出現在 PR 上。ChatGPT 留下的本地 commit 與 `docs/ai-handoff/CHATGPT.md` Entry 由 Claude 一併納入：
 
 1. 先在 `docs/ai-handoff/CLAUDE.md` 追加本次 Entry，再 commit。
 2. `git push -u origin <branch>`。

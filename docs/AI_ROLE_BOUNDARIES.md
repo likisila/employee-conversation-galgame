@@ -22,8 +22,17 @@ Claude 負責所有遊戲相關程式碼開發與 UX，包括：
 - 遊戲引擎、資料 schema、驗證器、分支條件、效果、路由、存讀檔與資產載入／整合。
 - UX：流程、導覽、互動、輸入、回饋、動畫行為、響應式行為、無障礙、錯誤處理、效能與易用性。
 - 將 ChatGPT 提供的 UI 設計、圖片、影片與文案實作並整合進遊戲。
+- GitHub 與所有遠端變更：包括任何遠端 Git 操作（如 `fetch`／`pull`／`push`），以及建立／更新／留言／關閉／合併／重跑 PR、issue、release、Actions 與其他會改變 GitHub 狀態的 API／CLI 操作。
 
 Claude 不自行創作文案或視覺資產；發現缺漏或矛盾時，應列出需求交回 ChatGPT。
+
+## GitHub 專屬邊界
+
+- 依使用者 2026-09-30 最新指示，ChatGPT（包含 Codex）可以唯讀查詢 GitHub，包括查看 repository、PR、issue、release 與 Actions 狀態。
+- ChatGPT 不得執行任何遠端 Git 操作，也不得建立、修改、留言、關閉、合併、重新執行或以其他方式改變 GitHub 狀態；全部遠端變更交由 Claude。
+- ChatGPT 可以在本地工作區修改被授權的內容、執行本地驗證、追加 `docs/ai-handoff/CHATGPT.md`，並視需要建立本地 commit；完成後只留下清楚的 Claude 交接事項。
+- Claude 負責把雙方已完成且已驗證的本地變更整理、推送、建立或更新 PR、合併及處理後續遠端狀態。
+- 即使其他文件仍留有過去要求 ChatGPT 開 PR 的歷史文字，也以本節與使用者最新指示為準。
 
 ## UI 與 UX 的判定
 
