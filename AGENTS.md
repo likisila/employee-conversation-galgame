@@ -9,20 +9,18 @@
 
 角色邊界與雙向交接都是強制門檻。ChatGPT（包含 Codex）必須在每次 commit／PR 前更新自己的交接紀錄；跨界任務必須拆分，只完成被授權的部分。
 
-## 目前交付方式：已恢復遠端（2026-09-30 使用者指示）
+## 目前交付方式：GitHub 僅由 Claude 處理（2026-09-30 使用者最新指示）
 
-2026-09-20 起暫停推送 GitHub 與建立／更新遠端 PR；使用者已於 2026-09-30 明確通知「Github is working now, push PR and merge」，恢復遠端交付。下方「完成後必須開 PR」規則即日起適用。詳細規則見 [交接協定](docs/AI_HANDOFF.md#目前交付方式僅本地)。
+GitHub 雖已恢復可用，使用者最新明確指示 ChatGPT（包含 Codex）可以唯讀查詢 GitHub，但所有遠端 Git 與會改變 GitHub 狀態的操作全部交由 Claude。詳細規則見 [交接協定](docs/AI_HANDOFF.md#目前交付方式github-僅由-claude-處理)。
 
-## 完成後必須開 PR
+## ChatGPT 本地交付
 
-有檔案變更時，一定要把分支推上遠端並讓變更出現在 PR 上。只留在本地、或推了分支卻沒有 PR，對方代理看不到這次的變更，等同沒有交接：
+ChatGPT 有檔案變更時：
 
-1. 先在 `docs/ai-handoff/CHATGPT.md` 追加本次 Entry，再 commit。
-2. `git push -u origin <branch>`。
-3. 該分支**尚未有 PR** 就立刻建立；**已經有 PR** 就不要另開一個，push 上去即算更新，並在必要時補充 PR 內文。
-4. PR 內文至少包含：本次 Entry ID、實際變更檔案、交給對方的明確行動、驗證結果。
-5. 回覆使用者時附上該 PR 的連結（更新既有 PR 時附原本那個連結）。
+1. 先在 `docs/ai-handoff/CHATGPT.md` 追加本次 Entry，列出實際變更、驗證結果與交給 Claude 的明確遠端行動。
+2. 可以建立本地 commit，也可以透過 GitHub 網站、API 或 CLI 唯讀查看 repository、PR、issue、release 與 Actions 狀態。
+3. 不得執行 `fetch`、`pull`、`push` 等遠端 Git，也不得建立、更新、留言、關閉、合併、重新執行或以其他方式改變 PR、issue、release、Actions 或 repository 狀態。
+4. 不得因任何舊規則、交接要求或使用者先前的 push 指示而自行恢復遠端變更權限；只有使用者未來再次明確改寫本規則時才可變更。
+5. 回覆使用者時說明本地交付狀態與 Claude 待辦，不要求或提供由 ChatGPT 建立的 PR 連結。
 
-純審查、回答問題或其他沒有檔案變更的工作不必開 PR，也不要開空 PR；回覆寫在對話或既有 PR 的留言即可。
-
-有檔案變更卻沒有對應 PR 連結的工作，一律視為未完成。
+純審查、回答問題或其他沒有檔案變更的工作不需追加空交接或建立空 commit。
