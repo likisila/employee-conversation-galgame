@@ -991,3 +991,24 @@
 - 交給 Claude 的明確行動：請在桌機與手機從正式 `00_final_documents.mp4` 完整播放到 `s1-final-cut`，確認影片結尾後顯示雅琳現場對白而非私訊卡；接著確認予安的工作收束動作分拍正常、雅琳離開後的後續私訊仍使用原本訊息 UI。若部署，請使用本次本地 commit 的建置結果；本次未授權部署。
 - 未決問題或阻塞：無本次內容阻塞。`Claude-20260928-1346` 的多維度選項逐維度分析文字仍待另行處理；04／06 過場影片沿續未生成。
 - 驗證結果：`property/scenes/s1-final-cut.json` 可解析；章節以 `Intl.Segmenter('zh-Hant')` 重算為 4074，已同步 frontmatter 與章節索引；Story CLI `links`／`validate` 通過，`continuity` 仍回報既有 7 項索引辨識錯誤（未因本次修改增加）；`npm.cmd run typecheck`、`npm.cmd test -- --run`（19 檔／210 項）與 `npm.cmd run build` 全數通過；`git diff --check` 通過。
+
+## ChatGPT-20260929-1150
+
+- 時間：2026-09-29T03:50:33Z
+- 分支或 PR：`codex/player-copy-sepia-20260920`；依使用者指示僅本地提交，不推送、不建立 PR。
+- 已讀對方紀錄：`Claude-20260928-2210`（最新）。已讀其 Scene 1 影片後銜接實機驗證與部署結果；本次不修改 runtime、schema、UX、測試、影片或部署設定。`Claude-20260928-1346` 所列多維度選項缺逐維度分析文字仍是既有內容缺口，本次未擴張為 schema／runtime 改版。
+- 本次範圍：依使用者提供的 `2026 MBA OB syllabus_20260903 (1).pdf`，逐頁檢查課程目標、30% 八人組期末報告與五項報告要求，將現有《最後一次一對一》整理為可直接對應課綱的 OB 期末專案；只新增／更新內容與報告規劃文件。
+- 實際變更檔案：
+  - 新增 `property/mba-ob-final-project-plan-20260929.md`：課綱五項要求對照、核心研究問題、文獻最低組合、簡報敘事、八人分工、提交包、限制與上台前驗收清單。
+  - `property/README.md`：新增上述課綱對齊文件索引。
+  - `property/mba-organizational-debrief.md`：在既有期末報告規劃前加入權威對齊文件入口，明定上台不能只展示遊戲，必須說明場域、目的、過程、解決方案與替代做法代價。
+  - `docs/ai-handoff/CHATGPT.md`：本 Entry。
+- 已定案事項：
+  1. 本作以「其他創意方式」＋投影片／書面附件交付；遊戲是案例模擬載體，不取代課堂論證。
+  2. 課程定位維持 Organizational Behavior，不改寫成 HR training 或法律／合規示範；裁撤、HR 與文件是場域，不是唯一評量標準。
+  3. 簡報主問題固定為「不可逆裁撤中，主管如何保留資訊、voice、主體性與程序可信度，又付出什麼代價？」；理論主線收斂為 organizational justice、employee voice、psychological safety、power-dependence、social exchange／psychological contract。
+  4. 報告必須揭露案例為複合虛構情境、分析規則非心理計量測驗、未涵蓋完整法務／跨文化／長期追蹤；不得把內部等級講成玩家人格或科學分數。
+  5. 八人分工按問題統整、場域、三組理論、模擬、stakeholder／替代方案及視覺 QA 分配，但台上仍須形成一條共同因果論證。
+- 交給 Claude：無新增 runtime 待辦。本次是純內容／報告規劃更新；若使用者之後要求把課綱對照或組員分工直接放進遊戲 UI／簡報網站，再由 Claude 接手互動與實作。
+- 未決問題或阻塞：正式組員姓名、實際報告時長、教師指定引用格式與是否要求紙本尚未提供；文件以可縮放段落與角色責任撰寫，不臆測這四項。多維度選項的逐維度分析文字缺口沿續，但不阻擋本次期末專案對齊；上台報告應以代表路徑與理論表補足，而不宣稱分析卡已是心理計量工具。
+- 驗證結果：完整視覺檢查課綱 3 頁，確認期末報告 30%、8 人一組與五項要求；`git diff --check` 通過。只修改 Markdown，未執行遊戲 typecheck／tests／build；未改出貨內容，不重建站點 ZIP。

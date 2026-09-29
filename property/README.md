@@ -20,6 +20,7 @@
 - `narrative-integration-revision-20260926.md`：感情線 setup/payoff 與曾雅琳角色弧的整合修訂；取代孤立的 Scene 5 回憶段落。
 - `choice-and-route-revision-20260928.md`：五個主要選擇改為「兩個可辯護策略＋一個明確高風險選項」的正式文案與 `doc-private` 立即終止規格；已由 Claude 整合進 `scenes/*.json` 的選項文字、效果與路由（技術對應見下方「主要選擇的效果設計」一節）。
 - `mba-organizational-debrief.md`：結局後 MBA 案例分析、理論映射、organizational state 與期末報告規劃的正式內容／實作需求；已由 Claude 整合為 `mba-debrief.json` ＋ `src/domain/mba.ts`（見下方「MBA Organizational Debrief」一節）。**課程定位是組織行為（Organizational Behavior，OB），不是 HR；往後 Review 與 Playthrough 必須依該文件的「課程定位與 Review 門檻」驗收。理論白話文案、證據方向規則、四方 stakeholder 後果與每結局兩套替代策略亦以此文件為唯一內容定稿。**
+- `mba-ob-final-project-plan-20260929.md`：依 2026 MBA 組織行為課綱整理的期末報告對齊方案；包含課綱五項要求對照、研究問題、文獻使用、簡報敘事、八人分工、提交包、限制與上台前驗收清單。
 - `ob-playthrough-review-20260926.md`：依「組織行為，不是 HR」重新實玩四個結局與最後評估頁的審查紀錄；包含通過項、教學閉環缺口及下一輪驗收標準。
 - `mba-debrief-sepia-revision-20260927.md`：`查看案例分析` 的 Sepia 完整文案修訂、語氣原則與 Claude 接線規格；玩家可見文字以 `mba-debrief.json` 為準，程式內硬編碼字串依此文件替換。
 - `mba-debrief.json`：上述內容的結構化資料——十五個主要選項對六個維度的加減分與路徑證據、stakeholder matrix、五個決策點的理論映射、四個結局的策略／stakeholder 結果／非預期後果／理論重點／替代方案，以及 Debrief 畫面的文案與區塊標題。`manifest.json` 的 `mba` 欄位指向它。
