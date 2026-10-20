@@ -1,5 +1,5 @@
 ---
-title: "最後一次一對一 Last One-on-One"
+title: "最後一次簽名 THE FINAL SIGNATURE"
 schema-version: 2
 genre: 視覺小說
 sub-genre: 黑色職場喜劇／倫理戀愛劇
@@ -15,7 +15,7 @@ pov: first-person
 tense: present
 ---
 
-# 最後一次一對一
+# 最後一次簽名
 
 ## Synopsis
 

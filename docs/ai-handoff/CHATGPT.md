@@ -1076,3 +1076,16 @@
 - 交給 Claude 的明確行動：以本 Entry 的修正版權限為準，忽略 `ChatGPT-20260930-0651` 中「不得查詢 GitHub」的過度限制；後續由 Claude 完成需要的遠端交付。
 - 未決問題或阻塞：無。
 - 驗證結果：五份規則／交接文件文字已同步；僅 Markdown 變更，以本地差異檢查驗證格式。
+
+## ChatGPT-20261020-1636
+
+- 時間：2026-10-20T08:36:11Z（使用者授權 PR 的提交時間）。
+- 分支或 PR：codex/final-signature-title-20261020；本次由 ChatGPT 依使用者明確指示直接提交 GitHub PR。
+- 已讀對方紀錄：Claude-20260930-1010（最新）；既有程式開發與 UX 仍由 Claude 負責。
+- 本次授權：使用者於本對話明確要求「直接更新到Github PR」。此指令授權本次標題內容的 GitHub 分支、commit 與 PR 操作；不修改既有長期角色規則，不擴張為程式開發或合併授權。
+- 本次範圍：正式作品名由「最後一次一對一」改為「最後一次簽名」／「THE FINAL SIGNATURE」；使用者曾輸入「最後一個簽名」，隨後明確更正為「最後一次簽名」，以後者為準。
+- 實際變更檔案：property/game.json、property/ui.json、README.md、story.md、story-bible.md、property/README.md、docs/narrative/last-one-on-one/story.md、docs/narrative/last-one-on-one/START-HERE.txt、docs/narrative/title-change-20261020.md（新增）、docs/ai-handoff/CHATGPT.md（本 Entry）。
+- 已定案事項：title「最後一次簽名」；英文「THE FINAL SIGNATURE」；startLabel「開始遊戲」。識別碼、狀態、劇情、路由及資產路徑不變。
+- 交給 Claude 的明確行動：依 title-change-20261020.md 整合英文副標、index.html 分頁標題與 src/domain/mba.ts 的案例摘要標題；完成相關建置與實機驗證，更新 Claude 交接紀錄。
+- 驗證結果：兩份 JSON 可解析；與 main 逐欄位比較，只有 game.title 與 ui.startLabel 改變。現行入口文件的作品名稱已同步。未改程式碼、schema、UX、測試或部署設定；未執行 build 或部署。
+- 未決問題或阻塞：英文副標、分頁及複製摘要仍待 Claude 程式整合；PR 不代表線上已更新。
