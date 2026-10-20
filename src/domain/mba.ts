@@ -89,7 +89,7 @@ export function computeDebrief(content: LoadedContent, endingId: string, majorCh
  */
 export function formatDebriefSummary(result: DebriefResult): string {
   const lines: string[] = [];
-  lines.push(`《最後一次一對一》案例紀錄｜${result.endingTitle}｜${result.endingLabel}`);
+  lines.push(`《最後一次簽名》案例紀錄｜${result.endingTitle}｜${result.endingLabel}`);
   lines.push('');
   lines.push('主問題：');
   lines.push(result.mainQuestion);

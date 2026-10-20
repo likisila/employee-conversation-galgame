@@ -165,6 +165,8 @@ export interface Scene {
 export interface Game {
   id: string;
   title: string;
+  /** 選填的英文副標，顯示在標題畫面主標下方。 */
+  titleEn?: string;
   startScene: string;
   initialState: GameState;
   /** 玩家操作的角色 ID；用來把玩家自己送出的訊息靠右顯示。選填。 */
@@ -260,6 +262,7 @@ export function parseGame(raw: unknown): Game {
   return {
     id: stringField(raw, 'id'),
     title: stringField(raw, 'title'),
+    titleEn: typeof raw.titleEn === 'string' && raw.titleEn.trim() ? raw.titleEn : undefined,
     startScene: stringField(raw, 'startScene'),
     initialState,
     player: typeof raw.player === 'string' ? raw.player : undefined,
