@@ -32,7 +32,7 @@
 - `cutscene-storyboard-v3.md`、`runway-video-shot-pack-v1.md`：已停止使用的歷史版，不得再送生成。`cutscene-storyboard-v2.md` 僅供更早期比對。
 - `sora-cutscenes.json`：保留既有影片 ID／檔名／trigger 相容的機器可讀內容清單。00 已標記為本地核准資產；其他項目仍為 `BLOCKED` 或 `DEPRECATED`，舊的一鍵 Sora 腳本不得使用。`cutscenes.json` 保存格式與缺檔策略；實際接線仍由 Claude-owned `cutscene-cues.json` 維護。
 
-## 目前作品：《最後一次一對一》
+## 目前作品：《最後一次簽名》
 
 - 狀態變數：`trust`（坦誠）、`procedure`（程序）、`boundary`（界線）、`avoidance`（逃避）。四者預設隱藏，不以好感度呈現。
 - 每個主要選擇會額外 `set` 一個 `choice1`…`choice5` 字串，供後續場景的條件台詞使用。

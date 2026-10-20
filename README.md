@@ -1,6 +1,8 @@
 # Employee Conversation Gal Game
 
-一個以 **TypeScript + Vite** 實作的資料驅動視覺小說引擎。目前載入的作品是《最後一次一對一》：部門主管周予安必須在下班前通知設計師林雨澄，她的職位已被裁撤。玩家的選擇不決定她是否「原諒」你，而是決定她能否帶著尊嚴離開。劇本與設定見 `story.md` 與 `docs/narrative/last-one-on-one/`。
+**最後一次簽名｜THE FINAL SIGNATURE**
+
+一個以 **TypeScript + Vite** 實作的資料驅動視覺小說引擎。目前載入的作品是《最後一次簽名》：部門主管周予安必須在下班前通知設計師林雨澄，她的職位已被裁撤。玩家的選擇不決定她是否「原諒」你，而是決定她能否帶著尊嚴離開。劇本與設定見 `story.md` 與 `docs/narrative/last-one-on-one/`。
 
 核心原則：**內容放 `property/`，引擎放 `src/`。角色名稱、對話、選項、分支與結局判定都不 hard-code。**
 
