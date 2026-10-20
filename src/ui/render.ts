@@ -47,7 +47,8 @@ export function renderTitle(app: HTMLElement, content: LoadedContent, hooks: Tit
       <div class="title-copy">
         <p class="eyebrow">A WORKPLACE CONVERSATION</p>
         <h1>${escapeHtml(content.game.title)}</h1>
-        <p class="subtitle">${escapeHtml(content.ui.subtitle)}</p>
+${content.game.titleEn ? `        <p class="title-en">${escapeHtml(content.game.titleEn)}</p>
+` : ''}        <p class="subtitle">${escapeHtml(content.ui.subtitle)}</p>
         <div class="title-actions">${actions}</div>
       </div>
     </section>

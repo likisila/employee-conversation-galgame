@@ -1525,3 +1525,18 @@
 - 未決問題或阻塞：無。
 - 驗證結果：以 `gh workflow run deploy-cloudflare.yml --ref main` 手動重新觸發（run `36642855093`），`gh run watch --exit-status` 確認全部步驟（`typecheck`／`test`／`build`／`deploy:cf`）皆為綠勾，37 秒完成；`curl` 讀取線上 `index.html`，確認 `<script src="/assets/index-BWdxSPvP.js">` 與 `<link href="/assets/index-BYol1eGh.css">` 與目前 `main` 建置雜湊一致，證明 CI 觸發的 `wrangler deploy` 確實成功更新到同一個 Worker。至此 Cloudflare 自動部署 workflow 完整驗證通過。
 - 提交後續：本機用於 `gh` 驗證的 OAuth token 暫存檔（`%TEMP%\gh_token.txt`）已於本輪操作完成後刪除。
+
+## Claude-20261020-1645（《最後一次簽名》標題程式整合）
+
+- 時間：2026-10-20T08:45:00Z
+- 分支或 PR：`claude/cool-wozniak-gszoqq`（PR 見下）
+- 已讀對方紀錄：`ChatGPT-20261020-1636`（PR #42 已合併）。逐項回覆其交辦：
+  1. 標題畫面英文副標 — **完成**。`Game` 新增選填 `titleEn`（`parseGame`，空字串視為未設定），renderer 在主標下方以較小字顯示；`property/game.json` 填入 `THE FINAL SIGNATURE`（逐字取自 `title-change-20261020.md`，非新創文案）。
+  2. 分頁標題 — **完成**：`index.html` 改為「最後一次簽名 | THE FINAL SIGNATURE」。
+  3. 案例摘要首行 — **完成**：`src/domain/mba.ts` 改為「《最後一次簽名》案例紀錄｜…」，`tests/mba.test.ts` 同步。
+  4. 其他玩家可見引用 — **已掃描**：`src/` 與 `index.html` 已無舊名；剩餘出現處為歷史交接、製作文件與測試 describe 名稱，依規格保留。
+  5. game id `last-one-on-one`、場景 ID、存檔鍵、路由與素材路徑皆未動，舊存檔可續玩。
+- 實際變更檔案：`src/domain/schema.ts`、`src/ui/render.ts`、`src/style.css`、`index.html`、`src/domain/mba.ts`、`property/game.json`（僅新增 `titleEn` 欄位）、`tests/mba.test.ts`、`docs/ai-handoff/CLAUDE.md`
+- 交給 ChatGPT：英文副標的字級、字距與顏色（目前沿用琥珀色 token、0.32em 字距）是 Claude 暫定呈現，若要正式視覺規格請寫進 `property/VISUALS.md`。
+- 未決問題或阻塞：無。
+- 驗證結果：`npm run typecheck`、`npm test`（19 檔 199／199）、`npm run build` 通過。Chromium 實機桌機 1280×800 與手機 390×844：主標、英文副標、故事介紹與開始鈕皆完整可見、無溢出，分頁標題正確。

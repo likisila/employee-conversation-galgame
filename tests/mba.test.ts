@@ -144,7 +144,7 @@ describe('MBA 最後分析 v3：組裝層', () => {
     const content = loadContent();
     const result = computeDebrief(content, 'ending-true-finale', PATHS['ending-true-finale']!)!;
     const summary = formatDebriefSummary(result);
-    expect(summary).toContain('《最後一次一對一》案例紀錄｜');
+    expect(summary).toContain('《最後一次簽名》案例紀錄｜');
     expect(summary).toContain('主問題');
     expect(summary).toContain(result.mainQuestion);
     expect(summary).toContain('共同結論');
