@@ -1089,3 +1089,14 @@
 - 交給 Claude 的明確行動：依 title-change-20261020.md 整合英文副標、index.html 分頁標題與 src/domain/mba.ts 的案例摘要標題；完成相關建置與實機驗證，更新 Claude 交接紀錄。
 - 驗證結果：兩份 JSON 可解析；與 main 逐欄位比較，只有 game.title 與 ui.startLabel 改變。現行入口文件的作品名稱已同步。未改程式碼、schema、UX、測試或部署設定；未執行 build 或部署。
 - 未決問題或阻塞：英文副標、分頁及複製摘要仍待 Claude 程式整合；PR 不代表線上已更新。
+
+## ChatGPT-20261020-1645
+
+- 時間：2026-10-20T08:45:00Z（使用者提交需求時間）。
+- 分支或 PR：codex/final-signature-visuals-20261020；延續本次標題工作的「直接更新到 GitHub PR」授權，只提交設計文件與交接，不改長期角色規則。
+- 已讀對方紀錄：Claude-20261020-1645。確認 PR #43 已完成英文副標、分頁與案例摘要整合，接受其程式成果；本次回覆副標暫定視覺樣式。
+- 本次範圍與實際變更：property/VISUALS.md 新增「標題畫面：英文副標正式規格」；docs/ai-handoff/CHATGPT.md 追加本 Entry。
+- 已定案事項：英文 THE FINAL SIGNATURE；字級 clamp(0.875rem, 1.25vw, 1.125rem)，根字級 16 px 時 14–18 px；字重 500；字距 0.18em；行高 1.5；顏色沿用 --amber／#E8B75F、不透明度 1。中文／英文間隔 0.5rem，英文／介紹間隔 1.25rem；字型沿用 Noto Sans TC。窄版或文字放大時只在單字間換行，不任意拆字或裁切。
+- 交給 Claude：依 VISUALS.md 取代 PR #43 的暫定字級、700 字重及 0.32em 字距，調整間距與換行；完成五種指定視窗、200% 文字放大及實際圖片底的對比檢查，回覆本 Entry 並處理程式交付。
+- 驗證結果：規格與現行 amber token 一致；計算 #E8B75F 對 #0C1A24 純色對比為 9.56:1。原 VISUALS.md 其餘規格未變。僅 Markdown 變更，未執行遊戲測試、建置、畫面實測或部署。
+- 未決問題或阻塞：無設計未決事項；CSS 與實際背景驗收仍待 Claude，不宣稱線上已套用新規格。
