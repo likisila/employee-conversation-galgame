@@ -2,6 +2,8 @@
 
 這裡是遊戲內容層。一般劇本修改不需要碰 `src/`。
 
+- `story-dialogue-revision-20261021.md`：使用者澄清後的故事與對白修訂。保留原結局分析，不要求顯示架構對齊簡報；撤回 PR #47 的三理論分析重寫及小標整合要求。
+
 - `manifest.json`：列出遊戲、角色、UI 與所有場景資料檔。
 - `game.json`：遊戲標題、起始場景與初始變數。
 - `characters.json`：角色 ID、顯示名稱、職稱等。
@@ -19,13 +21,12 @@
 - `dialogue-beat-revisions-20260926.md`：六處長段落的正式分拍規格；由 Claude 依原技術欄位拆成連續畫面。
 - `narrative-integration-revision-20260926.md`：感情線 setup/payoff 與曾雅琳角色弧的整合修訂；取代孤立的 Scene 5 回憶段落。
 - `choice-and-route-revision-20260928.md`：五個主要選擇改為「兩個可辯護策略＋一個明確高風險選項」的正式文案與 `doc-private` 立即終止規格；已由 Claude 整合進 `scenes/*.json` 的選項文字、效果與路由（技術對應見下方「主要選擇的效果設計」一節）。
-- `mba-report-alignment-20261021.md`：對齊最新八頁期末簡報的內容與 Claude 整合規格。三個分析主軸是組織正義、社會交換與權力依賴、必要之惡；`mba-debrief.json` 的文字已修改，硬編碼小標及複製摘要仍待 Claude 整合。
-- `mba-organizational-debrief.md`：較早期的案例分析總體規格；與本次三理論對齊文件衝突之處，以 `mba-report-alignment-20261021.md` 為準。v3 無評分分析已整合，不再是 v2 待轉換狀態。
+- `mba-organizational-debrief.md`：結局後 MBA 案例分析與期末報告規劃的總體規格；現行 v2 已由 Claude 整合為 `mba-debrief.json` ＋ `src/domain/mba.ts`，待整合的 v3 內容則以 `mba-final-analysis-managerial-judgment-v3-20260929.md` 為準。**課程定位是組織行為（Organizational Behavior，OB），不是 HR；往後 Review 與 Playthrough 必須依該文件的「課程定位與 Review 門檻」驗收。**
 - `mba-ob-final-project-plan-20260929.md`：依 2026 MBA 組織行為課綱整理的期末報告對齊方案；包含課綱五項要求對照、研究問題、文獻使用、簡報敘事、八人分工、提交包、限制與上台前驗收清單。
-- `mba-final-analysis-managerial-judgment-v3-20260929.md`：已整合的 v3 歷史內容規格；無評分、權限地圖與依結局讀取分析的方式保留，分析主軸由 `mba-report-alignment-20261021.md` 更新。
+- `mba-final-analysis-managerial-judgment-v3-20260929.md`：依 Managerial Judgment、Decision Rights、Conflict & Collaboration 與 Managerial Roles 重寫的最後分析內容規格；移除六維評分，改用權限地圖與四結局的完整路徑分析直接回答主問題。
 - `ob-playthrough-review-20260926.md`：依「組織行為，不是 HR」重新實玩四個結局與最後評估頁的審查紀錄；包含通過項、教學閉環缺口及下一輪驗收標準。
 - `mba-debrief-sepia-revision-20260927.md`：`查看案例分析` 的 Sepia 完整文案修訂、語氣原則與 Claude 接線規格；玩家可見文字以 `mba-debrief.json` 為準，程式內硬編碼字串依此文件替換。
-- `mba-debrief.json`：玩家可見案例分析文案，包括主問題、共同結論、選擇標籤、權限地圖、四結局的三理論分析、替代做法與分析限制。沒有六維計分或量表。`manifest.json` 的 `mba` 欄位指向它。
+- `mba-debrief.json`：上述內容的結構化資料——十五個主要選項對六個維度的加減分與路徑證據、stakeholder matrix、五個決策點的理論映射、四個結局的策略／stakeholder 結果／非預期後果／理論重點／替代方案，以及 Debrief 畫面的文案與區塊標題。`manifest.json` 的 `mba` 欄位指向它。
 - `cutscene-storyboard-v4-review.md`：00 已採用使用者提供並核准的 10 秒單一連續成片；04、06 仍為待審方案。正式 00 位於 `public/assets/cutscenes/00_final_documents.mp4`，既有 cue 不需修改。
 - `runway-video-spec-v2-review.md`：v4 的 Runway 製作與驗收規格；明確區分播放段落、鏡頭與生成任務，禁止用單鏡代表整段。v2.1 已為全部 7 鏡逐一量化起始／結尾 hold、攝影機或 rack focus 類型、起訖時間、方向、幅度、速度與緩動；鎖鏡也必須明寫 0 移動。
 - `keyframe-video-extension-prompt-v1.md`：平台中立的關鍵影格延伸影片 Prompt；04-B／C、06-B／C 仍為可用的直接貼上稿。00-A／B／C 已被核准的單一連續成片取代，只保留作未來明確要求重製時的歷史參考。
@@ -161,11 +162,9 @@
 
 ## MBA Organizational Debrief（結局後可選的案例分析）
 
-> 課程定位：組織行為（Organizational Behavior，OB）。依最新八頁簡報，通關分析主軸改為組織正義、社會交換與權力依賴、必要之惡。現行規格見 `mba-report-alignment-20261021.md`；文件程序是案例證據，不把遊戲寫成人資作業教學。
+> 課程定位：組織行為（Organizational Behavior，OB），不是人力資源管理（HR）。期末報告主軸是 Managerial Judgment、Decision Rights、Conflict & Collaboration 與 Managerial Roles。完整 Review 門檻見 `mba-organizational-debrief.md` 第零節。
 
 > 轉換狀態：2026-09-29 起線上／runtime 已整合 v3（`mba-final-analysis-managerial-judgment-v3-20260929.md`），取代舊版六維分析。v2 的稀疏矩陣、五級狀態、不可抵銷規則、理論篩選與因果鏈已從 `src/domain/mba.ts` 移除，只保留為 `property/mba-dramatic-analysis-scoring-v2-20260928.md` 的實作沿革記錄。
-
-> 2026-10-21 本地內容更新：既有 `managerialJudgment`、`decisionRights`、`conflictCollaboration` 欄位依序承載組織正義、社會交換與權力依賴、必要之惡的正式文案，保留識別碼以相容現行組裝。畫面與複製摘要的小標仍待 Claude 替換，不能宣稱正式站已完成對齊。其餘無評分與選擇時間線機制沿用 v3。
 
 四個結局畫面都有「查看案例分析」按鈕（沒有對應內容時自動不顯示）。內容資料是 `mba-debrief.json`（見上方「property 資料夾」一節），計算在 `src/domain/mba.ts` 的 `computeDebrief()`：
 
