@@ -1100,3 +1100,35 @@
 - 交給 Claude：依 VISUALS.md 取代 PR #43 的暫定字級、700 字重及 0.32em 字距，調整間距與換行；完成五種指定視窗、200% 文字放大及實際圖片底的對比檢查，回覆本 Entry 並處理程式交付。
 - 驗證結果：規格與現行 amber token 一致；計算 #E8B75F 對 #0C1A24 純色對比為 9.56:1。原 VISUALS.md 其餘規格未變。僅 Markdown 變更，未執行遊戲測試、建置、畫面實測或部署。
 - 未決問題或阻塞：無設計未決事項；CSS 與實際背景驗收仍待 Claude，不宣稱線上已套用新規格。
+
+## ChatGPT-20261021-1800
+
+- 時間：2026-10-21T11:26:04Z（本次內容修訂紀錄；非部署時間）。
+- 分支或 PR：本地工作區；基準 `2b1e2a7`，沒有遠端變更。
+- 已讀對方紀錄：`Claude-20261021-0929`。使用者確認審查結果後指示「改遊戲」；以該筆上傳的八頁簡報為本次教材對齊依據。
+- 本次範圍：修改既有 JSON 純文案、同步故事正典及製作文件；不修改簡報、程式、schema、條件、效果、路由、測試或部署設定。
+- 實際變更與驗證：見本 Entry 下方完成紀錄。
+- 交給 Claude：接收本地內容與交接規格，替換畫面與複製摘要中的硬編碼分析小標，完成整合驗證、遠端提交與部署；收到回覆前維持待確認。
+
+### 完成紀錄
+
+- 本地已修改：`property/mba-debrief.json`；`property/scenes/` 的 `s4-notice`、`s5-echo-work/detail/pause`、`s5-reason-afraid`、`s7-not-in-file`、`s8-reaction`、`ending-true`、`ending-decent`；`docs/narrative/last-one-on-one/chapters/chapter-01.md` 及 `chapters/_index.md`、`scenes/chapter-01-scene-08.md`；`story-bible.md`、`property/README.md`；新增 `property/mba-report-alignment-20261021.md`；兩份舊分析規格開頭標示新規格優先；本交接紀錄。
+- 已定案：主問題逐字對齊簡報 P3；四結局均以組織正義、社會交換與權力依賴、必要之惡解讀。保留原資料欄位及組裝相容性；區分補償與告白兩支路線；員工拒絕私人往來不代表管理失敗；不把虛構反應當成實證結果。
+- 劇情修正：誤導績效分支以低頭翻文件、避開目光呈現抽離；承認拖延的微選擇適用三種看稿路線；告白台詞改為推薦與作品說明的依賴，不宣稱主管握有所有核准權；兩條文件分支明確寄出電子檔；共用結局不再預設拿走紙本。
+- 驗證：10 份修改後 JSON 均只更動字串，物件鍵、陣列長度、場景 ID、條件、效果、路由及初始狀態不變；全部 property JSON 可解析。兩位原審查代理已覆核修訂內容，指出的共通看稿連戲與單次發言描述已修正。
+- 既有檢查：`npm run typecheck`、`npm test`（19 檔、199／199）、`npm run build` 成功。首輪測試曾因文件分拍測試比對舊台詞而失敗；保留原兩拍，把新增寄送資訊放入同分支後續既有台詞，重新全測通過，未修改測試。
+- Story CLI：更新本章與 registry 字數為目前工具計數的 1200（字數算法重算，不是刪除約七成內容）。validate、links、continuity 均為 0 errors／0 warnings；doctor 無結構錯誤。CLI 自動把既有 story 識別字改成依新標題推導的值並建立空 clues registry，這些範圍外變更已撤回，保留 `last-one-on-one` 識別字。無新增章節。
+- Claude 明確待辦：依 `property/mba-report-alignment-20261021.md` 對照表替換 `src/ui/render.ts` 與 `src/domain/mba.ts` 的三個硬編碼小標及摘要標題、同步相應既有測試，再驗證桌機／手機、四結局與兩種文件分支。這些程式檔本次沒有修改；目前建置成功不代表正式小標已整合。
+- 交付與限制：本次產出可套用的內容 patch；未執行遠端 Git、GitHub 寫入或部署。Claude 須先核對遠端最新內容、接收 patch、回覆本 Entry，再完成提交、PR、合併與正式部署。沒有宣稱已上線；本地未做瀏覽器實玩驗收。
+
+## ChatGPT-20261021-2104
+
+- 時間：2026-10-21T13:04:00Z。
+- 分支或 PR：`codex/ob-report-game-alignment-20261021` → `main`。
+- 已讀對方紀錄：`Claude-20261021-0929`（無新紀錄）。
+- 本次授權：使用者明確指示「You need to push pr」，授權 ChatGPT 將上一筆已完成的遊戲內容修訂推送並建立 PR。此授權適用本次分支、commit 與 PR，不修改長期分工，不包含合併或部署。
+- 實際範圍：提交 `ChatGPT-20261021-1800` 的內容變更與三理論整合規格，以及本 Entry；`property/mba-report-alignment-20261021.md` 的交付狀態同步補記本次授權。未修改程式、測試、schema、效果、條件、路由或簡報。
+- 遠端基準：建立 PR 前唯讀核對 `main` 仍為 `2b1e2a79f1dcae26f57c8e1ac9df77629476fe76`，與本地修改及驗證基準一致；當時沒有開啟中的 PR。
+- 驗證結果：沿用上一筆 199／199 測試、typecheck、build 與純內容欄位比對；本次只追加交付紀錄，提交前再次執行 `git diff --check`。
+- 交給 Claude：直接從本 PR 接收正式文案，依 `property/mba-report-alignment-20261021.md` 完成三個硬編碼分析小標與複製摘要的程式整合、相應測試及實機驗收；回覆本 Entry 並處理後續交付與部署。不得把內容 PR 已建立解讀為小標整合或正式站部署已完成。
+- 未決事項：Claude 的程式整合與部署仍待完成；本次不自動合併。

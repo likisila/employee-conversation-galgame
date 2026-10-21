@@ -21,7 +21,7 @@
     { "speaker": null, "kind": "narration", "text": "雨澄愣住了。她看了雅琳一眼，再看回我。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
     { "speaker": "lin-yucheng", "text": "不。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
     { "speaker": null, "kind": "narration", "text": "我以為她是否定感情。她把椅子往後推。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
-    { "speaker": "lin-yucheng", "text": "推薦信、作品核准、離職文件，我還要找你處理。你現在說喜歡我，要我怎麼回？", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
+    { "speaker": "lin-yucheng", "text": "推薦信要找你寫，作品也還要請你說明。你現在說喜歡我，要我怎麼回？", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
     { "speaker": null, "kind": "narration", "text": "雅琳起身，站到桌側，但沒有擋住雨澄。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
     { "speaker": "zeng-yalin", "text": "談話到這裡。後續由我單獨聯絡。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] },
     { "speaker": null, "kind": "narration", "text": "我還想說話，雅琳搖頭。我閉上嘴。", "conditions": [{ "variable": "choice5", "operator": "eq", "value": "confess" }] }

@@ -15,7 +15,7 @@
     { "speaker": "zeng-yalin", "text": "我需要更正。這次決定不是績效處分，也沒有核准用個人表現作為理由。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
     { "speaker": null, "kind": "narration", "text": "雨澄把原子筆從掛繩上取下，平放在桌上。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
     { "speaker": "lin-yucheng", "text": "那你剛才是在幫公司找理由，還是在幫自己找？", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
-    { "speaker": null, "kind": "narration", "text": "我看了一眼雅琳的平板，沒接話。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
+    { "speaker": null, "kind": "narration", "text": "我低頭翻文件，想快點把剩下幾頁念完。雨澄還看著我，我沒有抬頭。", "conditions": [{ "variable": "choice2", "operator": "eq", "value": "performance" }] },
 
     { "speaker": null, "kind": "narration", "text": "資料夾攤在我們中間，封面上是雨澄的名字。", "background": "cg-rights-packet" },
     { "speaker": "zhou-yuan", "text": "主要客戶解約後，公司取消了你負責的產品線，也決定不把這個職位轉到其他團隊。", "background": "moon-meeting-room-rain" },

@@ -5,7 +5,7 @@
     { "speaker": "zeng-yalin", "text": "這一處只確認你收到文件，不等於接受所有內容，也不等於放棄提問。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
     { "speaker": "zeng-yalin", "text": "你可以先不簽，帶回電子副本與紙本。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
     { "speaker": "lin-yucheng", "text": "如果我之後有問題？", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
-    { "speaker": "zeng-yalin", "text": "直接找我。你也可以帶你信任的人一起確認。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
+    { "speaker": "zeng-yalin", "text": "直接找我。電子檔我現在寄；妳也可以帶妳信任的人一起確認。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
     { "speaker": null, "kind": "narration", "text": "雨澄把資料夾拉近，翻到印著信箱的那一頁。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "protect" }] },
 
     { "speaker": "zeng-yalin", "text": "我現在寄電子檔。紙本可以帶走，也可以留在這裡。", "conditions": [{ "variable": "choice4", "operator": "eq", "value": "pressure" }] },
