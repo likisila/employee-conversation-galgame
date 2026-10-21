@@ -1,5 +1,7 @@
 # MBA Organizational Debrief 與期末報告規格
 
+> 2026-10-21 更新：本文件以下保留舊版規劃脈絡。v3 無評分分析已於 9/29 整合；其中「現行仍為 v2／v3 待整合」是過時狀態，不得作為目前實作依據。最新三理論主軸與驗收要求見 `mba-report-alignment-20261021.md`，玩家文案以 `mba-debrief.json` 為準。
+
 > 狀態：現行結局後案例分析頁仍是 v2 戲劇稀疏評分；v3 已改為依四個結局分析整條管理路徑，直接回答 Managerial Judgment、Decision Rights、Conflict & Collaboration 與 Managerial Roles，內容規格見 `mba-final-analysis-managerial-judgment-v3-20260929.md`，待 Claude 整合。v3 上線前不得宣稱現行分析頁已完全對齊課綱。
 >
 > 定位：玩家先完成故事，再把自己的決策還原成可分析的組織行為案例；理論不塞進角色台詞。

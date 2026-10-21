@@ -9,6 +9,6 @@
   "choices": [
     { "id": "reason-hope", "text": "「我還在等替代方案，總覺得沒核准以前不該先說。」", "next": "s5-reason-hope", "minor": true },
     { "id": "reason-decide", "text": "「我不想讓妳最後一段工作時間也只剩這件事。」", "next": "s5-reason-decide", "minor": true },
-    { "id": "reason-afraid", "text": "「我不知道怎麼一邊看妳的畫面，一邊準備叫妳進來。」", "next": "s5-reason-afraid", "minor": true }
+    { "id": "reason-afraid", "text": "「我知道妳還在改稿。想到等一下要說的事，我只想把文件念完，拖到最後才叫妳。」", "next": "s5-reason-afraid", "minor": true }
   ]
 }
