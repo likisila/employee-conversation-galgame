@@ -1567,3 +1567,20 @@
 - 交給 ChatGPT：無必要行動；若之後要調整簡報文案或視覺，請在交接紀錄提出，由 Claude 更新檔案。
 - 驗證結果：PPTX 已通過 OOXML 驗證，並以 LibreOffice 轉圖逐頁檢查版面。
 - 未決問題或阻塞：無。
+
+## Claude-20261021-1330（審查並合併 PR #48、故事分支驗收）
+
+- 時間：2026-10-21T13:30:00Z
+- 分支或 PR：審查並合併 PR #48（`codex/story-dialogue-scope-correction-20261021`，合併 commit `58f98f7`）；本紀錄分支 `claude/pr48-story-acceptance`。
+- 已讀對方紀錄：`ChatGPT-20261021-1800`、`ChatGPT-20261021-2104`、`ChatGPT-20261021-2119`（最新）。
+- 逐項回覆：
+  - `ChatGPT-20261021-1800`／`2104` 的三理論小標與複製摘要改名 — **取消**，依 `2119` 撤回。我曾在本地開始改 `src/domain/mba.ts`、`src/ui/render.ts`、`tests/mba.test.ts`，收到 PR #48 後已全部丟棄，未 commit、未推送；原分析程式與顯示方式維持不變。
+  - `ChatGPT-20261021-2119` 第 1 點（沿用原分析程式）— **完成**，本次沒有程式變更。
+  - 第 2 點（私下補償分支）— **完成**：以引擎窮舉全部 5,805 條路線，經過 `s7-doc-private-close` 的 243 條全部結束於 `ending-over-line`，沒有任何一條進入 `s8-reaction`；選擇告白的路線中沒有一條同時選過 `doc-private`。新台詞為未收款的假設語氣，路由未變。
+  - 第 3 點（承認拖延與紙本連戲）— **完成**：`s1-look-work／detail／pause` 三種開場都會走到 `s5-reason-afraid`，該場只說「知道妳還在改稿」「想把文件念完、拖到最後才叫妳」，與三種開場內容皆不矛盾；`s4-notice` 低頭翻文件一句只在 `choice2=performance` 顯示。`doc-pressure`（紙本留下）可走到 TRUE END（810 條）與 END02（270 條），兩個結局只寫「確認手機裡的文件」，不再收走紙本，與「紙本留下」一致。
+  - 第 4 點（保留測試與部署流程）— **完成**：未改測試或部署設定。
+- PR #48 審查結論：只改內容與文件，未碰 `src/`、`tests/`、腳本、工作流程或設定；三份分析資料／規格與 PR #47 前（`2b1e2a7`）逐位元組相同；`mba-debrief.json` 與 `s7-doc-private-close.json` 的鍵與陣列結構不變，只改字串。符合角色邊界，經使用者授權合併。
+- 實際變更檔案：`docs/ai-handoff/CLAUDE.md`
+- 交給 ChatGPT：無必要行動。
+- 驗證結果：PR #48 head `7d341be` 上 `npm run typecheck`、`npm test`（19 檔 199／199）、`npm run build` 通過。合併後 GitHub Actions「Deploy to Cloudflare」與「Deploy to GitHub Pages」對 `58f98f7` 皆成功；正式站從本執行環境連線被出口政策擋下（403），未能親自開啟線上頁面確認。
+- 未決問題或阻塞：無。
