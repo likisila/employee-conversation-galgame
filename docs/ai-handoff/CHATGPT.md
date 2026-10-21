@@ -1132,3 +1132,14 @@
 - 驗證結果：沿用上一筆 199／199 測試、typecheck、build 與純內容欄位比對；本次只追加交付紀錄，提交前再次執行 `git diff --check`。
 - 交給 Claude：直接從本 PR 接收正式文案，依 `property/mba-report-alignment-20261021.md` 完成三個硬編碼分析小標與複製摘要的程式整合、相應測試及實機驗收；回覆本 Entry 並處理後續交付與部署。不得把內容 PR 已建立解讀為小標整合或正式站部署已完成。
 - 未決事項：Claude 的程式整合與部署仍待完成；本次不自動合併。
+
+## ChatGPT-20261021-2119
+
+- 時間：2026-10-21T13:19:45Z。
+- 分支或 PR：`codex/story-dialogue-scope-correction-20261021` → `main`；PR #47 已合併，本次另開修正 PR。
+- 已讀對方紀錄：`Claude-20261021-0929`（無新紀錄）。遠端 `main` 為 `c716a63280db62eddb9540422617b7dcd7a04418`，相對 #47 head 只有合併紀錄，沒有額外內容修改。
+- 使用者最新澄清：結局分析不需要精確對齊簡報，本次需要改的是故事與對白。本 Entry 取代 `ChatGPT-20261021-1800`、`ChatGPT-20261021-2104` 中的分析重寫與程式整合要求；撤回三理論小標、摘要改名及相應測試修改待辦。
+- 實際變更：`property/mba-debrief.json`、`property/mba-final-analysis-managerial-judgment-v3-20260929.md`、`property/mba-organizational-debrief.md` 恢復 PR #47 前原文；`property/README.md` 恢復原索引並加入本次修訂索引；刪除 `property/mba-report-alignment-20261021.md`，改以 `property/story-dialogue-revision-20261021.md` 紀錄正確範圍；同步 `story-bible.md` 與本交接。保留 #47 的有效故事修訂，另修改 `property/scenes/s7-doc-private-close.json` 及章節正文，讓雨澄說出收取私人金錢後難以拒絕主管的顧慮。後日談場景製作註記移除新增的分析判準說明，保留文件連戲註記。
+- 已定案：以角色行動、話語與反應呈現問題，不要求結局分析逐字對齊簡報。保留主管抽離與拖延、具體資源依賴、電子與紙本連戲修訂。私下補償與告白維持不同分支，沒有收款，也沒有新增主管的交換條件；未修改程式、schema、選項效果、條件或路由。
+- 驗證與交付：原對白審查代理確認新增台詞符合角色語氣，採用「如果」避免誤讀為已收款；本次 `npm test` 19 檔、199／199 通過，`npm run build`（含 TypeScript）及 `git diff --check` 通過。三份恢復的分析資料／規格逐位元組等同 PR #47 前原文；全部 property JSON 可解析；私下補償場景只改一個台詞字串，條件及路由不變。延續本次使用者已明確要求的推送與 PR 交付，不自動合併或部署。
+- 交給 Claude：取消舊小標與摘要程式整合工作。請以 `property/story-dialogue-revision-20261021.md` 驗收故事分支與連戲；沿用原分析程式與顯示方式。未收到此澄清前的任何三理論小標工作，都不應繼續合併。
