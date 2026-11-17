@@ -16,6 +16,8 @@ const saveStore = new SaveStore(content.game.id);
 const hooks: RenderHooks = {
   onAdvance: () => saveStore.save(engine.snapshot),
   onRestart: () => saveStore.clear(),
+  // 宣告在下方的 showTitle 是函式宣告，會被提升，這裡呼叫時已可用。
+  onReturnToTitle: () => showTitle(),
 };
 
 /** 目前場景要用到的圖（背景、立繪），在讀取畫面預載，進場時不會閃白。 */
