@@ -1,6 +1,40 @@
 import type { MusicVideoConfig, UiCopy } from '../domain/schema';
 import { setKeyHandler } from './keyboard';
 
+type ClearedStorage = Pick<Storage, 'getItem' | 'setItem'>;
+
+function clearedKey(gameId: string): string {
+  return `ecg:cleared:${gameId}`;
+}
+
+function defaultStorage(): ClearedStorage | undefined {
+  try {
+    return globalThis.window?.localStorage;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * 記下「這個瀏覽器至少通關過一次」。標題畫面據此決定要不要顯示 MV 入口。
+ * 與存檔分開：通關後按「重新開始」會清掉存檔，但不該讓 MV 入口跟著消失。
+ */
+export function markCleared(gameId: string, storage: ClearedStorage | undefined = defaultStorage()): void {
+  try {
+    storage?.setItem(clearedKey(gameId), '1');
+  } catch {
+    // 隱私模式或配額用盡：只是標題畫面不顯示入口，結局頁仍可看。
+  }
+}
+
+export function hasCleared(gameId: string, storage: ClearedStorage | undefined = defaultStorage()): boolean {
+  try {
+    return storage?.getItem(clearedKey(gameId)) === '1';
+  } catch {
+    return false;
+  }
+}
+
 function escapeHtml(value: string): string {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
 }

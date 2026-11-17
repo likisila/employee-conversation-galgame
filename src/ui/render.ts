@@ -2,7 +2,7 @@ import type { LoadedContent } from '../data/contentLoader';
 import type { Line } from '../domain/schema';
 import type { StoryEngine } from '../engine/StoryEngine';
 import { playCutscene } from './cutscene';
-import { openMusicVideo } from './musicVideo';
+import { hasCleared, markCleared, openMusicVideo } from './musicVideo';
 import { icon } from './icons';
 import { setKeyHandler } from './keyboard';
 import { computeDebrief, formatDebriefSummary } from '../domain/mba';
@@ -38,10 +38,15 @@ export function renderTitle(app: HTMLElement, content: LoadedContent, hooks: Tit
   const title = content.images.screens.title;
   const canResume = hooks.canResume === true && typeof hooks.onResume === 'function';
   const startLabel = canResume ? content.ui.newGameLabel : content.ui.startLabel;
+  // 通關過一次的玩家，回到標題畫面也能直接看完整 MV（仍是「通關後自選」，未通關的人看不到）。
+  const showMusicVideo = content.musicVideo.src !== undefined && hasCleared(content.game.id);
+  const musicVideoButton = showMusicVideo
+    ? `<button class="secondary-action" id="title-music-video">${escapeHtml(content.ui.musicVideoLabel)}</button>`
+    : '';
   const actions = canResume
     ? `<button class="primary-action" id="resume">${escapeHtml(content.ui.resumeLabel)}</button>
-       <button class="secondary-action" id="start">${escapeHtml(startLabel)}</button>`
-    : `<button class="primary-action" id="start">${escapeHtml(startLabel)}</button>`;
+       <button class="secondary-action" id="start">${escapeHtml(startLabel)}</button>${musicVideoButton}`
+    : `<button class="primary-action" id="start">${escapeHtml(startLabel)}</button>${musicVideoButton}`;
   app.innerHTML = `
     <section class="title-screen" style="${imageStyle(title?.src, title?.focalPoint)}">
       <div class="title-shade" aria-hidden="true"></div>
@@ -58,6 +63,13 @@ ${content.game.titleEn ? `        <p class="title-en">${escapeHtml(content.game.
   if (canResume) {
     app.querySelector<HTMLButtonElement>('#resume')?.addEventListener('click', hooks.onResume!);
   }
+  app.querySelector<HTMLButtonElement>('#title-music-video')?.addEventListener('click', () => {
+    openMusicVideo(app, content.musicVideo, content.ui, () => {
+      // 關閉後回到標題畫面，焦點還給入口按鈕。
+      renderTitle(app, content, hooks);
+      app.querySelector<HTMLButtonElement>('#title-music-video')?.focus();
+    });
+  });
 }
 
 /**
@@ -470,6 +482,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const isEnding = atLast && scene.ending;
   const hasDebrief = isEnding && content.mba.endings[scene.id] !== undefined;
   // 完整 MV：只在設定的通關頁、且已有驗收完成的成片時才出現入口。
+  if (isEnding) markCleared(content.game.id);
   const hasMusicVideo = isEnding && content.musicVideo.src !== undefined && content.musicVideo.endingScenes.includes(scene.id);
   // 對話框底部這次放什麼：結局按鈕／選項／什麼都沒有。CSS 用它決定要單欄還是雙欄
   // （只有結局畫面維持「台詞在左、按鈕在右」；台詞頁與選項頁都是單欄，台詞才不會被擠窄）。
