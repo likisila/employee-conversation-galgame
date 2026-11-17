@@ -20,6 +20,8 @@ export interface TitleHooks {
 export interface RenderHooks {
   onAdvance?: () => void;
   onRestart?: () => void;
+  /** 結局頁按「重新開始」時回到標題畫面；沒給就直接在原地開新局（舊行為）。 */
+  onReturnToTitle?: () => void;
 }
 
 function escapeHtml(value: string): string {
@@ -645,6 +647,14 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   app.querySelector<HTMLButtonElement>('#restart')?.addEventListener('click', () => {
     engine.restart();
     resetSceneTracking();
+    if (hooks.onReturnToTitle) {
+      // 通關後的「重新開始」回到標題畫面：玩家可以從那裡開新局，或觀看通關後才出現的 MV。
+      // 先拆掉遊戲畫面的鍵盤處理器，標題畫面上按 Enter 才不會在背景推進劇情。
+      setKeyHandler(undefined);
+      hooks.onRestart?.();
+      hooks.onReturnToTitle();
+      return;
+    }
     render(app, engine, content, hooks);
     hooks.onRestart?.();
   });
