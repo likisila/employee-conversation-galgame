@@ -6,9 +6,6 @@
     { "id": "final-documents", "file": "00_final_documents.mp4", "trigger": "before:final-version", "scene": "s1-final-cut",
       "anchor": { "type": "scene" },
       "storyboard": [{ "shot": "00-A", "seconds": 2 }, { "shot": "00-B", "seconds": 2.5 }, { "shot": "00-C", "seconds": 2.5 }] },
-    { "id": "boundary-question", "file": "04_boundary_question.mp4", "trigger": "before:boundary-question", "scene": "s7-recommend-converge",
-      "anchor": { "type": "choices" },
-      "storyboard": [{ "shot": "04-B", "seconds": 2.5 }, { "shot": "04-C", "seconds": 2.5 }] },
     { "id": "ending-true", "file": "06_ending_true.mp4", "trigger": "on-enter:ending-true", "scene": "ending-true",
       "anchor": { "type": "line", "matchText": "三週後的晚上，我在家收到雨澄的訊息。" },
       "storyboard": [{ "shot": "06-B", "seconds": 3 }, { "shot": "06-C", "seconds": 3 }] }

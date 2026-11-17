@@ -8,7 +8,7 @@
  * 來源換過、設定改過或交付檔不見時才重新編碼。測試據此擋下「換了圖卻沒重新產生交付檔」。
  */
 import { createHash } from 'node:crypto';
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const sha256 = (buffer) => createHash('sha256').update(buffer).digest('hex');
@@ -30,9 +30,12 @@ async function loadManifest(file) {
  * @param {string} job.outputDir  交付 WebP 目錄
  * @param {object} job.options    寫進 manifest 的編碼設定；`resize` 會交給 sharp.resize，其餘交給 sharp.webp
  * @param {string} job.command    過期時提示執行的指令
+ * @param {Set<string>} [job.include] 只交付這些鏡號（不含副檔名）。來源目錄仍可留著其他原圖
+ *   （例如已退役、只供製作參考的影格），但不會被編碼出貨；先前交付過、現在不在清單裡的
+ *   WebP 會一併移除，避免退役影格繼續隨遊戲部署。沒給時交付來源目錄裡的全部 PNG。
  * @param {boolean} checkOnly     只檢查、不寫檔，過期時以非 0 結束
  */
-export async function runWebpDelivery({ sourceDir, sourceDirs, outputDir, options, command }, checkOnly) {
+export async function runWebpDelivery({ sourceDir, sourceDirs, outputDir, options, command, include }, checkOnly) {
   const dirs = sourceDirs ?? [sourceDir];
   const multiSource = dirs.length > 1;
   const manifestPath = path.join(outputDir, 'manifest.json');
@@ -44,7 +47,10 @@ export async function runWebpDelivery({ sourceDir, sourceDirs, outputDir, option
   const entries = [];
   for (const dir of dirs) {
     const label = path.basename(dir);
-    const names = (await readdir(dir)).filter((name) => name.endsWith('.png')).sort();
+    const names = (await readdir(dir))
+      .filter((name) => name.endsWith('.png'))
+      .filter((name) => !include || include.has(path.basename(name, '.png')))
+      .sort();
     for (const name of names) entries.push({ dir, name, sourceRef: multiSource ? `${label}/${name}` : name });
   }
   entries.sort((a, b) => a.sourceRef.localeCompare(b.sourceRef));
@@ -89,7 +95,15 @@ export async function runWebpDelivery({ sourceDir, sourceDirs, outputDir, option
     console.log(`${sourceRef} ${(source.length / 1024).toFixed(0)}KB → ${output} ${(encoded.length / 1024).toFixed(0)}KB`);
   }
 
+  if (include) {
+    const missing = [...include].filter((shot) => !next.files[`${shot}.webp`] && !stale.includes(`${shot}.webp`));
+    if (missing.length > 0) throw new Error(`找不到這些鏡號的原圖：${missing.join('、')}`);
+  }
+
+  // 不再交付的舊輸出（例如退役鏡號）：從交付目錄移除。
+  const orphans = Object.keys(manifest.files ?? {}).filter((output) => !(output in next.files) && !stale.includes(output));
   if (checkOnly) {
+    if (orphans.length > 0) stale.push(...orphans.map((output) => `${output}（應移除）`));
     if (stale.length > 0) {
       console.error(`交付檔過期或缺少：${stale.join('、')}\n請執行 ${command}`);
       process.exit(1);
@@ -98,6 +112,10 @@ export async function runWebpDelivery({ sourceDir, sourceDirs, outputDir, option
     return;
   }
 
+  for (const output of orphans) {
+    await rm(path.join(outputDir, output), { force: true });
+    console.log(`移除不再交付的 ${output}`);
+  }
   await mkdir(outputDir, { recursive: true });
   await writeFile(manifestPath, `${JSON.stringify(next, null, 2)}\n`);
   const before = Object.values(next.files).reduce((sum, file) => sum + file.sourceBytes, 0);

@@ -12,19 +12,27 @@
  * 1672×941 與 16:9 只差不到一個像素，以置中 cover 縮到 1280×720 即為過場影片的正式畫幅；
  * 原始 PNG 不修改、不覆寫。
  *
+ * 只交付 `property/cutscene-cues.json` 實際引用的鏡號。`keyframes/current/` 由 ChatGPT 管理，
+ * 可能仍放著已停用段落的影格（例如 2026-11-17 取消的 04-B／04-C）作為製作參考；
+ * 那些原圖保留不動，但不會再編碼成交付檔，也就不會隨遊戲部署。
+ *
  * 用法：
  *   npm run assets:storyboard            產生缺少或過期的交付檔
  *   npm run assets:storyboard -- --check 只檢查是否最新（不寫檔）
  */
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readFile } from 'node:fs/promises';
 import { runWebpDelivery } from './lib/webpDelivery.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const cueFile = JSON.parse(await readFile(path.join(root, 'property/cutscene-cues.json'), 'utf8'));
+const include = new Set(cueFile.cues.flatMap((cue) => (cue.storyboard ?? []).map((frame) => frame.shot)));
 
 await runWebpDelivery({
   sourceDir: path.join(root, 'public/assets/cutscenes/keyframes/current'),
   outputDir: path.join(root, 'public/assets/cutscenes/storyboard'),
   options: { resize: { width: 1280, height: 720, fit: 'cover' }, quality: 84, effort: 6 },
   command: 'npm run assets:storyboard',
+  include,
 }, process.argv.includes('--check'));

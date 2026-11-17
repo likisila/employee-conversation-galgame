@@ -48,5 +48,6 @@
   "cutscenes": "cutscenes.json",
   "soraCutscenes": "sora-cutscenes.json",
   "cutsceneCues": "cutscene-cues.json",
+  "musicVideo": "music-video.json",
   "mba": "mba-debrief.json"
 }

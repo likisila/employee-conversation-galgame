@@ -6,6 +6,7 @@ import {
   parseImages,
   parseManifest,
   parseMbaContent,
+  parseMusicVideo,
   parseScene,
   parseUi,
   type Character,
@@ -15,6 +16,7 @@ import {
   type ImageCatalog,
   type Manifest,
   type MbaContent,
+  type MusicVideoConfig,
   type Scene,
   type UiCopy,
 } from '../domain/schema';
@@ -52,6 +54,8 @@ export interface LoadedContent {
   cutsceneCues: Map<string, CutsceneCue>;
   /** 結局後可選的 MBA Organizational Debrief 內容。 */
   mba: MbaContent;
+  /** 通關後自選觀看的完整 MV。 */
+  musicVideo: MusicVideoConfig;
 }
 
 export function loadContent(): LoadedContent {
@@ -68,6 +72,10 @@ export function loadContent(): LoadedContent {
 
   const mba = manifest.mba ? parseMbaContent(requireFile(manifest.mba)) : parseMbaContent({});
   const cutscenes = manifest.cutscenes ? parseCutsceneSettings(requireFile(manifest.cutscenes)) : parseCutsceneSettings({});
+  const rawMusicVideo = manifest.musicVideo
+    ? parseMusicVideo(requireFile(manifest.musicVideo))
+    : parseMusicVideo({ file: null, endingScenes: [] });
+  const musicVideo = { ...rawMusicVideo, src: rawMusicVideo.src ? resolveAssetPath(rawMusicVideo.src) : undefined };
   const cueList = manifest.cutsceneCues ? parseCutsceneCues(requireFile(manifest.cutsceneCues)) : [];
   const cutsceneCues = new Map(
     cueList.map((cue) => [cue.scene, {
@@ -92,6 +100,13 @@ export function loadContent(): LoadedContent {
     if (cue.anchorType === 'choices' && scene.choices.length === 0) {
       throw new Error(`過場影片 ${cue.id} 的 anchorType 是 choices，但場景 ${cue.scene} 沒有選項`);
     }
+  }
+
+  // MV 入口只放在真正的通關頁；掛錯場景（例如還有後日談的 ending-true）就永遠不會出現或出現在半途。
+  for (const sceneId of musicVideo.endingScenes) {
+    const scene = scenes.get(sceneId);
+    if (!scene) throw new Error(`MV 入口掛在不存在的場景 ${sceneId}`);
+    if (!scene.ending) throw new Error(`MV 入口掛在非結局場景 ${sceneId}`);
   }
 
   for (const scene of scenes.values()) {
@@ -138,5 +153,5 @@ export function loadContent(): LoadedContent {
     if (transition.asset && !images.ui[transition.asset]) throw new Error(`轉場 ${transitionId} 引用了不存在的 UI asset ${transition.asset}`);
   }
 
-  return { manifest, game, characters, scenes, ui, images, cutscenes, cutsceneCues, mba };
+  return { manifest, game, characters, scenes, ui, images, cutscenes, cutsceneCues, mba, musicVideo };
 }

@@ -72,7 +72,7 @@ describe('過場影片的資料契約', () => {
     // anchorText 那一句之前、'choices' 在這場的選項出現之前——不是「進場景就算看過」。
     // 這條走的是「每個選擇點都取第一個選項」的固定路徑，不保證走到 TRUE END，
     // 所以結局過場（v4 唯一保留的 06）最多遇到一次，不強制一定遇到；
-    // 一定會走過的 final-documents（s1，全路徑共通）與 boundary-question（s7 匯流點）才斷言必定觸發。
+    // 一定會走過的 final-documents（s1，全路徑共通）才斷言必定觸發。
     const engine = new StoryEngine(content);
     const encountered: string[] = [];
     const trigger = (cue: ReturnType<typeof content.cutsceneCues.get>): void => {
@@ -97,11 +97,11 @@ describe('過場影片的資料契約', () => {
     }
     expect(new Set(encountered).size).toBe(encountered.length);
     expect(encountered).toContain('final-documents');
-    expect(encountered).toContain('boundary-question');
+    expect(encountered).not.toContain('boundary-question');
     expect(encountered.filter((id) => id.startsWith('ending-'))).toHaveLength(encountered.includes('ending-true') ? 1 : 0);
   });
 
-  it('依 TRUE END 標準路徑，final-documents／boundary-question／ending-true 三段依序各觸發一次', () => {
+  it('依 TRUE END 標準路徑，只有 final-documents／ending-true 兩段依序各觸發一次', () => {
     const engine = new StoryEngine(content);
     const majorSequence = ['invite-clear', 'notice-direct', 'answer-admit', 'doc-protect', 'keep-advocate'];
     let majorIndex = 0;
@@ -130,7 +130,7 @@ describe('過場影片的資料契約', () => {
     }
     expect(majorIndex).toBe(majorSequence.length);
     expect(engine.currentScene.id).toBe('ending-true-finale');
-    expect(encountered).toEqual(['final-documents', 'boundary-question', 'ending-true']);
+    expect(encountered).toEqual(['final-documents', 'ending-true']);
   });
 
   it('退役的 01／02／03／07／08／09 不再有 cue：這些場景不掛任何影片', () => {
@@ -142,11 +142,18 @@ describe('過場影片的資料契約', () => {
     expect(content.cutsceneCues.get('ending-over-line')).toBeUndefined();
   });
 
-  it('v4 審查定案的 3 段 cue 對齊 property/cutscene-storyboard-v4-review.md 的精確掛點', () => {
+  it('04 已取消（docs/media/cutscene-mv-integration-20261117.md v2）：s7 問題之後直接交回 Choice 5，沒有影片也沒有分鏡', () => {
+    expect(cues.some((cue) => cue.id === 'boundary-question')).toBe(false);
+    expect(content.cutsceneCues.get('s7-recommend-converge')).toBeUndefined();
+    expect(cues.flatMap((cue) => cue.storyboard ?? []).some((frame) => frame.shot.startsWith('04-'))).toBe(false);
+    // 不在主線新增會議室過場（d215a895 試剪方案已撤回）。
+    expect(content.cutsceneCues.get('s3-meeting')).toBeUndefined();
+  });
+
+  it('精簡方案的 2 段 cue 對齊整合規格 v2 的精確掛點（00 開場、TRUE END 06 時間橋）', () => {
     const byId = new Map(cues.map((c) => [c.id, c]));
-    expect(cues.map((c) => c.id)).toEqual(['final-documents', 'boundary-question', 'ending-true']);
+    expect(cues.map((c) => c.id)).toEqual(['final-documents', 'ending-true']);
     expect(byId.get('final-documents')).toMatchObject({ scene: 's1-final-cut', anchorType: 'scene' });
-    expect(byId.get('boundary-question')).toMatchObject({ scene: 's7-recommend-converge', anchorType: 'choices' });
     expect(byId.get('ending-true')).toMatchObject({
       scene: 'ending-true', anchorType: 'line', anchorText: '三週後的晚上，我在家收到雨澄的訊息。',
     });
@@ -262,8 +269,18 @@ describe('分鏡 placeholder', () => {
   const content = loadContent();
   const storyboards = [...content.cutsceneCues.values()].filter((cue) => cue.storyboard);
 
-  it('v4 正式製作清單（3 段）全部先用分鏡頂替缺檔的正式影片（0／3 已生成，見 property/cutscene-storyboard-v4-review.md）', () => {
-    expect(storyboards.map((cue) => cue.id)).toEqual(['final-documents', 'boundary-question', 'ending-true']);
+  it('保留的 2 段都有分鏡備援：00 正式成片載入失敗時仍可退回，06 尚無核准成片', () => {
+    expect(storyboards.map((cue) => cue.id)).toEqual(['final-documents', 'ending-true']);
+  });
+
+  it('只交付 cue 實際引用的分鏡：退役鏡號（04-B／04-C）不隨遊戲部署', () => {
+    const manifest = JSON.parse(readFileSync(path.join(root, 'public/assets/cutscenes/storyboard/manifest.json'), 'utf8')) as {
+      files: Record<string, unknown>;
+    };
+    const referenced = storyboards.flatMap((cue) => cue.storyboard!.map((frame) => `${frame.shot}.webp`)).sort();
+    expect(Object.keys(manifest.files).sort()).toEqual(referenced);
+    expect(existsSync(path.join(root, 'public/assets/cutscenes/storyboard/04-B.webp'))).toBe(false);
+    expect(existsSync(path.join(root, 'public/assets/cutscenes/storyboard/04-C.webp'))).toBe(false);
   });
 
   it('每一格都指向已產生的交付檔，且鏡號屬於該段（00-A 只能在 00 段）', () => {

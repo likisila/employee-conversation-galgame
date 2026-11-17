@@ -1584,3 +1584,22 @@
 - 交給 ChatGPT：無必要行動。
 - 驗證結果：PR #48 head `7d341be` 上 `npm run typecheck`、`npm test`（19 檔 199／199）、`npm run build` 通過。合併後 GitHub Actions「Deploy to Cloudflare」與「Deploy to GitHub Pages」對 `58f98f7` 皆成功；正式站從本執行環境連線被出口政策擋下（403），未能親自開啟線上頁面確認。
 - 未決問題或阻塞：無。
+
+## Claude-20261117-1150（04 取消、MV 入口實作）
+
+- 時間：2026-11-17T03:50:00Z
+- 分支或 PR：`claude/cutscene-mv-runtime-20261117`（自 `main` @ `9bf74c0`，PR #50 合併後），經使用者授權推送並開 PR，不自動合併。
+- 已讀對方紀錄：`ChatGPT-20261117-1126`、`ChatGPT-20261117-1132`（最新，取代 1126 的會議試剪與保留 04）。
+- 逐項回覆 `ChatGPT-20261117-1132`：
+  1. 停用 boundary-question 全部影片與分鏡觸發 — **完成**。`property/cutscene-cues.json` 移除該 cue；`s7-recommend-converge` 讀完「冷氣停了。她等著我回答。」直接翻到 Choice 5，沒有影片、分鏡、黑場或計時鎖定。台詞、選項、效果、路由未動。`render.ts` 的 `choices` 型觸發程式保留為通用能力，目前沒有任何 cue 使用。
+  2. 同步 manifest 依賴與驗證 — **完成**。`04-B.webp`／`04-C.webp` 交付檔移除，不再部署。`keyframes/current/` 的 04 原圖（ChatGPT 管理）未動；改為 `npm run assets:storyboard` 只交付 cue 實際引用的鏡號，並清掉不再引用的舊交付檔（`--check` 也會把它們列為過期）。`sora-cutscenes.json` 未改（04 仍是 BLOCKED，一致性測試不受影響）。
+  3. 保留 00 與 06 備援 — **完成**，兩段 cue 與 00-A／B／C、06-B／C 分鏡備援不變；不新增會議 cue。
+  4. MV 入口 — **已實作，目前不顯示**。新增 Claude 維護的 `property/music-video.json`：入口只在 `ending-decent`／`ending-soft-knife`／`ending-over-line`／`ending-true-finale` 四個通關頁（`ending-true` 有後日談，不放）；`file: null` 代表尚無驗收成片，入口完全不出現。成片放進 `public/assets/music-video/` 並填檔名即生效。行為：玩家自行點選；`spoilerNotice: true` 時先問是否觀看（含其他結局畫面）；確認後有聲播放，音量／進度／全螢幕用瀏覽器原生控制列，不沿用主線過場的靜音偏好；Esc 或「關閉」回到原結局並把焦點還給入口；載入失敗顯示說明並可關閉；不寫存檔、不影響「已看過」紀錄。
+- 實際變更檔案：`property/cutscene-cues.json`、`property/manifest.json`、`property/music-video.json`（新增）、`public/assets/cutscenes/storyboard/{04-B.webp,04-C.webp}`（刪除）、`public/assets/cutscenes/storyboard/manifest.json`、`public/assets/cutscenes/README.md`（只改接線說明）、`scripts/lib/webpDelivery.mjs`、`scripts/optimize-storyboard.mjs`、`src/domain/schema.ts`、`src/data/contentLoader.ts`、`src/ui/musicVideo.ts`（新增）、`src/ui/render.ts`、`src/visual.css`、`tests/cutscenes.test.ts`、`tests/buildOutput.test.ts`、`tests/musicVideo.test.ts`（新增）、`docs/ai-handoff/CLAUDE.md`
+- 交給 ChatGPT：
+  1. **MV 入口正式文案**：`property/ui.json` 新增可選欄位 `musicVideoLabel`、`musicVideoSpoilerNotice`、`musicVideoConfirmLabel`、`musicVideoCancelLabel`、`musicVideoCloseLabel`、`musicVideoUnavailableLabel`。目前落在程式暫定值（「觀看 MV」「這支 MV 含有其他結局的畫面。要現在觀看嗎？」「觀看」「先不要」「關閉」「影片暫時無法播放。」），補進 JSON 即生效。
+  2. **MV 成片**：驗收完成後交付 MP4，並確認是否含其他分支畫面（決定 `spoilerNotice`）。Claude 再掛檔、更新測試並實機驗收。
+  3. **06 正式成片**仍待核准；目前沿用分鏡備援。
+  4. 視覺：MV 視窗沿用決策點選單的遮罩／面板與過場的控制鈕樣式，未新增視覺設計；若要專屬樣式請提供規格。
+- 未決問題或阻塞：PR 待使用者審查合併；合併後由 Actions 部署。
+- 驗證結果：`npm run typecheck`、`npm test`（20 檔 209／209）、`npm run build`、`assets:storyboard --check`、`assets:sprites --check` 全數通過。Chromium 實機（桌機 1280×800、手機 390×844）從標題一路玩到 TRUE END：只觸發 00（正式影片）與 06（分鏡），Choice 5 在問題後直接出現；END 04 路線只觸發 00；無 pageerror。MV 另以臨時建置（4 秒測試片，未提交）驗證：入口出現、劇透提示 Esc 取消後焦點回到入口、確認後有聲播放、Enter／左方向鍵不推進結局頁、關閉後回到同一結局、重新載入仍顯示「繼續上次」；檔案缺失時顯示說明並可關閉回到結局。

@@ -2,6 +2,7 @@ import type { LoadedContent } from '../data/contentLoader';
 import type { Line } from '../domain/schema';
 import type { StoryEngine } from '../engine/StoryEngine';
 import { playCutscene } from './cutscene';
+import { openMusicVideo } from './musicVideo';
 import { icon } from './icons';
 import { setKeyHandler } from './keyboard';
 import { computeDebrief, formatDebriefSummary } from '../domain/mba';
@@ -468,6 +469,8 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   const decisionCount = engine.decisionPoints.length;
   const isEnding = atLast && scene.ending;
   const hasDebrief = isEnding && content.mba.endings[scene.id] !== undefined;
+  // 完整 MV：只在設定的通關頁、且已有驗收完成的成片時才出現入口。
+  const hasMusicVideo = isEnding && content.musicVideo.src !== undefined && content.musicVideo.endingScenes.includes(scene.id);
   // 對話框底部這次放什麼：結局按鈕／選項／什麼都沒有。CSS 用它決定要單欄還是雙欄
   // （只有結局畫面維持「台詞在左、按鈕在右」；台詞頁與選項頁都是單欄，台詞才不會被擠窄）。
   const footerKind = isEnding ? 'ending' : atChoiceStep ? 'choices' : 'none';
@@ -476,6 +479,7 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
         <button class="primary-action full" id="restart">${escapeHtml(content.ui.restartLabel)}</button>
         ${decisionCount > 0 ? `<button type="button" class="secondary-action full" id="rewind">${escapeHtml(content.ui.rewindLabel)}</button>` : ''}
         ${hasDebrief ? `<button type="button" class="secondary-action full" id="debrief">${escapeHtml(content.mba.copy.entryButton)}</button>` : ''}
+        ${hasMusicVideo ? `<button type="button" class="secondary-action full" id="music-video">${escapeHtml(content.ui.musicVideoLabel)}</button>` : ''}
       </div>`
     : choices
       ? `<section class="choices"><h2>${escapeHtml(choicePrompt)}</h2>${choices}</section>`
@@ -636,6 +640,13 @@ export function render(app: HTMLElement, engine: StoryEngine, content: LoadedCon
   });
   app.querySelector<HTMLButtonElement>('#debrief')?.addEventListener('click', () => {
     openDebrief(app, engine, content, hooks);
+  });
+  app.querySelector<HTMLButtonElement>('#music-video')?.addEventListener('click', () => {
+    openMusicVideo(app, content.musicVideo, content.ui, () => {
+      // 關閉後回到原本的結局畫面：重畫以交還鍵盤／點擊處理器，焦點回到入口按鈕。
+      render(app, engine, content, hooks);
+      app.querySelector<HTMLButtonElement>('#music-video')?.focus();
+    });
   });
 }
 
