@@ -1,0 +1,218 @@
+{
+  "date": "2026-11-17",
+  "scope": "21段描述與縮圖初篩、6段實片畫面抽查；不是逐格驗收",
+  "items": [
+    {
+      "order": 1,
+      "id": "98530082-1926-4753-bd82-6f7e71630509",
+      "name": "電梯門關閉",
+      "requested_seconds": 8,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_075213_98530082-1926-4753-bd82-6f7e71630509.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Reference image 1 = Yucheng: 26-year-old woman, short black bob with pale grey-blue tips, charcoal T-shirt, dark trousers, black lanyard, beige spiral sketchbook in hand. Reference image 2 = Yalin: 34-year-old woman, ash-brown shoulder-length hair, light grey-beige blazer, mist-grey top, LIGHT GREY straight trousers, off-white sneakers, holding a grey tablet. Keep both faces and outfits exactly as the references, adult proportions.\n\nScene: Office elevator lobby on a rainy day in Taipei, cool grey light. Camera is behind Yucheng, over her shoulder, two or three steps from a steel elevator whose doors are closing, leaving a narrowing vertical gap. Inside the elevator, Yalin stands in an ordinary side-facing stance looking down at her tablet, not noticing Yucheng, neutral expression, not smiling. Yucheng sees the gap narrowing and quickens one natural step forward, lanyard swinging and settling. The doors close into a thin vertical seam of light. Plausible floor distance and door geometry. Palette: desaturated blue-grey, graphite, steel reflections. No text, no dialogue, no friendly gesture."
+    },
+    {
+      "order": 2,
+      "id": "c7df69d1-73f7-417f-aaf2-2a207c88fc2e",
+      "name": "雨窗轉頭",
+      "requested_seconds": 8,
+      "review": "描述、縮圖與實片畫面抽查",
+      "use": "MV開頭候選；不新增獨立片頭",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_075542_c7df69d1-73f7-417f-aaf2-2a207c88fc2e.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Character: the young woman in the reference image (26, short black bob with pale grey-blue tips, charcoal T-shirt with small 'MAKE IT OBVIOUS' print, dark trousers, black lanyard with ID card, silver pen clipped, old black digital watch on her LEFT wrist). Keep her face, hair and outfit exactly as the reference, adult proportions.\n\nScene: Contemporary Taipei office, rainy humid daylight. Foreground: wet office window glass with rain streaks, the layered mid-rise city reflected in it. Slow lateral camera move along the glass gradually reveals the woman from behind, standing near the window, holding a beige spiral sketchbook against her side. At first her silhouette blends with the reflected city; as the camera slides, her outline separates clearly. Near the end she makes one small, alert turn of her head toward the corridor to the right; hair tips swing slightly after the head moves. Palette: desaturated rain blue, graphite, muted grey-green, cool glass reflections. Quiet, tense, restrained. No text, no other characters, no neon, no 3D look."
+    },
+    {
+      "order": 3,
+      "id": "2b9f27d1-44f8-422c-aeae-5df3b5927a10",
+      "name": "隔玻璃的資訊落差",
+      "requested_seconds": 8,
+      "review": "描述、縮圖與實片畫面抽查",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_080150_2b9f27d1-44f8-422c-aeae-5df3b5927a10.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Reference image 1 = Yuan: 31-year-old manager, androgynous presentation, short tousled dark-brown hair, charcoal jacket, blue-grey shirt, black lanyard, carrying a navy-blue folder. Reference image 2 = Yucheng: 26-year-old woman, short black bob with pale grey-blue tips, charcoal T-shirt, lanyard, beige spiral sketchbook. Keep faces and outfits exactly as references.\n\nScene, two parts in one continuous shot: First, seen through layered glass office partitions with vertical mullions, Yuan stands in rear three-quarter view in a corridor, head lowered, looking at the open navy-blue folder, thumb pressing the page edge, preoccupied and still. Rain light on the glass. The camera slides sideways; a vertical glass partition edge passes the foreground as a wipe, revealing Yucheng on the other side of the glass walking purposefully down an adjacent corridor with her beige sketchbook, ordinary focused expression, unaware of Yuan. Clear unequal knowledge, separated by glass. Palette: desaturated rain blue, graphite, muted grey-green. No text, no eye contact."
+    },
+    {
+      "order": 4,
+      "id": "322e3d9d-849b-4ed4-9eb7-8441279bde8e",
+      "name": "合作回憶與現實",
+      "requested_seconds": 11,
+      "review": "描述、縮圖與實片畫面抽查",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_080504_322e3d9d-849b-4ed4-9eb7-8441279bde8e.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Reference image 1 = Yucheng: 26-year-old product designer, short black bob with pale grey-blue tips, charcoal T-shirt, lanyard, black digital watch on LEFT wrist, beige spiral sketchbook. Reference image 2 = Yuan: 31-year-old manager, androgynous, short tousled dark-brown hair, charcoal jacket, blue-grey shirt. Keep faces and outfits exactly as references, adult proportions.\n\nShot 1 (memory, warm restrained amber light, softer edges): at a shared work desk, Yucheng points with her silver pen at a hand-drawn interface sketch in her open beige sketchbook, explaining a design detail; Yuan stands beside her, leaning slightly, listening attentively. Their shoulders align in parallel attention over the same page. Professional, not romantic, no touching.\nShot 2 (present, match cut with the same composition, cold desaturated rain-blue light): the same desk, Yuan's attention withdrawn, gaze turned away toward a window, the closed navy-blue folder on the desk. Yucheng's pen pauses in mid-air. Rain shadows drift across the desk. No text, no dialogue."
+    },
+    {
+      "order": 5,
+      "id": "d215a895-8a0b-44f2-85d7-0cc32158cd60",
+      "name": "三人會議",
+      "requested_seconds": 11,
+      "review": "描述、縮圖與實片畫面抽查",
+      "use": "MV素材保留；不新增會議過場",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_084147_d215a895-8a0b-44f2-85d7-0cc32158cd60.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Reference image 1 = Yucheng: 26-year-old woman, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, black digital watch on LEFT wrist. Reference image 2 = Yuan: 31-year-old manager, short tousled dark-brown hair, charcoal jacket, blue-grey shirt. Keep both faces and outfits exactly as references.\n\nA small office meeting room with one round table and a rain-streaked glass wall, cool blue rainy light. Wide shot: Yucheng sits on the left side of the table with her open beige spiral sketchbook full of unfinished pencil sketches; Yuan sits on the right side opposite her, a closed navy-blue folder on the table in front of Yuan, looking down at it. In the soft-focus background near the window, between them, sits a third person: a calm woman with ash-brown shoulder-length hair and a light beige blazer, holding a grey tablet, still. Yucheng's right hand lifts slightly from the sketchbook as if to ask a question, pauses, then rests again; her gaze stays steady. The camera slowly pulls back, the table and empty space around Yucheng growing wider. Silent, nobody speaks. No text."
+    },
+    {
+      "order": 6,
+      "id": "a6072512-04cc-4139-b6f2-2b6f5775279d",
+      "name": "低頭與文件反應",
+      "requested_seconds": 8,
+      "review": "描述、縮圖與實片畫面抽查",
+      "use": "MV素材保留；不加入主線",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_085913_a6072512-04cc-4139-b6f2-2b6f5775279d.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Reference image 1 = Yucheng: 26-year-old woman, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, black digital watch on LEFT wrist. Reference image 2 = Yuan: 31-year-old manager, short tousled dark-brown hair, charcoal jacket, blue-grey shirt. Keep faces and outfits exactly as references.\n\nInside a rainy office meeting room at a round table, cool blue light. Close shot on Yuan's face in profile, eyes lowered, a moving shadow of rain streaks from the window sliding across the face; a held, uncomfortable pause. Cut to close-up of Yucheng's right hand resting on the table: her restless fingertip tapping beside her beige sketchbook stops completely. Her eyes, which had been following Yuan, lower and settle on a single white printed administrative page lying on top of a navy-blue folder. Intimate, quiet, restrained; no shouting, no tears. No readable text on the page."
+    },
+    {
+      "order": 7,
+      "id": "b00f1dc8-e3df-4792-9d76-54d97dab9c6a",
+      "name": "會議轉抽象空間",
+      "requested_seconds": 9,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_090738_b00f1dc8-e3df-4792-9d76-54d97dab9c6a.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Reference image 1 = Yucheng: 26-year-old woman, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard. Reference image 2 = Yalin: 34-year-old HR professional, ash-brown shoulder-length hair, light grey-beige blazer, mist-grey top, holding a grey tablet. Keep faces and outfits exactly as references.\n\nRainy office meeting room, cool blue light. Slow sideways camera move across the room: Yucheng sits at the left edge of a round table, Yalin sits farther back near the rain-streaked glass, composed and attentive, and a third person in a charcoal jacket is seen only from behind as a dark shoulder silhouette in the right foreground. Each person occupies a separate zone of the room; their gazes do not meet. As the camera moves, the depth gradually flattens: foreground, middle and background compress into flat graphic layers of navy blue and pale ivory, like stacked paper planes, while the characters remain clean and intact. The room transforms into an abstract navy-and-ivory graphic space with a thin amber accent line. Quiet building tension. No text."
+    },
+    {
+      "order": 8,
+      "id": "7395fea1-4be8-497d-a37e-c730dd20232d",
+      "name": "行政文件與分離平面",
+      "requested_seconds": 12,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_091505_7395fea1-4be8-497d-a37e-c730dd20232d.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, cinematic 24fps animation, bold anime-opening graphic design. Character: the young woman from the reference (26, short black bob with pale grey-blue tips, charcoal T-shirt with small 'MAKE IT OBVIOUS' print, dark trousers, black lanyard, black digital watch on LEFT wrist). Keep her face, hair, outfit and adult proportions exactly.\n\nA strongly designed symbolic space: deep navy and pale ivory flat fields with a thin amber accent line. Yucheng stands solid and whole in the center, seen in a low-angle three-quarter view. Behind her, tall architectural planes shaped like glass partitions, door frames and the edges of a meeting table slide apart and separate in different directions at different speeds, opening the space. Decisive camera push and a clean jump in scale from medium shot to a wide silhouette. Then in the foreground a perfectly aligned white administrative document lies flat and neat, while behind it, out of focus, a hand begins a reassuring gesture and stops before completing it. Her hair tips and shirt respond to the motion. Dramatic, elegant, restrained emotion. No text, no words."
+    },
+    {
+      "order": 9,
+      "id": "838e0c1a-4c53-4c86-b452-9d3de9f3636d",
+      "name": "玻璃倒影分裂",
+      "requested_seconds": 9,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_092253_838e0c1a-4c53-4c86-b452-9d3de9f3636d.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, cinematic 24fps animation, bold anime-opening graphic design. Reference 1 = Yucheng (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard). Reference 2 = Yuan (31, short tousled dark-brown hair, charcoal jacket, blue-grey shirt). Keep faces and outfits exactly.\n\nAbstract navy and pale ivory graphic space built from tall panes of glass. Yucheng stands in the foreground, intact and steady, her outline crisp. Around her the reflections in the glass panes crack and slide out of alignment; the framing planes split and drift apart, but her body stays whole. Far behind, at a different depth, Yuan stands small and turned half away, separated by a vertical seam of light; their sightlines almost meet but miss. Then the surrounding planes slowly retreat backward into darkness, leaving increasing empty navy space around Yucheng, who plants her stance and does not step back. Her hair tips and shirt move gently. No shards touching skin, no text."
+    },
+    {
+      "order": 10,
+      "id": "404a054a-20bd-466c-839e-3e6ec8a4f6dc",
+      "name": "走廊與合作蒙太奇",
+      "requested_seconds": 13,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_093023_404a054a-20bd-466c-839e-3e6ec8a4f6dc.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Reference 1 = Yucheng (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, black digital watch on LEFT wrist, beige spiral sketchbook). Reference 2 = Yuan (31, short tousled dark-brown hair, charcoal jacket, blue-grey shirt). Keep faces and outfits exactly.\n\nA flowing, accelerating musical montage with motivated transitions. Yucheng walks purposefully through a sequence of office thresholds and glass doorways; each vertical door frame passing the camera wipes into a warm amber memory of collaborative work: an overhead view of a shared desk with her open beige sketchbook beside laptops, sticky notes and printed wireframes, her hand and Yuan's hand each working on their own part of the layout; a short moment of Yucheng presenting a sketch on a whiteboard while Yuan nods from the side. The motion of one shape carries into the next image. Finally the warm light drains back into cool rainy blue as she passes the last glass door. Energetic yet restrained, no romance, no touching, no text."
+    },
+    {
+      "order": 11,
+      "id": "bb3c1a4b-7bf7-4bc0-86c6-ca723d1c040b",
+      "name": "予安與雅琳遲疑",
+      "requested_seconds": 11,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_093816_bb3c1a4b-7bf7-4bc0-86c6-ca723d1c040b.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Reference 1 = Yuan (31, short tousled dark-brown hair, charcoal jacket, blue-grey shirt, navy-blue folder). Reference 2 = Yalin (34, ash-brown shoulder-length hair, light grey-beige blazer, mist-grey top, grey tablet). Keep faces and outfits exactly.\n\nBack in the rainy meeting room, cool blue light. First, Yuan sits with head lowered toward the closed navy-blue folder on the table. Then Yalin, seated near the rain-streaked glass wall, turns her eyes toward the window, her fingers resting still and controlled on the grey tablet, a small hesitation. Then a closer shot of Yuan beginning to explain something: hands lift into a practiced, open explaining gesture, but the ease drains away; the hands slow, one hand stops mid-air and drops to the folder edge, eyes failing to hold contact with someone off-screen to the left. Mouths stay closed or barely move, silent. Restrained, no villainy. No text."
+    },
+    {
+      "order": 12,
+      "id": "320ffc33-f79c-4d65-89c3-a012717e2c2c",
+      "name": "並肩到背離",
+      "requested_seconds": 14,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_094814_320ffc33-f79c-4d65-89c3-a012717e2c2c.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Reference 1 = Yucheng (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, black digital watch on LEFT wrist, beige spiral sketchbook). Reference 2 = Yuan (31, short tousled dark-brown hair, charcoal jacket, blue-grey shirt). Keep faces and outfits exactly.\n\nShot 1, warm amber memory: from behind, Yucheng and Yuan stand side by side over the same desk, shoulders aligned at the same height, each doing a different task on the same project. Match cut to shot 2, cold rainy present in the meeting room: the same two shoulder lines seen from behind across the round table, but now facing different directions, their gazes pointing apart, a wide empty gap of table and an empty chair between them; the open doorway visible behind, nobody blocking it. Shot 3: close-up of Yucheng's open beige sketchbook beside the closed navy-blue folder, an unfinished product diagram drawn in pencil; Yucheng's fingers slowly close around the edge of her own sketchbook and draw it toward her, keeping it. No touching between people, no romance, no text."
+    },
+    {
+      "order": 13,
+      "id": "d3c5e71d-78b8-4411-9922-42bd1eb639cc",
+      "name": "雨澄穿越抽象隔間",
+      "requested_seconds": 13,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_095702_d3c5e71d-78b8-4411-9922-42bd1eb639cc.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, cinematic 24fps animation, bold anime-opening graphic design. Reference 1 = Yucheng (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, dark trousers). Reference 2 = Yalin (34, ash-brown shoulder-length hair, light grey-beige blazer, mist-grey top, light grey trousers, grey tablet). Keep faces, outfit colors and adult proportions exactly.\n\nNavy and pale ivory graphic space with tall vertical columns and glass planes that slide at different speeds. This time Yucheng moves: she walks steadily across the composition from left to right, passing through the gaps between the sliding columns; the frames try to settle around her but fail and slip away. Yalin stands still at a different depth on the right, holding her tablet, composed, watching; a dark shoulder silhouette of a third person stands at a third depth. The camera arcs to a new low angle revealing the triangle of three separated positions. Clean silhouettes, controlled motion, a thin amber accent line. Faces stable, no running, no tears, no text."
+    },
+    {
+      "order": 14,
+      "id": "3b1b3ccd-a888-4bcb-b978-aaeec57a43cb",
+      "name": "回憶倒影錯位",
+      "requested_seconds": 9,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_100751_3b1b3ccd-a888-4bcb-b978-aaeec57a43cb.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, cinematic 24fps animation. Reference 1 = Yucheng (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, black digital watch on LEFT wrist). Reference 2 = Yuan (31, short tousled dark-brown hair, charcoal jacket, blue-grey shirt). Keep faces and outfits exactly.\n\nA reflection in the rain-streaked meeting room glass shows a warm amber memory: Yucheng and Yuan working together over the same desk. In front of the glass, the real present meeting table in cold blue light. The reflected memory slides out of alignment with the real table, its edges splitting into offset vertical slices, leaving only one recognizable fragment of the shared desk surface. Then Yucheng, seated, stops searching for Yuan's eyes: her gaze lowers, and her left hand, with the black digital watch, comes to rest calmly beside her own beige sketchbook. Quiet, subtle change of agency, no tears. No text."
+    },
+    {
+      "order": 15,
+      "id": "c43ec02e-be0f-4e91-a902-faaae9b00129",
+      "name": "城市與前行蒙太奇",
+      "requested_seconds": 12,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_101552_c43ec02e-be0f-4e91-a902-faaae9b00129.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation, the opening's largest visual movement. Character: the young woman from the reference (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, dark trousers, black digital watch on LEFT wrist, beige spiral sketchbook). Keep face, hair, outfit exactly.\n\nA sweeping braided sequence: the camera glides past wet window mullions of a Taipei office tower in the rain, the layered mid-rise city reflected in the glass; foreground mullions and page edges carry momentum from one image to the next. An oblique overhead pass over an office floor plan of desks and glass partitions with Yucheng walking alone through it. A change of scale to a clean, crisp silhouette of Yucheng standing against an open pale ivory field with navy edges and one thin amber line, her hair moving in the air. Then back to readable body movement: she walks forward steadily. Rising and releasing energy, elegant, no running, no text."
+    },
+    {
+      "order": 16,
+      "id": "ae8cd4e0-f290-4074-b861-e2c8043baa3a",
+      "name": "手錶與交接回憶",
+      "requested_seconds": 12,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_103510_ae8cd4e0-f290-4074-b861-e2c8043baa3a.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Reference 1 = Yucheng (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, old black digital watch on LEFT wrist). Reference 2 = Yuan (31, short tousled dark-brown hair, charcoal jacket, blue-grey shirt). Keep faces and outfits exactly.\n\nClose-up of Yucheng's left wrist with the old black digital watch resting on the meeting table in cool rain light. Dissolve through the matching shape of a hand into a warm amber memory: Yucheng's hand passing a sketch page across a desk toward Yuan's hand, the two hands about to complete a handoff of work. Before they meet, the matching shape dissolves back into the present: Yucheng's hand alone, still, on the cold table. Then the image slows down and empties: the camera gently pulls back as visual layers fall away until the meeting room is plain and quiet, Yuan seated across the table, the rain on the glass the only movement. Calm, sparse, no text."
+    },
+    {
+      "order": 17,
+      "id": "d3db0186-3cee-4403-a7da-1466efacd9c1",
+      "name": "欲言又止與握緊筆記本",
+      "requested_seconds": 11,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_104412_d3db0186-3cee-4403-a7da-1466efacd9c1.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation, slow and sustained. Reference 1 = Yucheng (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, black digital watch on LEFT wrist, beige spiral sketchbook). Reference 2 = Yuan (31, short tousled dark-brown hair, charcoal jacket, blue-grey shirt, creased cuff). Keep faces and outfits exactly.\n\nQuiet meeting room in soft rain light, a faint warm glow as if remembering a possibility. Shot 1: on Yuan's own side of the round table, Yuan's hand slowly begins to lift from the tabletop, breath held, lips slightly parted as if about to speak first, but the gesture stays suspended, never reaching across. Shot 2: on Yucheng's side, close-up of her own hand holding the edge of her beige spiral sketchbook, fingers tightening slightly, wanting to keep it open, wanting continuity. Each hand stays on its own side; no hands touch. Tender, sorrowful restraint, very slow camera, no text."
+    },
+    {
+      "order": 18,
+      "id": "7d600585-eeda-479d-96c0-9a6cfc66509c",
+      "name": "暖光消退與對視",
+      "requested_seconds": 14,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_105553_7d600585-eeda-479d-96c0-9a6cfc66509c.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation, one sustained developing composition. Reference 1 = Yucheng (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard). Reference 2 = Yuan (31, short tousled dark-brown hair, charcoal jacket, blue-grey shirt). Keep faces and outfits exactly.\n\nA medium-wide shot across the round meeting table: Yucheng on the left, Yuan on the right. At first a faint warm amber glow fills the space like an imagined better moment; slowly the warmth drains away, revealing the plain cold present table in blue rain light. The camera drifts very slowly and comes to rest. Yucheng's finger releases its tension, her shoulder settles; small breathing, rain moving on the glass. Then Yucheng raises her eyes and looks directly at Yuan with clear, searching attention, full of knowledge but unable to find a clean target for anger; no smile, no tears, no blush. Yuan cannot hold the gaze. After a moment Yucheng chooses to break the eye line and looks back down at what is in front of her. Silent. No text."
+    },
+    {
+      "order": 19,
+      "id": "b729ba0b-327a-4e4d-b41d-1c9b8dbde994",
+      "name": "雨窗與深夜加班",
+      "requested_seconds": 11,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_110521_b729ba0b-327a-4e4d-b41d-1c9b8dbde994.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation, the fullest and clearest return of the visual language. Character: the young woman from the reference (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, black digital watch on LEFT wrist). Keep face, hair, outfit exactly.\n\nYucheng stands in the visual center in profile beside a tall office window; the rainy Taipei city reflection slides past behind her on the glass, but her outline stays completely clear and legible, no longer erased by the reflection. Decisive camera arc and clean silhouette against navy and ivory planes with a thin amber line. Then a brief late-night memory: Yucheng alone at a desk under a pale monitor glow, exhausted posture, shoulders hunched, her hand still continuing a revision in her beige sketchbook. Match cut on the same hand back to the present, Yucheng in profile by the window, hand steady at her side. Strong, clear, emotional, no text."
+    },
+    {
+      "order": 20,
+      "id": "1c0705e4-10d0-45f7-89d4-775f8d8eeac7",
+      "name": "會談與林雨澄署名紙張",
+      "requested_seconds": 13,
+      "review": "描述與縮圖初篩",
+      "use": "MV素材保留",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_111423_1c0705e4-10d0-45f7-89d4-775f8d8eeac7.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation. Reference 1 = Yucheng (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, black digital watch on LEFT wrist, beige spiral sketchbook). Reference 2 = Yuan (31, short tousled dark-brown hair, charcoal jacket, blue-grey shirt). Keep faces and outfits exactly.\n\nShot 1: the meeting room in clear cool light, Yucheng and Yuan seated apart at the round table, each holding their own perspective, no one nodding, no resolution. Shot 2: locked-off close-up on Yuan's side of the table: a single loose product sketch sheet lies face down, separate from the navy-blue folder. On the plain back of the sheet, small neat printed black characters read exactly: 林雨澄. Nobody writes or signs; the camera holds still for several seconds. Shot 3: return to Yucheng: her own hands resting on her own beige sketchbook, steady and deliberate; she lifts her gaze, present, composed, not asking permission. Clear, quiet, firm. No other text."
+    },
+    {
+      "order": 21,
+      "id": "65db5dfc-00fd-4278-b026-a59abbe6a54c",
+      "name": "雨窗留白收尾",
+      "requested_seconds": 19,
+      "review": "描述、縮圖與實片畫面抽查",
+      "use": "MV收尾候選",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/hf_20261116_112847_65db5dfc-00fd-4278-b026-a59abbe6a54c.mp4",
+      "prompt": "Original 2D anime opening film, fine graphite-like line art, selectively painted cel shadows, muted watercolor backgrounds, cinematic 24fps animation, final calm shot. Character: the young woman from the reference (26, short black bob with pale grey-blue tips, charcoal T-shirt, black lanyard, dark trousers). Keep face, hair and outfit exactly.\n\nReturn to the opening image: a tall rain-streaked office window over the layered mid-rise Taipei skyline on an overcast day. Yucheng stands in the LEFT third of the frame in rear three-quarter view, looking out; her silhouette is distinct and whole, clearly separate from the city reflection in the glass. Small living animation only: gentle breathing, her lanyard settling, rain drops sliding, soft light shifting through the rain. A slow restrained camera drift that gradually comes to rest. The RIGHT third of the frame is calm, uncluttered negative space of soft grey rainy sky and glass, kept empty. Weather stays unresolved, no sunrise, no other people, no text, no logos."
+    }
+  ],
+  "design_version": "v2",
+  "mainline_policy": "僅00與TRUE END 06；取消04，不新增會議／其他過場"
+}
