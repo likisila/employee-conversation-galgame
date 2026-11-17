@@ -185,6 +185,8 @@ export interface Manifest {
   cutsceneCues?: string;
   /** 結局後可選的 MBA Organizational Debrief 內容（ChatGPT 維護，見 property/mba-debrief.md）。 */
   mba?: string;
+  /** 通關後自選觀看的完整 MV（Claude 維護的技術設定，見 property/music-video.json）。 */
+  musicVideo?: string;
 }
 
 export interface UiCopy {
@@ -222,6 +224,18 @@ export interface UiCopy {
   rewindChoiceLabel: string;
   /** 關閉決策點選單的按鈕文字。 */
   rewindCloseLabel: string;
+  /** 結局畫面上開啟完整 MV 的按鈕文字。 */
+  musicVideoLabel: string;
+  /** 播放前的劇透提示（MV 含其他結局的畫面時才出現）。 */
+  musicVideoSpoilerNotice: string;
+  /** 劇透提示上的「確定觀看」。 */
+  musicVideoConfirmLabel: string;
+  /** 劇透提示上的「不看了」。 */
+  musicVideoCancelLabel: string;
+  /** MV 播放畫面的關閉按鈕（回到原本的結局畫面）。 */
+  musicVideoCloseLabel: string;
+  /** MV 載入失敗時的說明句。 */
+  musicVideoUnavailableLabel: string;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -252,6 +266,7 @@ export function parseManifest(raw: unknown): Manifest {
     cutscenes: typeof raw.cutscenes === 'string' ? raw.cutscenes : undefined,
     cutsceneCues: typeof raw.cutsceneCues === 'string' ? raw.cutsceneCues : undefined,
     mba: typeof raw.mba === 'string' ? raw.mba : undefined,
+    musicVideo: typeof raw.musicVideo === 'string' ? raw.musicVideo : undefined,
   };
 }
 
@@ -401,6 +416,44 @@ export function parseUi(raw: unknown): UiCopy {
     rewindPrompt: typeof value.rewindPrompt === 'string' ? value.rewindPrompt : '回到哪一個決策點？',
     rewindChoiceLabel: typeof value.rewindChoiceLabel === 'string' ? value.rewindChoiceLabel : '你選了：',
     rewindCloseLabel: typeof value.rewindCloseLabel === 'string' ? value.rewindCloseLabel : '關閉',
+    // 以下 MV 入口的預設值只是讓功能可用的暫定文字；正式文案由 ChatGPT 補進 property/ui.json。
+    musicVideoLabel: typeof value.musicVideoLabel === 'string' ? value.musicVideoLabel : '觀看 MV',
+    musicVideoSpoilerNotice: typeof value.musicVideoSpoilerNotice === 'string'
+      ? value.musicVideoSpoilerNotice : '這支 MV 含有其他結局的畫面。要現在觀看嗎？',
+    musicVideoConfirmLabel: typeof value.musicVideoConfirmLabel === 'string' ? value.musicVideoConfirmLabel : '觀看',
+    musicVideoCancelLabel: typeof value.musicVideoCancelLabel === 'string' ? value.musicVideoCancelLabel : '先不要',
+    musicVideoCloseLabel: typeof value.musicVideoCloseLabel === 'string' ? value.musicVideoCloseLabel : '關閉',
+    musicVideoUnavailableLabel: typeof value.musicVideoUnavailableLabel === 'string'
+      ? value.musicVideoUnavailableLabel : '影片暫時無法播放。',
+  };
+}
+
+/**
+ * 通關後自選觀看的完整 MV。整首不自動播放、不打斷主線，只在 `endingScenes` 的結局畫面出現入口。
+ * `file` 為 null 代表還沒有驗收完成的正式成片：入口完全不顯示，而不是顯示一個點了才失敗的按鈕。
+ */
+export interface MusicVideoConfig {
+  /** 正式成片的路徑；沒有核准成片時為 undefined。 */
+  src?: string;
+  /** 顯示入口的結局頁（必須是 `ending: true` 的場景）。 */
+  endingScenes: string[];
+  /** MV 含其他分支畫面時為 true：播放前先提示劇透。 */
+  spoilerNotice: boolean;
+}
+
+export function parseMusicVideo(raw: unknown): MusicVideoConfig {
+  if (!isRecord(raw)) throw new Error('music-video 必須是物件');
+  if (!Array.isArray(raw.endingScenes) || !raw.endingScenes.every((item) => typeof item === 'string')) {
+    throw new Error('music-video.endingScenes 必須是字串陣列');
+  }
+  if (raw.file !== null && raw.file !== undefined && (typeof raw.file !== 'string' || !/^[\w.-]+\.mp4$/.test(raw.file))) {
+    throw new Error('music-video.file 必須是 null 或 mp4 檔名');
+  }
+  const directory = (typeof raw.directory === 'string' ? raw.directory : '/assets/music-video').replace(/\/+$/, '');
+  return {
+    src: typeof raw.file === 'string' ? `${directory}/${raw.file}` : undefined,
+    endingScenes: raw.endingScenes,
+    spoilerNotice: raw.spoilerNotice !== false,
   };
 }
 
