@@ -1,0 +1,47 @@
+# 一次性：把使用者在 Higgsfield 上傳的 MV 成片轉成可部署的網頁版，提交回這個分支，然後刪掉自己。
+# Claude 的執行環境連不到 Higgsfield 的檔案伺服器，所以改在 GitHub runner 下載與轉檔。
+# 轉檔設定與 Higgsfield 沙箱試轉相同（H.264 680k two-pass＋AAC 128k、faststart），
+# 結果約 23 MB，低於 Cloudflare 靜態素材單檔 25 MiB 上限。
+name: Import music video (one-off)
+
+on:
+  push:
+    branches: [claude/cutscene-mv-runtime-20261117]
+    paths: [.github/workflows/import-music-video.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/cutscene-mv-runtime-20261117
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Download source
+        run: |
+          curl -sSfL -o /tmp/mv-source.mp4 'https://d2ol7oe51mr4n9.cloudfront.net/user_3MBBl3Ruri4ExZDNzyPLcA4MgVD/fbcf2384-ad3c-4be8-9cd6-a12dd9454dff.mp4'
+          echo 'a2f7d75894278dd17f67a93a518e8a040f2c0729b841e0f9938a0196ac53766f  /tmp/mv-source.mp4' | sha256sum -c -
+      - name: Encode for web
+        run: |
+          mkdir -p public/assets/music-video
+          cd /tmp
+          ffmpeg -v error -y -i mv-source.mp4 -c:v libx264 -preset slow -b:v 680k -pass 1 -an -f null /dev/null
+          ffmpeg -v error -y -i mv-source.mp4 -c:v libx264 -preset slow -b:v 680k -maxrate 1200k -bufsize 2400k -pass 2 \
+            -pix_fmt yuv420p -profile:v high -c:a aac -b:a 128k -ar 48000 -movflags +faststart \
+            "$GITHUB_WORKSPACE/public/assets/music-video/mv_kitei_no_ashita.mp4"
+          size=$(stat -c %s "$GITHUB_WORKSPACE/public/assets/music-video/mv_kitei_no_ashita.mp4")
+          echo "size=$size"
+          test "$size" -lt 26214400
+          ffprobe -v error -show_entries format=duration,size,bit_rate:stream=codec_name,width,height -of compact "$GITHUB_WORKSPACE/public/assets/music-video/mv_kitei_no_ashita.mp4"
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898333+github-actions[bot]@users.noreply.github.com'
+          git rm -q .github/workflows/import-music-video.yml
+          git add public/assets/music-video/mv_kitei_no_ashita.mp4
+          git commit -q -m 'assets: import music video from Higgsfield upload fbcf2384 (source sha256 a2f7d758…)'
+          git push origin HEAD:claude/cutscene-mv-runtime-20261117
