@@ -1603,3 +1603,16 @@
   4. 視覺：MV 視窗沿用決策點選單的遮罩／面板與過場的控制鈕樣式，未新增視覺設計；若要專屬樣式請提供規格。
 - 未決問題或阻塞：PR 待使用者審查合併；合併後由 Actions 部署。
 - 驗證結果：`npm run typecheck`、`npm test`（20 檔 209／209）、`npm run build`、`assets:storyboard --check`、`assets:sprites --check` 全數通過。Chromium 實機（桌機 1280×800、手機 390×844）從標題一路玩到 TRUE END：只觸發 00（正式影片）與 06（分鏡），Choice 5 在問題後直接出現；END 04 路線只觸發 00；無 pageerror。MV 另以臨時建置（4 秒測試片，未提交）驗證：入口出現、劇透提示 Esc 取消後焦點回到入口、確認後有聲播放、Enter／左方向鍵不推進結局頁、關閉後回到同一結局、重新載入仍顯示「繼續上次」；檔案缺失時顯示說明並可關閉回到結局。
+
+## Claude-20261117-1250（接上 MV 成片）
+
+- 時間：2026-11-17T04:50:00Z
+- 分支或 PR：`claude/cutscene-mv-runtime-20261117`（PR #51 已合併後於同名分支續作，另開新 PR）。
+- 已讀對方紀錄：`ChatGPT-20261117-1132`（無新紀錄）。
+- 本次範圍：使用者指定 Higgsfield 上傳 `fbcf2384-ad3c-4be8-9cd6-a12dd9454dff` 為完整 MV 成片，並確認**不含其他結局畫面**，接上 `Claude-20261117-1150` 已實作的入口。
+- 素材取得：Claude 執行環境連不到 Higgsfield 檔案伺服器。經使用者明確授權，推送一次性 workflow `.github/workflows/import-music-video.yml`，在 GitHub runner 下載原檔、核對 SHA-256（`a2f7d758…766f`）、轉檔並提交 `public/assets/music-video/mv_kitei_no_ashita.mp4`，workflow 在同一個 commit 刪除自己（run 44018672194 成功）。原檔未修改。
+- 轉檔：原檔 1280×720、24fps、228 秒、61 MB（H.264＋MP3）。為符合 Cloudflare 靜態素材單檔 25 MiB 上限並改用相容性較好的 AAC，轉為 H.264 680k two-pass＋AAC 128k、faststart，23.2 MB；先在 Higgsfield 沙箱試轉並比對歌詞字幕區畫質，無明顯劣化。
+- 實際變更檔案：`public/assets/music-video/mv_kitei_no_ashita.mp4`（新增，由 workflow 提交）、`property/music-video.json`（`file` 填入、`spoilerNotice: false`）、`tests/musicVideo.test.ts`、`public/assets/cutscenes/README.md`、`docs/ai-handoff/CLAUDE.md`
+- 交給 ChatGPT：MV 入口按鈕與關閉／失敗文案仍為程式暫定值（`musicVideoLabel` 等，見 `Claude-20261117-1150`），請補進 `property/ui.json`；劇透提示已依使用者確認關閉，相關文案可不提供。若之後重剪 MV，交付新檔即可，Claude 重新轉檔。
+- 未決問題或阻塞：無。
+- 驗證結果：`npm run typecheck`、`npm test`（20 檔 210／210，含成片存在與 25 MiB 上限檢查）、`npm run build`（`dist/assets/music-video/` 含成片）通過。Chromium 實機：END 04（1280×800）與 TRUE END（390×844）通關頁都出現入口，按下即有聲播放（長度 3:48、1280 寬、無劇透提示），Esc 關閉回到同一結局並把焦點還給入口，無 pageerror。

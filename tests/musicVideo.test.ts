@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadContent } from '../src/data/contentLoader';
@@ -24,19 +24,24 @@ describe('通關後的完整 MV 入口（docs/media/cutscene-mv-integration-2026
     }
   });
 
-  it('尚無驗收完成的正式成片：不掛檔案，入口不出現', () => {
-    // 正式 MV 交付並驗收後，再於 property/music-video.json 填入 file；這條斷言會提醒同步更新測試。
-    expect(content.musicVideo.src).toBeUndefined();
+  it('已掛上使用者確認的成片（Higgsfield 上傳 fbcf2384，3:48，網頁版轉檔）', () => {
+    expect(content.musicVideo.src).toMatch(/\/assets\/music-video\/mv_kitei_no_ashita\.mp4$/);
   });
 
-  it('含其他分支畫面，播放前要先提示劇透', () => {
-    expect(content.musicVideo.spoilerNotice).toBe(true);
+  it('使用者確認 MV 不含其他結局畫面：不顯示劇透提示，按下入口直接播放', () => {
+    expect(content.musicVideo.spoilerNotice).toBe(false);
+  });
+
+  it('成片低於部署平台的單檔 25 MiB 上限', () => {
+    const root = path.resolve(__dirname, '..');
+    const file = path.join(root, 'public', content.musicVideo.src!.replace(/^\/+/, '').replace(/^.*?assets\//, 'assets/'));
+    expect(statSync(file).size).toBeLessThan(25 * 1024 * 1024);
   });
 
   it('掛上的檔案必須真的存在於 public/', () => {
     if (!content.musicVideo.src) return;
     const root = path.resolve(__dirname, '..');
-    expect(existsSync(path.join(root, 'public', content.musicVideo.src.replace(/^\/+/, '')))).toBe(true);
+    expect(existsSync(path.join(root, 'public', content.musicVideo.src.replace(/^\/+/, '').replace(/^.*?assets\//, 'assets/')))).toBe(true);
   });
 });
 
