@@ -26,6 +26,6 @@
 
 其餘三個結局（`ending-decent`／`ending-soft-knife`／`ending-over-line`）目前沒有掛任何 cue，不在本輪規劃內。
 
-完整 MV 不屬於主線過場：入口設定在 `property/music-video.json`，只在四個通關頁（`ending-decent`／`ending-soft-knife`／`ending-over-line`／`ending-true-finale`）由玩家自行點選；`file` 目前為 `null`，尚無驗收完成的成片，入口不顯示。成片交付後放在 `public/assets/music-video/` 並填入檔名即生效。
+完整 MV 不屬於主線過場：入口設定在 `property/music-video.json`，只在四個通關頁（`ending-decent`／`ending-soft-knife`／`ending-over-line`／`ending-true-finale`）由玩家自行點選；成片為 `public/assets/music-video/mv_kitei_no_ashita.mp4`（使用者 2026-11-17 指定的 Higgsfield 上傳 `fbcf2384`，3:48，轉為 H.264 680k＋AAC 128k 網頁版約 23 MB），使用者確認不含其他結局畫面，因此不顯示劇透提示。
 
 正式 MP4 缺失或未核准時，執行端應略過影片並繼續 canonical scene，不得回退到隔離舊片。

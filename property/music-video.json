@@ -1,7 +1,7 @@
 {
   "version": 1,
   "directory": "/assets/music-video",
-  "file": null,
+  "file": "mv_kitei_no_ashita.mp4",
   "endingScenes": ["ending-decent", "ending-soft-knife", "ending-over-line", "ending-true-finale"],
-  "spoilerNotice": true
+  "spoilerNotice": false
 }
